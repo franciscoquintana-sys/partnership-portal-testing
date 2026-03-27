@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuno Connectors</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0A0F1E;--ink2:#111827;--slate:#334155;--muted:#64748B;--ghost:#94A3B8;--line:#E2E8F0;--bg:#F8FAFC;--white:#FFF;--indigo:#5B5FDE;--indigo2:#4F46E5;--blue:#3B82F6;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--purple:#8B5CF6;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;}
+html,body{min-height:100vh;font-family:var(--font);background:var(--bg);color:var(--ink);}
+
+/* LAYOUT */
+.page{max-width:1280px;margin:0 auto;padding:24px 28px 60px;}
+
+/* HERO */
+.hero{background:var(--ink);border-radius:16px;padding:28px 32px;margin-bottom:20px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.03) 1px,transparent 0);background-size:22px 22px;pointer-events:none;}
+.hero-glow{position:absolute;width:300px;height:300px;top:-60px;right:40px;border-radius:50%;background:radial-gradient(circle,rgba(91,95,222,0.12),transparent 65%);pointer-events:none;}
+.hero h1{font-size:26px;font-weight:800;color:#F1F5F9;letter-spacing:-0.03em;margin-bottom:4px;position:relative;z-index:1;}
+.hero p{font-size:13px;color:var(--muted);position:relative;z-index:1;}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;}
+.stat{background:var(--white);border:1px solid var(--line);border-radius:14px;padding:20px;text-align:center;}
+.stat-val{font-size:28px;font-weight:800;letter-spacing:-1px;}
+.stat-lbl{font-size:11px;color:var(--ghost);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;}
+
+/* SEARCH */
+.search-wrap{background:var(--ink2);border-radius:14px;padding:20px 24px;margin-bottom:16px;position:relative;overflow:hidden;}
+.search-wrap::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(91,95,222,0.1),transparent 65%);pointer-events:none;}
+.search-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#818cf8;margin-bottom:8px;}
+.search-desc{font-size:12px;color:var(--muted);margin-bottom:10px;}
+.search-input{width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;font-size:14px;font-family:var(--font);color:#E2E8F0;outline:none;}
+.search-input::placeholder{color:#475569;}
+.search-input:focus{border-color:rgba(91,95,222,0.5);background:rgba(91,95,222,0.06);}
+
+/* QUICK SEARCH */
+.qs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0;}
+.qs span{font-size:11px;color:var(--indigo);padding:6px 14px;border:1px solid #C7D2FE;border-radius:10px;background:#EEF2FF;cursor:pointer;transition:all 0.15s;}
+.qs span:hover{background:#E0E7FF;border-color:#A5B4FC;}
+
+/* FILTERS */
+.filter-toggle{font-size:12px;font-weight:600;color:var(--indigo);cursor:pointer;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.filter-bar{display:none;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-bar.show{display:flex;}
+.f-select{padding:8px 12px;border:0.5px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--font);color:var(--slate);background:var(--white);outline:none;min-width:120px;}
+
+/* TABLE */
+.tbl-card{background:var(--white);border:0.5px solid var(--line);border-radius:12px;overflow:hidden;}
+.tbl-count{font-size:13px;margin-bottom:8px;}.tbl-count b{font-weight:700;color:var(--ink);}
+table{width:100%;border-collapse:collapse;}
+th{padding:10px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--ghost);border-bottom:1px solid var(--line);background:#FAFAFA;}
+td{padding:12px 14px;font-size:13px;border-bottom:0.5px solid #F1F5F9;vertical-align:middle;}
+tr.row{cursor:pointer;transition:background 0.1s;}
+tr.row:hover{background:#F8FAFC;}
+tr.row.active{background:#FAFBFF;border-left:3px solid var(--indigo);}
+.td-name{font-weight:700;color:var(--ink);}
+
+/* TAGS */
+.tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;display:inline-block;white-space:nowrap;}
+.t-green{background:#DCFCE7;color:#065F46}.t-blue{background:#DBEAFE;color:#1D4ED8}.t-amber{background:#FEF3C7;color:#B45309}
+.t-red{background:#FEE2E2;color:#DC2626}.t-gray{background:#F1F5F9;color:#475569}.t-purple{background:#F3E8FF;color:#6D28D9}
+
+/* DETAIL PANEL */
+tr.detail-row{display:none;}
+tr.detail-row.open{display:table-row;}
+.detail{background:#FAFBFF;padding:24px 28px;border-top:1px solid #E0E7FF;}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;}
+.detail-section{background:var(--white);border:1px solid #EEF2F7;border-radius:10px;padding:16px 18px;}
+.ds-title{font-size:10px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.ds-title svg{width:14px;height:14px;stroke:var(--indigo);fill:none;stroke-width:1.5;stroke-linecap:round;}
+.ds-row{margin-bottom:8px;}
+.ds-label{font-size:9px;color:var(--ghost);text-transform:uppercase;letter-spacing:0.05em;}
+.ds-value{font-size:12px;font-weight:600;color:var(--ink);margin-top:1px;}
+.ds-value.green{color:#065F46;}.ds-value.mono{font-family:var(--mono);}
+.chip{font-size:10px;font-weight:600;padding:3px 10px;border-radius:6px;display:inline-block;margin:2px;}
+.chip-pm{background:#EFF6FF;color:#1D4ED8;border:0.5px solid #BFDBFE;}
+.chip-vert{background:#F1F5F9;color:#334155;}
+.chip-cur{background:#ECFDF5;color:#065F46;border:0.5px solid #A7F3D0;}
+.check{display:flex;align-items:center;gap:6px;margin-bottom:6px;font-size:12px;}
+.check-on{width:16px;height:16px;border-radius:50%;background:#DCFCE7;display:flex;align-items:center;justify-content:center;font-size:10px;color:#065F46;}
+.check-off{width:16px;height:16px;border-radius:50%;background:#F1F5F9;display:flex;align-items:center;justify-content:center;font-size:10px;color:#CBD5E1;}
+.contact-card{display:flex;align-items:center;gap:10px;padding:8px 10px;background:#F8FAFC;border-radius:8px;margin-bottom:6px;}
+.contact-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-glow"></div>
+  <h1>Yuno Connectors</h1>
+  <p>Search, filter and explore Yuno's payment partner ecosystem.</p>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat"><div class="stat-val" style="color:#5B5FDE">460</div><div class="stat-lbl">Total Connectors</div></div>
+  <div class="stat"><div class="stat-val" style="color:#10B981">97</div><div class="stat-lbl">Live & Active</div></div>
+  <div class="stat"><div class="stat-val" style="color:#3B82F6">189</div><div class="stat-lbl">Countries</div></div>
+  <div class="stat"><div class="stat-val" style="color:#F59E0B">89.4%</div><div class="stat-lbl">Avg Approval Rate</div></div>
+</div>
+
+<!-- SEARCH -->
+<div class="search-wrap">
+  <div class="search-badge">✦ Smart Search</div>
+  <div class="search-desc">Search by name, type, country, or describe what you need — even with typos.</div>
+  <input class="search-input" id="search" placeholder="e.g. acquirers in brazil with high approvals..." oninput="filterTable()">
+  <div class="qs" id="qs">
+    <span onclick="setSearch('list of all acquirers and psps in brazil')">List of all acquirers and PSPs in Brazil</span>
+    <span onclick="setSearch('which acquirers accept gaming in APAC')">Which acquirers accept gaming in APAC</span>
+    <span onclick="setSearch('lowest rate best performance north america')">Lowest rate + best performance in N. America</span>
+    <span onclick="setSearch('which partner accepts recurring in all regions')">Partners with recurring in all regions</span>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filter-toggle" onclick="document.getElementById('fbar').classList.toggle('show')">▸ Filters & Export</div>
+<div class="filter-bar" id="fbar">
+  <select class="f-select" id="f-type" onchange="filterTable()"><option value="">Type</option><option>PSP</option><option>Acquirer</option><option>APM</option><option>Fraud</option><option>BaaS</option></select>
+  <select class="f-select" id="f-region" onchange="filterTable()"><option value="">Region</option><option>Global</option><option>LATAM</option><option>Brasil</option><option>EMEA</option><option>APAC</option><option>North America</option><option>Africa</option></select>
+  <select class="f-select" id="f-status" onchange="filterTable()"><option value="">Status</option><option>Live</option><option>Agreement Signed</option><option>Agreement Review</option><option>Negotiation</option><option>Prospect</option></select>
+  <select class="f-select" id="f-tier" onchange="filterTable()"><option value="">Tier</option><option>Strategic</option><option>Tier 1</option><option>Tier 2</option><option>Tier 3</option></select>
+  <select class="f-select" id="f-sort" onchange="filterTable()"><option value="">Sort by</option><option value="name">Name</option><option value="status">Status</option><option value="type">Type</option></select>
+</div>
+
+<!-- SHOW ALL TOGGLE -->
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+  <label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:#334155;font-weight:500;">
+    <input type="checkbox" id="show-all" checked onchange="filterTable()" style="width:16px;height:16px;accent-color:#5B5FDE;cursor:pointer;">
+    Show all Yuno connectors
+  </label>
+</div>
+
+<!-- TABLE -->
+<div class="tbl-count" id="tbl-count"><b>10</b> connectors</div>
+<div class="tbl-card">
+<table>
+  <thead><tr><th>Connector Name</th><th>Type</th><th>Region</th><th>Country</th><th>Status</th></tr></thead>
+  <tbody id="tbody"></tbody>
+</table>
+</div>
+
+</div>
+
+<script>
+var DATA = [
+  {name:"Adyen",type:"Acquirer",region:"Global",country:"Global",status:"Live",
+   contacts:[{name:"Sarah Chen",role:"Commercial",email:"s.chen@adyen.com",phone:"+31 20 555 0101",color:"#3B82F6"},{name:"Marco Visser",role:"Technical",email:"m.visser@adyen.com",phone:"+31 20 555 0202",color:"#10B981"},{name:"Lisa Park",role:"Escalation",email:"l.park@adyen.com",phone:"+31 20 555 0303",color:"#EF4444"}],
+   verticals:["E-commerce","Travel","Mobility","Streaming","Retail","Marketplaces"],
+   currencies:["USD","EUR","BRL","MXN","COP","ARS","GBP","JPY","SGD"],
+   auth:{type:"Full Auth + Pre-Auth",settlement:"T+1",settleCurrency:"Local + USD",chargebackWindow:"120 days"},
+   onboarding:{kyb:true,integration:"API + SDK",timeline:"2-4 weeks",localEntity:true,jurisdiction:"Netherlands / Local",entityType:"BV or equivalent"},
+   pricing:{standard:"0.95%",discount:"0.75%",discountWhen:"TPV > $50M/yr",mdr:"IC+ model",fx:"0.5% markup",minimums:"$5K/mo"},
+   paymentMethods:["Visa","Mastercard","Amex","iDEAL","Bancontact","PIX","Boleto","OXXO","PSE"]},
+  {name:"Cielo",type:"Acquirer",region:"Brasil",country:"Brasil",status:"Live",
+   contacts:[{name:"Ricardo Souza",role:"Commercial",email:"r.souza@cielo.com.br",phone:"+55 11 4002 5555",color:"#3B82F6"},{name:"Ana Costa",role:"Technical",email:"a.costa@cielo.com.br",phone:"+55 11 4002 5556",color:"#10B981"},{name:"Pedro Lima",role:"Escalation",email:"p.lima@cielo.com.br",phone:"+55 11 4002 5557",color:"#EF4444"}],
+   verticals:["Retail","E-commerce","Food Delivery","Subscriptions"],
+   currencies:["BRL","USD"],
+   auth:{type:"Full Auth",settlement:"T+1",settleCurrency:"BRL",chargebackWindow:"90 days"},
+   onboarding:{kyb:true,integration:"API",timeline:"3-4 weeks",localEntity:true,jurisdiction:"Brazil",entityType:"CNPJ required"},
+   pricing:{standard:"1.2%",discount:"0.85%",discountWhen:"Local entity + TPV > $10M/yr",mdr:"Blended",fx:"N/A (local)",minimums:"R$3K/mo"},
+   paymentMethods:["Visa","Mastercard","Elo","Hipercard","PIX","Boleto"]},
+  {name:"Stripe",type:"PSP",region:"Global",country:"Global",status:"Live",
+   contacts:[{name:"James Wilson",role:"Commercial",email:"j.wilson@stripe.com",phone:"+1 415 555 0101",color:"#3B82F6"},{name:"Emily Zhao",role:"Technical",email:"e.zhao@stripe.com",phone:"+1 415 555 0202",color:"#10B981"},{name:"David Kim",role:"Escalation",email:"d.kim@stripe.com",phone:"+1 415 555 0303",color:"#EF4444"}],
+   verticals:["SaaS","Marketplaces","E-commerce","On-demand","Subscriptions"],
+   currencies:["USD","EUR","GBP","MXN","BRL","JPY","AUD","CAD","SGD","HKD"],
+   auth:{type:"Full Auth + Pre-Auth + Incremental",settlement:"T+2",settleCurrency:"USD / Local",chargebackWindow:"120 days"},
+   onboarding:{kyb:true,integration:"API + SDK + Hosted",timeline:"1 week",localEntity:false,jurisdiction:"US / Ireland",entityType:"Not required — Stripe is MoR"},
+   pricing:{standard:"2.9% + $0.30",discount:"2.2%",discountWhen:"TPV > $100M/yr",mdr:"Blended",fx:"1% markup",minimums:"None"},
+   paymentMethods:["Visa","Mastercard","Amex","Apple Pay","Google Pay","SEPA","iDEAL","Bancontact"]},
+  {name:"dLocal",type:"PSP",region:"LATAM",country:"Regional",status:"Live",
+   contacts:[{name:"Maria Gonzalez",role:"Commercial",email:"m.gonzalez@dlocal.com",phone:"+598 2 555 0101",color:"#3B82F6"},{name:"Carlos Mendez",role:"Technical",email:"c.mendez@dlocal.com",phone:"+598 2 555 0202",color:"#10B981"},{name:"Laura Reyes",role:"Escalation",email:"l.reyes@dlocal.com",phone:"+598 2 555 0303",color:"#EF4444"}],
+   verticals:["Streaming","Gaming","SaaS","Marketplaces","Ride-hailing"],
+   currencies:["USD","BRL","MXN","COP","ARS","CLP","PEN","UYU"],
+   auth:{type:"Full Auth",settlement:"T+2 to T+5",settleCurrency:"USD",chargebackWindow:"90 days"},
+   onboarding:{kyb:true,integration:"API",timeline:"1-2 weeks",localEntity:false,jurisdiction:"Uruguay",entityType:"Not required — dLocal is MoR"},
+   pricing:{standard:"1.8%",discount:"1.4%",discountWhen:"Multi-country + TPV > $20M/yr",mdr:"Blended",fx:"1.5% markup",minimums:"$2K/mo"},
+   paymentMethods:["Visa","Mastercard","PIX","Boleto","OXXO","PSE","Efecty","Khipu","Webpay"]},
+  {name:"Kushki",type:"Acquirer",region:"LATAM",country:"Regional",status:"Live",
+   contacts:[{name:"Aron Schwarzkopf",role:"Commercial",email:"a.schwarz@kushki.com",phone:"+593 2 555 0101",color:"#3B82F6"},{name:"Diego Morales",role:"Technical",email:"d.morales@kushki.com",phone:"+593 2 555 0202",color:"#10B981"},{name:"Sofia Ruiz",role:"Escalation",email:"s.ruiz@kushki.com",phone:"+593 2 555 0303",color:"#EF4444"}],
+   verticals:["E-commerce","Ride-hailing","Delivery","SaaS","Retail"],
+   currencies:["USD","COP","MXN","PEN","CLP","BRL"],
+   auth:{type:"Full Auth + Pre-Auth",settlement:"T+1",settleCurrency:"Local",chargebackWindow:"60 days"},
+   onboarding:{kyb:true,integration:"API + SDK",timeline:"2 weeks",localEntity:false,jurisdiction:"Ecuador / Colombia",entityType:"Not required for cross-border"},
+   pricing:{standard:"1.6%",discount:"1.2%",discountWhen:"Multi-LATAM deal",mdr:"IC+",fx:"0.8% markup",minimums:"$1K/mo"},
+   paymentMethods:["Visa","Mastercard","PSE","Nequi","OXXO","PagoEfectivo"]},
+  {name:"SEON",type:"Fraud",region:"Global",country:"Global",status:"Live",
+   contacts:[{name:"Tamas Kadar",role:"Commercial",email:"t.kadar@seon.io",phone:"+36 1 555 0101",color:"#3B82F6"},{name:"Bence Nagy",role:"Technical",email:"b.nagy@seon.io",phone:"+36 1 555 0202",color:"#10B981"},{name:"Eva Kovacs",role:"Escalation",email:"e.kovacs@seon.io",phone:"+36 1 555 0303",color:"#EF4444"}],
+   verticals:["Gaming","Crypto","Fintech","E-commerce","iGaming"],
+   currencies:["N/A — Fraud screening"],
+   auth:{type:"Pre-transaction screening",settlement:"N/A",settleCurrency:"N/A",chargebackWindow:"N/A"},
+   onboarding:{kyb:false,integration:"API + JS snippet",timeline:"1 week",localEntity:false,jurisdiction:"Hungary / UK",entityType:"Not required"},
+   pricing:{standard:"$0.02/check",discount:"$0.01/check",discountWhen:"Volume > 1M checks/mo",mdr:"Per-query",fx:"N/A",minimums:"$500/mo"},
+   paymentMethods:["Device fingerprinting","Email intelligence","Phone intelligence","IP scoring","Velocity checks"]},
+  {name:"Nuvei",type:"PSP",region:"Global",country:"Global",status:"Agreement Signed",
+   contacts:[{name:"Philip Fayer",role:"Commercial",email:"p.fayer@nuvei.com",phone:"+1 514 555 0101",color:"#3B82F6"},{name:"Ronen Morecki",role:"Technical",email:"r.morecki@nuvei.com",phone:"+1 514 555 0202",color:"#10B981"},{name:"Lisa Chen",role:"Escalation",email:"l.chen@nuvei.com",phone:"+1 514 555 0303",color:"#EF4444"}],
+   verticals:["Gaming","Crypto","Forex","Travel","iGaming"],
+   currencies:["USD","EUR","GBP","CAD","AUD","BRL","MXN","JPY"],
+   auth:{type:"Full Auth + Pre-Auth + 3DS",settlement:"T+1 to T+3",settleCurrency:"USD / EUR / GBP",chargebackWindow:"120 days"},
+   onboarding:{kyb:true,integration:"API + SDK + Hosted",timeline:"3-4 weeks",localEntity:false,jurisdiction:"Canada / Cyprus",entityType:"Not required"},
+   pricing:{standard:"1.4%",discount:"1.0%",discountWhen:"High-risk vertical + volume",mdr:"IC+",fx:"1% markup",minimums:"$3K/mo"},
+   paymentMethods:["Visa","Mastercard","Amex","Apple Pay","Google Pay","Bitcoin","Skrill","Neteller"]},
+  {name:"MercadoPago",type:"APM",region:"LATAM",country:"Regional",status:"Live",
+   contacts:[{name:"Carlos Ruiz",role:"Commercial",email:"c.ruiz@mercadopago.com",phone:"+54 11 555 0101",color:"#3B82F6"},{name:"Lucia Fernandez",role:"Technical",email:"l.fernandez@mercadopago.com",phone:"+54 11 555 0202",color:"#10B981"},{name:"Martin Diaz",role:"Escalation",email:"m.diaz@mercadopago.com",phone:"+54 11 555 0303",color:"#EF4444"}],
+   verticals:["E-commerce","Marketplaces","Retail","Delivery","Subscriptions"],
+   currencies:["ARS","BRL","MXN","COP","CLP","UYU"],
+   auth:{type:"Redirect-based",settlement:"T+1",settleCurrency:"Local",chargebackWindow:"45 days"},
+   onboarding:{kyb:true,integration:"API + SDK",timeline:"2 weeks",localEntity:false,jurisdiction:"Argentina",entityType:"Not required for wallet payments"},
+   pricing:{standard:"1.5%",discount:"1.1%",discountWhen:"TPV > $15M/yr",mdr:"Blended",fx:"N/A (local)",minimums:"None"},
+   paymentMethods:["MercadoPago Wallet","QR Code","Installments","Debit","Credit"]},
+  {name:"Checkout.com",type:"PSP",region:"Global",country:"Global",status:"Agreement Review",
+   contacts:[{name:"Guillaume Pousaz",role:"Commercial",email:"g.pousaz@checkout.com",phone:"+44 20 555 0101",color:"#3B82F6"},{name:"Tom Richards",role:"Technical",email:"t.richards@checkout.com",phone:"+44 20 555 0202",color:"#10B981"},{name:"Sarah Jones",role:"Escalation",email:"s.jones@checkout.com",phone:"+44 20 555 0303",color:"#EF4444"}],
+   verticals:["Travel","Gaming","Crypto","Forex","Marketplaces"],
+   currencies:["USD","EUR","GBP","AED","SAR","BHD","KWD","QAR"],
+   auth:{type:"Full Auth + Pre-Auth + Network Tokens",settlement:"T+1",settleCurrency:"USD / EUR / GBP / AED",chargebackWindow:"120 days"},
+   onboarding:{kyb:true,integration:"API",timeline:"2-3 weeks",localEntity:true,jurisdiction:"UK / UAE / Singapore",entityType:"Ltd or equivalent"},
+   pricing:{standard:"1.1%",discount:"0.8%",discountWhen:"Enterprise deal + exclusivity",mdr:"IC+",fx:"0.6% markup",minimums:"$10K/mo"},
+   paymentMethods:["Visa","Mastercard","Amex","Apple Pay","Google Pay","Mada","KNET","Fawry"]},
+  {name:"Tap Payments",type:"PSP",region:"EMEA",country:"Regional",status:"Agreement Signed",
+   contacts:[{name:"Faisal Al-Saud",role:"Commercial",email:"f.alsaud@tap.company",phone:"+966 11 555 0101",color:"#3B82F6"},{name:"Ahmed Hassan",role:"Technical",email:"a.hassan@tap.company",phone:"+966 11 555 0202",color:"#10B981"},{name:"Noura Al-Rashid",role:"Escalation",email:"n.alrashid@tap.company",phone:"+966 11 555 0303",color:"#EF4444"}],
+   verticals:["E-commerce","Retail","Food Delivery","SaaS","Travel"],
+   currencies:["SAR","AED","BHD","KWD","QAR","OMR","JOD","EGP","USD"],
+   auth:{type:"Full Auth + 3DS2",settlement:"T+2",settleCurrency:"Local GCC",chargebackWindow:"90 days"},
+   onboarding:{kyb:true,integration:"API + SDK + Hosted",timeline:"2-3 weeks",localEntity:true,jurisdiction:"KSA / UAE / Bahrain",entityType:"GCC entity required"},
+   pricing:{standard:"2.0%",discount:"1.5%",discountWhen:"GCC multi-country deal",mdr:"Blended",fx:"0.5% markup",minimums:"$2K/mo"},
+   paymentMethods:["Visa","Mastercard","Mada","KNET","Benefit","Apple Pay","Tamara","Tabby"]}
+];
+
+var STATUS_CLS={"Live":"t-green","Agreement Signed":"t-blue","Agreement Review":"t-amber","Negotiation":"t-amber","Prospect":"t-gray","Lost":"t-red"};
+var TYPE_CLS={"PSP":"t-blue","Acquirer":"t-blue","APM":"t-purple","Fraud":"t-red","BaaS":"t-amber","Other":"t-gray"};
+
+function render(data){
+  var tb=document.getElementById('tbody');
+  tb.innerHTML='';
+  document.getElementById('tbl-count').innerHTML='<b>'+data.length+'</b> connectors';
+  data.forEach(function(d,i){
+    // Main row
+    var tr=document.createElement('tr');
+    tr.className='row';
+    tr.setAttribute('data-idx',i);
+    tr.innerHTML='<td class="td-name">'+d.name+'</td><td><span class="tag '+(TYPE_CLS[d.type]||'t-gray')+'">'+d.type+'</span></td><td style="color:#64748b">'+d.region+'</td><td style="color:#64748b">'+d.country+'</td><td><span class="tag '+(STATUS_CLS[d.status]||'t-gray')+'">'+d.status+'</span></td>';
+    tr.onclick=function(){toggleDetail(this,d,i);};
+    tb.appendChild(tr);
+    // Detail row (hidden)
+    var dr=document.createElement('tr');
+    dr.className='detail-row';
+    dr.id='det-'+i;
+    var dtd=document.createElement('td');
+    dtd.colSpan=5;
+    dtd.style.padding='0';
+    dtd.innerHTML=buildDetail(d);
+    dr.appendChild(dtd);
+    tb.appendChild(dr);
+  });
+}
+
+function toggleDetail(row,d,i){
+  var det=document.getElementById('det-'+i);
+  var isOpen=det.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.detail-row').forEach(function(r){r.classList.remove('open');});
+  document.querySelectorAll('tr.row').forEach(function(r){r.classList.remove('active');});
+  if(!isOpen){det.classList.add('open');row.classList.add('active');}
+}
+
+function buildDetail(d){
+  var c=d.contacts||[];
+  var contactsHTML=c.map(function(ct){
+    var init=ct.name.split(' ').map(function(w){return w[0];}).join('');
+    return '<div class="contact-card"><div class="contact-av" style="background:'+ct.color+'">'+init+'</div><div><div class="ds-label">'+ct.role+'</div><div class="ds-value">'+ct.name+'</div><div style="font-size:11px;color:#64748b">'+ct.email+' · '+ct.phone+'</div></div></div>';
+  }).join('');
+  var vertsHTML=(d.verticals||[]).map(function(v){return '<span class="chip chip-vert">'+v+'</span>';}).join(' ');
+  var cursHTML=(d.currencies||[]).map(function(c){return '<span class="chip chip-cur">'+c+'</span>';}).join(' ');
+  var pmsHTML=(d.paymentMethods||[]).map(function(m){return '<span class="chip chip-pm">'+m+'</span>';}).join(' ');
+  var a=d.auth||{};
+  var o=d.onboarding||{};
+  var pr=d.pricing||{};
+  var ck=function(v){return v?'<span class="check-on">✓</span>':'<span class="check-off">✗</span>';};
+
+  return '<div class="detail"><div class="detail-grid">'+
+    // Col 1: Contacts
+    '<div class="detail-section"><div class="ds-title"><svg viewBox="0 0 16 16"><circle cx="8" cy="5" r="3"/><path d="M2 14c0-3 2.7-5.5 6-5.5s6 2.5 6 5.5"/></svg>Key Contacts</div>'+contactsHTML+'</div>'+
+    // Col 2: Verticals + Currencies
+    '<div class="detail-section"><div class="ds-title"><svg viewBox="0 0 16 16"><rect x="2" y="2" width="5" height="5" rx="1"/><rect x="9" y="2" width="5" height="5" rx="1"/><rect x="2" y="9" width="5" height="5" rx="1"/><rect x="9" y="9" width="5" height="5" rx="1"/></svg>Verticals & Currencies</div>'+
+    '<div class="ds-label">Verticals Supported</div><div style="margin:4px 0 12px">'+vertsHTML+'</div>'+
+    '<div class="ds-label">Currencies Accepted</div><div style="margin:4px 0 0">'+cursHTML+'</div></div>'+
+    // Col 3: Auth & Settlement
+    '<div class="detail-section"><div class="ds-title"><svg viewBox="0 0 16 16"><path d="M8 1L2 4v5c0 3.5 2.5 5.5 6 7 3.5-1.5 6-3.5 6-7V4L8 1z"/></svg>Auth & Settlement</div>'+
+    '<div class="ds-row"><div class="ds-label">Auth Type</div><div class="ds-value">'+a.type+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">Settlement Window</div><div class="ds-value mono">'+a.settlement+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">Settlement Currency</div><div class="ds-value">'+a.settleCurrency+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">Chargeback Window</div><div class="ds-value">'+a.chargebackWindow+'</div></div></div>'+
+    // Row 2
+    '</div><div class="detail-grid" style="margin-top:12px;">'+
+    // Col 1: Onboarding
+    '<div class="detail-section"><div class="ds-title"><svg viewBox="0 0 16 16"><path d="M2 8h12M9 4l5 4-5 4"/></svg>Onboarding</div>'+
+    '<div class="check">'+ck(o.kyb)+'<span>KYB Documents</span></div>'+
+    '<div class="ds-row"><div class="ds-label">Integration</div><div class="ds-value">'+o.integration+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">Est. Go-Live</div><div class="ds-value green">'+o.timeline+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">Local Entity</div><div class="ds-value">'+(o.localEntity?'Required — '+o.jurisdiction:'Not required')+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">Entity Type</div><div class="ds-value">'+o.entityType+'</div></div></div>'+
+    // Col 2: Pricing
+    '<div class="detail-section"><div class="ds-title"><svg viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5"/><path d="M8 5v6M5.5 7h3.5q1 0 1 1t-1 1H6q-1 0-1 1t1 1H9"/></svg>Pricing</div>'+
+    '<div class="ds-row"><div class="ds-label">Standard Rate</div><div class="ds-value mono">'+pr.standard+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">Discounted Rate</div><div class="ds-value mono green">'+pr.discount+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">Discount Applies</div><div class="ds-value">'+pr.discountWhen+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">MDR Model</div><div class="ds-value">'+pr.mdr+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">FX Markup</div><div class="ds-value">'+pr.fx+'</div></div>'+
+    '<div class="ds-row"><div class="ds-label">Monthly Minimums</div><div class="ds-value">'+pr.minimums+'</div></div></div>'+
+    // Col 3: Payment Methods
+    '<div class="detail-section"><div class="ds-title"><svg viewBox="0 0 16 16"><rect x="1" y="3" width="14" height="10" rx="2"/><path d="M1 7h14"/></svg>Payment Methods</div>'+
+    '<div style="margin-top:4px">'+pmsHTML+'</div></div>'+
+    '</div></div>';
+}
+
+function filterTable(){
+  var q=(document.getElementById('search').value||'').toLowerCase();
+  var ft=document.getElementById('f-type').value;
+  var fr=document.getElementById('f-region').value;
+  var fs=document.getElementById('f-status').value;
+  var sort=document.getElementById('f-sort').value;
+  var fti=document.getElementById('f-tier').value;
+  var showAll=document.getElementById('show-all').checked;
+  if(!showAll && !q && !ft && !fr && !fs && !fti){
+    document.getElementById('tbody').innerHTML='<tr><td colspan="5" style="text-align:center;padding:40px;color:#94a3b8;font-size:13px;">Search above or check "Show all Yuno connectors" to browse the full list.</td></tr>';
+    document.getElementById('tbl-count').innerHTML='';
+    return;
+  }
+  // Smart query parsing
+  var aliases={"u.s.":"north america","usa":"north america","us":"north america","united states":"north america","uk":"europe","uae":"emea","emirates":"emea","brasil":"brasil","brazil":"brasil","saudi":"emea","ksa":"emea","mexico":"north america","colombia":"latam","argentina":"latam","chile":"latam","peru":"latam","singapore":"apac","india":"apac","japan":"apac","turkey":"emea"};
+  var countryAliases={"u.s.":"US","usa":"US","us":"US","united states":"US","brazil":"BR","brasil":"BR","mexico":"MX","colombia":"CO","argentina":"AR","chile":"CL","peru":"PE","uk":"GB","uae":"AE","saudi":"SA","turkey":"TR","india":"IN","singapore":"SG","japan":"JP"};
+  var stops=new Set(["the","a","an","in","into","for","to","and","or","of","with","is","by","on","at","from","which","what","are","all","list","can","you","we","our","has","have","that","does","do"]);
+  var wantsGaming=/(gaming|igaming|game)/i.test(q);
+  var wantsGambling=/(gambling|betting|casino)/i.test(q);
+  var wantsCrypto=/(crypto|bitcoin|web3)/i.test(q);
+  var wantsRecurring=/(recurring|subscription|recur)/i.test(q);
+  var wantsAirlines=/(airline|aviation|flight)/i.test(q);
+  var wantsAcquirer=/(acquir)/i.test(q);
+  var wantsPSP=/(psp|gateway|aggregat)/i.test(q);
+  var wantsAPM=/(apm|wallet|local method)/i.test(q);
+  var wantsLowRate=/(low|cheap|cost|affordable|lowest)/i.test(q) && /(rate|price|cost|pricing)/i.test(q);
+  var wantsBestPerf=/(best|high|top).*?(perform|approval|reliable)/i.test(q);
+  var wantsLive=/(live|active|ready)/i.test(q);
+  // Detect region from query
+  var detectedRegion='';
+  var detectedCountries=[];
+  for(var alias in aliases){if(q.indexOf(alias)!==-1){detectedRegion=aliases[alias];break;}}
+  for(var ca in countryAliases){if(q.indexOf(ca)!==-1){detectedCountries.push(countryAliases[ca]);}}
+
+  var filtered=DATA.filter(function(d){
+    if(ft&&d.type!==ft)return false;
+    if(fr&&d.region!==fr)return false;
+    if(fs&&d.status!==fs)return false;
+    if(fti){var dt=(d.tier||'').toLowerCase();if(fti==='Strategic'){if(dt.indexOf('strategic')===-1)return false;}else{if(dt.indexOf(fti.toLowerCase())===-1)return false;}}
+    if(!q) return true;
+    var caps=d.caps||{};
+    // Type filter from query
+    if(wantsAcquirer && !wantsPSP && d.type!=='Acquirer') return false;
+    if(wantsPSP && !wantsAcquirer && d.type!=='PSP') return false;
+    if(wantsAcquirer && wantsPSP && d.type!=='Acquirer' && d.type!=='PSP') return false;
+    if(wantsAPM && d.type!=='APM') return false;
+    // Capability filters
+    if(wantsGaming && !caps.gaming) return false;
+    if(wantsGambling && !caps.gambling) return false;
+    if(wantsCrypto && !caps.crypto) return false;
+    if(wantsRecurring && !caps.recurring) return false;
+    if(wantsAirlines && !caps.airlines) return false;
+    // Region filter
+    if(detectedRegion){
+      var pRegion=(d.region||'').toLowerCase();
+      var capRegions=(caps.regions||[]).map(function(r){return r.toLowerCase();});
+      if(pRegion.indexOf(detectedRegion.toLowerCase())===-1 && !capRegions.some(function(r){return r.indexOf(detectedRegion.toLowerCase())!==-1;}) && detectedRegion.toLowerCase()!=='global' && pRegion!=='global') return false;
+    }
+    // Country filter
+    if(detectedCountries.length>0 && caps.countries){
+      if(!detectedCountries.some(function(c){return caps.countries.indexOf(c)!==-1;})){
+        // Fallback: check country field
+        var dc=detectedCountries.map(function(c){return c.toLowerCase();});
+        if(dc.indexOf((d.country||'').toLowerCase().substring(0,2))===-1 && (d.country||'').toLowerCase()!=='global') return false;
+      }
+    }
+    // Live filter
+    if(wantsLive && d.status!=='Live') return false;
+    // Text match fallback (if no structured match happened)
+    if(!wantsAcquirer&&!wantsPSP&&!wantsAPM&&!wantsGaming&&!wantsGambling&&!wantsCrypto&&!wantsRecurring&&!wantsAirlines&&!detectedRegion&&!wantsLive){
+      var s=(d.name+' '+d.type+' '+d.region+' '+d.country+' '+d.status).toLowerCase();
+      var tokens=q.split(/\s+/).filter(function(t){return t.length>1&&!stops.has(t);});
+      if(tokens.length>0) return tokens.some(function(t){return s.indexOf(t)!==-1||s.split(/\s+/).some(function(w){return w.startsWith(t.substring(0,3));});});
+    }
+    return true;
+  });
+  // Smart sorting
+  if(wantsLowRate) filtered.sort(function(a,b){return(a.strategic?0:1)-(b.strategic?0:1);});
+  if(wantsBestPerf) filtered.sort(function(a,b){return((a.status==='Live'&&a.caps&&a.caps.recurring)?0:1)-((b.status==='Live'&&b.caps&&b.caps.recurring)?0:1);});
+  if(sort==='name')filtered.sort(function(a,b){return a.name.localeCompare(b.name);});
+  if(sort==='status')filtered.sort(function(a,b){return(a.status==='Live'?0:1)-(b.status==='Live'?0:1);});
+  if(sort==='type')filtered.sort(function(a,b){return a.type.localeCompare(b.type);});
+
+  render(filtered);
+}
+
+function setSearch(q){document.getElementById('search').value=q;filterTable();}
+
+render(DATA);
+</script>
+</body>
+</html>

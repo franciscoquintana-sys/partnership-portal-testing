@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partners In Flight</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--ink:#0A0F1E;--slate:#334155;--muted:#64748B;--ghost:#94A3B8;--line:#E2E8F0;--bg:#F8FAFC;--white:#FFF;--indigo:#5B5FDE;--green:#10B981;--amber:#F59E0B;--red:#EF4444;--font:'DM Sans',system-ui,sans-serif;--mono:'DM Mono',monospace;}
+html,body{min-height:100vh;font-family:var(--font);background:var(--bg);color:var(--ink);font-size:13px;}
+.page{max-width:100%;padding:0;}
+
+/* HERO */
+.hero{background:var(--ink);border-radius:14px;padding:22px 26px;margin-bottom:14px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.03) 1px,transparent 0);background-size:20px 20px;pointer-events:none;}
+.hero h1{font-size:20px;font-weight:800;color:#F1F5F9;letter-spacing:-0.02em;margin-bottom:3px;position:relative;z-index:1;}
+.hero p{font-size:11px;color:var(--muted);position:relative;z-index:1;}
+.hero-stats{display:flex;gap:8px;margin-top:12px;position:relative;z-index:1;flex-wrap:wrap;}
+.hs{background:rgba(255,255,255,0.04);border:0.5px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 12px;text-align:center;}
+.hs-val{font-size:16px;font-weight:800;line-height:1;}
+.hs-lbl{font-size:8px;color:#475569;text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;}
+
+/* REGION MAP */
+.map-wrap{background:var(--white);border:0.5px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px;}
+.map-title{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:10px;}
+.region-grid{display:flex;gap:6px;flex-wrap:wrap;}
+.reg-btn{padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--white);cursor:pointer;font-size:11px;font-weight:600;color:var(--muted);transition:all 0.15s;font-family:var(--font);}
+.reg-btn:hover{border-color:#A5B4FC;color:var(--indigo);}
+.reg-btn.active{background:var(--ink);border-color:var(--indigo);color:#A5B4FC;}
+.reg-btn .ct{font-weight:800;margin-left:4px;}
+
+/* KANBAN */
+.kanban-title{font-size:12px;font-weight:700;color:var(--ink);margin:8px 0 6px;}
+.kanban{display:flex;gap:6px;overflow-x:auto;padding-bottom:10px;}
+.stage{min-width:140px;flex:1;background:var(--white);border:0.5px solid var(--line);border-radius:10px;padding:8px;display:flex;flex-direction:column;}
+.stage-hdr{padding:6px 8px;border-radius:6px;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;}
+.stage-name{font-size:10px;font-weight:700;color:var(--white);text-transform:uppercase;letter-spacing:0.05em;}
+.stage-ct{font-size:10px;font-weight:800;color:rgba(255,255,255,0.7);}
+.stage-owner{font-size:8px;color:var(--ghost);margin-top:2px;font-weight:600;}
+.card-list{flex:1;display:flex;flex-direction:column;gap:4px;min-height:40px;}
+.card{background:var(--white);border:1px solid var(--line);border-radius:7px;padding:8px 10px;cursor:grab;transition:all 0.12s;border-left:3px solid transparent;user-select:none;}
+.card:hover{border-color:#A5B4FC;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.card.selected{border-color:var(--indigo);background:#FAFBFF;box-shadow:0 2px 12px rgba(91,95,222,0.1);}
+.card.dragging{opacity:0.5;transform:rotate(2deg);box-shadow:0 8px 24px rgba(0,0,0,0.15);cursor:grabbing;}
+.card-list.drag-over{background:#EEF2FF;border-radius:6px;outline:2px dashed #A5B4FC;outline-offset:-2px;}
+.drag-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#0f172a;color:#A5B4FC;padding:10px 20px;border-radius:10px;font-size:12px;font-weight:600;z-index:100;display:none;box-shadow:0 4px 20px rgba(0,0,0,0.3);}
+.card-name{font-size:11px;font-weight:700;color:var(--ink);}
+.card-meta{font-size:9px;color:var(--ghost);margin-top:1px;}
+.card-checks{display:flex;gap:2px;margin-top:4px;}
+.ck{font-size:7px;padding:1px 4px;border-radius:3px;}
+.ck-on{background:#DCFCE7;color:#065F46;}.ck-off{background:#F1F5F9;color:#CBD5E1;}
+
+/* DETAIL PANEL */
+.detail-panel{background:var(--white);border:1px solid var(--line);border-radius:12px;padding:20px;margin-top:12px;display:none;}
+.detail-panel.show{display:block;}
+.dp-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid #F1F5F9;}
+.dp-name{font-size:18px;font-weight:800;color:var(--ink);}
+.dp-sub{font-size:11px;color:var(--ghost);margin-top:2px;}
+.dp-close{background:none;border:none;font-size:18px;color:var(--ghost);cursor:pointer;padding:4px;}
+.dp-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.dp-section{background:#FAFBFC;border:0.5px solid #EEF2F7;border-radius:8px;padding:14px;}
+.dp-stitle{font-size:9px;font-weight:700;color:var(--indigo);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;}
+.dp-row{margin-bottom:6px;}
+.dp-lbl{font-size:8px;color:var(--ghost);text-transform:uppercase;letter-spacing:0.04em;}
+.dp-val{font-size:11px;font-weight:600;color:var(--ink);margin-top:1px;}
+.dp-val.green{color:#065F46;}
+.chip{font-size:9px;font-weight:600;padding:2px 7px;border-radius:4px;display:inline-block;margin:1px;}
+.chip-blue{background:#DBEAFE;color:#1D4ED8;}.chip-green{background:#DCFCE7;color:#065F46;}.chip-amber{background:#FEF3C7;color:#B45309;}.chip-gray{background:#F1F5F9;color:#475569;}
+.feed{margin-top:8px;}
+.feed-item{display:flex;gap:8px;padding:6px 0;border-bottom:0.5px solid #F1F5F9;font-size:10px;}
+.feed-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.feed-text{color:var(--slate);line-height:1.4;}
+.feed-time{color:var(--ghost);margin-left:auto;white-space:nowrap;font-size:9px;}
+.tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;display:inline-block;}
+.t-green{background:#DCFCE7;color:#065F46;}.t-blue{background:#DBEAFE;color:#1D4ED8;}.t-amber{background:#FEF3C7;color:#B45309;}.t-red{background:#FEE2E2;color:#DC2626;}.t-purple{background:#F3E8FF;color:#6D28D9;}.t-gray{background:#F1F5F9;color:#475569;}
+</style>
+</head>
+<body>
+<div class="page">
+<div class="hero">
+  <h1>Partners In Flight</h1>
+  <p>End-to-end partner lifecycle — from prospect to live & scaling</p>
+  <div class="hero-stats" id="hero-stats"></div>
+</div>
+
+<div class="map-wrap">
+  <div class="map-title">Filter by Region</div>
+  <div class="region-grid" id="regions"></div>
+</div>
+
+<div class="kanban-title">E2E Partner Lifecycle — <span id="stage-count" style="color:#5B5FDE;"></span></div>
+<div class="kanban" id="kanban"></div>
+
+<div class="detail-panel" id="detail"></div>
+<div class="drag-toast" id="drag-toast"></div>
+</div>
+
+<script>
+var STAGES=[
+  {id:0,label:"Prospect",short:"PROS",color:"#94a3b8",owner:"Partnership BD"},
+  {id:1,label:"Negotiation",short:"NEG",color:"#6366f1",owner:"Partnership BD"},
+  {id:2,label:"Agreement Review",short:"AGR",color:"#8b5cf6",owner:"Partnerships + Legal"},
+  {id:3,label:"Agreement Signed",short:"SIGN",color:"#7c3aed",owner:"Partnerships + Legal"},
+  {id:4,label:"Prioritized",short:"PRI",color:"#0891b2",owner:"Product + Partnerships"},
+  {id:5,label:"In Development",short:"DEV",color:"#2563eb",owner:"Integrations"},
+  {id:6,label:"Dev Complete",short:"QA",color:"#059669",owner:"Integrations"},
+  {id:7,label:"Go Live",short:"LIVE",color:"#16a34a",owner:"Merchant BD/KAM"},
+  {id:8,label:"Pilot",short:"PILOT",color:"#d97706",owner:"Merchant BD/KAM"},
+  {id:9,label:"G2M",short:"G2M",color:"#e11d48",owner:"Marketing + Partnerships"},
+  {id:10,label:"Live & Processing",short:"LIVE+",color:"#065f46",owner:"Partnership Acct Mgmt"}
+];
+
+var GATE_CRITERIA={
+  0:["Market assessment complete","Initial outreach made","Opportunity qualified"],
+  1:["Commercial terms discussed","Pricing aligned","Scope defined"],
+  2:["NDA signed","Contract drafted","Compliance review passed"],
+  3:["Contract executed","Both parties signed","Ready for prioritization"],
+  4:["Roadmap slot confirmed","Resources allocated","Kickoff planned"],
+  5:["API integration started","Sandbox access granted","Certification in progress"],
+  6:["QA testing passed","Sandbox certified","Production ready"],
+  7:["Production deployed","Monitoring active","Initial txns flowing"],
+  8:["First merchant onboarded","Volume ramp started","Performance validated"],
+  9:["GTM plan agreed","Co-marketing launched","Case study drafted"],
+  10:["Active volume","Rev share collecting","Quarterly reviews scheduled"]
+};
+
+var KPIs={
+  0:"Time to qualify: <14 days",1:"Time to terms: <21 days",2:"Legal turnaround: <10 days",
+  3:"Sign to kickoff: <7 days",4:"Prioritization cycle: <14 days",5:"Integration time: <30 days",
+  6:"QA cycle: <7 days",7:"Go-live time: <3 days",8:"First merchant: <30 days",
+  9:"GTM launch: <45 days",10:"Rev share active within 60 days"
+};
+
+// Data will be injected by Python
+var DATA = [];
+
+var activeRegion='All';
+var selectedCard=null;
+
+function getRegions(){
+  var r={};DATA.forEach(function(d){var reg=d.region||'Other';if(!r[reg])r[reg]=0;r[reg]++;});
+  return r;
+}
+
+function render(){
+  // Stats
+  var total=DATA.length;
+  var filt=activeRegion==='All'?DATA:DATA.filter(function(d){return d.region===activeRegion;});
+  var live=filt.filter(function(d){return d.stage_idx>=7;}).length;
+  var dev=filt.filter(function(d){return d.stage_idx>=5&&d.stage_idx<7;}).length;
+  document.getElementById('hero-stats').innerHTML=
+    '<div class="hs"><div class="hs-val" style="color:#C7D2FE">'+filt.length+'</div><div class="hs-lbl">Total</div></div>'+
+    '<div class="hs"><div class="hs-val" style="color:#6EE7B7">'+live+'</div><div class="hs-lbl">Live</div></div>'+
+    '<div class="hs"><div class="hs-val" style="color:#818cf8">'+dev+'</div><div class="hs-lbl">In Dev</div></div>';
+
+  // Regions
+  var regions=getRegions();
+  var regHtml='<button class="reg-btn'+(activeRegion==='All'?' active':'')+'" onclick="setRegion(\'All\')">All <span class="ct">'+total+'</span></button>';
+  Object.keys(regions).sort().forEach(function(r){
+    regHtml+='<button class="reg-btn'+(activeRegion===r?' active':'')+'" onclick="setRegion(\''+r+'\')">'+r+' <span class="ct">'+regions[r]+'</span></button>';
+  });
+  document.getElementById('regions').innerHTML=regHtml;
+
+  // Kanban
+  var kanbanHtml='';
+  var totalShown=0;
+  STAGES.forEach(function(s){
+    var cards=filt.filter(function(d){return d.stage_idx===s.id;});
+    totalShown+=cards.length;
+    var cardsHtml='';
+    cards.forEach(function(d){
+      var sel=selectedCard&&selectedCard.name===d.name?' selected':'';
+      var checks=['NDA','Int','Merch','Rev$'];
+      var vals=[d.nda,d.int_ready,d.int_used,d.revshare];
+      var ckHtml=checks.map(function(c,i){return '<span class="ck '+(vals[i]?'ck-on':'ck-off')+'">'+c+'</span>';}).join('');
+      var eName=d.name.replace(/'/g,"\\'");
+      cardsHtml+='<div class="card'+sel+'" style="border-left-color:'+s.color+';" draggable="true" onclick="selectPartner(\''+eName+'\')" ondragstart="onDragStart(event,\''+eName+'\')" ondragend="onDragEnd(event)">';
+      cardsHtml+='<div class="card-name">'+d.name+'</div>';
+      cardsHtml+='<div class="card-meta">'+d.offering+' · '+d.region+'</div>';
+      cardsHtml+='<div class="card-checks">'+ckHtml+'</div></div>';
+    });
+    if(!cardsHtml) cardsHtml='<div style="text-align:center;padding:12px;color:#d1d5db;font-size:9px;">—</div>';
+    kanbanHtml+='<div class="stage"><div class="stage-hdr" style="background:'+s.color+'"><span class="stage-name">'+s.short+'</span><span class="stage-ct">'+cards.length+'</span></div><div class="stage-owner">'+s.owner+'</div><div class="card-list" data-stage="'+s.id+'" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event,'+s.id+')">'+cardsHtml+'</div></div>';
+  });
+  document.getElementById('kanban').innerHTML=kanbanHtml;
+  document.getElementById('stage-count').textContent=totalShown+' partners';
+
+  // Detail
+  if(selectedCard) showDetail(selectedCard);
+  else document.getElementById('detail').classList.remove('show');
+}
+
+function setRegion(r){activeRegion=r;selectedCard=null;render();}
+
+function selectPartner(name){
+  var d=DATA.find(function(p){return p.name===name;});
+  if(!d)return;
+  if(selectedCard&&selectedCard.name===name){selectedCard=null;document.getElementById('detail').classList.remove('show');render();return;}
+  selectedCard=d;render();
+}
+
+function showDetail(d){
+  var s=STAGES[d.stage_idx]||STAGES[0];
+  var gates=(GATE_CRITERIA[d.stage_idx]||[]).map(function(g){return '<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><span class="ck ck-on">✓</span><span style="font-size:10px;">'+g+'</span></div>';}).join('');
+  var kpi=KPIs[d.stage_idx]||'—';
+  var po=d.pending_owner||'—';
+  var pt=d.pending_task||'—';
+
+  var html='<div class="dp-header"><div><div class="dp-name">'+d.name+'</div><div class="dp-sub">'+d.offering+' · '+d.country+' · '+d.region+' · <span class="tag" style="background:'+s.color+'15;color:'+s.color+';">'+s.label+'</span></div></div><button class="dp-close" onclick="selectedCard=null;render();">✕</button></div>';
+  html+='<div class="dp-grid">';
+  // Gate criteria
+  html+='<div class="dp-section"><div class="dp-stitle">Gate Criteria</div>'+gates+'</div>';
+  // Ownership & KPI
+  html+='<div class="dp-section"><div class="dp-stitle">Ownership & KPI</div>';
+  html+='<div class="dp-row"><div class="dp-lbl">Current Owner</div><div class="dp-val">'+po+'</div></div>';
+  html+='<div class="dp-row"><div class="dp-lbl">Pending Task</div><div class="dp-val">'+pt+'</div></div>';
+  html+='<div class="dp-row"><div class="dp-lbl">Stage Owner</div><div class="dp-val">'+s.owner+'</div></div>';
+  html+='<div class="dp-row"><div class="dp-lbl">Target KPI</div><div class="dp-val green">'+kpi+'</div></div>';
+  html+='<div class="dp-row"><div class="dp-lbl">Partner Manager</div><div class="dp-val">'+d.manager+'</div></div></div>';
+  // Outputs & Status
+  html+='<div class="dp-section"><div class="dp-stitle">Status & Outputs</div>';
+  html+='<div style="display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;">';
+  html+='<span class="chip '+(d.nda?'chip-green':'chip-gray')+'">NDA '+(d.nda?'✓':'✗')+'</span>';
+  html+='<span class="chip '+(d.int_ready?'chip-green':'chip-gray')+'">Integration '+(d.int_ready?'✓':'✗')+'</span>';
+  html+='<span class="chip '+(d.int_used?'chip-green':'chip-gray')+'">Merchants '+(d.int_used?'✓':'✗')+'</span>';
+  html+='<span class="chip '+(d.revshare?'chip-green':'chip-gray')+'">Rev Share '+(d.revshare?'✓':'✗')+'</span></div>';
+  html+='<div class="dp-row"><div class="dp-lbl">Deal Stage (Excel)</div><div class="dp-val">'+d.deal_stage+'</div></div>';
+  html+='<div class="dp-row"><div class="dp-lbl">Management</div><div class="dp-val">'+(d.mgmt_type||'—')+'</div></div>';
+  html+='<div class="dp-row"><div class="dp-lbl">Strategic</div><div class="dp-val">'+(d.strategic?'Yes':'No')+'</div></div></div>';
+  html+='</div>';
+  // Activity feed
+  html+='<div class="feed" style="margin-top:14px;"><div class="dp-stitle">Activity Feed</div>';
+  html+='<div class="feed-item"><div class="feed-dot" style="background:'+s.color+';"></div><div class="feed-text">Moved to <b>'+s.label+'</b></div><div class="feed-time">Mar 2026</div></div>';
+  html+='<div class="feed-item"><div class="feed-dot" style="background:#E2E8F0;"></div><div class="feed-text">'+(d.nda?'NDA signed and uploaded':'NDA requested')+'</div><div class="feed-time">Feb 2026</div></div>';
+  html+='<div class="feed-item"><div class="feed-dot" style="background:#E2E8F0;"></div><div class="feed-text">Partner account created by '+d.manager+'</div><div class="feed-time">Jan 2026</div></div>';
+  html+='</div>';
+
+  document.getElementById('detail').innerHTML=html;
+  document.getElementById('detail').classList.add('show');
+}
+
+// Drag and drop
+var draggedPartner=null;
+function onDragStart(e,name){
+  draggedPartner=name;
+  e.dataTransfer.effectAllowed='move';
+  e.dataTransfer.setData('text/plain',name);
+  setTimeout(function(){e.target.classList.add('dragging');},0);
+}
+function onDragEnd(e){
+  e.target.classList.remove('dragging');
+  document.querySelectorAll('.card-list').forEach(function(cl){cl.classList.remove('drag-over');});
+  draggedPartner=null;
+}
+function onDragOver(e){
+  e.preventDefault();
+  e.dataTransfer.dropEffect='move';
+  e.currentTarget.classList.add('drag-over');
+}
+function onDragLeave(e){
+  e.currentTarget.classList.remove('drag-over');
+}
+function onDrop(e,stageId){
+  e.preventDefault();
+  e.currentTarget.classList.remove('drag-over');
+  if(!draggedPartner)return;
+  var d=DATA.find(function(p){return p.name===draggedPartner;});
+  if(!d)return;
+  var oldStage=STAGES[d.stage_idx]?STAGES[d.stage_idx].label:'?';
+  var newStage=STAGES[stageId]?STAGES[stageId].label:'?';
+  d.stage_idx=stageId;
+  var owners=["Partnership BD","Partnership BD","Partnerships + Legal","Partnerships + Legal","Product","Integrations","Integrations","Merchant BD/KAM","Merchant BD/KAM","Marketing + Partnerships","Partnership Acct Mgmt"];
+  var tasks=["Qualify opportunity","Align commercial terms","Contract under review","Awaiting sign-off","Awaiting roadmap slot","Integration in progress","QA certification","Go-live deployment","Merchant onboarding","GTM campaigns","Ongoing management"];
+  d.pending_owner=owners[stageId]||'—';
+  d.pending_task=tasks[stageId]||'—';
+  selectedCard=d;
+  render();
+  var toast=document.getElementById('drag-toast');
+  toast.innerHTML='✦ <b>'+d.name+'</b> moved from <b>'+oldStage+'</b> → <b>'+newStage+'</b>';
+  toast.style.display='block';
+  setTimeout(function(){toast.style.display='none';},3000);
+}
+
+render();
+</script>
+</body>
+</html>

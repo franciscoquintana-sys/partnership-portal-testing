@@ -1,0 +1,18 @@
+__pycache__/
+*.pyc
+.DS_Store
+*.zip
+*.pptx
+*.pdf
+PAPO V1.py
+app.py
+partner_portal.py
+partner_portal_backup.py
+partner_portal_pre_map.py
+generate_payments.py
+payments.json
+Screenshot*.png
+Yuno × Adyen*
+Copy of*
+Backup*
+landing_component/
