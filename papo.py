@@ -522,9 +522,9 @@ def show_landing():
 .sso-microsoft:hover{border-color:rgba(0,120,212,0.5);background:rgba(0,120,212,0.08);}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(1.3);}}
 </style>
-<div style="background:#0A0F1E;border-radius:20px;padding:60px 20px;position:relative;overflow:hidden;min-height:560px;display:flex;align-items:center;justify-content:center;">
+<div style="background:#EA580C;border-radius:20px;padding:60px 20px;position:relative;overflow:hidden;min-height:560px;display:flex;align-items:center;justify-content:center;">
   <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.03) 1px,transparent 0);background-size:28px 28px;pointer-events:none;"></div>
-  <div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(91,95,222,0.14) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+  <div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(251,146,60,0.3) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
   <div class="login-wrap">
     <div class="login-card">
       <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:6px;">
@@ -536,7 +536,7 @@ def show_landing():
         </div>
         <span style="font-size:28px;font-weight:800;color:#E2E8F0;letter-spacing:-0.03em;">yuno</span>
       </div>
-      <div style="text-align:center;font-size:22px;font-weight:700;color:#F1F5F9;letter-spacing:-0.02em;margin:20px 0 8px;">Welcome to the<br>Yuno Partner Portal</div>
+      <div style="text-align:center;font-size:22px;font-weight:700;color:#F1F5F9;letter-spacing:-0.02em;margin:20px 0 8px;">Welcome to the<br>Amazing Yuno Partner Portal</div>
       <div style="text-align:center;font-size:13px;color:#475569;margin-bottom:32px;">Sign in with your organization account</div>
       <button class="sso-btn sso-google" onclick="ssoLogin('google')">
         <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
