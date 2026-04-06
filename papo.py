@@ -656,7 +656,6 @@ def show_sidebar():
                 ("PIPELINE & FLOW", [
                     ("MissionCtrl", "Partners In Flight"),
                     ("Pipeline",    "Partner Leads"),
-                    ("Merchants",   "Merchants"),
                 ]),
                 ("PERFORMANCE", [
                     ("Performance", "Partner Health"),
@@ -677,7 +676,6 @@ def show_sidebar():
                 ]),
                 ("PIPELINE & FLOW", [
                     ("Pipeline",    "Partner Leads"),
-                    ("Merchants",   "Merchants"),
                 ]),
                 ("PERFORMANCE", [
                     ("Performance", "Partner Health"),
