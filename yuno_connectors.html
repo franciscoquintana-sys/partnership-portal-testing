@@ -452,7 +452,10 @@ var ALL_COLS=[
   {key:'tier',label:'Tier',idx:-1,get:function(d){return d.tier||'—';}},
   {key:'manager',label:'Manager',idx:-1,get:function(d){return d.contacts&&d.contacts[0]?d.contacts[0].name:'—';}}
 ];
-var selectedCols={name:true,type:true,region:true,country:true,status:true,tier:true,manager:true};
+var _defaultCols={name:true,type:true,region:true,country:true,status:true,tier:true,manager:true};
+var selectedCols;
+try{selectedCols=JSON.parse(localStorage.getItem('yuno_selectedCols'))||_defaultCols;}catch(e){selectedCols=_defaultCols;}
+function _saveCols(){try{localStorage.setItem('yuno_selectedCols',JSON.stringify(selectedCols));}catch(e){}}
 
 function applyColVisibility(){
   // Hide/show table columns (only for cols with idx >= 0)
@@ -486,6 +489,7 @@ function renderColChecks(){
     span.addEventListener('click',function(e){
       e.preventDefault();e.stopPropagation();
       selectedCols[c.key]=!selectedCols[c.key];
+      _saveCols();
       renderColChecks();
     });
     container.appendChild(span);
