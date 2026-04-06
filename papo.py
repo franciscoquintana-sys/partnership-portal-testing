@@ -1381,15 +1381,15 @@ def show_partners():
         # External contacts from partner files
         _ext_key = p["name"].upper().replace("(","").replace(")","").strip()
         _ext = _EXT_CONTACTS.get(_ext_key, {})
-        _comm_name = _ext.get("commercial_contact","") or (enrich["commercial_contact"] if enrich else manager)
-        _comm_email = _ext.get("commercial_email","")
-        _comm_phone = _ext.get("commercial_phone","")
-        _tech_name = _ext.get("technical_contact","") or (enrich["technical_contact"] if enrich else "—")
-        _tech_email = _ext.get("technical_email","")
-        _tech_phone = _ext.get("technical_phone","")
+        _comm_name = _ext.get("commercial_contact","") or (enrich["commercial_contact"] if enrich else "") or "TBD"
+        _comm_email = _ext.get("commercial_email","") or "TBD"
+        _comm_phone = _ext.get("commercial_phone","") or "TBD"
+        _tech_name = _ext.get("technical_contact","") or (enrich["technical_contact"] if enrich else "") or "TBD"
+        _tech_email = _ext.get("technical_email","") or "TBD"
+        _tech_phone = _ext.get("technical_phone","") or "TBD"
         # Verticals from external data (Source of Truth features)
         _ext_verts = _ext.get("verticals","")
-        _verticals_list = [v.strip() for v in _ext_verts.split(",") if v.strip()] if _ext_verts else (enrich["verticals"].split(", ") if enrich and enrich.get("verticals") else ["General"])
+        _verticals_list = [v.strip() for v in _ext_verts.split(",") if v.strip()] if _ext_verts else (enrich["verticals"].split(", ") if enrich and enrich.get("verticals") else ["TBD"])
 
         _connector_data.append({
             "name": p["name"], "type": p["cat"], "region": p.get("region","—"), "country": country, "status": p["status"],
@@ -1403,7 +1403,7 @@ def show_partners():
             "currencies": ["USD","Local"],
             "auth": {"type": "Full Auth", "settlement": "T+1", "settleCurrency": "Local / USD", "chargebackWindow": "90 days"},
             "onboarding": {"kyb": bool(p.get("nda")), "integration": enrich["onboarding"].split(",")[0] if enrich else "API", "timeline": enrich["onboarding"].split(",")[-1].strip() if enrich else "2-4 weeks", "localEntity": False, "jurisdiction": "—", "entityType": "Contact partnerships"},
-            "pricing": {"standard": enrich["avg_pricing"] if enrich else "—", "discount": enrich["discount_rate"] if enrich else "—", "discountWhen": enrich["discount_condition"] if enrich else "—", "mdr": "Blended", "fx": "—", "minimums": "—"},
+            "pricing": {"standard": enrich["avg_pricing"] if enrich else "TBD", "discount": enrich["discount_rate"] if enrich else "TBD", "discountWhen": enrich["discount_condition"] if enrich else "TBD", "mdr": "Blended", "fx": "TBD", "minimums": "TBD"},
             "paymentMethods": sot_pms if sot_pms else ["Card"],
             "health": {"score": 85 if p["status"]=="Live" else 55 if "Agreement" in p["status"] else 30, "label": enrich["health"] if enrich else ("Live" if p["status"]=="Live" else "Pipeline")},
             "tier": p.get("tier","—").replace("Partners","").replace("(Global)","").replace("Strategic Partners: Very Important","Strategic").strip().rstrip(":").strip() or "—",
@@ -1733,17 +1733,17 @@ setTimeout(function(){
             # Enrichment data lookup
             enrich = _PARTNER_ENRICHMENT.get(p["name"].upper().replace("(","").replace(")","").strip())
             _ext_d = _EXT_CONTACTS.get(p["name"].upper().replace("(","").replace(")","").strip(), {})
-            comm_contact = _ext_d.get("commercial_contact","") or (enrich["commercial_contact"] if enrich else manager)
-            tech_contact = _ext_d.get("technical_contact","") or (enrich["technical_contact"] if enrich else "—")
+            comm_contact = _ext_d.get("commercial_contact","") or (enrich["commercial_contact"] if enrich else "") or "TBD"
+            tech_contact = _ext_d.get("technical_contact","") or (enrich["technical_contact"] if enrich else "") or "TBD"
             _ext_verts_d = _ext_d.get("verticals","")
-            verticals = _ext_verts_d if _ext_verts_d else (enrich["verticals"] if enrich else "—")
-            pricing = enrich["avg_pricing"] if enrich else "—"
-            discount = enrich["discount_rate"] if enrich else "—"
-            discount_cond = enrich["discount_condition"] if enrich else "—"
-            revshare_status = enrich["revshare"] if enrich else ("Yes" if p.get("revshare") else "No")
-            onboarding = enrich["onboarding"] if enrich else "Contact partnerships team"
+            verticals = _ext_verts_d if _ext_verts_d else (enrich["verticals"] if enrich else "TBD")
+            pricing = enrich["avg_pricing"] if enrich else "TBD"
+            discount = enrich["discount_rate"] if enrich else "TBD"
+            discount_cond = enrich["discount_condition"] if enrich else "TBD"
+            revshare_status = enrich["revshare"] if enrich else ("Yes" if p.get("revshare") else "TBD")
+            onboarding = enrich["onboarding"] if enrich else "TBD"
             merch_live = enrich["merchants_live"] if enrich else 0
-            merch_names = enrich["merchants"] if enrich else "—"
+            merch_names = enrich["merchants"] if enrich else "TBD"
             p_health_label = enrich["health"] if enrich else ("Good" if health >= 50 else "New")
 
             # Payment methods from SOT
