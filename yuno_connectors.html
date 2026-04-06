@@ -52,8 +52,8 @@ html,body{min-height:100vh;font-family:var(--font);background:var(--bg);color:va
 .dl-item{padding:11px 18px;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:8px;border-bottom:1px solid #F5F5F5;transition:background 0.1s;}
 .dl-item:last-child{border-bottom:none;}
 .dl-item:hover{background:#F8FAFC;}
-.col-chip{font-size:10px;font-weight:600;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--slate);transition:all 0.12s;font-family:var(--font);user-select:none;}
-.col-chip.on{background:#EEF2FF;border-color:#A5B4FC;color:var(--indigo);}
+.col-chip{font-size:10px;font-weight:600;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:#F8FAFC;cursor:pointer;color:#CBD5E1;transition:all 0.12s;font-family:var(--font);user-select:none;text-decoration:line-through;}
+.col-chip.on{background:#EEF2FF;border-color:#A5B4FC;color:var(--indigo);text-decoration:none;}
 .filter-bar{display:none;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
 .filter-bar.show{display:flex;}
 .col-divider{width:1px;height:24px;background:var(--line);margin:0 4px;}
@@ -475,14 +475,21 @@ function applyColVisibility(){
 }
 
 function renderColChecks(){
-  var html='';
+  var container=document.getElementById('col-checks');
+  container.innerHTML='';
   ALL_COLS.forEach(function(c){
-    html+='<span class="col-chip'+(selectedCols[c.key]?' on':'')+'" onclick="toggleCol(\''+c.key+'\')">'+c.label+'</span>';
+    var span=document.createElement('span');
+    span.className='col-chip'+(selectedCols[c.key]?' on':'');
+    span.textContent=c.label;
+    span.addEventListener('click',function(e){
+      e.preventDefault();e.stopPropagation();
+      selectedCols[c.key]=!selectedCols[c.key];
+      renderColChecks();
+    });
+    container.appendChild(span);
   });
-  document.getElementById('col-checks').innerHTML=html;
   applyColVisibility();
 }
-function toggleCol(k){selectedCols[k]=!selectedCols[k];renderColChecks();}
 renderColChecks();
 
 // Close download menu on outside click
