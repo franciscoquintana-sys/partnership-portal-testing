@@ -522,9 +522,9 @@ def show_landing():
 .sso-microsoft:hover{border-color:rgba(0,120,212,0.5);background:rgba(0,120,212,0.08);}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(1.3);}}
 </style>
-<div style="background:#EA580C;border-radius:20px;padding:60px 20px;position:relative;overflow:hidden;min-height:560px;display:flex;align-items:center;justify-content:center;">
+<div style="background:#4F46E5;border-radius:20px;padding:60px 20px;position:relative;overflow:hidden;min-height:560px;display:flex;align-items:center;justify-content:center;">
   <div style="position:absolute;inset:0;background-image:radial-gradient(circle at 1px 1px,rgba(255,255,255,0.03) 1px,transparent 0);background-size:28px 28px;pointer-events:none;"></div>
-  <div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(251,146,60,0.3) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
+  <div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(91,95,222,0.14) 0%,transparent 65%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;"></div>
   <div class="login-wrap">
     <div class="login-card">
       <div style="display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:6px;">
@@ -667,7 +667,6 @@ def show_sidebar():
                 ]),
                 ("TOOLS", [
                     ("MerchSim",    "Merchant Sim"),
-                    ("Testing",     "Testing"),
                 ]),
             ]
         else:
@@ -3818,11 +3817,6 @@ def show_home():
                         f'</div>', unsafe_allow_html=True)
 
 
-# ── Testing ────────────────────────────────────────────────────────────────────
-def show_testing():
-    st.markdown("## Testing")
-    st.caption("This section is under construction.")
-
 
 # ── Main App ───────────────────────────────────────────────────────────────────
 inject_css(st.session_state.role)
@@ -3863,5 +3857,3 @@ else:
         show_merchant_sim()
     elif page == "MissionCtrl":
         show_mission_control()
-    elif page == "Testing":
-        show_testing()
