@@ -59,9 +59,9 @@ html,body{min-height:100vh;font-family:var(--font);background:var(--bg);color:va
 .col-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.1);z-index:50;min-width:170px;overflow:hidden;animation:dlFade 0.12s ease;padding:4px 0;}
 .col-row{padding:8px 16px;font-size:12px;font-weight:500;cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:10px;transition:background 0.1s;user-select:none;}
 .col-row:hover{background:#F8FAFC;}
-.col-eye{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;transition:all 0.12s;}
-.col-eye.on{color:var(--indigo);}
-.col-eye.off{color:#D1D5DB;}
+.col-eye{width:18px;height:18px;border-radius:4px;border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;transition:all 0.12s;}
+.col-eye.on{background:var(--indigo);border-color:var(--indigo);color:#fff;}
+.col-eye.off{background:#F8FAFC;border-color:#D1D5DB;color:#D1D5DB;}
 .dl-btn{background:var(--ink);color:#A5B4FC;border:none;border-radius:8px;padding:7px 14px;font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:5px;transition:all 0.12s;white-space:nowrap;}
 .dl-btn:hover{background:#1a2236;}
 .dl-menu{display:none;position:absolute;right:0;top:calc(100% + 4px);background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.1);z-index:50;min-width:140px;overflow:hidden;animation:dlFade 0.12s ease;}
@@ -162,7 +162,7 @@ tr.detail-row.open{display:table-row;}
     <div style="display:flex;align-items:center;gap:6px;">
       <div class="dl-wrap" id="col-wrap">
         <button class="col-btn" onclick="document.getElementById('col-menu').style.display=document.getElementById('col-menu').style.display==='block'?'none':'block';">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
           Columns ▾
         </button>
         <div class="col-menu" id="col-menu"></div>
@@ -560,7 +560,7 @@ function renderColMenu(){
     var isOn=selectedCols[key];
     var row=document.createElement('div');
     row.className='col-row';
-    row.innerHTML='<span class="col-eye '+(isOn?'on':'off')+'">'+(isOn?'👁':'👁‍🗨')+'</span>'+col.label;
+    row.innerHTML='<span class="col-eye '+(isOn?'on':'off')+'">'+(isOn?'✓':'—')+'</span>'+col.label;
     row.addEventListener('click',function(e){
       e.preventDefault();e.stopPropagation();
       selectedCols[key]=!selectedCols[key];
