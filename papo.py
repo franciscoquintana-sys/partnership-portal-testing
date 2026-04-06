@@ -1450,16 +1450,6 @@ def show_partners():
     _html_content = _html_content.replace(">189<", f">{countries_ct}<")
     _html_content = _html_content.replace("var YUNO_LOGO_B64='';", f"var YUNO_LOGO_B64='{_LOGO_B64}';")
 
-    # Python-based export buttons (reliable, not blocked by iframe sandbox)
-    _exp_c1, _exp_c2, _exp_c3, _exp_c4 = st.columns([7, 1, 1, 1])
-    _partners_df = _build_partners_df()
-    with _exp_c2:
-        st.download_button("PDF", data=_export_pdf(_partners_df), file_name="Yuno_Partner_Portfolio.pdf", mime="application/pdf", use_container_width=True)
-    with _exp_c3:
-        st.download_button("Excel", data=_export_excel(_partners_df), file_name="Yuno_Partner_Portfolio.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
-    with _exp_c4:
-        st.download_button("PPTX", data=_export_pptx(_partners_df), file_name="Yuno_Partner_Portfolio.pptx", mime="application/vnd.openxmlformats-officedocument.presentationml.presentation", use_container_width=True)
-
     components.html(_html_content, height=2400, scrolling=True)
     return  # HTML component handles everything — skip old Python rendering
 

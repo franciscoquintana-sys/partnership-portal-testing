@@ -605,26 +605,48 @@ function getExportRows(){
   return {cols:cols,rows:rows,count:active.length};
 }
 
-function loadScript(src){return new Promise(function(ok){var s=document.createElement('script');s.src=src;s.onload=ok;document.head.appendChild(s);});}
+function loadScript(src){
+  return new Promise(function(ok,fail){
+    var s=document.createElement('script');s.src=src;
+    s.onload=ok;s.onerror=function(){fail(new Error('Failed to load '+src));};
+    document.head.appendChild(s);
+  });
+}
 
 // ── PDF Export ──
 function exportPDF(){
   document.getElementById('dl-menu').style.display='none';
+  var d=getExportRows();
+  // Try jsPDF first, fallback to HTML-based PDF
   (window.jspdf?Promise.resolve():loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js'))
   .then(function(){return window.jspdf&&window.jspdf.jsPDF.API.autoTable?Promise.resolve():loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js');})
   .then(function(){
     var jsPDF=window.jspdf.jsPDF;
     var doc=new jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
     doc.setFillColor(255,255,255);doc.rect(0,0,297,210,'F');
-    if(YUNO_LOGO_B64){try{doc.addImage('data:image/png;base64,'+YUNO_LOGO_B64,'PNG',12,6,28,28);}catch(e){}}
+    if(YUNO_LOGO_B64){try{doc.addImage('data:image/png;base64,'+YUNO_LOGO_B64,'PNG',12,6,28,28);}catch(e){console.log('Logo skip:',e);}}
     doc.setFontSize(16);doc.setTextColor(28,20,51);doc.text('Partner Portfolio',12,40);
     doc.setFontSize(9);doc.setTextColor(100,116,139);doc.text('Generated on '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),12,47);
-    var d=getExportRows();
-    doc.autoTable({head:[d.cols],body:d.rows,startY:52,
+    // Sanitize text
+    var cleanRows=d.rows.map(function(r){return r.map(function(v){return (v||'').replace(/[\u2014\u2013]/g,'-').replace(/[\u2018\u2019]/g,"'").replace(/[\u201c\u201d]/g,'"');});});
+    doc.autoTable({head:[d.cols],body:cleanRows,startY:52,
       styles:{fontSize:7,cellPadding:2,fillColor:[255,255,255],textColor:[28,20,51]},
-      headStyles:{fillColor:[79,70,229],textColor:[255,255,255],fontStyle:'bold',fontSize:7},
+      headStyles:{fillColor:[62,79,224],textColor:[255,255,255],fontStyle:'bold',fontSize:7},
       alternateRowStyles:{fillColor:[248,250,252]}});
     doc.save('Yuno_Partner_Portfolio.pdf');
+  })
+  .catch(function(err){
+    // Fallback: generate printable HTML and trigger print/save
+    console.log('jsPDF failed, using HTML fallback:',err);
+    var html='<html><head><title>Yuno Partner Portfolio</title><style>body{font-family:Arial,sans-serif;margin:20px;}table{width:100%;border-collapse:collapse;margin-top:20px;}th{background:#3E4FE0;color:#fff;padding:8px;text-align:left;font-size:11px;}td{padding:6px 8px;border-bottom:1px solid #eee;font-size:10px;}tr:nth-child(even){background:#f8fafc;}.logo{max-width:120px;margin-bottom:10px;}</style></head><body>';
+    if(YUNO_LOGO_B64) html+='<img class="logo" src="data:image/png;base64,'+YUNO_LOGO_B64+'">';
+    html+='<h2 style="color:#282A30;margin:0;">Partner Portfolio</h2><p style="color:#6b7280;font-size:12px;">Generated on '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})+'</p>';
+    html+='<table><thead><tr>'+d.cols.map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr></thead><tbody>';
+    d.rows.forEach(function(r){html+='<tr>'+r.map(function(v){return '<td>'+(v||'')+'</td>';}).join('')+'</tr>';});
+    html+='</tbody></table></body></html>';
+    var w=window.open('','_blank');
+    if(w){w.document.write(html);w.document.close();w.print();}
+    else{var blob=new Blob([html],{type:'text/html'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Yuno_Partner_Portfolio.html';a.click();}
   });
 }
 
