@@ -54,8 +54,9 @@ html,body{min-height:100vh;font-family:var(--font);background:var(--bg);color:va
 .dl-item:hover{background:#F8FAFC;}
 .col-chip{font-size:10px;font-weight:600;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--slate);transition:all 0.12s;font-family:var(--font);user-select:none;}
 .col-chip.on{background:#EEF2FF;border-color:#A5B4FC;color:var(--indigo);}
-.filter-bar{display:none;gap:0;margin-bottom:14px;flex-direction:column;background:#fff;border:0.5px solid var(--line);border-radius:10px;padding:14px 16px;}
+.filter-bar{display:none;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center;}
 .filter-bar.show{display:flex;}
+.col-divider{width:1px;height:24px;background:var(--line);margin:0 4px;}
 .f-select{padding:8px 12px;border:0.5px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--font);color:var(--slate);background:var(--white);outline:none;min-width:120px;}
 
 /* TABLE */
@@ -144,17 +145,13 @@ tr.detail-row.open{display:table-row;}
   </div>
 </div>
 <div class="filter-bar" id="fbar">
-  <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;width:100%;">
-    <select class="f-select" id="f-type" onchange="filterTable()"><option value="">Type</option><option>PSP</option><option>Acquirer</option><option>APM</option><option>Fraud</option><option>BaaS</option></select>
-    <select class="f-select" id="f-region" onchange="filterTable()"><option value="">Region</option><option>Global</option><option>LATAM</option><option>Brasil</option><option>EMEA</option><option>APAC</option><option>North America</option><option>Africa</option></select>
-    <select class="f-select" id="f-status" onchange="filterTable()"><option value="">Status</option><option>Live</option><option>Agreement Signed</option><option>Agreement Review</option><option>Negotiation</option><option>Prospect</option></select>
-    <select class="f-select" id="f-tier" onchange="filterTable()"><option value="">Tier</option><option>Strategic</option><option>Tier 1</option><option>Tier 2</option><option>Tier 3</option></select>
-    <select class="f-select" id="f-sort" onchange="filterTable()"><option value="">Sort by</option><option value="name">Name</option><option value="status">Status</option><option value="type">Type</option></select>
-  </div>
-  <div style="width:100%;margin-top:10px;padding-top:10px;border-top:1px solid #F1F5F9;">
-    <div style="font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px;">Export columns</div>
-    <div style="display:flex;flex-wrap:wrap;gap:5px;" id="col-checks"></div>
-  </div>
+  <select class="f-select" id="f-type" onchange="filterTable()"><option value="">Type</option><option>PSP</option><option>Acquirer</option><option>APM</option><option>Fraud</option><option>BaaS</option></select>
+  <select class="f-select" id="f-region" onchange="filterTable()"><option value="">Region</option><option>Global</option><option>LATAM</option><option>Brasil</option><option>EMEA</option><option>APAC</option><option>North America</option><option>Africa</option></select>
+  <select class="f-select" id="f-status" onchange="filterTable()"><option value="">Status</option><option>Live</option><option>Agreement Signed</option><option>Agreement Review</option><option>Negotiation</option><option>Prospect</option></select>
+  <select class="f-select" id="f-tier" onchange="filterTable()"><option value="">Tier</option><option>Strategic</option><option>Tier 1</option><option>Tier 2</option><option>Tier 3</option></select>
+  <select class="f-select" id="f-sort" onchange="filterTable()"><option value="">Sort by</option><option value="name">Name</option><option value="status">Status</option><option value="type">Type</option></select>
+  <div class="col-divider"></div>
+  <div id="col-checks" style="display:flex;flex-wrap:wrap;gap:5px;align-items:center;"></div>
 </div>
 
 <!-- SHOW ALL TOGGLE -->
@@ -169,7 +166,7 @@ tr.detail-row.open{display:table-row;}
 <div class="tbl-count" id="tbl-count"><b>10</b> connectors</div>
 <div class="tbl-card">
 <table>
-  <thead><tr><th>Connector Name</th><th>Type</th><th>Region</th><th>Country</th><th>Status</th></tr></thead>
+  <thead><tr id="thead-row"><th>Connector Name</th><th>Type</th><th>Region</th><th>Country</th><th>Status</th></tr></thead>
   <tbody id="tbody"></tbody>
 </table>
 </div>
@@ -286,6 +283,7 @@ function render(data){
     dr.appendChild(dtd);
     tb.appendChild(dr);
   });
+  applyColVisibility();
 }
 
 function toggleDetail(row,d,i){
@@ -439,17 +437,40 @@ render(DATA);
 
 var YUNO_LOGO_B64='';
 
-// All available columns
+// Table columns (indices match <th> order: 0=Name,1=Type,2=Region,3=Country,4=Status)
+// Extra export-only cols: Tier, Manager
 var ALL_COLS=[
-  {key:'name',label:'Partner Name',get:function(d){return d.name;}},
-  {key:'type',label:'Type',get:function(d){return d.type;}},
-  {key:'region',label:'Region',get:function(d){return d.region;}},
-  {key:'country',label:'Country',get:function(d){return d.country;}},
-  {key:'status',label:'Status',get:function(d){return d.status;}},
-  {key:'tier',label:'Tier',get:function(d){return d.tier||'—';}},
-  {key:'manager',label:'Manager',get:function(d){return d.contacts&&d.contacts[0]?d.contacts[0].name:'—';}}
+  {key:'name',label:'Name',idx:0,get:function(d){return d.name;}},
+  {key:'type',label:'Type',idx:1,get:function(d){return d.type;}},
+  {key:'region',label:'Region',idx:2,get:function(d){return d.region;}},
+  {key:'country',label:'Country',idx:3,get:function(d){return d.country;}},
+  {key:'status',label:'Status',idx:4,get:function(d){return d.status;}},
+  {key:'tier',label:'Tier',idx:-1,get:function(d){return d.tier||'—';}},
+  {key:'manager',label:'Manager',idx:-1,get:function(d){return d.contacts&&d.contacts[0]?d.contacts[0].name:'—';}}
 ];
 var selectedCols={name:true,type:true,region:true,country:true,status:true,tier:true,manager:true};
+
+function applyColVisibility(){
+  // Hide/show table columns (only for cols with idx >= 0)
+  ALL_COLS.forEach(function(c){
+    if(c.idx<0) return;
+    var vis=selectedCols[c.key];
+    // Header
+    var ths=document.getElementById('thead-row').children;
+    if(ths[c.idx]) ths[c.idx].style.display=vis?'':'none';
+    // All body cells
+    document.querySelectorAll('#tbody tr').forEach(function(tr){
+      var tds=tr.children;
+      // detail rows have a single td with colspan — skip
+      if(tds.length>1 && tds[c.idx]) tds[c.idx].style.display=vis?'':'none';
+      // update colspan on detail rows
+      if(tds.length===1 && tds[0].colSpan){
+        var visCount=ALL_COLS.filter(function(cc){return cc.idx>=0&&selectedCols[cc.key];}).length;
+        tds[0].colSpan=visCount;
+      }
+    });
+  });
+}
 
 function renderColChecks(){
   var html='';
@@ -457,6 +478,7 @@ function renderColChecks(){
     html+='<span class="col-chip'+(selectedCols[c.key]?' on':'')+'" onclick="toggleCol(\''+c.key+'\')">'+c.label+'</span>';
   });
   document.getElementById('col-checks').innerHTML=html;
+  applyColVisibility();
 }
 function toggleCol(k){selectedCols[k]=!selectedCols[k];renderColChecks();}
 renderColChecks();
