@@ -5,3 +5,4 @@ plotly>=5.15.0
 pycountry>=22.3.5
 openpyxl>=3.1.0
 python-pptx>=0.6.21
+fpdf2>=2.7.0

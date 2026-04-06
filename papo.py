@@ -1129,6 +1129,161 @@ def _partner_detail(p):
 </div>""", unsafe_allow_html=True)
 
 
+def _build_partners_df():
+    """Build a DataFrame from PARTNERS_DATA for export."""
+    rows = []
+    for p in PARTNERS_DATA:
+        manager = p.get("manager", "—")
+        if manager == "nan": manager = "—"
+        country = p.get("country", "")
+        if country == "nan": country = "—"
+        rows.append({
+            "Partner Name": p["name"],
+            "Category": p.get("cat", ""),
+            "Region": p.get("region", "—"),
+            "Country": country,
+            "Status": p["status"],
+            "Tier": p.get("tier", "—"),
+            "Manager": manager,
+        })
+    return pd.DataFrame(rows)
+
+
+def _export_csv(df):
+    return df.to_csv(index=False).encode("utf-8")
+
+
+def _export_pdf(df):
+    from fpdf import FPDF
+    pdf = FPDF(orientation="L", format="A4")
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    pdf.set_fill_color(255, 255, 255)
+    # Logo
+    logo_path = _os.path.join(_BASE, "Yuno logo.png")
+    if _os.path.exists(logo_path):
+        pdf.image(logo_path, x=10, y=8, w=40)
+    pdf.ln(22)
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, "Partner Portfolio Export", ln=True)
+    pdf.set_font("Helvetica", "", 9)
+    pdf.cell(0, 6, f"Generated on {pd.Timestamp.now().strftime('%B %d, %Y')}", ln=True)
+    pdf.ln(6)
+    # Table header
+    cols = list(df.columns)
+    col_widths = [55, 30, 30, 30, 35, 35, 55]
+    pdf.set_font("Helvetica", "B", 8)
+    pdf.set_fill_color(79, 70, 229)
+    pdf.set_text_color(255, 255, 255)
+    for i, col in enumerate(cols):
+        pdf.cell(col_widths[i], 7, col, border=1, fill=True)
+    pdf.ln()
+    # Table rows
+    pdf.set_font("Helvetica", "", 7)
+    pdf.set_text_color(0, 0, 0)
+    for _, row in df.iterrows():
+        for i, col in enumerate(cols):
+            val = str(row[col]) if pd.notna(row[col]) else ""
+            pdf.cell(col_widths[i], 6, val[:30], border=1)
+        pdf.ln()
+    return bytes(pdf.output())
+
+
+def _export_pptx(df):
+    from pptx import Presentation
+    from pptx.util import Inches, Pt, Emu
+    from pptx.dml.color import RGBColor
+    from pptx.enum.text import PP_ALIGN
+    prs = Presentation()
+    prs.slide_width = Inches(13.333)
+    prs.slide_height = Inches(7.5)
+    # Title slide
+    slide = prs.slides.add_slide(prs.slide_layouts[6])  # blank
+    slide.background.fill.solid()
+    slide.background.fill.fore_color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+    # Logo
+    logo_path = _os.path.join(_BASE, "Yuno logo.png")
+    if _os.path.exists(logo_path):
+        slide.shapes.add_picture(logo_path, Inches(0.5), Inches(0.3), width=Inches(1.8))
+    txBox = slide.shapes.add_textbox(Inches(0.5), Inches(2.5), Inches(12), Inches(1.5))
+    tf = txBox.text_frame
+    p = tf.paragraphs[0]
+    p.text = "Partner Portfolio"
+    p.font.size = Pt(36)
+    p.font.bold = True
+    p.font.color.rgb = RGBColor(0x1C, 0x14, 0x33)
+    p2 = tf.add_paragraph()
+    p2.text = f"Generated on {pd.Timestamp.now().strftime('%B %d, %Y')}"
+    p2.font.size = Pt(14)
+    p2.font.color.rgb = RGBColor(0x6B, 0x72, 0x80)
+    # Data slide with table
+    cols = list(df.columns)
+    max_rows = min(len(df), 30)
+    slide2 = prs.slides.add_slide(prs.slide_layouts[6])
+    slide2.background.fill.solid()
+    slide2.background.fill.fore_color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+    if _os.path.exists(logo_path):
+        slide2.shapes.add_picture(logo_path, Inches(0.5), Inches(0.15), width=Inches(1.2))
+    tbl_shape = slide2.shapes.add_table(max_rows + 1, len(cols), Inches(0.3), Inches(0.8), Inches(12.7), Inches(6.2))
+    tbl = tbl_shape.table
+    # Header
+    for i, col in enumerate(cols):
+        cell = tbl.cell(0, i)
+        cell.text = col
+        cell.fill.solid()
+        cell.fill.fore_color.rgb = RGBColor(0x4F, 0x46, 0xE5)
+        for paragraph in cell.text_frame.paragraphs:
+            paragraph.font.size = Pt(9)
+            paragraph.font.bold = True
+            paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+    # Rows
+    for r_idx in range(max_rows):
+        for c_idx, col in enumerate(cols):
+            cell = tbl.cell(r_idx + 1, c_idx)
+            val = str(df.iloc[r_idx][col]) if pd.notna(df.iloc[r_idx][col]) else ""
+            cell.text = val
+            cell.fill.solid()
+            cell.fill.fore_color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+            for paragraph in cell.text_frame.paragraphs:
+                paragraph.font.size = Pt(8)
+                paragraph.font.color.rgb = RGBColor(0x1C, 0x14, 0x33)
+    # Additional slides for remaining rows if > 30
+    remaining = df.iloc[max_rows:]
+    while len(remaining) > 0:
+        chunk = remaining.iloc[:30]
+        remaining = remaining.iloc[30:]
+        slide_n = prs.slides.add_slide(prs.slide_layouts[6])
+        slide_n.background.fill.solid()
+        slide_n.background.fill.fore_color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+        if _os.path.exists(logo_path):
+            slide_n.shapes.add_picture(logo_path, Inches(0.5), Inches(0.15), width=Inches(1.2))
+        tbl_shape_n = slide_n.shapes.add_table(len(chunk) + 1, len(cols), Inches(0.3), Inches(0.8), Inches(12.7), Inches(6.2))
+        tbl_n = tbl_shape_n.table
+        for i, col in enumerate(cols):
+            cell = tbl_n.cell(0, i)
+            cell.text = col
+            cell.fill.solid()
+            cell.fill.fore_color.rgb = RGBColor(0x4F, 0x46, 0xE5)
+            for paragraph in cell.text_frame.paragraphs:
+                paragraph.font.size = Pt(9)
+                paragraph.font.bold = True
+                paragraph.font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+        for r_idx in range(len(chunk)):
+            for c_idx, col in enumerate(cols):
+                cell = tbl_n.cell(r_idx + 1, c_idx)
+                val = str(chunk.iloc[r_idx][col]) if pd.notna(chunk.iloc[r_idx][col]) else ""
+                cell.text = val
+                cell.fill.solid()
+                cell.fill.fore_color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
+                for paragraph in cell.text_frame.paragraphs:
+                    paragraph.font.size = Pt(8)
+                    paragraph.font.color.rgb = RGBColor(0x1C, 0x14, 0x33)
+    import io
+    buf = io.BytesIO()
+    prs.save(buf)
+    return buf.getvalue()
+
+
 def show_partners():
     if st.session_state.selected_partner is not None:
         sel = st.session_state.selected_partner
@@ -1138,6 +1293,19 @@ def show_partners():
             return
         else:
             st.session_state.selected_partner = None
+
+    # ── Export button ────────────────────────────────────────────────────────
+    _exp_col1, _exp_col2, _exp_col3 = st.columns([6, 2, 2])
+    with _exp_col2:
+        export_fmt = st.selectbox("Export format", ["PDF", "CSV", "PowerPoint"], key="export_fmt", label_visibility="collapsed")
+    with _exp_col3:
+        _partners_df = _build_partners_df()
+        if export_fmt == "CSV":
+            st.download_button("⬇ Download Export", data=_export_csv(_partners_df), file_name="Yuno_Partner_Portfolio.csv", mime="text/csv", use_container_width=True)
+        elif export_fmt == "PDF":
+            st.download_button("⬇ Download Export", data=_export_pdf(_partners_df), file_name="Yuno_Partner_Portfolio.pdf", mime="application/pdf", use_container_width=True)
+        elif export_fmt == "PowerPoint":
+            st.download_button("⬇ Download Export", data=_export_pptx(_partners_df), file_name="Yuno_Partner_Portfolio.pptx", mime="application/vnd.openxmlformats-officedocument.presentationml.presentation", use_container_width=True)
 
     # ── Build connector data for HTML component ─────────────────────────────
     total = len(PARTNERS_DATA)
