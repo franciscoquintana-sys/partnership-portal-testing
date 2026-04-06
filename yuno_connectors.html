@@ -52,7 +52,8 @@ html,body{min-height:100vh;font-family:var(--font);background:var(--bg);color:va
 .dl-item{padding:11px 18px;font-size:12px;font-weight:600;cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:8px;border-bottom:1px solid #F5F5F5;transition:background 0.1s;}
 .dl-item:last-child{border-bottom:none;}
 .dl-item:hover{background:#F8FAFC;}
-.dl-item .dl-icon{font-size:14px;width:20px;text-align:center;}
+.col-chip{font-size:10px;font-weight:600;padding:3px 9px;border-radius:6px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--slate);transition:all 0.12s;font-family:var(--font);user-select:none;}
+.col-chip.on{background:#EEF2FF;border-color:#A5B4FC;color:var(--indigo);}
 .filter-bar{display:none;gap:8px;margin-bottom:14px;flex-wrap:wrap;}
 .filter-bar.show{display:flex;}
 .f-select{padding:8px 12px;border:0.5px solid var(--line);border-radius:8px;font-size:12px;font-family:var(--font);color:var(--slate);background:var(--white);outline:none;min-width:120px;}
@@ -136,9 +137,12 @@ tr.detail-row.open{display:table-row;}
       Download <span style="font-size:9px;opacity:0.7;">▾</span>
     </button>
     <div class="dl-menu" id="dl-menu">
-      <div class="dl-item" onclick="exportPDF()"><span class="dl-icon">📕</span> PDF</div>
-      <div class="dl-item" onclick="exportExcel()"><span class="dl-icon">📊</span> Excel</div>
-      <div class="dl-item" onclick="exportPPTX()"><span class="dl-icon">📽</span> PowerPoint</div>
+      <div style="padding:10px 18px 6px;font-size:10px;font-weight:700;color:#94A3B8;text-transform:uppercase;letter-spacing:0.06em;">Include columns</div>
+      <div style="padding:4px 18px 10px;display:flex;flex-wrap:wrap;gap:4px;" id="col-checks"></div>
+      <div style="height:1px;background:#F1F5F9;"></div>
+      <div class="dl-item" onclick="exportPDF()">PDF</div>
+      <div class="dl-item" onclick="exportExcel()">Excel</div>
+      <div class="dl-item" onclick="exportPPTX()">PowerPoint</div>
     </div>
   </div>
 </div>
@@ -432,6 +436,28 @@ render(DATA);
 
 var YUNO_LOGO_B64='';
 
+// All available columns
+var ALL_COLS=[
+  {key:'name',label:'Partner Name',get:function(d){return d.name;}},
+  {key:'type',label:'Type',get:function(d){return d.type;}},
+  {key:'region',label:'Region',get:function(d){return d.region;}},
+  {key:'country',label:'Country',get:function(d){return d.country;}},
+  {key:'status',label:'Status',get:function(d){return d.status;}},
+  {key:'tier',label:'Tier',get:function(d){return d.tier||'—';}},
+  {key:'manager',label:'Manager',get:function(d){return d.contacts&&d.contacts[0]?d.contacts[0].name:'—';}}
+];
+var selectedCols={name:true,type:true,region:true,country:true,status:true,tier:true,manager:true};
+
+function renderColChecks(){
+  var html='';
+  ALL_COLS.forEach(function(c){
+    html+='<span class="col-chip'+(selectedCols[c.key]?' on':'')+'" onclick="toggleCol(\''+c.key+'\')">'+c.label+'</span>';
+  });
+  document.getElementById('col-checks').innerHTML=html;
+}
+function toggleCol(k){selectedCols[k]=!selectedCols[k];renderColChecks();}
+renderColChecks();
+
 // Close download menu on outside click
 document.addEventListener('click',function(e){
   if(!document.getElementById('dl-wrap').contains(e.target)){
@@ -440,18 +466,17 @@ document.addEventListener('click',function(e){
 });
 
 function getExportRows(){
-  var cols=['Partner Name','Type','Region','Country','Status','Tier','Manager'];
-  var rows=DATA.map(function(d){
-    return [d.name,d.type,d.region,d.country,d.status,d.tier||'—',
-      (d.contacts&&d.contacts[0]?d.contacts[0].name:'—')];
-  });
-  return {cols:cols,rows:rows};
+  var active=ALL_COLS.filter(function(c){return selectedCols[c.key];});
+  var cols=active.map(function(c){return c.label;});
+  var rows=DATA.map(function(d){return active.map(function(c){return c.get(d);});});
+  return {cols:cols,rows:rows,count:active.length};
 }
+
+function loadScript(src){return new Promise(function(ok){var s=document.createElement('script');s.src=src;s.onload=ok;document.head.appendChild(s);});}
 
 // ── PDF Export ──
 function exportPDF(){
   document.getElementById('dl-menu').style.display='none';
-  function loadScript(src){return new Promise(function(ok){var s=document.createElement('script');s.src=src;s.onload=ok;document.head.appendChild(s);});}
   (window.jspdf?Promise.resolve():loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js'))
   .then(function(){return window.jspdf&&window.jspdf.jsPDF.API.autoTable?Promise.resolve():loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js');})
   .then(function(){
@@ -470,44 +495,66 @@ function exportPDF(){
   });
 }
 
-// ── Excel Export (CSV with BOM for Excel compatibility + logo reference) ──
+// ── Excel Export ──
 function exportExcel(){
   document.getElementById('dl-menu').style.display='none';
-  function loadScript(src){return new Promise(function(ok){var s=document.createElement('script');s.src=src;s.onload=ok;document.head.appendChild(s);});}
   (window.ExcelJS?Promise.resolve():loadScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js'))
   .then(function(){
     var wb=new ExcelJS.Workbook();
     var ws=wb.addWorksheet('Partner Portfolio');
-    // Logo
+    var d=getExportRows();
+    var nc=Math.max(d.count,3);
+    // Merge top area for logo + branding
+    ws.mergeCells(1,1,5,nc);
+    ws.getRow(1).height=80;
     if(YUNO_LOGO_B64){
       var imgId=wb.addImage({base64:YUNO_LOGO_B64,extension:'png'});
-      ws.addImage(imgId,{tl:{col:0,row:0},ext:{width:150,height:150}});
+      ws.addImage(imgId,{tl:{col:0,row:0},ext:{width:140,height:140}});
     }
-    // Title
-    ws.getCell('A9').value='Yuno — Partner Portfolio Export';
-    ws.getCell('A9').font={name:'Helvetica',size:14,bold:true,color:{argb:'FF4F46E5'}};
-    ws.getCell('A10').value='Generated on '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    ws.getCell('A10').font={name:'Helvetica',size:10,color:{argb:'FF6B7280'}};
-    var d=getExportRows();
-    // Header
-    var hdrRow=ws.getRow(12);
+    // Merged title row
+    ws.mergeCells(6,1,6,nc);
+    var titleCell=ws.getCell('A6');
+    titleCell.value='Yuno — Partner Portfolio Export';
+    titleCell.font={name:'Helvetica',size:16,bold:true,color:{argb:'FF4F46E5'}};
+    titleCell.alignment={horizontal:'left',vertical:'middle'};
+    ws.getRow(6).height=28;
+    // Merged date row
+    ws.mergeCells(7,1,7,nc);
+    var dateCell=ws.getCell('A7');
+    dateCell.value='Generated on '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+    dateCell.font={name:'Helvetica',size:10,color:{argb:'FF6B7280'}};
+    dateCell.alignment={horizontal:'left',vertical:'middle'};
+    // Spacer row
+    ws.getRow(8).height=8;
+    // Header row
+    var hdrRowNum=9;
+    var hdrRow=ws.getRow(hdrRowNum);
+    hdrRow.height=24;
     d.cols.forEach(function(c,i){
       var cell=hdrRow.getCell(i+1);cell.value=c;
       cell.font={name:'Helvetica',size:10,bold:true,color:{argb:'FFFFFFFF'}};
       cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF4F46E5'}};
-      cell.alignment={horizontal:'center'};
+      cell.alignment={horizontal:'center',vertical:'middle'};
+      cell.border={bottom:{style:'thin',color:{argb:'FF3730A3'}}};
     });
-    // Data
+    // Data rows
     d.rows.forEach(function(r,ri){
-      var row=ws.getRow(13+ri);
+      var row=ws.getRow(hdrRowNum+1+ri);
+      row.height=20;
       r.forEach(function(v,ci){
         var cell=row.getCell(ci+1);cell.value=v;
         cell.font={name:'Helvetica',size:9,color:{argb:'FF1C1433'}};
+        cell.alignment={vertical:'middle'};
+        cell.border={bottom:{style:'hair',color:{argb:'FFE2E8F0'}}};
+        if(ri%2===1) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
       });
     });
     // Column widths
-    d.cols.forEach(function(c,i){ws.getColumn(i+1).width=Math.max(c.length+4,15);});
-    ws.getColumn(1).width=30;
+    d.cols.forEach(function(c,i){
+      var maxLen=c.length;
+      d.rows.forEach(function(r){if(r[i]&&r[i].length>maxLen) maxLen=r[i].length;});
+      ws.getColumn(i+1).width=Math.min(Math.max(maxLen+4,14),35);
+    });
     wb.xlsx.writeBuffer().then(function(buf){
       var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Yuno_Partner_Portfolio.xlsx';a.click();
@@ -518,18 +565,17 @@ function exportExcel(){
 // ── PowerPoint Export ──
 function exportPPTX(){
   document.getElementById('dl-menu').style.display='none';
-  function loadScript(src){return new Promise(function(ok){var s=document.createElement('script');s.src=src;s.onload=ok;document.head.appendChild(s);});}
   (window.PptxGenJS?Promise.resolve():loadScript('https://cdn.jsdelivr.net/gh/gitbrent/PptxGenJS@3.12.0/dist/pptxgen.bundle.js'))
   .then(function(){
     var pptx=new PptxGenJS();
     pptx.defineLayout({name:'WIDE',cx:13.333,cy:7.5});pptx.layout='WIDE';
-    // Title slide
     var s1=pptx.addSlide();s1.background={fill:'FFFFFF'};
     if(YUNO_LOGO_B64){try{s1.addImage({data:'data:image/png;base64,'+YUNO_LOGO_B64,x:0.5,y:0.3,w:1.8,h:1.8});}catch(e){}}
     s1.addText('Partner Portfolio',{x:0.5,y:2.5,w:10,h:1,fontSize:36,bold:true,color:'1C1433',fontFace:'Helvetica'});
     s1.addText('Generated on '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}),{x:0.5,y:3.5,w:10,h:0.5,fontSize:14,color:'6B7280',fontFace:'Helvetica'});
-    // Data slides
     var d=getExportRows();
+    var colW=d.cols.map(function(){return 12.1/d.count;});
+    if(d.cols[0]==='Partner Name') colW[0]=Math.min(3,12.1/d.count*1.8);
     var chunk=25;
     for(var i=0;i<d.rows.length;i+=chunk){
       var sl=pptx.addSlide();sl.background={fill:'FFFFFF'};
@@ -538,7 +584,7 @@ function exportPPTX(){
       d.rows.slice(i,i+chunk).forEach(function(r){
         tblRows.push(r.map(function(v){return{text:v||'—',options:{fontSize:7,color:'1C1433'}};}));
       });
-      sl.addTable(tblRows,{x:0.3,y:0.9,w:12.7,colW:[3,1.3,1.3,1.3,1.5,1.5,2.8],border:{pt:0.5,color:'E2E8F0'},rowH:0.28});
+      sl.addTable(tblRows,{x:0.3,y:0.9,w:12.7,colW:colW,border:{pt:0.5,color:'E2E8F0'},rowH:0.28});
     }
     pptx.writeFile({fileName:'Yuno_Partner_Portfolio.pptx'});
   });
