@@ -27,18 +27,18 @@ html,body{min-height:100vh;font-family:var(--font);background:var(--bg);color:va
 .stat-lbl{font-size:11px;color:var(--ghost);font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;}
 
 /* SEARCH */
-.search-wrap{background:var(--ink2);border-radius:14px;padding:20px 24px;margin-bottom:16px;position:relative;overflow:hidden;}
-.search-wrap::before{content:'';position:absolute;top:-40px;right:-40px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(91,95,222,0.1),transparent 65%);pointer-events:none;}
-.search-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#818cf8;margin-bottom:8px;}
-.search-desc{font-size:12px;color:var(--muted);margin-bottom:10px;}
-.search-input{width:100%;padding:12px 16px;background:rgba(255,255,255,0.06);border:0.5px solid rgba(255,255,255,0.12);border-radius:10px;font-size:14px;font-family:var(--font);color:#E2E8F0;outline:none;}
-.search-input::placeholder{color:#475569;}
-.search-input:focus{border-color:rgba(91,95,222,0.5);background:rgba(91,95,222,0.06);}
+.search-wrap{background:var(--white);border:0.5px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:12px;position:relative;}
+.search-badge{display:none;}
+.search-desc{display:none;}
+.search-input{width:100%;padding:11px 14px 11px 36px;background:var(--bg);border:1px solid var(--line);border-radius:9px;font-size:13px;font-family:var(--font);color:var(--ink);outline:none;transition:border-color 0.15s,box-shadow 0.15s;}
+.search-input::placeholder{color:var(--ghost);font-weight:400;}
+.search-input:focus{border-color:var(--indigo);box-shadow:0 0 0 3px rgba(91,95,222,0.08);}
+.search-icon{position:absolute;left:28px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--ghost);}
 
 /* QUICK SEARCH */
-.qs{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 0;}
-.qs span{font-size:11px;color:var(--indigo);padding:6px 14px;border:1px solid #C7D2FE;border-radius:10px;background:#EEF2FF;cursor:pointer;transition:all 0.15s;}
-.qs span:hover{background:#E0E7FF;border-color:#A5B4FC;}
+.qs{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 0;}
+.qs span{font-size:10px;font-weight:500;color:var(--ghost);padding:5px 12px;border:0.5px solid var(--line);border-radius:7px;background:var(--bg);cursor:pointer;transition:all 0.12s;}
+.qs span:hover{color:var(--indigo);border-color:#A5B4FC;background:#EEF2FF;}
 
 /* FILTERS */
 .filter-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;gap:12px;flex-wrap:wrap;}
@@ -118,14 +118,15 @@ tr.detail-row.open{display:table-row;}
 
 <!-- SEARCH -->
 <div class="search-wrap">
-  <div class="search-badge">✦ Smart Search</div>
-  <div class="search-desc">Search by name, type, country, or describe what you need — even with typos.</div>
-  <input class="search-input" id="search" placeholder="e.g. acquirers in brazil with high approvals..." oninput="filterTable()">
+  <div style="position:relative;">
+    <svg class="search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="search-input" id="search" placeholder="Search by partner, type, region, or describe what you need..." oninput="filterTable()">
+  </div>
   <div class="qs" id="qs">
-    <span onclick="setSearch('list of all acquirers and psps in brazil')">List of all acquirers and PSPs in Brazil</span>
-    <span onclick="setSearch('which acquirers accept gaming in APAC')">Which acquirers accept gaming in APAC</span>
-    <span onclick="setSearch('lowest rate best performance north america')">Lowest rate + best performance in N. America</span>
-    <span onclick="setSearch('which partner accepts recurring in all regions')">Partners with recurring in all regions</span>
+    <span onclick="setSearch('list of all acquirers and psps in brazil')">Acquirers & PSPs in Brazil</span>
+    <span onclick="setSearch('which acquirers accept gaming in APAC')">Gaming in APAC</span>
+    <span onclick="setSearch('lowest rate best performance north america')">Best performance in N. America</span>
+    <span onclick="setSearch('which partner accepts recurring in all regions')">Recurring in all regions</span>
   </div>
 </div>
 
