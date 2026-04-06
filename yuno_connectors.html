@@ -264,30 +264,42 @@ var DATA = [
 var STATUS_CLS={"Live":"t-green","Agreement Signed":"t-blue","Agreement Review":"t-amber","Negotiation":"t-amber","Prospect":"t-gray","Lost":"t-red"};
 var TYPE_CLS={"PSP":"t-blue","Acquirer":"t-blue","APM":"t-purple","Fraud":"t-red","BaaS":"t-amber","Other":"t-gray"};
 
+// Table column definitions — key, header label, cell renderer
+var TBL_COLS=[
+  {key:'name',hdr:'Connector Name',cell:function(d){return '<td class="td-name">'+d.name+'</td>';}},
+  {key:'type',hdr:'Type',cell:function(d){return '<td><span class="tag '+(TYPE_CLS[d.type]||'t-gray')+'">'+d.type+'</span></td>';}},
+  {key:'region',hdr:'Region',cell:function(d){return '<td style="color:#64748b">'+d.region+'</td>';}},
+  {key:'country',hdr:'Country',cell:function(d){return '<td style="color:#64748b">'+d.country+'</td>';}},
+  {key:'status',hdr:'Status',cell:function(d){return '<td><span class="tag '+(STATUS_CLS[d.status]||'t-gray')+'">'+d.status+'</span></td>';}}
+];
+
 function render(data){
+  // Rebuild header based on visible columns
+  var visCols=TBL_COLS.filter(function(c){return selectedCols[c.key];});
+  var thead=document.getElementById('thead-row');
+  thead.innerHTML=visCols.map(function(c){return '<th>'+c.hdr+'</th>';}).join('');
+
   var tb=document.getElementById('tbody');
   tb.innerHTML='';
   document.getElementById('tbl-count').innerHTML='<b>'+data.length+'</b> connectors';
   data.forEach(function(d,i){
-    // Main row
     var tr=document.createElement('tr');
     tr.className='row';
     tr.setAttribute('data-idx',i);
-    tr.innerHTML='<td class="td-name">'+d.name+'</td><td><span class="tag '+(TYPE_CLS[d.type]||'t-gray')+'">'+d.type+'</span></td><td style="color:#64748b">'+d.region+'</td><td style="color:#64748b">'+d.country+'</td><td><span class="tag '+(STATUS_CLS[d.status]||'t-gray')+'">'+d.status+'</span></td>';
+    tr.innerHTML=visCols.map(function(c){return c.cell(d);}).join('');
     tr.onclick=function(){toggleDetail(this,d,i);};
     tb.appendChild(tr);
-    // Detail row (hidden)
+    // Detail row
     var dr=document.createElement('tr');
     dr.className='detail-row';
     dr.id='det-'+i;
     var dtd=document.createElement('td');
-    dtd.colSpan=5;
+    dtd.colSpan=visCols.length;
     dtd.style.padding='0';
     dtd.innerHTML=buildDetail(d);
     dr.appendChild(dtd);
     tb.appendChild(dr);
   });
-  applyColVisibility();
 }
 
 function toggleDetail(row,d,i){
@@ -444,40 +456,15 @@ var YUNO_LOGO_B64='';
 // Table columns (indices match <th> order: 0=Name,1=Type,2=Region,3=Country,4=Status)
 // Extra export-only cols: Tier, Manager
 var ALL_COLS=[
-  {key:'name',label:'Name',idx:0,get:function(d){return d.name;}},
-  {key:'type',label:'Type',idx:1,get:function(d){return d.type;}},
-  {key:'region',label:'Region',idx:2,get:function(d){return d.region;}},
-  {key:'country',label:'Country',idx:3,get:function(d){return d.country;}},
-  {key:'status',label:'Status',idx:4,get:function(d){return d.status;}},
-  {key:'tier',label:'Tier',idx:-1,get:function(d){return d.tier||'—';}},
-  {key:'manager',label:'Manager',idx:-1,get:function(d){return d.contacts&&d.contacts[0]?d.contacts[0].name:'—';}}
+  {key:'name',label:'Name',get:function(d){return d.name;}},
+  {key:'type',label:'Type',get:function(d){return d.type;}},
+  {key:'region',label:'Region',get:function(d){return d.region;}},
+  {key:'country',label:'Country',get:function(d){return d.country;}},
+  {key:'status',label:'Status',get:function(d){return d.status;}},
+  {key:'tier',label:'Tier',get:function(d){return d.tier||'TBD';}},
+  {key:'manager',label:'Manager',get:function(d){return d.contacts&&d.contacts[0]?d.contacts[0].name:'TBD';}}
 ];
-var _defaultCols={name:true,type:true,region:true,country:true,status:true,tier:true,manager:true};
-var selectedCols;
-try{selectedCols=JSON.parse(localStorage.getItem('yuno_selectedCols'))||_defaultCols;}catch(e){selectedCols=_defaultCols;}
-function _saveCols(){try{localStorage.setItem('yuno_selectedCols',JSON.stringify(selectedCols));}catch(e){}}
-
-function applyColVisibility(){
-  // Hide/show table columns (only for cols with idx >= 0)
-  ALL_COLS.forEach(function(c){
-    if(c.idx<0) return;
-    var vis=selectedCols[c.key];
-    // Header
-    var ths=document.getElementById('thead-row').children;
-    if(ths[c.idx]) ths[c.idx].style.display=vis?'':'none';
-    // All body cells
-    document.querySelectorAll('#tbody tr').forEach(function(tr){
-      var tds=tr.children;
-      // detail rows have a single td with colspan — skip
-      if(tds.length>1 && tds[c.idx]) tds[c.idx].style.display=vis?'':'none';
-      // update colspan on detail rows
-      if(tds.length===1 && tds[0].colSpan){
-        var visCount=ALL_COLS.filter(function(cc){return cc.idx>=0&&selectedCols[cc.key];}).length;
-        tds[0].colSpan=visCount;
-      }
-    });
-  });
-}
+var selectedCols={name:true,type:true,region:true,country:true,status:true,tier:true,manager:true};
 
 function renderColChecks(){
   var container=document.getElementById('col-checks');
@@ -489,12 +476,11 @@ function renderColChecks(){
     span.addEventListener('click',function(e){
       e.preventDefault();e.stopPropagation();
       selectedCols[c.key]=!selectedCols[c.key];
-      _saveCols();
       renderColChecks();
+      filterTable();
     });
     container.appendChild(span);
   });
-  applyColVisibility();
 }
 renderColChecks();
 
