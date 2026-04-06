@@ -1450,23 +1450,17 @@ def show_partners():
     _html_content = _html_content.replace(">189<", f">{countries_ct}<")
     _html_content = _html_content.replace("var YUNO_LOGO_B64='';", f"var YUNO_LOGO_B64='{_LOGO_B64}';")
 
-    # PPTX uses Yuno template (Python-side, hidden button triggered by JS)
+    # Hidden PPTX download (triggered by JS in iframe via Export > PowerPoint)
     _partners_df = _build_partners_df()
-    _pptx_col1, _pptx_col2 = st.columns([9, 1])
-    with _pptx_col2:
-        st.download_button("PowerPoint", data=_export_pptx(_partners_df),
-                           file_name="Yuno_Partner_Portfolio.pptx",
-                           mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                           use_container_width=True, key="pptx_dl")
-    # Style it to match the toolbar
+    st.download_button("PowerPoint", data=_export_pptx(_partners_df),
+                       file_name="Yuno_Partner_Portfolio.pptx",
+                       mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
+                       key="pptx_dl")
     st.markdown("""<style>
-    [data-testid="stMain"] [data-testid="stColumns"]:has(button[data-testid*="pptx_dl"]) {margin-top:-8px;margin-bottom:4px;}
-    [data-testid="stMain"] button[data-testid*="pptx_dl"] {
-        background:var(--ink,#0A0F1E) !important;color:#A5B4FC !important;
-        border:none !important;border-radius:8px !important;font-size:11px !important;
-        font-weight:600 !important;padding:7px 14px !important;
+    [data-testid="stMain"] div:has(> button[data-testid*="pptx_dl"]) {
+        position:absolute !important;opacity:0 !important;height:1px !important;
+        overflow:hidden !important;pointer-events:auto !important;
     }
-    [data-testid="stMain"] button[data-testid*="pptx_dl"]:hover {background:#1a2236 !important;}
     </style>""", unsafe_allow_html=True)
 
     components.html(_html_content, height=2400, scrolling=True)
