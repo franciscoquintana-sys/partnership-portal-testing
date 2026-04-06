@@ -1334,19 +1334,6 @@ def show_partners():
         else:
             st.session_state.selected_partner = None
 
-    # ── Export button ────────────────────────────────────────────────────────
-    _exp_col1, _exp_col2, _exp_col3 = st.columns([6, 2, 2])
-    with _exp_col2:
-        export_fmt = st.selectbox("Export format", ["PDF", "Excel", "Google Slides"], key="export_fmt", label_visibility="collapsed")
-    with _exp_col3:
-        _partners_df = _build_partners_df()
-        if export_fmt == "Excel":
-            st.download_button("⬇ Download Export", data=_export_excel(_partners_df), file_name="Yuno_Partner_Portfolio.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", use_container_width=True)
-        elif export_fmt == "PDF":
-            st.download_button("⬇ Download Export", data=_export_pdf(_partners_df), file_name="Yuno_Partner_Portfolio.pdf", mime="application/pdf", use_container_width=True)
-        elif export_fmt == "Google Slides":
-            st.download_button("⬇ Download Export", data=_export_pptx(_partners_df), file_name="Yuno_Partner_Portfolio.pptx", mime="application/vnd.openxmlformats-officedocument.presentationml.presentation", use_container_width=True)
-
     # ── Build connector data for HTML component ─────────────────────────────
     total = len(PARTNERS_DATA)
     live_all = sum(1 for p in PARTNERS_DATA if p["status"] == "Live")
@@ -1422,6 +1409,7 @@ def show_partners():
     _html_content = _html_content.replace(">460<", f">{total}<")
     _html_content = _html_content.replace(">97<", f">{sot_live_ct}<")
     _html_content = _html_content.replace(">189<", f">{countries_ct}<")
+    _html_content = _html_content.replace("var YUNO_LOGO_B64='';", f"var YUNO_LOGO_B64='{_LOGO_B64}';")
 
     components.html(_html_content, height=2400, scrolling=True)
     return  # HTML component handles everything — skip old Python rendering
