@@ -1397,7 +1397,7 @@ def show_partners():
             "contacts": [
                 {"name": _comm_name, "role": "Commercial", "email": _comm_email, "phone": _comm_phone, "color": "#3B82F6"},
                 {"name": _tech_name, "role": "Technical", "email": _tech_email, "phone": _tech_phone, "color": "#10B981"},
-                {"name": "Daniela Reyes", "role": "Escalation", "email": "", "phone": "", "color": "#EF4444"},
+                {"name": manager if manager != "—" else "Partnerships Team", "role": "Escalation", "email": "", "phone": "", "color": "#EF4444"},
             ],
             "verticals": _verticals_list,
             "currencies": ["USD","Local"],
@@ -1787,8 +1787,7 @@ setTimeout(function(){
                             f'<div><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;">Technical Contact</div><div style="font-size:12px;font-weight:600;color:#0f172a;">{tech_contact}</div></div></div>'
                             f'<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:#F8FAFC;border-radius:8px;">'
                             f'<div style="width:28px;height:28px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#DC2626;flex-shrink:0;">ES</div>'
-                            f'<div><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;">Escalation / Tech Support</div><div style="font-size:12px;font-weight:600;color:#0f172a;">Daniela Reyes</div></div></div>'
-                            f'<div style="font-size:9px;color:#94a3b8;margin-top:2px;">Yuno Partner Manager: {manager}</div>'
+                            f'<div><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;">Escalation / Partner Manager</div><div style="font-size:12px;font-weight:600;color:#0f172a;">{manager if manager != "—" else "Partnerships Team"}</div></div></div>'
                             f'</div></div>', unsafe_allow_html=True)
             with col_b:
                 st.markdown(f'<div style="background:#fff;border:1px solid #EEF2F7;border-radius:10px;padding:16px 18px;">'
