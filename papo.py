@@ -1450,19 +1450,6 @@ def show_partners():
     _html_content = _html_content.replace(">189<", f">{countries_ct}<")
     _html_content = _html_content.replace("var YUNO_LOGO_B64='';", f"var YUNO_LOGO_B64='{_LOGO_B64}';")
 
-    # Hidden PPTX download (triggered by JS in iframe via Export > PowerPoint)
-    _partners_df = _build_partners_df()
-    st.download_button("PowerPoint", data=_export_pptx(_partners_df),
-                       file_name="Yuno_Partner_Portfolio.pptx",
-                       mime="application/vnd.openxmlformats-officedocument.presentationml.presentation",
-                       key="pptx_dl")
-    st.markdown("""<style>
-    [data-testid="stMain"] div:has(> button[data-testid*="pptx_dl"]) {
-        position:absolute !important;opacity:0 !important;height:1px !important;
-        overflow:hidden !important;pointer-events:auto !important;
-    }
-    </style>""", unsafe_allow_html=True)
-
     components.html(_html_content, height=2400, scrolling=True)
     return  # HTML component handles everything — skip old Python rendering
 
