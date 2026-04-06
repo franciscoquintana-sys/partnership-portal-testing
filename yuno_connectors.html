@@ -633,7 +633,12 @@ function exportPDF(){
       styles:{fontSize:7,cellPadding:2,fillColor:[255,255,255],textColor:[28,20,51]},
       headStyles:{fillColor:[62,79,224],textColor:[255,255,255],fontStyle:'bold',fontSize:7},
       alternateRowStyles:{fillColor:[248,250,252]}});
-    doc.save('Yuno_Partner_Portfolio.pdf');
+    // Use blob download (works in iframe)
+    var pdfBlob=doc.output('blob');
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(pdfBlob);
+    a.download='Yuno_Partner_Portfolio.pdf';
+    a.click();
   })
   .catch(function(err){
     // Fallback: generate printable HTML and trigger print/save
@@ -741,7 +746,12 @@ function exportPPTX(){
       });
       sl.addTable(tblRows,{x:0.3,y:0.9,w:12.7,colW:colW,border:{pt:0.5,color:'E2E8F0'},rowH:0.28});
     }
-    pptx.writeFile({fileName:'Yuno_Partner_Portfolio.pptx'});
+    pptx.write('blob').then(function(blob){
+      var a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);
+      a.download='Yuno_Partner_Portfolio.pptx';
+      a.click();
+    });
   });
 }
 </script>
