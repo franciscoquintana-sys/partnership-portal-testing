@@ -1146,8 +1146,6 @@ def _build_partners_df():
             "Region": p.get("region", "—"),
             "Country": country,
             "Status": p["status"],
-            "Tier": p.get("tier", "—"),
-            "Manager": manager,
         })
     return pd.DataFrame(rows)
 
