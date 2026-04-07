@@ -174,13 +174,6 @@ tr.detail-row.open{display:table-row;}
       <span class="tb-count" id="tbl-count"></span>
     </div>
     <div style="display:flex;align-items:center;gap:6px;">
-      <div class="dl-wrap" id="col-wrap">
-        <button class="col-btn" onclick="document.getElementById('col-menu').style.display=document.getElementById('col-menu').style.display==='block'?'none':'block';">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="18" rx="1"/></svg>
-          Columns ▾
-        </button>
-        <div class="col-menu" id="col-menu"></div>
-      </div>
       <div class="dl-wrap" id="dl-wrap">
         <button class="dl-btn" onclick="document.getElementById('dl-menu').style.display=document.getElementById('dl-menu').style.display==='block'?'none':'block';">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -633,9 +626,6 @@ render(DATA);
 document.addEventListener('click',function(e){
   if(!document.getElementById('dl-wrap').contains(e.target)){
     document.getElementById('dl-menu').style.display='none';
-  }
-  if(!document.getElementById('col-wrap').contains(e.target)){
-    document.getElementById('col-menu').style.display='none';
   }
   if(!document.getElementById('f-status-wrap').contains(e.target)){
     document.getElementById('f-status-menu').style.display='none';

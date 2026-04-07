@@ -1427,14 +1427,42 @@ def show_partners():
     _html_content = _html_content.replace(">189<", f">{countries_ct}<")
     _html_content = _html_content.replace("var YUNO_LOGO_B64='';", f"var YUNO_LOGO_B64='{_LOGO_B64}';")
 
-    # Hidden export buttons (triggered by JS in iframe)
+    # Column visibility — controls both table and exports
+    _all_cols = ["Partner Name", "Category", "Region", "Country", "Status"]
+    if "visible_cols" not in st.session_state:
+        st.session_state.visible_cols = _all_cols.copy()
+    _vis = st.multiselect("Visible columns", _all_cols, default=st.session_state.visible_cols,
+                          key="col_vis_select", label_visibility="collapsed")
+    st.session_state.visible_cols = _vis if _vis else ["Partner Name"]
+
+    # Inject column visibility into HTML component
+    _vis_keys = []
+    _col_map = {"Partner Name":"name","Category":"type","Region":"region","Country":"country","Status":"status"}
+    for c in st.session_state.visible_cols:
+        if c in _col_map:
+            _vis_keys.append(_col_map[c])
+    _vis_js = ",".join(f"'{k}':true" for k in _vis_keys)
+    _hide_js = ",".join(f"'{v}':false" for v in ["name","type","region","country","status"] if v not in _vis_keys)
+    _all_js = _vis_js + ("," + _hide_js if _hide_js else "")
+    _html_content = _html_content.replace(
+        "var selectedCols={name:true,type:true,region:true,country:true,status:true,tier:false,manager:false};",
+        f"var selectedCols={{{_all_js},tier:false,manager:false}};"
+    )
+
+    # Export with only visible columns
     _partners_df = _build_partners_df()
-    st.download_button("Download PDF", data=_export_pdf(_partners_df),
+    _keep = [c for c in st.session_state.visible_cols if c in _partners_df.columns]
+    if "Partner Name" not in _keep:
+        _keep = ["Partner Name"] + _keep
+    _export_df = _partners_df[_keep]
+
+    # Hidden download buttons
+    st.download_button("Download PDF", data=_export_pdf(_export_df),
                        file_name="Yuno_Partner_Portfolio.pdf", mime="application/pdf", key="st_pdf_dl")
-    st.download_button("Download Excel", data=_export_excel(_partners_df),
+    st.download_button("Download Excel", data=_export_excel(_export_df),
                        file_name="Yuno_Partner_Portfolio.xlsx",
                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key="st_xlsx_dl")
-    # Hide the download buttons visually but keep them clickable by JS
+    # Hide multiselect and download buttons
     components.html("""<script>
     setTimeout(function(){
       var doc=window.parent.document;
@@ -1444,6 +1472,10 @@ def show_partners():
           var el=btn.closest('[data-testid="stElementContainer"]')||btn.parentElement;
           el.style.cssText='position:absolute!important;opacity:0!important;height:0!important;overflow:hidden!important;pointer-events:auto!important;';
         }
+      });
+      // Style multiselect to look like a toolbar
+      doc.querySelectorAll('[data-testid="stMultiSelect"]').forEach(function(el){
+        el.style.cssText='margin-top:-4px!important;margin-bottom:2px!important;';
       });
     },200);
     </script>""", height=0)
