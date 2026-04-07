@@ -631,8 +631,14 @@ function exportPDF(){
     doc.autoTable({head:[d.cols],body:cleanRows,startY:52,
       styles:{fontSize:7,cellPadding:2,fillColor:[255,255,255],textColor:[28,20,51]},
       headStyles:{fillColor:[62,79,224],textColor:[255,255,255],fontStyle:'bold',fontSize:7},
-      alternateRowStyles:{fillColor:[248,250,252]}});
-    // Use blob download (works in iframe)
+      alternateRowStyles:{fillColor:[248,250,252]},
+      didDrawPage:function(data){
+        // Footer on every page
+        doc.setFontSize(7);doc.setTextColor(148,163,184);
+        doc.text('Confidential Yuno x Mastercard',data.settings.margin.left,doc.internal.pageSize.height-10);
+        doc.text('Page '+doc.internal.getCurrentPageInfo().pageNumber,doc.internal.pageSize.width-data.settings.margin.right-15,doc.internal.pageSize.height-10);
+      }
+    });
     var pdfBlob=doc.output('blob');
     var a=document.createElement('a');
     a.href=URL.createObjectURL(pdfBlob);
@@ -640,17 +646,16 @@ function exportPDF(){
     a.click();
   })
   .catch(function(err){
-    // Fallback: generate printable HTML and trigger print/save
+    // Fallback: HTML file download (no window.open to avoid about:blank)
     console.log('jsPDF failed, using HTML fallback:',err);
-    var html='<html><head><title>Yuno Partner Portfolio</title><style>body{font-family:Arial,sans-serif;margin:20px;}table{width:100%;border-collapse:collapse;margin-top:20px;}th{background:#3E4FE0;color:#fff;padding:8px;text-align:left;font-size:11px;}td{padding:6px 8px;border-bottom:1px solid #eee;font-size:10px;}tr:nth-child(even){background:#f8fafc;}.logo{max-width:120px;margin-bottom:10px;}</style></head><body>';
-    if(YUNO_LOGO_B64) html+='<img class="logo" src="data:image/png;base64,'+YUNO_LOGO_B64+'">';
-    html+='<h2 style="color:#282A30;margin:0;">Partner Portfolio</h2><p style="color:#6b7280;font-size:12px;">Generated on '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})+'</p>';
+    var html='<!DOCTYPE html><html><head><title>Yuno Partner Portfolio</title><style>@page{margin:20mm;}body{font-family:Arial,sans-serif;margin:20px;color:#282A30;}table{width:100%;border-collapse:collapse;margin-top:20px;}th{background:#3E4FE0;color:#fff;padding:8px 10px;text-align:left;font-size:10px;font-weight:700;}td{padding:6px 10px;border-bottom:1px solid #E2E8F0;font-size:9px;}tr:nth-child(even){background:#f8fafc;}.footer{position:fixed;bottom:0;width:100%;text-align:center;font-size:8px;color:#94a3b8;padding:10px 0;}</style></head><body>';
+    if(YUNO_LOGO_B64) html+='<img src="data:image/png;base64,'+YUNO_LOGO_B64+'" style="max-width:100px;margin-bottom:12px;">';
+    html+='<h2 style="margin:0 0 4px;">Partner Portfolio</h2><p style="color:#6b7280;font-size:11px;margin:0 0 16px;">Generated on '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})+'</p>';
     html+='<table><thead><tr>'+d.cols.map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr></thead><tbody>';
     d.rows.forEach(function(r){html+='<tr>'+r.map(function(v){return '<td>'+(v||'')+'</td>';}).join('')+'</tr>';});
-    html+='</tbody></table></body></html>';
-    var w=window.open('','_blank');
-    if(w){w.document.write(html);w.document.close();w.print();}
-    else{var blob=new Blob([html],{type:'text/html'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Yuno_Partner_Portfolio.html';a.click();}
+    html+='</tbody></table><div class="footer">Confidential Yuno x Mastercard</div></body></html>';
+    var blob=new Blob([html],{type:'text/html'});
+    var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Yuno_Partner_Portfolio.html';a.click();
   });
 }
 
@@ -660,60 +665,87 @@ function exportExcel(){
   (window.ExcelJS?Promise.resolve():loadScript('https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js'))
   .then(function(){
     var wb=new ExcelJS.Workbook();
-    var ws=wb.addWorksheet('Partner Portfolio');
+    wb.creator='Yuno Partner Portal';
+    var ws=wb.addWorksheet('Partner Portfolio',{views:[{showGridLines:false}]});
     var d=getExportRows();
     var nc=Math.max(d.count,3);
-    // Merge top area for logo + branding
-    ws.mergeCells(1,1,5,nc);
-    ws.getRow(1).height=80;
+
+    // Logo area
+    ws.mergeCells(1,1,4,nc);
+    ws.getRow(1).height=60;
     if(YUNO_LOGO_B64){
       var imgId=wb.addImage({base64:YUNO_LOGO_B64,extension:'png'});
-      ws.addImage(imgId,{tl:{col:0,row:0},ext:{width:140,height:140}});
+      ws.addImage(imgId,{tl:{col:0,row:0},ext:{width:120,height:120}});
     }
-    // Merged title row
-    ws.mergeCells(6,1,6,nc);
-    var titleCell=ws.getCell('A6');
-    titleCell.value='Yuno — Partner Portfolio Export';
-    titleCell.font={name:'Helvetica',size:16,bold:true,color:{argb:'FF4F46E5'}};
+    // Title
+    ws.mergeCells(5,1,5,nc);
+    var titleCell=ws.getCell('A5');
+    titleCell.value='Yuno - Partner Portfolio';
+    titleCell.font={name:'Arial',size:18,bold:true,color:{argb:'FF282A30'}};
     titleCell.alignment={horizontal:'left',vertical:'middle'};
-    ws.getRow(6).height=28;
-    // Merged date row
-    ws.mergeCells(7,1,7,nc);
-    var dateCell=ws.getCell('A7');
+    ws.getRow(5).height=30;
+    // Date
+    ws.mergeCells(6,1,6,nc);
+    var dateCell=ws.getCell('A6');
     dateCell.value='Generated on '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
-    dateCell.font={name:'Helvetica',size:10,color:{argb:'FF6B7280'}};
+    dateCell.font={name:'Arial',size:10,color:{argb:'FF94A3B8'}};
     dateCell.alignment={horizontal:'left',vertical:'middle'};
-    // Spacer row
-    ws.getRow(8).height=8;
+    ws.getRow(6).height=18;
+    // Spacer
+    ws.getRow(7).height=6;
+
     // Header row
-    var hdrRowNum=9;
+    var hdrRowNum=8;
     var hdrRow=ws.getRow(hdrRowNum);
-    hdrRow.height=24;
+    hdrRow.height=26;
     d.cols.forEach(function(c,i){
       var cell=hdrRow.getCell(i+1);cell.value=c;
-      cell.font={name:'Helvetica',size:10,bold:true,color:{argb:'FFFFFFFF'}};
-      cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF4F46E5'}};
+      cell.font={name:'Arial',size:10,bold:true,color:{argb:'FFFFFFFF'}};
+      cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF3E4FE0'}};
       cell.alignment={horizontal:'center',vertical:'middle'};
-      cell.border={bottom:{style:'thin',color:{argb:'FF3730A3'}}};
+      cell.border={
+        top:{style:'thin',color:{argb:'FF3E4FE0'}},
+        bottom:{style:'thin',color:{argb:'FF3E4FE0'}},
+        left:{style:'thin',color:{argb:'FF3E4FE0'}},
+        right:{style:'thin',color:{argb:'FF3E4FE0'}}
+      };
     });
     // Data rows
     d.rows.forEach(function(r,ri){
       var row=ws.getRow(hdrRowNum+1+ri);
-      row.height=20;
+      row.height=22;
+      var bgColor=ri%2===0?'FFFFFFFF':'FFF8FAFC';
       r.forEach(function(v,ci){
         var cell=row.getCell(ci+1);cell.value=v;
-        cell.font={name:'Helvetica',size:9,color:{argb:'FF1C1433'}};
-        cell.alignment={vertical:'middle'};
-        cell.border={bottom:{style:'hair',color:{argb:'FFE2E8F0'}}};
-        if(ri%2===1) cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF8FAFC'}};
+        cell.font={name:'Arial',size:9,color:{argb:'FF282A30'}};
+        cell.alignment={vertical:'middle',wrapText:true};
+        cell.fill={type:'pattern',pattern:'solid',fgColor:{argb:bgColor}};
+        cell.border={
+          bottom:{style:'hair',color:{argb:'FFE2E8F0'}},
+          left:{style:'hair',color:{argb:'FFE2E8F0'}},
+          right:{style:'hair',color:{argb:'FFE2E8F0'}}
+        };
       });
     });
-    // Column widths
+    // Confidential footer
+    var footerRow=hdrRowNum+1+d.rows.length+1;
+    ws.mergeCells(footerRow,1,footerRow,nc);
+    var footerCell=ws.getCell(footerRow,1);
+    footerCell.value='Confidential Yuno x Mastercard';
+    footerCell.font={name:'Arial',size:8,italic:true,color:{argb:'FF94A3B8'}};
+    footerCell.alignment={horizontal:'center',vertical:'middle'};
+    ws.getRow(footerRow).height=20;
+
+    // Column widths — first col wider for names
     d.cols.forEach(function(c,i){
       var maxLen=c.length;
       d.rows.forEach(function(r){if(r[i]&&r[i].length>maxLen) maxLen=r[i].length;});
-      ws.getColumn(i+1).width=Math.min(Math.max(maxLen+4,14),35);
+      ws.getColumn(i+1).width=i===0?Math.min(maxLen+6,40):Math.min(Math.max(maxLen+4,14),28);
     });
+    // Print setup
+    ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1};
+    ws.headerFooter={oddFooter:'Confidential Yuno x Mastercard'};
+
     wb.xlsx.writeBuffer().then(function(buf){
       var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
       var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Yuno_Partner_Portfolio.xlsx';a.click();
