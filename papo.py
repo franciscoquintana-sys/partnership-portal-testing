@@ -1429,23 +1429,14 @@ def show_partners():
 
     # Hidden download buttons (triggered by JS Export menu)
     _partners_df = _build_partners_df()
+    st.markdown("""<style>
+    [data-testid="stDownloadButton"] {position:absolute !important;opacity:0 !important;height:0 !important;overflow:hidden !important;pointer-events:auto !important;z-index:-1 !important;}
+    </style>""", unsafe_allow_html=True)
     st.download_button("Download PDF", data=_export_pdf(_partners_df),
                        file_name="Yuno_Partner_Portfolio.pdf", mime="application/pdf", key="st_pdf_dl")
     st.download_button("Download Excel", data=_export_excel(_partners_df),
                        file_name="Yuno_Partner_Portfolio.xlsx",
                        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key="st_xlsx_dl")
-    components.html("""<script>
-    setTimeout(function(){
-      var doc=window.parent.document;
-      doc.querySelectorAll('button').forEach(function(btn){
-        var t=btn.textContent.trim();
-        if(t==='Download PDF'||t==='Download Excel'){
-          var el=btn.closest('[data-testid="stElementContainer"]')||btn.parentElement;
-          el.style.cssText='position:absolute!important;opacity:0!important;height:0!important;overflow:hidden!important;pointer-events:auto!important;';
-        }
-      });
-    },200);
-    </script>""", height=0)
 
     components.html(_html_content, height=2400, scrolling=True)
     return
