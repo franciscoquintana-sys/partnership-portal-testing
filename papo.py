@@ -1427,14 +1427,26 @@ def show_partners():
     _html_content = _html_content.replace(">189<", f">{countries_ct}<")
     _html_content = _html_content.replace("var YUNO_LOGO_B64='';", f"var YUNO_LOGO_B64='{_LOGO_B64}';")
 
-    # Server-side export buttons (hidden, triggered by JS in iframe)
+    # Export column selector + download buttons
+    _all_export_cols = ["Partner Name", "Category", "Region", "Country", "Status"]
+    if "export_cols" not in st.session_state:
+        st.session_state.export_cols = _all_export_cols.copy()
+    _exp_sel_col, _dl1, _dl2 = st.columns([4, 1, 1])
+    with _exp_sel_col:
+        _selected_export = st.multiselect("Export columns", _all_export_cols, default=st.session_state.export_cols,
+                                          key="export_col_select", label_visibility="collapsed")
+        st.session_state.export_cols = _selected_export if _selected_export else ["Partner Name"]
     _partners_df = _build_partners_df()
-    _dl1, _dl2 = st.columns(2)
+    # Filter to selected columns only (always keep Partner Name)
+    _keep = [c for c in st.session_state.export_cols if c in _partners_df.columns]
+    if "Partner Name" not in _keep:
+        _keep = ["Partner Name"] + _keep
+    _export_df = _partners_df[_keep]
     with _dl1:
-        st.download_button("Download PDF", data=_export_pdf(_partners_df),
+        st.download_button("Download PDF", data=_export_pdf(_export_df),
                            file_name="Yuno_Partner_Portfolio.pdf", mime="application/pdf", key="st_pdf_dl")
     with _dl2:
-        st.download_button("Download Excel", data=_export_excel(_partners_df),
+        st.download_button("Download Excel", data=_export_excel(_export_df),
                            file_name="Yuno_Partner_Portfolio.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key="st_xlsx_dl")
     st.markdown("""<style>
@@ -1442,6 +1454,7 @@ def show_partners():
     [data-testid="stMain"] div:has(> button[data-testid*="st_xlsx_dl"]) {
         position:absolute !important;opacity:0 !important;height:1px !important;overflow:hidden !important;pointer-events:auto !important;
     }
+    [data-testid="stMain"] [data-testid="stMultiSelect"] {margin-bottom:-10px;}
     </style>""", unsafe_allow_html=True)
 
     components.html(_html_content, height=2400, scrolling=True)
