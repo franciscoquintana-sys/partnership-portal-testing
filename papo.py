@@ -16,6 +16,13 @@ try:
 except:
     _DANIELA_B64 = ""
 
+try:
+    import sys as _sys
+    _sys.path.insert(0, _os.path.join(_BASE, "data"))
+    from partner_contacts import PARTNER_CONTACTS as _EXT_CONTACTS
+except:
+    _EXT_CONTACTS = {}
+
 # ── Page Config ────────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="PAPO · Yuno Partner Portal",
@@ -537,7 +544,7 @@ def show_landing():
         <span style="font-size:28px;font-weight:800;color:#E2E8F0;letter-spacing:-0.03em;">yuno</span>
       </div>
       <div style="text-align:center;font-size:22px;font-weight:700;color:#F1F5F9;letter-spacing:-0.02em;margin:20px 0 8px;">Welcome to the<br>Yuno Partner Portal</div>
-      <div style="text-align:center;font-size:13px;color:#475569;margin-bottom:32px;">Sign in with your organization account</div>
+      <div style="text-align:center;font-size:13px;color:#475569;margin-bottom:32px;">Internal access only</div>
       <button class="sso-btn sso-google" onclick="ssoLogin('google')">
         <svg width="18" height="18" viewBox="0 0 18 18"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 01-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 009 18z" fill="#34A853"/><path d="M3.964 10.71A5.41 5.41 0 013.682 9c0-.593.102-1.17.282-1.71V4.958H.957A8.997 8.997 0 000 9c0 1.452.348 2.827.957 4.042l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 00.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
         Continue with Google
@@ -554,11 +561,7 @@ def show_landing():
       <div style="display:flex;gap:8px;">
         <button class="sso-btn" style="flex:1;margin:0;background:rgba(91,95,222,0.1);border-color:rgba(91,95,222,0.3);color:#A5B4FC;" onclick="enterCode('internal')">
           <svg width="16" height="16" viewBox="0 0 22 22" fill="none" stroke="#818CF8" stroke-width="1.5" stroke-linecap="round"><path d="M11 2L3 8v12h16V8L11 2z"/><path d="M8 20v-7h6v7"/></svg>
-          Yuno A-Team
-        </button>
-        <button class="sso-btn" style="flex:1;margin:0;background:rgba(16,185,129,0.08);border-color:rgba(16,185,129,0.25);color:#6EE7B7;" onclick="enterCode('partner')">
-          <svg width="16" height="16" viewBox="0 0 22 22" fill="none" stroke="#34D399" stroke-width="1.5" stroke-linecap="round"><circle cx="11" cy="8" r="4"/><path d="M4 20c0-4 3.1-7 7-7s7 3.1 7 7"/></svg>
-          Yuno Partner
+          Enter Portal
         </button>
       </div>
       <div style="text-align:center;margin-top:24px;font-size:11px;color:#1E293B;display:flex;align-items:center;justify-content:center;gap:5px;">
@@ -656,7 +659,6 @@ def show_sidebar():
                 ("PIPELINE & FLOW", [
                     ("MissionCtrl", "Partners In Flight"),
                     ("Pipeline",    "Partner Leads"),
-                    ("Merchants",   "Merchants"),
                 ]),
                 ("PERFORMANCE", [
                     ("Performance", "Partner Health"),
@@ -667,7 +669,6 @@ def show_sidebar():
                 ]),
                 ("TOOLS", [
                     ("MerchSim",    "Merchant Sim"),
-                    ("Testing",     "Testing"),
                 ]),
             ]
         else:
@@ -678,7 +679,6 @@ def show_sidebar():
                 ]),
                 ("PIPELINE & FLOW", [
                     ("Pipeline",    "Partner Leads"),
-                    ("Merchants",   "Merchants"),
                 ]),
                 ("PERFORMANCE", [
                     ("Performance", "Partner Health"),
@@ -1132,6 +1132,269 @@ def _partner_detail(p):
 </div>""", unsafe_allow_html=True)
 
 
+def _build_partners_df():
+    """Build a DataFrame from PARTNERS_DATA for export."""
+    rows = []
+    for p in PARTNERS_DATA:
+        manager = p.get("manager", "—")
+        if manager == "nan": manager = "—"
+        country = p.get("country", "")
+        if country == "nan": country = "—"
+        rows.append({
+            "Partner Name": p["name"],
+            "Category": p.get("cat", ""),
+            "Region": p.get("region", "—"),
+            "Country": country,
+            "Status": p["status"],
+        })
+    return pd.DataFrame(rows)
+
+
+def _export_excel(df):
+    import io
+    from openpyxl import Workbook
+    from openpyxl.drawing.image import Image as XlImage
+    from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+    from openpyxl.utils import get_column_letter
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Partner Portfolio"
+    ws.sheet_view.showGridLines = False
+    nc = len(df.columns)
+    last_col = get_column_letter(nc)
+    thin_border = Side(style="hair", color="E2E8F0")
+    # Logo area — merged
+    ws.merge_cells(f"A1:{last_col}4")
+    ws.row_dimensions[1].height = 60
+    logo_path = _os.path.join(_BASE, "Yuno logo.png")
+    if _os.path.exists(logo_path):
+        img = XlImage(logo_path)
+        img.width = 110
+        img.height = 110
+        ws.add_image(img, "A1")
+    # Title — merged
+    ws.merge_cells(f"A5:{last_col}5")
+    ws["A5"] = "Yuno - Partner Portfolio"
+    ws["A5"].font = Font(name="Arial", size=18, bold=True, color="282A30")
+    ws["A5"].alignment = Alignment(horizontal="left", vertical="center")
+    ws.row_dimensions[5].height = 30
+    # Date — merged
+    ws.merge_cells(f"A6:{last_col}6")
+    ws["A6"] = f"Generated on {pd.Timestamp.now().strftime('%B %d, %Y')}"
+    ws["A6"].font = Font(name="Arial", size=10, color="94A3B8")
+    ws["A6"].alignment = Alignment(horizontal="left", vertical="center")
+    ws.row_dimensions[6].height = 18
+    # Metrics — merged
+    ws.merge_cells(f"A7:{last_col}7")
+    total = len(df)
+    by_type = df["Category"].value_counts().to_dict() if "Category" in df.columns else {}
+    type_str = "   |   ".join(f"{k}: {v}" for k, v in by_type.items())
+    ws["A7"] = f"Total Partners: {total}     {type_str}"
+    ws["A7"].font = Font(name="Arial", size=9, color="64748B")
+    ws["A7"].alignment = Alignment(horizontal="left", vertical="center")
+    ws.row_dimensions[7].height = 18
+    # Spacer
+    ws.row_dimensions[8].height = 6
+    # Header row
+    hr = 9
+    header_fill = PatternFill(start_color="3E4FE0", end_color="3E4FE0", fill_type="solid")
+    header_font = Font(name="Arial", size=10, bold=True, color="FFFFFF")
+    header_border = Border(top=Side(style="thin", color="3E4FE0"), bottom=Side(style="thin", color="3E4FE0"),
+                           left=Side(style="thin", color="3E4FE0"), right=Side(style="thin", color="3E4FE0"))
+    for c_idx, col in enumerate(df.columns, 1):
+        cell = ws.cell(row=hr, column=c_idx, value=col)
+        cell.fill = header_fill
+        cell.font = header_font
+        cell.alignment = Alignment(horizontal="center", vertical="center")
+        cell.border = header_border
+    ws.row_dimensions[hr].height = 26
+    # Data rows
+    alt_fill = PatternFill(start_color="F8FAFC", end_color="F8FAFC", fill_type="solid")
+    data_font = Font(name="Arial", size=9, color="282A30")
+    data_border = Border(bottom=thin_border, left=thin_border, right=thin_border)
+    for r_idx, row in enumerate(df.itertuples(index=False)):
+        rn = hr + 1 + r_idx
+        for c_idx, val in enumerate(row, 1):
+            cell = ws.cell(row=rn, column=c_idx, value=val)
+            cell.font = data_font
+            cell.alignment = Alignment(vertical="center")
+            cell.border = data_border
+            if r_idx % 2 == 1:
+                cell.fill = alt_fill
+        ws.row_dimensions[rn].height = 22
+    # Footer — merged
+    fr = hr + 1 + len(df) + 1
+    ws.merge_cells(f"A{fr}:{last_col}{fr}")
+    ws[f"A{fr}"] = "Yuno x Mastercard Confidential"
+    ws[f"A{fr}"].font = Font(name="Arial", size=10, bold=True, italic=True, color="3E4FE0")
+    ws[f"A{fr}"].alignment = Alignment(horizontal="center", vertical="center")
+    ws[f"A{fr}"].fill = PatternFill(start_color="F0F1FE", end_color="F0F1FE", fill_type="solid")
+    ws[f"A{fr}"].border = Border(top=Side(style="thin", color="3E4FE0"), bottom=Side(style="thin", color="3E4FE0"))
+    ws.row_dimensions[fr].height = 28
+    # Column widths
+    for c_idx, col in enumerate(df.columns, 1):
+        max_len = max(len(str(col)), df[col].astype(str).str.len().max())
+        ws.column_dimensions[get_column_letter(c_idx)].width = 35 if c_idx == 1 else min(max_len + 5, 28)
+    # Auto-filter
+    ws.auto_filter.ref = f"A{hr}:{last_col}{hr + len(df)}"
+    ws.page_setup.orientation = "landscape"
+    ws.page_setup.fitToPage = True
+    ws.page_setup.fitToWidth = 1
+    buf = io.BytesIO()
+    wb.save(buf)
+    return buf.getvalue()
+
+
+def _export_pdf(df):
+    from fpdf import FPDF
+    pdf = FPDF(orientation="L", format="A4")
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+    pdf.set_fill_color(255, 255, 255)
+    # Yuno logo
+    logo_path = _os.path.join(_BASE, "Yuno logo.png")
+    if _os.path.exists(logo_path):
+        pdf.image(logo_path, x=10, y=8, w=35, h=35)
+    # Title next to logo
+    pdf.set_xy(50, 14)
+    pdf.set_font("Helvetica", "B", 20)
+    pdf.set_text_color(62, 79, 224)
+    pdf.cell(0, 10, "Yuno", ln=False)
+    pdf.set_xy(50, 24)
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.set_text_color(28, 20, 51)
+    pdf.cell(0, 8, "Partner Portfolio Export", ln=True)
+    pdf.set_xy(50, 33)
+    pdf.set_font("Helvetica", "", 9)
+    pdf.set_text_color(100, 116, 139)
+    pdf.cell(0, 6, f"Generated on {pd.Timestamp.now().strftime('%B %d, %Y')}", ln=True)
+    pdf.ln(8)
+    # Table
+    cols = list(df.columns)
+    n_cols = len(cols)
+    avail_w = 277
+    col_w = avail_w / n_cols
+    col_widths = [col_w] * n_cols
+    # Header
+    pdf.set_font("Helvetica", "B", 8)
+    pdf.set_fill_color(62, 79, 224)
+    pdf.set_text_color(255, 255, 255)
+    for i, col in enumerate(cols):
+        pdf.cell(col_widths[i], 7, col, border=0, fill=True)
+    pdf.ln()
+    # Rows
+    pdf.set_font("Helvetica", "", 7)
+    for r_idx, (_, row) in enumerate(df.iterrows()):
+        if r_idx % 2 == 1:
+            pdf.set_fill_color(248, 250, 252)
+        else:
+            pdf.set_fill_color(255, 255, 255)
+        pdf.set_text_color(28, 20, 51)
+        for i, col in enumerate(cols):
+            val = str(row[col]) if pd.notna(row[col]) else ""
+            val = val.replace("\u2014", "-").replace("\u2013", "-").replace("\u2018","'").replace("\u2019","'").replace("\u201c",'"').replace("\u201d",'"')
+            pdf.cell(col_widths[i], 6, val[:35], border=0, fill=True)
+        pdf.ln()
+    # Footer line
+    pdf.set_y(-20)
+    pdf.set_font("Helvetica", "", 7)
+    pdf.set_text_color(148, 163, 184)
+    pdf.cell(0, 5, "Yuno x Mastercard Confidential", align="C")
+    return bytes(pdf.output())
+
+
+def _export_pptx(df):
+    from pptx import Presentation
+    from pptx.util import Inches, Pt
+    from pptx.dml.color import RGBColor
+    import io
+    # Use Yuno template if available
+    tpl_path = _os.path.join(_BASE, "data", "template.pptx")
+    if _os.path.exists(tpl_path):
+        prs = Presentation(tpl_path)
+        # Remove all existing slides (keep template layouts/master)
+        while len(prs.slides) > 0:
+            rId = prs.slides._sldIdLst[0].rId
+            prs.part.drop_rel(rId)
+            del prs.slides._sldIdLst[0]
+    else:
+        prs = Presentation()
+        prs.slide_width = Inches(13.333)
+        prs.slide_height = Inches(7.5)
+    # Find title layout (first with TITLE placeholder) or fallback to first
+    title_layout = prs.slide_layouts[0]
+    content_layout = prs.slide_layouts[0]
+    for sl in prs.slide_layouts:
+        if "title" in sl.name.lower():
+            title_layout = sl
+            break
+    for sl in prs.slide_layouts:
+        if "content" in sl.name.lower():
+            content_layout = sl
+            break
+    # Brand colors from template theme
+    brand_blue = RGBColor(0x3E, 0x4F, 0xE0)
+    dark = RGBColor(0x28, 0x2A, 0x30)
+    white = RGBColor(0xFF, 0xFF, 0xFF)
+    gray = RGBColor(0x6B, 0x72, 0x80)
+    # Title slide
+    slide = prs.slides.add_slide(title_layout)
+    for ph in slide.placeholders:
+        if ph.placeholder_format.type is not None:
+            if ph.placeholder_format.idx == 0:
+                ph.text = "Partner Portfolio"
+                for p in ph.text_frame.paragraphs:
+                    p.font.size = Pt(36)
+                    p.font.bold = True
+                    p.font.color.rgb = dark
+                    p.font.name = "Arial"
+            elif ph.placeholder_format.idx == 1:
+                ph.text = f"Generated on {pd.Timestamp.now().strftime('%B %d, %Y')}"
+                for p in ph.text_frame.paragraphs:
+                    p.font.size = Pt(16)
+                    p.font.color.rgb = gray
+                    p.font.name = "Arial"
+    # Data slides
+    cols = list(df.columns)
+    chunk_size = 22
+    for start in range(0, len(df), chunk_size):
+        chunk = df.iloc[start:start + chunk_size]
+        slide_n = prs.slides.add_slide(content_layout)
+        # Clear placeholders
+        for ph in slide_n.placeholders:
+            ph.text = ""
+        # Add table
+        n_rows = len(chunk) + 1
+        tbl_shape = slide_n.shapes.add_table(n_rows, len(cols), Inches(0.4), Inches(0.9), Inches(12.5), Inches(6.0))
+        tbl = tbl_shape.table
+        # Header
+        for i, col in enumerate(cols):
+            cell = tbl.cell(0, i)
+            cell.text = col
+            cell.fill.solid()
+            cell.fill.fore_color.rgb = brand_blue
+            for p in cell.text_frame.paragraphs:
+                p.font.size = Pt(9)
+                p.font.bold = True
+                p.font.color.rgb = white
+                p.font.name = "Arial"
+        # Rows
+        for r_idx in range(len(chunk)):
+            for c_idx, col in enumerate(cols):
+                cell = tbl.cell(r_idx + 1, c_idx)
+                val = str(chunk.iloc[r_idx][col]) if pd.notna(chunk.iloc[r_idx][col]) else ""
+                cell.text = val
+                cell.fill.solid()
+                cell.fill.fore_color.rgb = RGBColor(0xF8, 0xFA, 0xFC) if r_idx % 2 == 1 else white
+                for p in cell.text_frame.paragraphs:
+                    p.font.size = Pt(8)
+                    p.font.color.rgb = dark
+                    p.font.name = "Arial"
+    buf = io.BytesIO()
+    prs.save(buf)
+    return buf.getvalue()
+
+
 def show_partners():
     if st.session_state.selected_partner is not None:
         sel = st.session_state.selected_partner
@@ -1142,16 +1405,53 @@ def show_partners():
         else:
             st.session_state.selected_partner = None
 
-    # ── Build connector data for HTML component ─────────────────────────────
+    # ── Build connector data for HTML component (cached) ────────────────────
+    _connector_data, total, sot_live_ct, countries_ct = _build_connector_data()
+
+    import json as _json
+    _data_json = _json.dumps(_connector_data).replace("'","\\'").replace("</","<\\/")
+
+    # Read the HTML template and inject data
+    _html_file = _os.path.join(_BASE, "yuno_connectors.html")
+    with open(_html_file, "r") as _f:
+        _html_content = _f.read()
+
+    # Replace the hardcoded DATA array with our dynamic data
+    _html_content = _html_content.replace(
+        "var DATA = [",
+        f"var DATA = {_data_json}; var _ORIGINAL_DATA = ["
+    )
+    # Update stat numbers
+    _html_content = _html_content.replace(">460<", f">{total}<")
+    _html_content = _html_content.replace(">97<", f">{sot_live_ct}<")
+    _html_content = _html_content.replace(">189<", f">{countries_ct}<")
+    _html_content = _html_content.replace("var YUNO_LOGO_B64='';", f"var YUNO_LOGO_B64='{_LOGO_B64}';")
+
+    # Hidden download buttons (triggered by JS Export menu)
+    _partners_df = _build_partners_df()
+    st.markdown("""<style>
+    [data-testid="stDownloadButton"] {position:absolute !important;opacity:0 !important;height:0 !important;overflow:hidden !important;pointer-events:auto !important;z-index:-1 !important;}
+    </style>""", unsafe_allow_html=True)
+    st.download_button("Download PDF", data=_export_pdf(_partners_df),
+                       file_name="Yuno_Partner_Portfolio.pdf", mime="application/pdf", key="st_pdf_dl")
+    st.download_button("Download Excel", data=_export_excel(_partners_df),
+                       file_name="Yuno_Partner_Portfolio.xlsx",
+                       mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", key="st_xlsx_dl")
+
+    components.html(_html_content, height=2400, scrolling=True)
+    return
+
+
+@st.cache_data
+def _build_connector_data():
     total = len(PARTNERS_DATA)
     live_all = sum(1 for p in PARTNERS_DATA if p["status"] == "Live")
     countries_ct = len(set(p.get("country","") for p in PARTNERS_DATA if p.get("country","") and p.get("country","") != "nan"))
     sot_live_ct = len(_SOT_DF[_SOT_DF["Live/NonLive Partner/Contract signed"] == "Live"]["PROVIDER_NAME"].unique()) if len(_SOT_DF) > 0 else live_all
 
-    # Build JSON data for the HTML component
     import json as _json
     _connector_data = []
-    for p in PARTNERS_DATA[:100]:
+    for p in PARTNERS_DATA:
         enrich = _PARTNER_ENRICHMENT.get(p["name"].upper().replace("(","").replace(")","").strip())
         manager = p.get("manager","—")
         if manager == "nan": manager = "—"
@@ -1179,19 +1479,32 @@ def show_partners():
                 "countries": sorted(_p_sot["COUNTRY_ISO"].dropna().unique().tolist()),
             }
 
+        # External contacts from partner files
+        _ext_key = p["name"].upper().replace("(","").replace(")","").strip()
+        _ext = _EXT_CONTACTS.get(_ext_key, {})
+        _comm_name = _ext.get("commercial_contact","") or (enrich["commercial_contact"] if enrich else "") or "TBD"
+        _comm_email = _ext.get("commercial_email","") or "TBD"
+        _comm_phone = _ext.get("commercial_phone","") or "TBD"
+        _tech_name = _ext.get("technical_contact","") or (enrich["technical_contact"] if enrich else "") or "TBD"
+        _tech_email = _ext.get("technical_email","") or "TBD"
+        _tech_phone = _ext.get("technical_phone","") or "TBD"
+        # Verticals from external data (Source of Truth features)
+        _ext_verts = _ext.get("verticals","")
+        _verticals_list = [v.strip() for v in _ext_verts.split(",") if v.strip()] if _ext_verts else (enrich["verticals"].split(", ") if enrich and enrich.get("verticals") else ["TBD"])
+
         _connector_data.append({
             "name": p["name"], "type": p["cat"], "region": p.get("region","—"), "country": country, "status": p["status"],
             "caps": _sot_caps,
             "contacts": [
-                {"name": enrich["commercial_contact"] if enrich else manager, "role": "Commercial", "email": "", "phone": "", "color": "#3B82F6"},
-                {"name": enrich["technical_contact"] if enrich else "—", "role": "Technical", "email": "", "phone": "", "color": "#10B981"},
-                {"name": "Daniela Reyes", "role": "Escalation", "email": "", "phone": "", "color": "#EF4444"},
+                {"name": _comm_name, "role": "Commercial", "email": _comm_email, "phone": _comm_phone, "color": "#3B82F6"},
+                {"name": _tech_name, "role": "Technical", "email": _tech_email, "phone": _tech_phone, "color": "#10B981"},
+                {"name": manager if manager != "—" else "Partnerships Team", "role": "Escalation", "email": "", "phone": "", "color": "#EF4444"},
             ],
-            "verticals": (enrich["verticals"].split(", ") if enrich and enrich.get("verticals") else ["General"]),
+            "verticals": _verticals_list,
             "currencies": ["USD","Local"],
             "auth": {"type": "Full Auth", "settlement": "T+1", "settleCurrency": "Local / USD", "chargebackWindow": "90 days"},
             "onboarding": {"kyb": bool(p.get("nda")), "integration": enrich["onboarding"].split(",")[0] if enrich else "API", "timeline": enrich["onboarding"].split(",")[-1].strip() if enrich else "2-4 weeks", "localEntity": False, "jurisdiction": "—", "entityType": "Contact partnerships"},
-            "pricing": {"standard": enrich["avg_pricing"] if enrich else "—", "discount": enrich["discount_rate"] if enrich else "—", "discountWhen": enrich["discount_condition"] if enrich else "—", "mdr": "Blended", "fx": "—", "minimums": "—"},
+            "pricing": {"standard": enrich["avg_pricing"] if enrich else "TBD", "discount": enrich["discount_rate"] if enrich else "TBD", "discountWhen": enrich["discount_condition"] if enrich else "TBD", "mdr": "Blended", "fx": "TBD", "minimums": "TBD"},
             "paymentMethods": sot_pms if sot_pms else ["Card"],
             "health": {"score": 85 if p["status"]=="Live" else 55 if "Agreement" in p["status"] else 30, "label": enrich["health"] if enrich else ("Live" if p["status"]=="Live" else "Pipeline")},
             "tier": p.get("tier","—").replace("Partners","").replace("(Global)","").replace("Strategic Partners: Very Important","Strategic").strip().rstrip(":").strip() or "—",
@@ -1201,25 +1514,7 @@ def show_partners():
             "nda": bool(p.get("nda")),
             "revshare": enrich["revshare"] if enrich else ("Yes" if p.get("revshare") else "No"),
         })
-    _data_json = _json.dumps(_connector_data).replace("'","\\'").replace("</","<\\/")
-
-    # Read the HTML template and inject data
-    _html_file = _os.path.join(_BASE, "yuno_connectors.html")
-    with open(_html_file, "r") as _f:
-        _html_content = _f.read()
-
-    # Replace the hardcoded DATA array with our dynamic data
-    _html_content = _html_content.replace(
-        "var DATA = [",
-        f"var DATA = {_data_json}; var _ORIGINAL_DATA = ["
-    )
-    # Update stat numbers
-    _html_content = _html_content.replace(">460<", f">{total}<")
-    _html_content = _html_content.replace(">97<", f">{sot_live_ct}<")
-    _html_content = _html_content.replace(">189<", f">{countries_ct}<")
-
-    components.html(_html_content, height=2400, scrolling=True)
-    return  # HTML component handles everything — skip old Python rendering
+    return _connector_data, total, sot_live_ct, countries_ct
 
     # ── OLD CODE (kept for reference, never executes) ─────────────────────────
     st.markdown(f"""
@@ -1519,16 +1814,18 @@ setTimeout(function(){
 
             # Enrichment data lookup
             enrich = _PARTNER_ENRICHMENT.get(p["name"].upper().replace("(","").replace(")","").strip())
-            comm_contact = enrich["commercial_contact"] if enrich else manager
-            tech_contact = enrich["technical_contact"] if enrich else "—"
-            verticals = enrich["verticals"] if enrich else "—"
-            pricing = enrich["avg_pricing"] if enrich else "—"
-            discount = enrich["discount_rate"] if enrich else "—"
-            discount_cond = enrich["discount_condition"] if enrich else "—"
-            revshare_status = enrich["revshare"] if enrich else ("Yes" if p.get("revshare") else "No")
-            onboarding = enrich["onboarding"] if enrich else "Contact partnerships team"
+            _ext_d = _EXT_CONTACTS.get(p["name"].upper().replace("(","").replace(")","").strip(), {})
+            comm_contact = _ext_d.get("commercial_contact","") or (enrich["commercial_contact"] if enrich else "") or "TBD"
+            tech_contact = _ext_d.get("technical_contact","") or (enrich["technical_contact"] if enrich else "") or "TBD"
+            _ext_verts_d = _ext_d.get("verticals","")
+            verticals = _ext_verts_d if _ext_verts_d else (enrich["verticals"] if enrich else "TBD")
+            pricing = enrich["avg_pricing"] if enrich else "TBD"
+            discount = enrich["discount_rate"] if enrich else "TBD"
+            discount_cond = enrich["discount_condition"] if enrich else "TBD"
+            revshare_status = enrich["revshare"] if enrich else ("Yes" if p.get("revshare") else "TBD")
+            onboarding = enrich["onboarding"] if enrich else "TBD"
             merch_live = enrich["merchants_live"] if enrich else 0
-            merch_names = enrich["merchants"] if enrich else "—"
+            merch_names = enrich["merchants"] if enrich else "TBD"
             p_health_label = enrich["health"] if enrich else ("Good" if health >= 50 else "New")
 
             # Payment methods from SOT
@@ -1572,8 +1869,7 @@ setTimeout(function(){
                             f'<div><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;">Technical Contact</div><div style="font-size:12px;font-weight:600;color:#0f172a;">{tech_contact}</div></div></div>'
                             f'<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;background:#F8FAFC;border-radius:8px;">'
                             f'<div style="width:28px;height:28px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#DC2626;flex-shrink:0;">ES</div>'
-                            f'<div><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;">Escalation / Tech Support</div><div style="font-size:12px;font-weight:600;color:#0f172a;">Daniela Reyes</div></div></div>'
-                            f'<div style="font-size:9px;color:#94a3b8;margin-top:2px;">Yuno Partner Manager: {manager}</div>'
+                            f'<div><div style="font-size:9px;color:#94a3b8;text-transform:uppercase;">Escalation / Partner Manager</div><div style="font-size:12px;font-weight:600;color:#0f172a;">{manager if manager != "—" else "Partnerships Team"}</div></div></div>'
                             f'</div></div>', unsafe_allow_html=True)
             with col_b:
                 st.markdown(f'<div style="background:#fff;border:1px solid #EEF2F7;border-radius:10px;padding:16px 18px;">'
@@ -1944,148 +2240,384 @@ setTimeout(function(){{
 # ── Insights View ──────────────────────────────────────────────────────────────
 def show_insights():
     is_internal = st.session_state.role == "internal"
-    st.markdown('<div style="font-size:28px;font-weight:700;color:#1d1d1f;letter-spacing:-0.8px;margin-bottom:4px;">Intelligence & Insights</div>'
-                '<div style="font-size:11px;color:#86868b;margin-bottom:16px;">Market gaps · signals · strategy</div>', unsafe_allow_html=True)
+    st.markdown('<div style="font-size:28px;font-weight:700;color:#1d1d1f;letter-spacing:-0.8px;margin-bottom:4px;">Global Market Intel</div>'
+                '<div style="font-size:11px;color:#86868b;margin-bottom:16px;">Payment landscape insights across key markets worldwide</div>', unsafe_allow_html=True)
 
     stat_row([
-        {"label":"Market Coverage","value":"73%","delta":"↑ LATAM payment methods","delta_type":"up","val_color":"#818cf8"},
-        {"label":"Gaps Identified","value":"8","delta":"→ 3 in BNPL, 2 in crypto","delta_type":"flat"},
-        {"label":"Routing Efficiency","value":"94%","delta":"↑ smart routing gains","delta_type":"up"},
-        {"label":"Partner Redundancy","value":"2.1×","delta":"↑ per corridor avg","delta_type":"up"},
-        {"label":"Time to Integrate","value":"42d","delta":"↓ 12d vs 2023","delta_type":"down"},
+        {"label":"Markets Covered","value":"45+","delta":"Across LATAM, APAC, MENAT, EU, NA","delta_type":"flat","val_color":"#818cf8"},
+        {"label":"Payment Methods Tracked","value":"300+","delta":"Cards, wallets, A2A, BNPL, crypto","delta_type":"flat"},
+        {"label":"Avg. Approval Rate (Global)","value":"89.2%","delta":"↑ 1.4pp vs prior year","delta_type":"up"},
+        {"label":"Real-Time Insights","value":"Live","delta":"Updated continuously","delta_type":"up","val_color":"#16a34a"},
     ])
 
-    tab_options = ["Market Gaps","Partner Signals"] + (["Strategic Recs","Market News"] if is_internal else ["Market News"])
+    tab_options = ["Country Profiles","Payment Trends","Regulatory Updates","Market News"]
     tab = st.radio("insights_tab", tab_options, horizontal=True, key="insight_tab_radio", label_visibility="collapsed")
 
-    if tab == "Market Gaps":
-        c1, c2 = st.columns(2)
-        with c1:
-            st.markdown("""
-<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border:none;border-radius:10px;padding:16px;margin-bottom:14px;">
-  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">🌎 LATAM Coverage Gaps</div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-    <span style="font-size:16px;flex-shrink:0;">⬛</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">BNPL — No active partner in MX & COL</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Kueski (MX) and Addi (COL) are the dominant players. Neither currently integrated. Estimated $180M TPV opportunity per year if onboarded.</div></div>
-  </div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-    <span style="font-size:16px;flex-shrink:0;">⬛</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Open Banking / Pix — Single point of failure in BR</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Only OpenPix covers PIX routing. Adding Celcoin as backup would provide redundancy and competitive take rate negotiation.</div></div>
-  </div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;">
-    <span style="font-size:16px;flex-shrink:0;">⬛</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Crypto payments — zero coverage</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Bitso and MercadoPago crypto rails gaining share in AR and VE. Not yet on roadmap. Consider as Q2 initiative pending regulatory clarity.</div></div>
-  </div>
-</div>""", unsafe_allow_html=True)
-            st.markdown("""
-<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border:none;border-radius:10px;padding:16px;">
-  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">⚡ Fraud & Risk Coverage</div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-    <span style="font-size:16px;flex-shrink:0;">◆</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">SEON live but coverage limited to card fraud</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Merchants requesting ATO and chargeback dispute management. Evaluate Kount or Signifyd as complementary fraud partners.</div></div>
-  </div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;">
-    <span style="font-size:16px;flex-shrink:0;">◆</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Truora — KYC/KYB coverage for LATAM</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Strong coverage for identity verification in CO, MX, BR. Adds compliance layer that opens regulated merchant segments.</div></div>
-  </div>
-</div>""", unsafe_allow_html=True)
+    # ── Country Profiles Data ─────────────────────────────────────────────────
+    _COUNTRIES = {
+        "Brazil": {
+            "flag":"🇧🇷","population":"216M","gdp":"$2.17T","ecom_size":"$62B (2025)",
+            "payment_methods":[("PIX",40),("Credit Card",30),("Boleto Bancario",15),("Debit Card",10),("Other",5)],
+            "top_acquirers":"Cielo, Rede (Itau), Getnet (Santander), Stone, PagSeguro, Adyen",
+            "regulatory":"Central Bank regulates PIX. Open Finance mandate in effect. PIX credit launching Q2 2026. Data localization not required but LGPD (data privacy) applies to all payment data.",
+            "settlement":"PIX: instant. Cards: D+1 to D+30 (negotiable). Boleto: D+1 after payment confirmation.",
+            "fx":"BRL is not freely convertible. Central Bank controls FX. Merchants must use authorized dealers. IOF tax (up to 6.38%) applies to cross-border transactions.",
+            "instore_online":"Online 48% / In-store 52%. PIX rapidly gaining in-store share via QR code.",
+        },
+        "Mexico": {
+            "flag":"🇲🇽","population":"130M","gdp":"$1.79T","ecom_size":"$38B (2025)",
+            "payment_methods":[("Credit Card",32),("Debit Card",28),("OXXO (cash voucher)",18),("SPEI/CoDi",12),("Digital Wallets",10)],
+            "top_acquirers":"BBVA Mexico, Banorte, Conekta, Stripe, Mercado Pago, Kushki",
+            "regulatory":"Banxico regulates payment systems. CoDi (instant payments) push. Fintech Law (Ley Fintech) governs digital payments. CNBV oversees PSPs.",
+            "settlement":"Cards: D+1 to D+3. SPEI: instant (banking hours). OXXO: D+1 after cash payment.",
+            "fx":"MXN is freely traded. No FX restrictions for merchants. Withholding tax on cross-border payments may apply (ISR).",
+            "instore_online":"Online 38% / In-store 62%. Cash-based methods (OXXO) remain critical for unbanked population (~45%).",
+        },
+        "Colombia": {
+            "flag":"🇨🇴","population":"52M","gdp":"$363B","ecom_size":"$12B (2025)",
+            "payment_methods":[("Credit Card",30),("PSE (bank transfer)",28),("Debit Card",18),("Cash (Efecty/Baloto)",15),("Digital Wallets",9)],
+            "top_acquirers":"Redeban, Credibanco, Kushki, Mercado Pago, PayU, Addi (BNPL)",
+            "regulatory":"Superintendencia Financiera oversees payments. Transfiya 2.0 (instant payments) launched 2026. GMF tax (4x1000) on financial transactions.",
+            "settlement":"Cards: D+1 to D+7. PSE: D+1. Cash vouchers: D+1 after confirmation.",
+            "fx":"COP has managed float. Central bank approval needed for large FX transactions. Repatriation of funds possible but requires documentation.",
+            "instore_online":"Online 32% / In-store 68%. Cash on delivery still significant in tier-2 cities.",
+        },
+        "Argentina": {
+            "flag":"🇦🇷","population":"46M","gdp":"$641B","ecom_size":"$14B (2025)",
+            "payment_methods":[("Credit Card (installments)",38),("Debit Card",25),("Bank Transfer",15),("Digital Wallets",14),("Cash (Rapipago/PagoFacil)",8)],
+            "top_acquirers":"Prisma (Visa), First Data (MC), Mercado Pago, Ualá, Modo",
+            "regulatory":"BCRA regulates payments. Installment plans (cuotas) are culturally essential. Capital controls (cepo) restrict FX. DEBIN for instant debits.",
+            "settlement":"Cards: D+10 to D+18 standard (accelerated available at cost). Bank transfers: D+0 to D+1.",
+            "fx":"Strict capital controls. Multiple exchange rates (official, MEP, CCL). Cross-border settlement is complex. Merchants must navigate BCRA restrictions.",
+            "instore_online":"Online 40% / In-store 60%. Installment-based credit card payments dominate eCommerce.",
+        },
+        "Chile": {
+            "flag":"🇨🇱","population":"19.5M","gdp":"$335B","ecom_size":"$12B (2025)",
+            "payment_methods":[("Debit Card",35),("Credit Card",30),("Bank Transfer (Khipu)",18),("Prepaid Cards",10),("Cash",7)],
+            "top_acquirers":"Transbank, Getnet, Kushki, Mercado Pago, Flow",
+            "regulatory":"CMF oversees financial regulation. Transbank monopoly broken by four-party model reform. New PSP licensing framework in place since 2022.",
+            "settlement":"Cards: D+1 to D+2. Khipu: instant/D+1. Transbank: D+2 standard.",
+            "fx":"CLP is freely traded. No significant FX restrictions. Chile has bilateral trade agreements reducing friction for cross-border commerce.",
+            "instore_online":"Online 42% / In-store 58%. Debit cards overtook credit cards as primary online method in 2024.",
+        },
+        "India": {
+            "flag":"🇮🇳","population":"1.44B","gdp":"$3.94T","ecom_size":"$120B (2025)",
+            "payment_methods":[("UPI",48),("Credit Card",15),("Debit Card",14),("Net Banking",10),("Wallets (Paytm, PhonePe)",8),("Cash on Delivery",5)],
+            "top_acquirers":"Razorpay, Cashfree, PayU India, CCAvenue, Juspay, Pine Labs (in-store)",
+            "regulatory":"RBI regulates all payments. Zero MDR on UPI (under review). Data localization mandate — all payment data must be stored in India. Recurring payment framework (e-mandate) in effect.",
+            "settlement":"UPI: instant. Cards: T+1 to T+3. Net Banking: T+1 to T+2.",
+            "fx":"INR is partially convertible. RBI controls capital account. FEMA regulations govern cross-border payments. LRS limit of $250K/year for individuals.",
+            "instore_online":"Online 35% / In-store 65%. UPI QR codes dominate in-store. 15B+ monthly UPI transactions as of 2026.",
+        },
+        "Indonesia": {
+            "flag":"🇮🇩","population":"278M","gdp":"$1.42T","ecom_size":"$62B (2025)",
+            "payment_methods":[("Digital Wallets (GoPay, OVO, Dana)",35),("Bank Transfer (VA)",28),("Credit Card",12),("QRIS (QR standard)",15),("Convenience Store",10)],
+            "top_acquirers":"Midtrans (GoTo), Xendit, DOKU, Nicepay, Ayoconnect",
+            "regulatory":"Bank Indonesia oversees payments. QRIS is the national QR standard. PBI regulations on payment systems. Local processing requirement for domestic transactions.",
+            "settlement":"Bank transfers: instant (BI-FAST). Cards: D+2 to D+7. E-wallets: D+1.",
+            "fx":"IDR is managed float. BI approval needed for large transfers. Repatriation rules apply. Withholding tax on cross-border digital services.",
+            "instore_online":"Online 40% / In-store 60%. QRIS unifying fragmented QR code market. E-wallet adoption among highest in Southeast Asia.",
+        },
+        "UAE": {
+            "flag":"🇦🇪","population":"10M","gdp":"$509B","ecom_size":"$10B (2025)",
+            "payment_methods":[("Credit Card",40),("Debit Card",22),("Apple Pay / Samsung Pay",18),("AANI (instant)",10),("Cash on Delivery",10)],
+            "top_acquirers":"Network International, Checkout.com, Tap Payments, Amazon Payment Services, Telr",
+            "regulatory":"CBUAE regulates payments. AANI instant payment system launched nationwide 2026. Strong AML/KYC requirements. UAE PASS digital identity integration for onboarding.",
+            "settlement":"Cards: D+1 to D+3. AANI: instant. COD reconciliation: D+1 to D+5.",
+            "fx":"AED is pegged to USD (3.6725). No FX restrictions. Free zones offer simplified cross-border payment structures. No income tax; 9% corporate tax introduced 2023.",
+            "instore_online":"Online 45% / In-store 55%. Contactless penetration among highest globally (>80% of in-store card transactions).",
+        },
+        "Saudi Arabia": {
+            "flag":"🇸🇦","population":"36M","gdp":"$1.07T","ecom_size":"$16B (2025)",
+            "payment_methods":[("Mada (debit)",45),("Credit Card",25),("STC Pay",12),("Apple Pay",10),("SADAD / BNPL (Tamara, Tabby)",8)],
+            "top_acquirers":"Neoleap, Geidea, HyperPay, Moyasar, Tap Payments, Checkout.com",
+            "regulatory":"SAMA regulates payments. Mada scheme mandatory for all domestic debit. BNPL framework introduced 2023. Open Banking launched. Vision 2030 driving cashless push — targeting 70% non-cash by 2025.",
+            "settlement":"Mada: D+1. Credit cards: D+2 to D+5. STC Pay: D+1.",
+            "fx":"SAR pegged to USD (3.75). No FX restrictions. Straightforward repatriation. ZATCA manages VAT (15%) compliance.",
+            "instore_online":"Online 38% / In-store 62%. Mada contactless payments growing rapidly. NFC penetration > 70%.",
+        },
+        "Nigeria": {
+            "flag":"🇳🇬","population":"224M","gdp":"$477B","ecom_size":"$8B (2025)",
+            "payment_methods":[("Bank Transfer",35),("Cards (Verve, Visa, MC)",25),("USSD",18),("Mobile Money",12),("eNaira / Cash",10)],
+            "top_acquirers":"Paystack (Stripe), Flutterwave, Interswitch, Kuda, Moniepoint",
+            "regulatory":"CBN regulates payments. eNaira (CBDC) in circulation. Cashless policy enforced. Verve is the dominant local card scheme. PSB (Payment Service Bank) licenses expanding mobile money.",
+            "settlement":"Bank transfers: instant (NIP). Cards: D+1. USSD: D+1. Mobile money: instant.",
+            "fx":"NGN has unified floating rate (post-2023 reform). FX liquidity challenges persist. Repatriation can be delayed. Parallel market premiums have narrowed post-reform.",
+            "instore_online":"Online 30% / In-store 70%. USSD payments critical for feature-phone users. Bank transfers growing fastest.",
+        },
+        "South Africa": {
+            "flag":"🇿🇦","population":"62M","gdp":"$399B","ecom_size":"$7.5B (2025)",
+            "payment_methods":[("Credit Card",30),("Debit Card",25),("EFT (bank transfer)",22),("Instant EFT (Ozow, Stitch)",15),("Cash / Voucher",8)],
+            "top_acquirers":"Nedbank, Standard Bank, Peach Payments, PayFast (Takealot), Ozow, Stitch",
+            "regulatory":"SARB and PASA regulate payments. National Payment System Act. Strong consumer protection via NCA. PayShap instant payment system launched 2023.",
+            "settlement":"Cards: D+1 to D+3. EFT: D+1 to D+2. Instant EFT: D+0. PayShap: instant.",
+            "fx":"ZAR is freely traded. Excon rules apply to cross-border flows. Loop structures available for multinationals. Withholding tax on royalties/services.",
+            "instore_online":"Online 32% / In-store 68%. Instant EFT growing rapidly as card alternative. Tap-to-phone pilots expanding.",
+        },
+        "UK": {
+            "flag":"🇬🇧","population":"68M","gdp":"$3.34T","ecom_size":"$170B (2025)",
+            "payment_methods":[("Debit Card",42),("Credit Card",25),("Open Banking / FPS",12),("Digital Wallets",15),("BNPL (Klarna, Clearpay)",6)],
+            "top_acquirers":"Worldpay, Adyen, Stripe, Barclays Payments, Checkout.com, Trust Payments",
+            "regulatory":"FCA and PSR regulate payments. Strong Consumer Duty (2023). Open Banking well-established (9M+ users). SCA enforced under UK-retained PSD2. BNPL regulation pending.",
+            "settlement":"Faster Payments: instant. Cards: D+1 to D+3. BACS: D+3.",
+            "fx":"GBP is freely traded. No restrictions. London is global FX hub. Cross-border payments straightforward. Interchange capped at 0.2% debit / 0.3% credit.",
+            "instore_online":"Online 52% / In-store 48%. Contactless limit raised to £100. Open Banking payments accelerating for eCommerce.",
+        },
+        "Germany": {
+            "flag":"🇩🇪","population":"84M","gdp":"$4.46T","ecom_size":"$130B (2025)",
+            "payment_methods":[("PayPal",28),("Invoice/Kauf auf Rechnung",20),("Credit Card",18),("SEPA Direct Debit",15),("Debit (girocard)",12),("SOFORT/Klarna",7)],
+            "top_acquirers":"Adyen, Unzer, Computop, Worldline, Stripe, Payone",
+            "regulatory":"BaFin and Bundesbank oversee payments. PSD2/SCA enforced. Strong data privacy (GDPR strictest interpretation). E-invoicing mandate from 2025.",
+            "settlement":"SEPA: D+1. Cards: D+1 to D+3. Invoice: varies (14-30 days).",
+            "fx":"EUR — no FX needed within eurozone. No restrictions for cross-border EUR payments. SEPA zone covers 36 countries.",
+            "instore_online":"Online 45% / In-store 55%. Germany historically cash-heavy but post-COVID card/digital adoption surged. girocard dominates in-store.",
+        },
+        "France": {
+            "flag":"🇫🇷","population":"68M","gdp":"$3.05T","ecom_size":"$95B (2025)",
+            "payment_methods":[("Credit/Debit Card (CB)",45),("PayPal",15),("Bank Transfer (SEPA)",12),("Digital Wallets",10),("Cartes Bancaires",10),("BNPL / Cheque",8)],
+            "top_acquirers":"Worldline, Adyen, Stripe, PayPlug, Dalenys (Natixis), Lyra",
+            "regulatory":"ACPR/Banque de France regulate. PSD2/SCA enforced. Cartes Bancaires (CB) is mandatory co-badging on all French cards. DGCCRF consumer protection applies.",
+            "settlement":"Cards: D+1 to D+2. SEPA Credit Transfer: D+1. SEPA Instant: seconds.",
+            "fx":"EUR — no FX within eurozone. Interchange capped per EU regulation.",
+            "instore_online":"Online 42% / In-store 58%. Carte Bancaire network processes majority of domestic transactions. Contactless widely adopted.",
+        },
+        "USA": {
+            "flag":"🇺🇸","population":"335M","gdp":"$28.78T","ecom_size":"$1.14T (2025)",
+            "payment_methods":[("Credit Card",38),("Debit Card",28),("Digital Wallets (Apple Pay, Google Pay)",16),("ACH/Bank Transfer",10),("BNPL",5),("Cash/Other",3)],
+            "top_acquirers":"Chase Paymentech, Fiserv (First Data), Worldpay, Adyen, Stripe, Square, Braintree",
+            "regulatory":"Federal Reserve, OCC, CFPB, and state regulators. Durbin amendment caps debit interchange. No federal data privacy law (state-level patchwork — CCPA, etc.). FedNow instant payment system live since 2023.",
+            "settlement":"ACH: D+1 to D+2. FedNow: instant. Cards: D+1 to D+2. Wire: same-day.",
+            "fx":"USD is global reserve currency. No FX restrictions. Straightforward cross-border settlement.",
+            "instore_online":"Online 42% / In-store 58%. Contactless adoption growing but still below EU levels. Tap-to-pay at ~35% of in-store card transactions.",
+        },
+        "Canada": {
+            "flag":"🇨🇦","population":"40M","gdp":"$2.14T","ecom_size":"$58B (2025)",
+            "payment_methods":[("Credit Card",38),("Debit (Interac)",30),("Digital Wallets",14),("Bank Transfer (EFT)",10),("BNPL",5),("Cash",3)],
+            "top_acquirers":"Moneris, Global Payments, Chase (Canada), Adyen, Stripe, Nuvei",
+            "regulatory":"Bank of Canada and OSFI oversee payments. Payments Canada modernizing with RTR (Real-Time Rail). Interchange regulated. PIPEDA (privacy). Retail Payment Activities Act (2024).",
+            "settlement":"Interac e-Transfer: instant. Cards: D+1 to D+2. EFT: D+1 to D+3. RTR (upcoming): instant.",
+            "fx":"CAD is freely traded. No FX restrictions. Close integration with US financial system.",
+            "instore_online":"Online 40% / In-store 60%. Interac Flash (contactless debit) very popular in-store. Interac Online for eCommerce.",
+        },
+        "Japan": {
+            "flag":"🇯🇵","population":"125M","gdp":"$4.23T","ecom_size":"$180B (2025)",
+            "payment_methods":[("Credit Card",40),("Convenience Store Payment (Konbini)",15),("Digital Wallets (PayPay, LinePay)",18),("Bank Transfer (Furikomi)",12),("Carrier Billing",8),("Cash",7)],
+            "top_acquirers":"GMO Payment Gateway, SB Payment Service, Adyen, Stripe Japan, Paygent, DG Financial Technology",
+            "regulatory":"FSA and Bank of Japan regulate. Cashless Vision targeting 40%+ cashless ratio (achieved ~39% in 2024). JCB is major domestic card scheme alongside Visa/MC. Installments (bunkatsu) culturally important.",
+            "settlement":"Cards: D+15 to D+30 (monthly cycle typical). Bank transfer: D+0 to D+1. E-wallets: D+1 to D+15.",
+            "fx":"JPY is freely traded. No FX restrictions. Japan has unique long settlement cycles for card payments that require planning.",
+            "instore_online":"Online 38% / In-store 62%. IC card payments (Suica, PASMO) dominate transit/convenience. QR code wallets (PayPay) growing rapidly.",
+        },
+        "Singapore": {
+            "flag":"🇸🇬","population":"5.9M","gdp":"$497B","ecom_size":"$9B (2025)",
+            "payment_methods":[("Credit Card",38),("Debit Card",20),("PayNow (instant)",18),("Digital Wallets (GrabPay, ShopeePay)",15),("BNPL (Atome, Pace)",5),("NETS",4)],
+            "top_acquirers":"Adyen, Stripe, 2C2P, Worldline, Rapyd, Nium",
+            "regulatory":"MAS regulates payments. Payment Services Act (PS Act) covers all payment service providers. PayNow corporate expanding. SGQR unified QR standard. Strong AML framework.",
+            "settlement":"PayNow: instant. Cards: D+1 to D+3. NETS: D+1. FAST: instant.",
+            "fx":"SGD is managed float (MAS band). No FX restrictions. Singapore is Asian payments hub. Cross-border QR payments linked with Thailand (PromptPay) and India (UPI).",
+            "instore_online":"Online 48% / In-store 52%. SGQR standardizes QR payments. Contactless card penetration > 85%.",
+        },
+        "Turkey": {
+            "flag":"🇹🇷","population":"85M","gdp":"$1.11T","ecom_size":"$25B (2025)",
+            "payment_methods":[("Credit Card (installments)",45),("Debit Card / BKM Express",20),("Bank Transfer (FAST/EFT)",18),("Digital Wallets",10),("Cash on Delivery",7)],
+            "top_acquirers":"Iyzico (PayU), PayTR, Param, Craftgate, Stripe Turkey, Garanti BBVA",
+            "regulatory":"CBRT and BRSA regulate payments. Installment payments deeply embedded (up to 12 months interest-free). BKM operates domestic card scheme (Troy). FAST instant payment system live.",
+            "settlement":"Cards: D+1 to D+30 (installment cycles). FAST: instant. Bank transfer: D+0 to D+1.",
+            "fx":"TRY is volatile. Central bank interventions frequent. FX-denominated pricing restricted for domestic transactions. Cross-border settlements can face delays. Withholding taxes apply.",
+            "instore_online":"Online 35% / In-store 65%. Installment-based card payments are the norm for eCommerce. Troy card scheme growing domestically.",
+        },
+        "Egypt": {
+            "flag":"🇪🇬","population":"106M","gdp":"$398B","ecom_size":"$8B (2025)",
+            "payment_methods":[("Cash on Delivery",35),("Credit/Debit Card",22),("Mobile Wallets (Fawry, Vodafone Cash)",20),("Bank Transfer (InstaPay)",13),("Meeza (local scheme)",10)],
+            "top_acquirers":"Fawry, Paymob, Accept (by Paymob), Kashier, ValU (BNPL), Amazon Payment Services",
+            "regulatory":"CBE regulates payments. National Payment Council driving cashless. InstaPay instant transfer system. Meeza is the national card scheme. Mobile money regulations enabling wallet interoperability.",
+            "settlement":"Cards: D+2 to D+7. InstaPay: instant. Mobile wallets: D+1 to D+2. COD: varies.",
+            "fx":"EGP floated in 2022-2024 reforms. FX availability has improved but repatriation can still face delays. Letters of credit requirements eased. Central bank unified the exchange rate.",
+            "instore_online":"Online 22% / In-store 78%. Cash on delivery remains dominant for eCommerce. Mobile wallet adoption accelerating among younger demographics.",
+        },
+    }
 
-        with c2:
-            st.markdown("""
-<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border:none;border-radius:10px;padding:16px;margin-bottom:14px;">
-  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">🏦 BaaS Vertical — New Opportunity</div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-    <span style="font-size:16px;flex-shrink:0;">★</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Pomelo — White-label orchestration for neobanks</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Pomelo issues cards across LATAM and needs a reliable orchestration layer. Yuno could become embedded infrastructure. Estimated ARR: $440K.</div></div>
-  </div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-    <span style="font-size:16px;flex-shrink:0;">★</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Bnext / Stori — Card issuers seeking orchestration</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Two card issuers reached out via LinkedIn. Both need multi-acquirer routing for their debit/prepaid portfolios.</div></div>
-  </div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;">
-    <span style="font-size:16px;flex-shrink:0;">★</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Neobank embedded finance wave</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Nubank, Mercado Pago, and Ualá competing in 3+ countries simultaneously. Winning one creates a network effect across their markets.</div></div>
-  </div>
-</div>""", unsafe_allow_html=True)
-            st.markdown("""
-<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border:none;border-radius:10px;padding:16px;">
-  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">📊 Routing Optimization Signals</div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-    <span style="font-size:16px;flex-shrink:0;">▲</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Getnet outperforming Cielo on BR Visa transactions</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Auth rate delta: +3.1pp. Projected uplift: $4.2M additional authorised TPV per month by shifting routing.</div></div>
-  </div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;">
-    <span style="font-size:16px;flex-shrink:0;">▲</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">APM share growing 4pp per quarter in Chile & Peru</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Khipu (CL) and Yape (PE) seeing strong adoption. Integrating both adds coverage for ~22M active users in under-served corridors.</div></div>
-  </div>
-</div>""", unsafe_allow_html=True)
+    if tab == "Country Profiles":
+        country_name = st.selectbox("Select a market", list(_COUNTRIES.keys()), key="country_profile_select")
+        c = _COUNTRIES[country_name]
 
-    elif tab == "Partner Signals":
-        c1, c2 = st.columns(2)
-        with c1:
-            st.markdown("""
-<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border:none;border-radius:10px;padding:16px;">
-  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">🔴 At-Risk Partners</div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-    <span style="font-size:16px;flex-shrink:0;">⚠</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Nuvei — 4 open SLA incidents</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Auth rate dropped to 84.1% in BR over last 14 days. Merchant escalations received. Schedule urgent technical review with Nuvei engineering.</div></div>
-  </div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;">
-    <span style="font-size:16px;flex-shrink:0;">⚠</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Conekta MX — stalled commercial negotiations</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Deal stuck at Evaluation for 92 days. Primary contact has gone quiet. Recommend C-level outreach or re-evaluation of strategic fit.</div></div>
-  </div>
-</div>""", unsafe_allow_html=True)
-        with c2:
-            st.markdown("""
-<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border:none;border-radius:10px;padding:16px;">
-  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">🟢 Growth Signals</div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);">
-    <span style="font-size:16px;flex-shrink:0;">↑</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Getnet — Rapid TPV ramp post-launch</div><div style="font-size:11px;color:#86868b;line-height:1.55;">+42% TPV growth in first 60 days live. Santander group exploring Getnet rollout in AR and CL — opportunity to extend contract to new markets.</div></div>
-  </div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;">
-    <span style="font-size:16px;flex-shrink:0;">↑</span>
-    <div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">OpenPix — Pix adoption surging</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Pix now 31% of all BR transactions through Yuno. OpenPix volume up 31% MoM. Strong case for preferential pricing renegotiation at scale.</div></div>
-  </div>
-</div>""", unsafe_allow_html=True)
+        # Payment method breakdown chart
+        fig = go.Figure(go.Bar(
+            x=[pm[1] for pm in c["payment_methods"]],
+            y=[pm[0] for pm in c["payment_methods"]],
+            orientation='h',
+            marker_color=['#4F46E5','#818cf8','#a5b4fc','#c7d2fe','#e0e7ff','#eef2ff'][:len(c["payment_methods"])],
+            text=[f'{pm[1]}%' for pm in c["payment_methods"]],
+            textposition='outside',
+        ))
+        fig.update_layout(
+            height=220, margin=dict(l=0,r=40,t=10,b=10),
+            xaxis=dict(title="Share (%)", range=[0,60], showgrid=True, gridcolor='rgba(0,0,0,0.05)'),
+            yaxis=dict(autorange="reversed"),
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(size=11),
+        )
 
-    elif tab == "Strategic Recs" and is_internal:
-        st.markdown("""
-<div style="border:1px solid rgba(245,158,11,.22);background:rgba(245,158,11,.04);border-radius:10px;padding:13px 16px;margin-bottom:16px;">
-  <div style="font-size:9.5px;font-weight:700;color:#d97706;letter-spacing:.9px;text-transform:uppercase;margin-bottom:10px;">🔒 Internal — Strategic Recommendations for Q1</div>
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:12px;"><span style="color:#6e6e73;">Priority 1: Close Getnet Santander — activates AR + CL expansion</span><span style="font-family:monospace;color:#d97706;">Jan deadline</span></div>
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:12px;"><span style="color:#6e6e73;">Priority 2: Sign first BaaS partner (Pomelo) — validates new vertical</span><span style="font-family:monospace;color:#d97706;">Q1 OKR</span></div>
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:12px;"><span style="color:#6e6e73;">Priority 3: Add Addi (BNPL COL) to close biggest product gap</span><span style="font-family:monospace;color:#d97706;">Assigned: SR</span></div>
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.06);font-size:12px;"><span style="color:#6e6e73;">Priority 4: Resolve Nuvei SLA before contract renewal review</span><span style="font-family:monospace;color:#d97706;">Urgent</span></div>
-  <div style="display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12px;"><span style="color:#6e6e73;">Priority 5: Evaluate Crypto rails for Q2 pipeline readiness</span><span style="font-family:monospace;color:#d97706;">Research phase</span></div>
-</div>""", unsafe_allow_html=True)
-        c1, c2 = st.columns(2)
-        with c1:
-            st.markdown("""
-<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border:none;border-radius:10px;padding:16px;">
-  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">🗺 2025 Partner Expansion Map</div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);"><span style="font-size:16px;flex-shrink:0;">①</span><div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Deepen LATAM acquirer coverage in CL, PE, AR</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Only 1 active acquirer per country. Target: 2 per market minimum by Q3 2025 to enable true redundancy and competitive routing.</div></div></div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);"><span style="font-size:16px;flex-shrink:0;">②</span><div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Build out BaaS as a formal partner tier</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Create dedicated partner program track — separate commercial terms, embedded orchestration API, dedicated technical success manager.</div></div></div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;"><span style="font-size:16px;flex-shrink:0;">③</span><div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Launch fraud marketplace — 3 partners by EOY</div><div style="font-size:11px;color:#86868b;line-height:1.55;">SEON + Truora + one chargeback specialist would create a credible fraud marketplace offering.</div></div></div>
-</div>""", unsafe_allow_html=True)
-        with c2:
-            st.markdown("""
-<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border:none;border-radius:10px;padding:16px;">
-  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">💡 Partner Program Recommendations</div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid rgba(0,0,0,0.07);"><span style="font-size:16px;flex-shrink:0;">◈</span><div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Introduce tiered partner program (Silver / Gold / Platinum)</div><div style="font-size:11px;color:#86868b;line-height:1.55;">High-volume partners (Adyen, Getnet) should get dedicated integration support, co-marketing budget, and quarterly business reviews.</div></div></div>
-  <div style="display:flex;align-items:flex-start;gap:9px;padding:8px 0;"><span style="font-size:16px;flex-shrink:0;">◈</span><div><div style="font-size:12px;font-weight:600;color:#1d1d1f;margin-bottom:2px;">Partner-sourced deals need clearer attribution model</div><div style="font-size:11px;color:#86868b;line-height:1.55;">Kushki and Adyen have referred 3 merchants each this quarter with no formal incentive structure. Implementing a referral bonus increases deal flow.</div></div></div>
-</div>""", unsafe_allow_html=True)
+        st.markdown(f'''<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border-radius:12px;padding:20px 24px;margin-bottom:14px;">
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+    <span style="font-size:32px;">{c["flag"]}</span>
+    <div>
+      <div style="font-size:20px;font-weight:700;color:#1d1d1f;letter-spacing:-0.5px;">{country_name}</div>
+      <div style="font-size:11px;color:#86868b;">Population: {c["population"]} &nbsp;·&nbsp; GDP: {c["gdp"]} &nbsp;·&nbsp; eCommerce: {c["ecom_size"]}</div>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+    <span style="font-size:9px;font-weight:700;padding:3px 8px;border-radius:5px;background:#EEF2FF;color:#4F46E5;">{c["instore_online"]}</span>
+  </div>
+</div>''', unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+        with col1:
+            st.markdown('<div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:4px;">Payment Method Mix</div>', unsafe_allow_html=True)
+            st.plotly_chart(fig, use_container_width=True, config={"displayModeBar": False})
+
+            st.markdown(f'''<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border-radius:10px;padding:16px;margin-bottom:14px;">
+  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">🏦 Top Acquirers / PSPs</div>
+  <div style="font-size:12px;color:#1d1d1f;line-height:1.7;">{c["top_acquirers"]}</div>
+</div>''', unsafe_allow_html=True)
+
+        with col2:
+            st.markdown(f'''<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border-radius:10px;padding:16px;margin-bottom:14px;">
+  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">📋 Regulatory Highlights</div>
+  <div style="font-size:12px;color:#1d1d1f;line-height:1.7;">{c["regulatory"]}</div>
+</div>''', unsafe_allow_html=True)
+
+            st.markdown(f'''<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border-radius:10px;padding:16px;margin-bottom:14px;">
+  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">⏱ Settlement Times</div>
+  <div style="font-size:12px;color:#1d1d1f;line-height:1.7;">{c["settlement"]}</div>
+</div>''', unsafe_allow_html=True)
+
+            st.markdown(f'''<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border-radius:10px;padding:16px;margin-bottom:14px;">
+  <div style="font-size:9px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#86868b;margin-bottom:10px;">💱 FX Considerations</div>
+  <div style="font-size:12px;color:#1d1d1f;line-height:1.7;">{c["fx"]}</div>
+</div>''', unsafe_allow_html=True)
+
+    elif tab == "Payment Trends":
+        _TRENDS = [
+            {
+                "icon":"⚡","title":"Rise of Account-to-Account (A2A) Instant Payments",
+                "body":"PIX (Brazil) now processes 4B+ monthly transactions. UPI (India) exceeds 15B/month. FPS (UK) and AANI (UAE) expanding merchant acceptance. A2A payments offer lower costs (0-0.5% vs 1.5-3% for cards), instant settlement, and zero chargeback risk. Projected to capture 25% of global eCommerce payments by 2028.",
+                "stats":"PIX: 4B txns/mo · UPI: 15B txns/mo · FPS: 400M txns/mo",
+                "tag":"Instant Payments","tag_color":"#059669","tag_bg":"#D1FAE5",
+            },
+            {
+                "icon":"🛒","title":"BNPL Adoption Varies Sharply by Region",
+                "body":"BNPL represents ~5% of global eCommerce but adoption varies widely. Nordic countries lead at 12-15%, followed by Australia (10%), UK (8%), and Germany (7% via invoice model). In MENA, Tamara and Tabby are growing 80% YoY. LATAM adoption is 3-4% but growing fast. Regulatory scrutiny increasing globally — UK and EU introducing BNPL-specific frameworks.",
+                "stats":"Global BNPL: $350B GMV · MENA growth: 80% YoY · EU regulation pending",
+                "tag":"BNPL","tag_color":"#7C3AED","tag_bg":"#EDE9FE",
+            },
+            {
+                "icon":"🌐","title":"Cross-Border Payment Costs Declining",
+                "body":"Average cost of sending $200 cross-border has dropped from 6.3% (2020) to 4.1% (2026). Swift GPI now delivers 50% of payments in under 30 minutes. Visa Direct and Mastercard Send enabling real-time cross-border. Wise, Airwallex, and Nium offering 0.5-1.5% FX margins vs 2-4% from traditional banks. G20 target of 3% average cost by 2027 on track.",
+                "stats":"Avg cost: 4.1% (down from 6.3%) · Swift GPI: 50% <30min · G20 target: 3%",
+                "tag":"Cross-Border","tag_color":"#0369A1","tag_bg":"#E0F2FE",
+            },
+            {
+                "icon":"📱","title":"Mobile Wallet Penetration Accelerating",
+                "body":"Global mobile wallet users projected at 5.2B by 2027. In APAC, wallets already account for 60%+ of eCommerce payments (Alipay, WeChat Pay, GCash, GrabPay). In Africa, M-Pesa and MTN Mobile Money process $1.2B daily. Apple Pay and Google Pay growing in developed markets. Super-app wallets (Grab, GoTo, Rappi) blurring lines between payments and commerce.",
+                "stats":"5.2B wallet users by 2027 · APAC: 60%+ eCom share · Africa: $1.2B/day",
+                "tag":"Mobile Wallets","tag_color":"#EA580C","tag_bg":"#FFF7ED",
+            },
+            {
+                "icon":"₿","title":"Crypto Payment Adoption in Emerging Markets",
+                "body":"Stablecoin transaction volume surpassed $10T in 2025. USDT dominates in LATAM, Africa, and Southeast Asia as a remittance and savings tool. Merchants in Argentina, Nigeria, and Turkey increasingly accepting stablecoins to hedge local currency volatility. Stripe and PayPal now support USDC settlements. CBDCs progressing: eNaira (live), Digital Real (pilot), Digital Rupee (pilot).",
+                "stats":"Stablecoin vol: $10T+ (2025) · eNaira: live · Digital Real: pilot phase",
+                "tag":"Crypto/Stablecoins","tag_color":"#CA8A04","tag_bg":"#FEF9C3",
+            },
+            {
+                "icon":"📶","title":"Contactless & Tap-to-Phone In-Store Growth",
+                "body":"Contactless penetration exceeds 75% of in-store card transactions in Europe and MENA. Tap-to-phone (SoftPOS) eliminating need for dedicated terminals — Stripe Terminal, Adyen Tap to Pay, and Square enabling any smartphone as a POS. In-store/online convergence accelerating via unified commerce platforms. Apple Tap to Pay expanding to 15+ markets.",
+                "stats":"EU contactless: 75%+ · Tap-to-phone: 15+ markets · SoftPOS reducing terminal costs by 60%",
+                "tag":"In-Store Innovation","tag_color":"#BE185D","tag_bg":"#FCE7F3",
+            },
+        ]
+
+        for t in _TRENDS:
+            st.markdown(f'''<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border-radius:10px;padding:16px 18px;margin-bottom:10px;">
+  <div style="display:flex;align-items:flex-start;gap:12px;">
+    <span style="font-size:24px;flex-shrink:0;margin-top:2px;">{t["icon"]}</span>
+    <div style="flex:1;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <div style="font-size:14px;font-weight:700;color:#0f172a;">{t["title"]}</div>
+        <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:{t["tag_bg"]};color:{t["tag_color"]};white-space:nowrap;">{t["tag"]}</span>
+      </div>
+      <div style="font-size:12px;color:#64748b;line-height:1.65;margin-bottom:8px;">{t["body"]}</div>
+      <div style="font-size:10px;font-family:'Menlo',monospace;color:#4F46E5;background:#F8FAFC;padding:6px 10px;border-radius:6px;">{t["stats"]}</div>
+    </div>
+  </div>
+</div>''', unsafe_allow_html=True)
+
+    elif tab == "Regulatory Updates":
+        _REGULATIONS = [
+            {
+                "icon":"🇪🇺","region":"Europe","title":"EU PSD3 & Payment Services Regulation (PSR)",
+                "status":"Draft Published — Expected adoption 2026-2027",
+                "status_color":"#B45309","status_bg":"#FEF3C7",
+                "body":"PSD3 introduces stronger SCA exemptions for low-risk transactions under EUR 500 with merchant Transaction Risk Analysis (TRA). The PSR (a directly applicable regulation replacing PSD2 directives) will harmonize rules across all EU member states. Key changes: expanded open banking access, fraud liability shifts, non-bank PSP access to payment systems, and enhanced consumer rights. Merchants can expect 3-5% auth rate improvement from relaxed SCA and lower friction at checkout.",
+            },
+            {
+                "icon":"🇧🇷","region":"LATAM","title":"Brazil PIX Credit Launch & Open Finance Expansion",
+                "status":"Launching Q2 2026",
+                "status_color":"#059669","status_bg":"#D1FAE5",
+                "body":"The Central Bank of Brazil (BCB) is launching PIX Credit, allowing consumers to make PIX payments using credit lines from their banks. This effectively creates an instant BNPL mechanism on existing PIX rails. Expected to increase eCommerce conversion by 15-20% by combining PIX simplicity with installment flexibility. Additionally, Open Finance Phase 4 expands data sharing to investments and insurance. Merchants should prepare checkout flows to support PIX Credit alongside standard PIX.",
+            },
+            {
+                "icon":"🇮🇳","region":"APAC","title":"India MDR Regulation & Digital Payment Incentives",
+                "status":"Under Review — Policy update expected H2 2026",
+                "status_color":"#1D4ED8","status_bg":"#DBEAFE",
+                "body":"RBI maintains zero MDR on UPI and RuPay debit transactions, subsidized via government reimbursement to banks (~$350M annually). The sustainability of this model is under review. Industry bodies are lobbying for a small MDR (0.15-0.3%) to fund infrastructure investment. Separately, RBI's e-mandate framework now supports recurring UPI payments up to INR 1 lakh. The Digital Personal Data Protection Act (2023) impacts how payment data can be stored and processed, with compliance deadlines in 2026.",
+            },
+            {
+                "icon":"🇸🇦","region":"MENA","title":"Saudi SAMA Mada Requirements & Open Banking",
+                "status":"Mandatory — Enforcement active",
+                "status_color":"#DC2626","status_bg":"#FEE2E2",
+                "body":"SAMA mandates that all domestic debit card transactions route through the Mada scheme. By Q3 2026, merchants without Mada certification will see 100% decline rates on local debit cards (which represent ~45% of all card payments). Open Banking framework launched with 8 banks in phase 1. BNPL regulation formalized — all BNPL providers must be SAMA-licensed. Vision 2030 cashless target of 70% non-cash transactions is driving aggressive fintech licensing and payment modernization.",
+            },
+            {
+                "icon":"🇳🇬","region":"Africa","title":"Nigeria eNaira & CBN Cashless Policy Updates",
+                "status":"In Effect — Evolving framework",
+                "status_color":"#7C3AED","status_bg":"#EDE9FE",
+                "body":"The eNaira (CBDC) is live but adoption remains modest (~$80M in circulation). CBN continues enforcing cashless policy with withdrawal limits (NGN 500K/individual, NGN 5M/corporate per week). Cash processing fees of 5-10% apply above limits. The NIBSS Instant Payment (NIP) system processes 1B+ transactions annually. CBN has issued new Payment Service Bank (PSB) licenses expanding mobile money. New regulations require payment processors to maintain local data storage and obtain CBN licensing.",
+            },
+            {
+                "icon":"🌎","region":"LATAM","title":"Data Localization Trends Across Latin America",
+                "status":"Varies by Country — Monitoring recommended",
+                "status_color":"#475569","status_bg":"#F1F5F9",
+                "body":"Brazil (LGPD) does not mandate data localization but requires consent for cross-border transfers and BCB mandates local payment data processing. Mexico (Ley Fintech) requires financial data to be accessible to Mexican regulators. Colombia requires certain financial records to remain accessible domestically. Argentina's data protection law requires adequate protection for cross-border transfers. Chile is updating its data protection framework (GDPR-aligned). Merchants operating across LATAM should evaluate whether a regional data center strategy is needed.",
+            },
+        ]
+
+        for r in _REGULATIONS:
+            st.markdown(f'''<div style="background:#fff;box-shadow:0 1px 3px rgba(0,0,0,0.07),0 0 0 1px rgba(0,0,0,0.04);border-radius:10px;padding:16px 18px;margin-bottom:10px;">
+  <div style="display:flex;align-items:flex-start;gap:12px;">
+    <span style="font-size:24px;flex-shrink:0;margin-top:2px;">{r["icon"]}</span>
+    <div style="flex:1;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
+        <div style="font-size:14px;font-weight:700;color:#0f172a;">{r["title"]}</div>
+        <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:4px;background:#EEF2FF;color:#4F46E5;white-space:nowrap;">{r["region"]}</span>
+      </div>
+      <div style="margin-bottom:8px;"><span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;background:{r["status_bg"]};color:{r["status_color"]};">{r["status"]}</span></div>
+      <div style="font-size:12px;color:#64748b;line-height:1.65;">{r["body"]}</div>
+    </div>
+  </div>
+</div>''', unsafe_allow_html=True)
 
     elif tab == "Market News":
         _NEWS = [
-            {"date":"Mar 22, 2026","region":"LATAM","title":"Brazil Central Bank announces PIX credit launch for Q2 2026","body":"PIX credit will allow merchants to offer instant BNPL at checkout via PIX rails — expected to increase conversion by 15-20% for Brazilian merchants. Yuno partners Cielo, PagBank, and Stone are early adopters.","impact":"High","tag":"Regulation"},
+            {"date":"Mar 22, 2026","region":"LATAM","title":"Brazil Central Bank announces PIX credit launch for Q2 2026","body":"PIX credit will allow merchants to offer instant BNPL at checkout via PIX rails — expected to increase conversion by 15-20% for Brazilian merchants. Cielo, PagBank, and Stone are early adopters.","impact":"High","tag":"Regulation"},
             {"date":"Mar 20, 2026","region":"MENAT","title":"Saudi Arabia mandates Mada scheme for all local transactions","body":"SAMA has confirmed that all domestic card transactions must route through Mada by Q3 2026. Merchants without Mada support will see 100% decline rates on local cards. Checkout.com and Tap Payments are certified.","impact":"Critical","tag":"Compliance"},
-            {"date":"Mar 18, 2026","region":"APAC","title":"India UPI crosses 15 billion monthly transactions","body":"UPI volume continues to grow at 40% YoY. RazorPay and Cashfree are Yuno's primary partners for UPI acceptance. Google Pay and PhonePe dominate market share.","impact":"Medium","tag":"Market Growth"},
-            {"date":"Mar 15, 2026","region":"Europe","title":"EU PSD3 draft published — stronger SCA exemptions for low-risk transactions","body":"The draft PSD3 regulation proposes wider SCA exemptions for transactions under €500 with merchant TRA. This could improve auth rates by 3-5% for European merchants using Adyen and Stripe.","impact":"High","tag":"Regulation"},
+            {"date":"Mar 18, 2026","region":"APAC","title":"India UPI crosses 15 billion monthly transactions","body":"UPI volume continues to grow at 40% YoY. RazorPay and Cashfree are leading PSPs for UPI acceptance. Google Pay and PhonePe dominate market share.","impact":"Medium","tag":"Market Growth"},
+            {"date":"Mar 15, 2026","region":"Europe","title":"EU PSD3 draft published — stronger SCA exemptions for low-risk transactions","body":"The draft PSD3 regulation proposes wider SCA exemptions for transactions under EUR 500 with merchant TRA. This could improve auth rates by 3-5% for European merchants using Adyen and Stripe.","impact":"High","tag":"Regulation"},
             {"date":"Mar 12, 2026","region":"Global","title":"Visa and Mastercard announce 2026 fee increases for cross-border transactions","body":"Interchange fees for cross-border transactions increasing by 8-12 basis points effective July 2026. Local acquiring becomes even more critical for cost optimization.","impact":"High","tag":"Pricing"},
-            {"date":"Mar 10, 2026","region":"LATAM","title":"Colombia launches instant payment system — Transfiya 2.0","body":"Banco de la República upgrades Transfiya with merchant acceptance capabilities. PSE alternative expected to reduce costs and increase real-time settlement options.","impact":"Medium","tag":"Infrastructure"},
+            {"date":"Mar 10, 2026","region":"LATAM","title":"Colombia launches instant payment system — Transfiya 2.0","body":"Banco de la Republica upgrades Transfiya with merchant acceptance capabilities. PSE alternative expected to reduce costs and increase real-time settlement options.","impact":"Medium","tag":"Infrastructure"},
             {"date":"Mar 8, 2026","region":"MENAT","title":"UAE Central Bank launches AANI instant payments nationwide","body":"AANI is now available across all UAE banks. Merchants can accept instant A2A payments with zero chargeback risk. Integration via Checkout.com and Tap Payments.","impact":"High","tag":"Infrastructure"},
-            {"date":"Mar 5, 2026","region":"Global","title":"Apple Pay later discontinued — shifts focus to issuer installments","body":"Apple confirms BNPL product sunset. Market opportunity for Tamara, Tabby, Klarna, and local BNPL providers to fill the gap.","impact":"Medium","tag":"Competitive"},
+            {"date":"Mar 5, 2026","region":"Global","title":"Apple Pay Later discontinued — shifts focus to issuer installments","body":"Apple confirms BNPL product sunset. Market opportunity for Tamara, Tabby, Klarna, and local BNPL providers to fill the gap.","impact":"Medium","tag":"Competitive"},
         ]
         _impact_style = {"Critical":("#DC2626","#FEE2E2"),"High":("#B45309","#FEF3C7"),"Medium":("#1D4ED8","#DBEAFE")}
 
@@ -2449,26 +2981,26 @@ def show_benchmarks():
 # ── Payment Recommendations ──────────────────────────────────────────────────
 # Partner enrichment data for expanded detail view
 _PARTNER_ENRICHMENT = {
-    "ADYEN": {"commercial_contact":"Tom Kuehn","technical_contact":"Jorge Restrepo","verticals":"Retail, Travel, Mobility, Streaming, Marketplaces","revshare":"Yes","avg_pricing":"0.95%","discount_rate":"0.75%","discount_condition":"TPV > $50M/yr","onboarding":"API keys + KYC docs, 2-4 weeks","health":"Strong","merchants_live":5,"merchants":"Uber, Netflix, Spotify, Rappi, MercadoLibre"},
-    "CIELO": {"commercial_contact":"Talita Diaz Gama","technical_contact":"Valentina Perez","verticals":"Retail, eCommerce, Food Delivery, Subscriptions","revshare":"Yes — active","avg_pricing":"1.2%","discount_rate":"0.85%","discount_condition":"Local entity + TPV > $10M/yr","onboarding":"Brazilian CNPJ required, 3-4 weeks","health":"Strong","merchants_live":3,"merchants":"Rappi, iFood, Falabella"},
-    "DLOCAL": {"commercial_contact":"Daniela Reyes","technical_contact":"Jorge Restrepo","verticals":"Streaming, Gaming, SaaS, Marketplaces, Ride-hailing","revshare":"Yes — active","avg_pricing":"1.8%","discount_rate":"1.4%","discount_condition":"Multi-country deal + TPV > $20M/yr","onboarding":"Single API, no local entity needed, 1-2 weeks","health":"Strong","merchants_live":4,"merchants":"Spotify, Netflix, Uber, MercadoLibre"},
-    "STRIPE": {"commercial_contact":"Daniela Reyes","technical_contact":"Valentina Perez","verticals":"SaaS, Marketplaces, eCommerce, On-demand","revshare":"Yes — active","avg_pricing":"2.9% + $0.30","discount_rate":"2.2%","discount_condition":"TPV > $100M/yr","onboarding":"Self-serve API, 1 week","health":"Strong","merchants_live":2,"merchants":"Netflix, Despegar"},
-    "CHECKOUT": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"Travel, Gaming, Crypto, Forex, Marketplaces","revshare":"Yes","avg_pricing":"1.1%","discount_rate":"0.8%","discount_condition":"Enterprise deal + exclusivity","onboarding":"API integration, 2-3 weeks","health":"Strong","merchants_live":0,"merchants":"No merchants live yet — in onboarding"},
-    "CHECKOUT MENA": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"Travel, Gaming, Crypto, Forex, Marketplaces","revshare":"Yes","avg_pricing":"1.1%","discount_rate":"0.8%","discount_condition":"Enterprise deal + exclusivity","onboarding":"API integration, 2-3 weeks","health":"Strong","merchants_live":0,"merchants":"No merchants live yet — in onboarding"},
-    "GETNET BR": {"commercial_contact":"Johanderson Guevara","technical_contact":"Valentina Perez","verticals":"Retail, Food Delivery, Subscriptions","revshare":"Yes","avg_pricing":"1.3%","discount_rate":"0.95%","discount_condition":"Local entity + volume commitment","onboarding":"Brazilian CNPJ, Santander relationship helps, 3 weeks","health":"Good","merchants_live":2,"merchants":"Rappi, Falabella"},
-    "MERCADOPAGO BR": {"commercial_contact":"Johanderson Guevara","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Marketplaces, Retail, Delivery","revshare":"Yes — active","avg_pricing":"1.5%","discount_rate":"1.1%","discount_condition":"TPV > $15M/yr","onboarding":"API + MercadoLibre ecosystem, 2 weeks","health":"Strong","merchants_live":3,"merchants":"MercadoLibre, Rappi, PedidosYa"},
-    "EBANX": {"commercial_contact":"Talita Diaz Gama","technical_contact":"Valentina Perez","verticals":"SaaS, Gaming, Streaming, Digital Goods","revshare":"Yes — active","avg_pricing":"2.1%","discount_rate":"1.6%","discount_condition":"Multi-LATAM + TPV > $10M/yr","onboarding":"No local entity needed, 1-2 weeks","health":"Good","merchants_live":2,"merchants":"Spotify, Uber"},
-    "BAMBOO PAYMENTS": {"commercial_contact":"Talita Diaz Gama","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Retail, Delivery, Fintech","revshare":"Yes — active","avg_pricing":"1.6%","discount_rate":"1.2%","discount_condition":"LATAM multi-country","onboarding":"Single API for LATAM, 2 weeks","health":"Good","merchants_live":2,"merchants":"Rappi, PedidosYa"},
-    "NUVEI": {"commercial_contact":"Alessandra Rospigliosi","technical_contact":"Valentina Perez","verticals":"Gaming, Crypto, Forex, Travel, iGaming","revshare":"Yes","avg_pricing":"1.4%","discount_rate":"1.0%","discount_condition":"High-risk vertical + volume","onboarding":"API + compliance review, 3-4 weeks","health":"Good","merchants_live":0,"merchants":"No merchants live yet — in pipeline"},
-    "TAP PAYMENTS": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Retail, Food Delivery, SaaS","revshare":"Yes","avg_pricing":"2.0%","discount_rate":"1.5%","discount_condition":"GCC multi-country","onboarding":"GCC entity required, 2-3 weeks","health":"Good","merchants_live":0,"merchants":"No merchants live yet — in pipeline"},
-    "PAYMOB": {"commercial_contact":"Francisco Quintana","technical_contact":"Valentina Perez","verticals":"eCommerce, Retail, SME, Food Delivery","revshare":"Pending","avg_pricing":"1.8%","discount_rate":"1.4%","discount_condition":"Egypt + MENA volume","onboarding":"Local partnership, 2-3 weeks","health":"New","merchants_live":0,"merchants":"No merchants live yet — prospecting"},
-    "PAGBANK BRASIL": {"commercial_contact":"Johanderson Guevara","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Retail, SME, Subscriptions","revshare":"Yes — active","avg_pricing":"1.4%","discount_rate":"1.0%","discount_condition":"TPV > $5M/yr","onboarding":"Brazilian CNPJ required, 2 weeks","health":"Good","merchants_live":2,"merchants":"iFood, Claro"},
-    "STONE": {"commercial_contact":"Johanderson Guevara","technical_contact":"Valentina Perez","verticals":"Retail, eCommerce, SME","revshare":"Yes","avg_pricing":"1.5%","discount_rate":"1.1%","discount_condition":"Volume commitment","onboarding":"Brazilian CNPJ required, 3 weeks","health":"Good","merchants_live":1,"merchants":"Falabella"},
-    "PAGAR.ME": {"commercial_contact":"Johanderson Guevara","technical_contact":"Jorge Restrepo","verticals":"eCommerce, SaaS, Subscriptions, Marketplaces","revshare":"Yes — active","avg_pricing":"1.3%","discount_rate":"0.9%","discount_condition":"TPV > $8M/yr","onboarding":"Brazilian CNPJ, 2-3 weeks","health":"Strong","merchants_live":2,"merchants":"Spotify, Netflix"},
-    "KUSHKI": {"commercial_contact":"Talita Diaz Gama","technical_contact":"Valentina Perez","verticals":"eCommerce, Ride-hailing, Delivery, SaaS","revshare":"Yes","avg_pricing":"1.6%","discount_rate":"1.2%","discount_condition":"Multi-LATAM","onboarding":"Single API, 2 weeks","health":"Good","merchants_live":2,"merchants":"Uber, Rappi"},
-    "CYBERSOURCE": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"Enterprise, Travel, Retail, eCommerce","revshare":"Yes","avg_pricing":"0.9%","discount_rate":"0.7%","discount_condition":"Enterprise deal","onboarding":"Visa subsidiary, 3-4 weeks","health":"Strong","merchants_live":1,"merchants":"Despegar"},
-    "RAZORPAY": {"commercial_contact":"Francisco Quintana","technical_contact":"Valentina Perez","verticals":"eCommerce, SaaS, Fintech, Subscriptions","revshare":"Yes","avg_pricing":"2.0%","discount_rate":"1.5%","discount_condition":"India volume","onboarding":"Indian entity required, 2 weeks","health":"Good","merchants_live":0,"merchants":"No merchants live yet — in pipeline"},
-    "XENDIT": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Marketplaces, Fintech, Gaming","revshare":"Yes","avg_pricing":"1.8%","discount_rate":"1.3%","discount_condition":"SEA multi-country","onboarding":"SEA entity required, 2 weeks","health":"Good","merchants_live":0,"merchants":"No merchants live yet — in pipeline"},
+    "ADYEN": {"commercial_contact":"Tom Kuehn","technical_contact":"Jorge Restrepo","verticals":"Retail, Travel, Mobility, Streaming, Marketplaces","revshare":"Yes","avg_pricing":"€0.11 + scheme fees","discount_rate":"—","discount_condition":"—","onboarding":"API keys + KYC docs, 2-4 weeks","health":"Strong","merchants_live":5,"merchants":"Uber, Netflix, Spotify, Rappi, MercadoLibre"},
+    "CIELO": {"commercial_contact":"Talita Diaz Gama","technical_contact":"Valentina Perez","verticals":"Retail, eCommerce, Food Delivery, Subscriptions","revshare":"Yes — active","avg_pricing":"From 4.99%","discount_rate":"—","discount_condition":"—","onboarding":"Brazilian CNPJ required, 3-4 weeks","health":"Strong","merchants_live":3,"merchants":"Rappi, iFood, Falabella"},
+    "DLOCAL": {"commercial_contact":"Daniela Reyes","technical_contact":"Jorge Restrepo","verticals":"Streaming, Gaming, SaaS, Marketplaces, Ride-hailing","revshare":"Yes — active","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"Single API, no local entity needed, 1-2 weeks","health":"Strong","merchants_live":4,"merchants":"Spotify, Netflix, Uber, MercadoLibre"},
+    "STRIPE": {"commercial_contact":"Daniela Reyes","technical_contact":"Valentina Perez","verticals":"SaaS, Marketplaces, eCommerce, On-demand","revshare":"Yes — active","avg_pricing":"2.9% + $0.30","discount_rate":"—","discount_condition":"—","onboarding":"Self-serve API, 1 week","health":"Strong","merchants_live":2,"merchants":"Netflix, Despegar"},
+    "CHECKOUT": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"Travel, Gaming, Crypto, Forex, Marketplaces","revshare":"Yes","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"API integration, 2-3 weeks","health":"Strong","merchants_live":0,"merchants":"No merchants live yet — in onboarding"},
+    "CHECKOUT MENA": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"Travel, Gaming, Crypto, Forex, Marketplaces","revshare":"Yes","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"API integration, 2-3 weeks","health":"Strong","merchants_live":0,"merchants":"No merchants live yet — in onboarding"},
+    "GETNET BR": {"commercial_contact":"Johanderson Guevara","technical_contact":"Valentina Perez","verticals":"Retail, Food Delivery, Subscriptions","revshare":"Yes","avg_pricing":"From 2%","discount_rate":"—","discount_condition":"—","onboarding":"Brazilian CNPJ, Santander relationship helps, 3 weeks","health":"Good","merchants_live":2,"merchants":"Rappi, Falabella"},
+    "MERCADOPAGO BR": {"commercial_contact":"Johanderson Guevara","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Marketplaces, Retail, Delivery","revshare":"Yes — active","avg_pricing":"4.99%","discount_rate":"—","discount_condition":"—","onboarding":"API + MercadoLibre ecosystem, 2 weeks","health":"Strong","merchants_live":3,"merchants":"MercadoLibre, Rappi, PedidosYa"},
+    "EBANX": {"commercial_contact":"Talita Diaz Gama","technical_contact":"Valentina Perez","verticals":"SaaS, Gaming, Streaming, Digital Goods","revshare":"Yes — active","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"No local entity needed, 1-2 weeks","health":"Good","merchants_live":2,"merchants":"Spotify, Uber"},
+    "BAMBOO PAYMENTS": {"commercial_contact":"Talita Diaz Gama","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Retail, Delivery, Fintech","revshare":"Yes — active","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"Single API for LATAM, 2 weeks","health":"Good","merchants_live":2,"merchants":"Rappi, PedidosYa"},
+    "NUVEI": {"commercial_contact":"Alessandra Rospigliosi","technical_contact":"Valentina Perez","verticals":"Gaming, Crypto, Forex, Travel, iGaming","revshare":"Yes","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"API + compliance review, 3-4 weeks","health":"Good","merchants_live":0,"merchants":"No merchants live yet — in pipeline"},
+    "TAP PAYMENTS": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Retail, Food Delivery, SaaS","revshare":"Yes","avg_pricing":"2.75% + $0.30","discount_rate":"—","discount_condition":"—","onboarding":"GCC entity required, 2-3 weeks","health":"Good","merchants_live":0,"merchants":"No merchants live yet — in pipeline"},
+    "PAYMOB": {"commercial_contact":"Francisco Quintana","technical_contact":"Valentina Perez","verticals":"eCommerce, Retail, SME, Food Delivery","revshare":"Pending","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"Local partnership, 2-3 weeks","health":"New","merchants_live":0,"merchants":"No merchants live yet — prospecting"},
+    "PAGBANK BRASIL": {"commercial_contact":"Johanderson Guevara","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Retail, SME, Subscriptions","revshare":"Yes — active","avg_pricing":"From 4.99%","discount_rate":"—","discount_condition":"—","onboarding":"Brazilian CNPJ required, 2 weeks","health":"Good","merchants_live":2,"merchants":"iFood, Claro"},
+    "STONE": {"commercial_contact":"Johanderson Guevara","technical_contact":"Valentina Perez","verticals":"Retail, eCommerce, SME","revshare":"Yes","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"Brazilian CNPJ required, 3 weeks","health":"Good","merchants_live":1,"merchants":"Falabella"},
+    "PAGAR.ME": {"commercial_contact":"Johanderson Guevara","technical_contact":"Jorge Restrepo","verticals":"eCommerce, SaaS, Subscriptions, Marketplaces","revshare":"Yes — active","avg_pricing":"From 3.49% + R$0.39","discount_rate":"—","discount_condition":"—","onboarding":"Brazilian CNPJ, 2-3 weeks","health":"Strong","merchants_live":2,"merchants":"Spotify, Netflix"},
+    "KUSHKI": {"commercial_contact":"Talita Diaz Gama","technical_contact":"Valentina Perez","verticals":"eCommerce, Ride-hailing, Delivery, SaaS","revshare":"Yes","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"Single API, 2 weeks","health":"Good","merchants_live":2,"merchants":"Uber, Rappi"},
+    "CYBERSOURCE": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"Enterprise, Travel, Retail, eCommerce","revshare":"Yes","avg_pricing":"—","discount_rate":"—","discount_condition":"—","onboarding":"Visa subsidiary, 3-4 weeks","health":"Strong","merchants_live":1,"merchants":"Despegar"},
+    "RAZORPAY": {"commercial_contact":"Francisco Quintana","technical_contact":"Valentina Perez","verticals":"eCommerce, SaaS, Fintech, Subscriptions","revshare":"Yes","avg_pricing":"2% per txn","discount_rate":"—","discount_condition":"—","onboarding":"Indian entity required, 2 weeks","health":"Good","merchants_live":0,"merchants":"No merchants live yet — in pipeline"},
+    "XENDIT": {"commercial_contact":"Francisco Quintana","technical_contact":"Jorge Restrepo","verticals":"eCommerce, Marketplaces, Fintech, Gaming","revshare":"Yes","avg_pricing":"~2.9% + fixed fee","discount_rate":"—","discount_condition":"—","onboarding":"SEA entity required, 2 weeks","health":"Good","merchants_live":0,"merchants":"No merchants live yet — in pipeline"},
 }
 
 def show_payment_recs():
@@ -2994,11 +3526,20 @@ setTimeout(function(){
                 # Detail grid — contacts + commercial
                 dc1, dc2 = st.columns(2)
                 with dc1:
+                    _pkey = r["name"].upper().replace("(","").replace(")","").strip()
+                    _ec = _EXT_CONTACTS.get(_pkey, {})
+                    _cl = _ec.get("commercial_contact","") or enrich["commercial_contact"]
+                    _tl = _ec.get("technical_contact","") or enrich["technical_contact"]
+                    _ce = _ec.get("commercial_email","")
+                    _te = _ec.get("technical_email","")
+                    _ev = _ec.get("verticals","") or enrich["verticals"]
+                    _cl_line = f'{_cl}<br><span style="font-size:10px;color:#64748b;">{_ce}</span>' if _ce else _cl
+                    _tl_line = f'{_tl}<br><span style="font-size:10px;color:#64748b;">{_te}</span>' if _te else _tl
                     st.markdown(f'<div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:18px 20px;">'
                                 f'<div style="font-size:10px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:12px;">Contacts & Verticals</div>'
-                                f'<div style="margin-bottom:10px;"><div style="font-size:10px;color:#94a3b8;">Commercial Lead</div><div style="font-size:13px;font-weight:600;color:#0f172a;">{enrich["commercial_contact"]}</div></div>'
-                                f'<div style="margin-bottom:10px;"><div style="font-size:10px;color:#94a3b8;">Technical Lead</div><div style="font-size:13px;font-weight:600;color:#0f172a;">{enrich["technical_contact"]}</div></div>'
-                                f'<div style="margin-bottom:10px;"><div style="font-size:10px;color:#94a3b8;">Focus Verticals</div><div style="font-size:12px;color:#334155;">{enrich["verticals"]}</div></div>'
+                                f'<div style="margin-bottom:10px;"><div style="font-size:10px;color:#94a3b8;">Commercial Lead</div><div style="font-size:13px;font-weight:600;color:#0f172a;">{_cl_line}</div></div>'
+                                f'<div style="margin-bottom:10px;"><div style="font-size:10px;color:#94a3b8;">Technical Lead</div><div style="font-size:13px;font-weight:600;color:#0f172a;">{_tl_line}</div></div>'
+                                f'<div style="margin-bottom:10px;"><div style="font-size:10px;color:#94a3b8;">Focus Verticals</div><div style="font-size:12px;color:#334155;">{_ev}</div></div>'
                                 f'<div><div style="font-size:10px;color:#94a3b8;">Rev Share</div><div style="font-size:13px;font-weight:600;color:#0f172a;">{enrich["revshare"]}</div></div>'
                                 f'</div>', unsafe_allow_html=True)
                 with dc2:
@@ -3818,11 +4359,6 @@ def show_home():
                         f'</div>', unsafe_allow_html=True)
 
 
-# ── Testing ────────────────────────────────────────────────────────────────────
-def show_testing():
-    st.markdown("## Testing")
-    st.caption("This section is under construction.")
-
 
 # ── Main App ───────────────────────────────────────────────────────────────────
 inject_css(st.session_state.role)
@@ -3831,14 +4367,34 @@ if st.session_state.role is None:
     show_landing()
 else:
     show_sidebar()
-    # Top-right "Landing Page" button
+    # Top-right sign out button
     _top_left, _top_right = st.columns([9, 1])
     with _top_right:
-        if st.button("← Landing", key="goto_landing", use_container_width=True):
+        if st.button("Sign out", key="goto_landing", use_container_width=True):
             st.session_state.role = None
             st.session_state.page = "Home"
             st.query_params.clear()
             st.rerun()
+    # Style the sign-out button
+    st.markdown("""<style>
+    button[data-testid="baseButton-secondary"][kind="secondary"]:has(~ div) {},
+    [data-testid="stMain"] [data-testid="stColumns"]:first-of-type [data-testid="stColumn"]:last-child button {
+        background: transparent !important;
+        border: 1px solid #E2E8F0 !important;
+        border-radius: 8px !important;
+        color: #64748B !important;
+        font-size: 12px !important;
+        font-weight: 600 !important;
+        padding: 6px 14px !important;
+        transition: all 0.15s !important;
+        letter-spacing: 0.01em !important;
+    }
+    [data-testid="stMain"] [data-testid="stColumns"]:first-of-type [data-testid="stColumn"]:last-child button:hover {
+        background: #F8FAFC !important;
+        border-color: #CBD5E1 !important;
+        color: #334155 !important;
+    }
+    </style>""", unsafe_allow_html=True)
     page = st.session_state.page
     if page == "Home":
         show_home()
@@ -3863,5 +4419,3 @@ else:
         show_merchant_sim()
     elif page == "MissionCtrl":
         show_mission_control()
-    elif page == "Testing":
-        show_testing()
