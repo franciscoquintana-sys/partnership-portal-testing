@@ -649,7 +649,7 @@ function exportPDF(){
       didDrawPage:function(data){
         // Footer on every page
         doc.setFontSize(7);doc.setTextColor(148,163,184);
-        doc.text('Confidential Yuno x Mastercard',data.settings.margin.left,doc.internal.pageSize.height-10);
+        doc.text('Yuno x Mastercard Confidential',data.settings.margin.left,doc.internal.pageSize.height-10);
         doc.text('Page '+doc.internal.getCurrentPageInfo().pageNumber,doc.internal.pageSize.width-data.settings.margin.right-15,doc.internal.pageSize.height-10);
       }
     });
@@ -667,7 +667,7 @@ function exportPDF(){
     html+='<h2 style="margin:0 0 4px;">Partner Portfolio</h2><p style="color:#6b7280;font-size:11px;margin:0 0 16px;">Generated on '+new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'})+'</p>';
     html+='<table><thead><tr>'+d.cols.map(function(c){return '<th>'+c+'</th>';}).join('')+'</tr></thead><tbody>';
     d.rows.forEach(function(r){html+='<tr>'+r.map(function(v){return '<td>'+(v||'')+'</td>';}).join('')+'</tr>';});
-    html+='</tbody></table><div class="footer">Confidential Yuno x Mastercard</div></body></html>';
+    html+='</tbody></table><div class="footer">Yuno x Mastercard Confidential</div></body></html>';
     var blob=new Blob([html],{type:'text/html'});
     var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='Yuno_Partner_Portfolio.html';a.click();
   });
@@ -791,7 +791,7 @@ function exportExcel(){
     var footerRow=spRow+1;
     ws.mergeCells(footerRow,1,footerRow,nc);
     var fc=ws.getCell(footerRow,1);
-    fc.value='Confidential Yuno x Mastercard';
+    fc.value='Yuno x Mastercard Confidential';
     fc.font={name:'Arial',size:10,bold:true,italic:true,color:{argb:'FF3E4FE0'}};
     fc.alignment={horizontal:'center',vertical:'middle'};
     fc.fill={type:'pattern',pattern:'solid',fgColor:{argb:'FFF0F1FE'}};
@@ -807,7 +807,7 @@ function exportExcel(){
     ws.autoFilter={from:{row:hdrRowNum,column:1},to:{row:hdrRowNum+exportRows.length,column:nc}};
     // Print
     ws.pageSetup={orientation:'landscape',fitToPage:true,fitToWidth:1};
-    ws.headerFooter={oddFooter:'Confidential Yuno x Mastercard'};
+    ws.headerFooter={oddFooter:'Yuno x Mastercard Confidential'};
 
     wb.xlsx.writeBuffer().then(function(buf){
       var blob=new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
