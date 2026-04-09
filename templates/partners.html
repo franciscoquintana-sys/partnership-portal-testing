@@ -397,6 +397,8 @@
 {% endblock %}
 
 {% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
 const FILTERS = ['connector','cat','region','country','status','tier','manager'];
 
@@ -490,25 +492,96 @@ function exportCSV() {
 
 function exportPDF() {
   document.getElementById('export-menu').style.display = 'none';
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
   const rows = getVisibleRows();
+  const now = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const pageW = doc.internal.pageSize.getWidth();
+
+  // Header bar
+  doc.setFillColor(10, 22, 40);
+  doc.rect(0, 0, pageW, 56, 'F');
+
+  // Accent glow
+  doc.setFillColor(79, 70, 229);
+  doc.setGState(new doc.GState({ opacity: 0.18 }));
+  doc.ellipse(pageW - 60, 28, 120, 60, 'F');
+  doc.setGState(new doc.GState({ opacity: 1 }));
+
+  // Title
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.setTextColor(255, 255, 255);
+  doc.text('Partners Portal', 32, 28);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(11);
+  doc.setTextColor(148, 163, 184);
+  doc.text('Partner Portfolio Export', 32, 44);
+
+  // Date top right
+  doc.setFontSize(9);
+  doc.setTextColor(148, 163, 184);
+  doc.text(now, pageW - 32, 36, { align: 'right' });
+
+  // Summary line
+  doc.setFontSize(9);
+  doc.setTextColor(100, 116, 139);
+  doc.text(`${rows.length} connector${rows.length !== 1 ? 's' : ''} · Filtered export`, 32, 72);
+
+  // Table data
   const headers = ['Connector', 'Type', 'Region', 'Country', 'Status', 'Tier', 'Manager'];
-  let html = `<html><head><style>
-    body{font-family:Arial,sans-serif;font-size:11px;padding:20px}
-    h2{color:#0f172a;margin-bottom:16px}
-    table{width:100%;border-collapse:collapse}
-    th{background:#4F46E5;color:#fff;padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.05em}
-    td{padding:7px 10px;border-bottom:1px solid #e2e8f0;color:#334155}
-    tr:nth-child(even) td{background:#f8fafc}
-  </style></head><body>
-  <h2>Yuno Partner Portfolio</h2>
-  <table><thead><tr>${headers.map(h=>`<th>${h}</th>`).join('')}</tr></thead><tbody>`;
-  rows.forEach(r => {
+  const body = rows.map(r => {
     const cells = r.querySelectorAll('td');
-    const vals = [r.dataset.partner, r.dataset.type, r.dataset.region, r.dataset.country, r.dataset.status, r.dataset.tier, cells[6]?cells[6].textContent.trim():''];
-    html += `<tr>${vals.map(v=>`<td>${v||'—'}</td>`).join('')}</tr>`;
+    return [
+      r.dataset.partner || '',
+      r.dataset.type || '',
+      r.dataset.region || '',
+      r.dataset.country || '',
+      r.dataset.status || '',
+      r.dataset.tier || '—',
+      cells[6] ? cells[6].textContent.trim() : '',
+    ];
   });
-  html += '</tbody></table></body></html>';
-  const win = window.open('','_blank'); win.document.write(html); win.document.close(); win.print();
+
+  doc.autoTable({
+    startY: 84,
+    head: [headers],
+    body: body,
+    styles: { font: 'helvetica', fontSize: 9, cellPadding: 7, textColor: [51, 65, 85] },
+    headStyles: {
+      fillColor: [79, 70, 229], textColor: 255, fontStyle: 'bold',
+      fontSize: 8.5, cellPadding: 8, halign: 'left',
+    },
+    alternateRowStyles: { fillColor: [248, 250, 252] },
+    columnStyles: {
+      0: { fontStyle: 'bold', cellWidth: 130 },
+      4: { cellWidth: 70 },
+    },
+    tableLineColor: [226, 232, 240],
+    tableLineWidth: 0.5,
+    margin: { left: 32, right: 32 },
+    didDrawCell: (data) => {
+      // Color-code status column
+      if (data.section === 'body' && data.column.index === 4) {
+        const val = data.cell.raw;
+        if (val === 'Live') doc.setTextColor(22, 163, 74);
+        else if (val === 'Prospect') doc.setTextColor(217, 119, 6);
+        else doc.setTextColor(100, 116, 139);
+      }
+    },
+  });
+
+  // Footer
+  const finalY = doc.lastAutoTable.finalY + 20;
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.5);
+  doc.line(32, finalY, pageW - 32, finalY);
+  doc.setFontSize(8);
+  doc.setTextColor(148, 163, 184);
+  doc.text('Yuno Partnerships Portal · Confidential', 32, finalY + 12);
+  doc.text(`Generated ${now}`, pageW - 32, finalY + 12, { align: 'right' });
+
+  doc.save(`yuno_partners_${new Date().toISOString().slice(0,10)}.pdf`);
 }
 </script>
 {% endblock %}
