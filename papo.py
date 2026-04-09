@@ -239,6 +239,9 @@ html,body,[class*="css"] {
 section[data-testid="stMain"] > div { background:var(--bg) !important; }
 [data-testid="stSidebar"] { background:#0A0F1E !important; border-right:0.5px solid rgba(255,255,255,0.05) !important; }
 [data-testid="stSidebar"] > div:first-child { padding:0 !important; }
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] { padding:0 !important; gap:2px !important; }
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div { padding:0 !important; margin:0 !important; }
+[data-testid="stSidebar"] [data-testid="stButton"] { padding:0 8px !important; margin:0 !important; }
 /* Role toggle buttons (inside columns in sidebar) */
 [data-testid="stSidebar"] [data-testid="column"] [data-testid="stButton"] > button {
   border-radius:20px !important; border:none !important; font-size:11.5px !important; font-weight:600 !important; padding:7px 12px !important;
