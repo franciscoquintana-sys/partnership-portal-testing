@@ -54,13 +54,15 @@ BADGES = {
 def ctx(request: Request, page: str, **kwargs):
     role = get_role(request)
     return {
-        "request": request,
         "role": role,
         "page": page,
         "nav": NAV.get(role, []),
         "badges": BADGES,
         **kwargs
     }
+
+def tr(request: Request, name: str, context: dict):
+    return templates.TemplateResponse(request=request, name=name, context=context)
 
 # ── Routes ────────────────────────────────────────────────────────────────────
 
@@ -78,7 +80,7 @@ def root(request: Request):
 def login_page(request: Request):
     if get_role(request):
         return RedirectResponse("/home")
-    return templates.TemplateResponse("login.html", {"request": request, "error": ""})
+    return tr(request, "login.html", {"error": ""})
 
 @app.post("/login", response_class=HTMLResponse)
 def login_submit(request: Request, code: str = Form(...)):
@@ -89,7 +91,7 @@ def login_submit(request: Request, code: str = Form(...)):
     elif code.lower() == "partners":
         request.session["role"] = "partner"
         return RedirectResponse("/home", status_code=303)
-    return templates.TemplateResponse("login.html", {"request": request, "error": "Invalid access code."})
+    return tr(request, "login.html", {"error": "Invalid access code."})
 
 @app.get("/logout")
 def logout(request: Request):
@@ -101,7 +103,7 @@ def home(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
-    return templates.TemplateResponse("home.html", ctx(request, "home"))
+    return tr(request, "home.html", ctx(request, "home"))
 
 @app.get("/partners", response_class=HTMLResponse)
 def partners(request: Request, q: str = "", cat: str = "all", status: str = "all", region: str = "all"):
@@ -122,7 +124,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     cats = sorted(set(p["type"] for p in all_partners if p["type"]))
     statuses = sorted(set(p["status"] for p in all_partners if p["status"]))
     regions = sorted(set(p["region"] for p in all_partners if p["region"]))
-    return templates.TemplateResponse("partners.html", ctx(
+    return tr(request, "partners.html", ctx(
         request, "partners",
         partners=filtered, total=len(all_partners),
         cats=cats, statuses=statuses, regions=regions,
@@ -134,7 +136,7 @@ def pipeline(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
-    return templates.TemplateResponse("pipeline.html", ctx(
+    return tr(request, "pipeline.html", ctx(
         request, "pipeline",
         stages=PIPELINE_STAGES, deals=PIPELINE_DEALS
     ))
@@ -146,7 +148,7 @@ def mission(request: Request):
         return RedirectResponse("/login")
     if role != "internal":
         return RedirectResponse("/home")
-    return templates.TemplateResponse("mission.html", ctx(request, "mission"))
+    return tr(request, "mission.html", ctx(request, "mission"))
 
 @app.get("/performance", response_class=HTMLResponse)
 def performance(request: Request):
@@ -173,7 +175,7 @@ def performance(request: Request):
         showlegend=False,
     )
 
-    return templates.TemplateResponse("performance.html", ctx(
+    return tr(request, "performance.html", ctx(
         request, "performance",
         merchants=merchants, avg_ar=round(avg_ar, 1), total_tpv=round(total_tpv, 1),
         bar_chart=bar_fig.to_json()
@@ -218,7 +220,7 @@ def benchmarks(request: Request):
         showlegend=False,
     )
 
-    return templates.TemplateResponse("benchmarks.html", ctx(
+    return tr(request, "benchmarks.html", ctx(
         request, "benchmarks",
         revshare=REVSHARE_BY_PARTNER, total=total,
         pie_chart=pie_fig.to_json(),
@@ -231,7 +233,7 @@ def insights(request: Request, country: str = "Brazil"):
     if not role:
         return RedirectResponse("/login")
     data = COUNTRIES.get(country, COUNTRIES["Brazil"])
-    return templates.TemplateResponse("insights.html", ctx(
+    return tr(request, "insights.html", ctx(
         request, "insights",
         countries=list(COUNTRIES.keys()),
         selected=country,
@@ -247,7 +249,7 @@ def merch_sim(request: Request):
         return RedirectResponse("/home")
     sot_countries = get_sot_countries()
     sot_providers = get_sot_providers()
-    return templates.TemplateResponse("merch_sim.html", ctx(
+    return tr(request, "merch_sim.html", ctx(
         request, "merch_sim",
         merchants=MERCHANTS,
         sot_countries=sot_countries,
