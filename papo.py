@@ -402,7 +402,7 @@ setInterval(function(){
         active_nav = _page_to_nav.get(current_page, "Home")
         _badge_map = {"Partner Portfolio":"47","Partners In Flight":"3","Partner Leads":"24","Merchants":"12","Rev Share":"Apr 1"}
         btn_js = f"""
-setTimeout(function(){{
+setInterval(function(){{
   var activeNav='{active_nav}';
   var badges={str(_badge_map).replace("'",'"')};
   var sidebar=window.parent.document.querySelector('[data-testid="stSidebar"]');
@@ -413,7 +413,10 @@ setTimeout(function(){{
     var t=btn.textContent.trim();
     var isActive=(t===activeNav);
     var badge=badges[t]||'';
-    // Style as dark sidebar nav item
+    // Force parent containers to full width
+    if(btn.parentElement)btn.parentElement.style.cssText='width:100% !important;padding:0 !important;margin:0 !important;';
+    if(btn.parentElement&&btn.parentElement.parentElement)btn.parentElement.parentElement.style.cssText='width:100% !important;padding:0 !important;margin:0 !important;';
+    // Style nav button
     btn.style.cssText='display:flex !important;align-items:center !important;padding:7px 12px 7px 16px !important;cursor:pointer !important;border-radius:6px !important;margin:1px 0 !important;border:none !important;box-shadow:none !important;font-size:13.5px !important;font-weight:'+(isActive?'600':'400')+' !important;color:'+(isActive?'#A5B4FC':'#94A3B8')+' !important;background:'+(isActive?'rgba(91,95,222,0.15)':'transparent')+' !important;border-left:3px solid '+(isActive?'#5B5FDE':'transparent')+' !important;text-align:left !important;justify-content:flex-start !important;width:100% !important;box-sizing:border-box !important;';
     // Add badge
     if(badge && !btn.querySelector('.nav-badge')){{
