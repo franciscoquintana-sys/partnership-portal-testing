@@ -239,9 +239,12 @@ html,body,[class*="css"] {
 section[data-testid="stMain"] > div { background:var(--bg) !important; }
 [data-testid="stSidebar"] { background:#0A0F1E !important; border-right:0.5px solid rgba(255,255,255,0.05) !important; }
 [data-testid="stSidebar"] > div:first-child { padding:0 !important; }
-[data-testid="stSidebar"] [data-testid="stVerticalBlock"] { padding:0 !important; gap:2px !important; }
+[data-testid="stSidebarContent"] { padding:0 !important; }
+[data-testid="stSidebarUserContent"] { padding:0 !important; }
+[data-testid="stSidebar"] [data-testid="stVerticalBlock"] { padding:0 !important; gap:0 !important; }
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div { padding:0 !important; margin:0 !important; }
-[data-testid="stSidebar"] [data-testid="stButton"] { padding:0 !important; margin:0 !important; }
+[data-testid="stSidebar"] [data-testid="stButton"] { padding:0 !important; margin:0 !important; width:100% !important; }
+[data-testid="stSidebar"] [data-testid="stMarkdownContainer"] { padding:0 !important; margin:0 !important; }
 /* Role toggle buttons (inside columns in sidebar) */
 [data-testid="stSidebar"] [data-testid="column"] [data-testid="stButton"] > button {
   border-radius:20px !important; border:none !important; font-size:11.5px !important; font-weight:600 !important; padding:7px 12px !important;
@@ -695,7 +698,7 @@ def show_sidebar():
         _NAV_BADGES = {"Partner Portfolio":"47","Partners In Flight":"3","Partner Leads":"24","Merchants":"12","Rev Share":"Apr 1","Recommendations":"12"}
 
         for section_label, items in NAV_SECTIONS:
-            st.markdown(f'<div style="padding:14px 16px 4px;font-size:9.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#334155;">{section_label}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="padding:14px 0 4px 16px;font-size:9.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#334155;">{section_label}</div>', unsafe_allow_html=True)
             for page_key, label in items:
                 if st.button(label, key=f"nav_{page_key}", use_container_width=True, type="secondary"):
                     st.session_state.page = page_key
