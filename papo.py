@@ -408,11 +408,13 @@ setTimeout(function(){{
   var sidebar=window.parent.document.querySelector('[data-testid="stSidebar"]');
   if(!sidebar)return;
   sidebar.querySelectorAll('button').forEach(function(btn){{
+    // Skip role toggle buttons inside columns
+    if(btn.closest('[data-testid="column"]'))return;
     var t=btn.textContent.trim();
     var isActive=(t===activeNav);
     var badge=badges[t]||'';
     // Style as dark sidebar nav item
-    btn.style.cssText='display:flex !important;align-items:center !important;gap:9px !important;padding:8px 14px 8px 16px !important;cursor:pointer !important;border-radius:8px !important;margin:1px 8px !important;border:none !important;box-shadow:none !important;font-size:13px !important;font-weight:'+(isActive?'600':'400')+' !important;color:'+(isActive?'#A5B4FC':'#64748B')+' !important;background:'+(isActive?'rgba(91,95,222,0.15)':'transparent')+' !important;border-left:2px solid '+(isActive?'#5B5FDE':'transparent')+' !important;text-align:left !important;width:calc(100% - 16px) !important;';
+    btn.style.cssText='display:flex !important;align-items:center !important;padding:7px 12px 7px 16px !important;cursor:pointer !important;border-radius:6px !important;margin:1px 0 !important;border:none !important;box-shadow:none !important;font-size:13.5px !important;font-weight:'+(isActive?'600':'400')+' !important;color:'+(isActive?'#A5B4FC':'#94A3B8')+' !important;background:'+(isActive?'rgba(91,95,222,0.15)':'transparent')+' !important;border-left:3px solid '+(isActive?'#5B5FDE':'transparent')+' !important;text-align:left !important;justify-content:flex-start !important;width:100% !important;box-sizing:border-box !important;';
     // Add badge
     if(badge && !btn.querySelector('.nav-badge')){{
       var b=document.createElement('span');
