@@ -64,28 +64,6 @@ html, body {
   flex-shrink: 0;
 }
 
-.sidebar-logo {
-  display: grid;
-  grid-template-columns: repeat(4, 5px);
-  gap: 1.5px;
-}
-
-.sidebar-logo span {
-  width: 5px;
-  height: 5px;
-  border-radius: 1px;
-  background: #5B5FDE;
-}
-
-.sidebar-logo span.dim { opacity: 0.4; }
-.sidebar-logo span.off { background: transparent; }
-
-.sidebar-logo-text {
-  font-size: 18px;
-  font-weight: 800;
-  color: #E2E8F0;
-  letter-spacing: -0.02em;
-}
 
 .sidebar-badge {
   margin-left: auto;
