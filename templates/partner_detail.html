@@ -1,0 +1,351 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.stat-box { background: #fff; padding: 18px 24px; }
+.stat-box-value { font-size: 30px; font-weight: 800; color: #0f172a; letter-spacing: -1px; line-height: 1; }
+.stat-box-value.green { color: #16a34a; }
+.stat-box-value.blue  { color: #2563eb; }
+.stat-box-value.amber { color: #d97706; }
+.stat-box-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); margin-top: 4px; }
+
+/* Partner header */
+.partner-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.partner-header-avatar {
+  width: 56px; height: 56px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+}
+.partner-header-name { font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+.partner-header-meta { font-size: 13px; color: var(--text3); margin-top: 3px; display: flex; align-items: center; gap: 8px; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12.5px; font-weight: 600; color: var(--text3);
+  text-decoration: none; margin-bottom: 16px;
+  transition: color 0.15s;
+}
+.back-link:hover { color: var(--indigo); }
+
+/* Tags row */
+.tags-row {
+  display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 600; padding: 5px 12px;
+  border-radius: 20px; white-space: nowrap;
+}
+.tag-on  { background: rgba(22,163,74,.1);   color: #15803d; border: 1px solid rgba(22,163,74,.2); }
+.tag-off { background: rgba(107,114,128,.07); color: #9ca3af; border: 1px solid rgba(107,114,128,.15); }
+.tag-blue { background: rgba(37,99,235,.1); color: #1d4ed8; border: 1px solid rgba(37,99,235,.2); }
+.tag-purple { background: rgba(124,58,237,.1); color: #6d28d9; border: 1px solid rgba(124,58,237,.2); }
+
+/* Content grid */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.section-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.section-card.full { grid-column: 1 / -1; }
+
+.section-head {
+  padding: 12px 16px;
+  background: #fafafa;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+.section-body { padding: 16px; }
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.field-label { font-size: 10px; color: var(--text3); margin-bottom: 3px; }
+.field-value { font-size: 13.5px; font-weight: 600; color: #0f172a; }
+.field-value.muted { color: var(--text2); font-weight: 400; }
+
+/* Type pill */
+.type-pill {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 5px;
+}
+.type-Acquirer { background: rgba(59,130,246,.12); color: #1d4ed8; }
+.type-PSP      { background: rgba(139,92,246,.12); color: #6d28d9; }
+.type-APM      { background: rgba(20,184,166,.12); color: #0f766e; }
+.type-Fraud    { background: rgba(239,68,68,.12);  color: #b91c1c; }
+.type-BaaS     { background: rgba(245,158,11,.12); color: #b45309; }
+.type-Other    { background: rgba(107,114,128,.12);color: #4b5563; }
+.type-Plug-In  { background: rgba(6,182,212,.12);  color: #0e7490; }
+
+/* Coverage table */
+.coverage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.coverage-table th {
+  padding: 9px 14px; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text3); text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.coverage-table td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.coverage-table tr:last-child td { border-bottom: none; }
+.coverage-table tbody tr:hover td { background: #f8f8fb; }
+
+/* Methods / processing pills */
+.methods-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+.method-tag {
+  font-size: 11px; font-weight: 500; padding: 3px 9px;
+  border-radius: 5px; background: var(--bg3); color: var(--text2);
+}
+
+/* Placeholder section */
+.placeholder-section {
+  background: #fff;
+  border: 1px dashed var(--border2);
+  border-radius: 12px;
+  padding: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  min-height: 100px;
+}
+.placeholder-label { font-size: 12px; font-weight: 600; color: var(--text3); }
+.placeholder-sub { font-size: 11px; color: #c0c0c8; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<a href="/partners" class="back-link">
+  ← Back to Partner Portfolio
+</a>
+
+<!-- Partner header -->
+<div class="partner-header">
+  <div class="partner-header-avatar" style="background:{{ partner.color }}">{{ partner.logo }}</div>
+  <div>
+    <div class="partner-header-name">{{ partner.name }}</div>
+    <div class="partner-header-meta">
+      <span class="type-pill type-{{ partner.type | replace('/', '-') | replace(' ', '-') }}">{{ partner.type }}</span>
+      <span>{{ partner.region }}{% if partner.country %} · {{ partner.country }}{% endif %}</span>
+      {% if partner.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 7px;border-radius:4px;font-weight:700">STRATEGIC</span>{% endif %}
+    </div>
+  </div>
+  <div style="margin-left:auto">
+    <span style="font-size:14px;font-weight:700;
+      {% if partner.status == 'Live' %}color:#16a34a
+      {% elif partner.status == 'Prospect' %}color:#d97706
+      {% else %}color:var(--text2){% endif %}">
+      ● {{ partner.status }}
+    </span>
+  </div>
+</div>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat-box">
+    <div class="stat-box-value">{{ countries | length }}</div>
+    <div class="stat-box-label">Countries</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-box-value blue">{{ methods | length }}</div>
+    <div class="stat-box-label">Payment Methods</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-box-value">{{ processing | length }}</div>
+    <div class="stat-box-label">Processing Types</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-box-value {% if partner.status == 'Live' %}green{% else %}amber{% endif %}">
+      {{ partner.status }}
+    </div>
+    <div class="stat-box-label">Partnership Status</div>
+  </div>
+</div>
+
+<!-- Feature tags -->
+<div class="tags-row">
+  {% for name, active in features.items() %}
+  <span class="tag {% if active %}tag-on{% else %}tag-off{% endif %}">
+    {% if active %}✓{% else %}○{% endif %} {{ name }}
+  </span>
+  {% endfor %}
+  {% if partner.nda %}<span class="tag tag-blue">✓ NDA Signed</span>{% endif %}
+  {% if partner.revshare_active %}<span class="tag tag-purple">✓ Rev Share Active</span>{% endif %}
+</div>
+
+<!-- Content grid -->
+<div class="detail-grid">
+
+  <!-- Partner details -->
+  <div class="section-card">
+    <div class="section-head">Partnership Details</div>
+    <div class="section-body">
+      <div class="field-grid">
+        <div>
+          <div class="field-label">Manager</div>
+          <div class="field-value">{{ partner.manager or '—' }}</div>
+        </div>
+        <div>
+          <div class="field-label">Tier</div>
+          <div class="field-value">{{ partner.tier or '—' }}</div>
+        </div>
+        <div>
+          <div class="field-label">Management Type</div>
+          <div class="field-value muted">{{ partner.mgmt_type or '—' }}</div>
+        </div>
+        <div>
+          <div class="field-label">Rev Share Contract</div>
+          <div class="field-value">{% if partner.revshare %}Yes{% else %}No{% endif %}</div>
+        </div>
+        <div>
+          <div class="field-label">NDA</div>
+          <div class="field-value">{% if partner.nda %}Signed{% else %}Pending{% endif %}</div>
+        </div>
+        <div>
+          <div class="field-label">Integration Used</div>
+          <div class="field-value">{% if partner.integration_used %}Yes{% else %}No{% endif %}</div>
+        </div>
+      </div>
+      {% if partner.comments %}
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <div class="field-label" style="margin-bottom:6px">Notes</div>
+        <div style="font-size:13px;color:var(--text2);line-height:1.6">{{ partner.comments }}</div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Payment methods & processing -->
+  <div class="section-card">
+    <div class="section-head">Capabilities</div>
+    <div class="section-body" style="display:flex;flex-direction:column;gap:16px">
+      <div>
+        <div class="field-label" style="margin-bottom:8px">Payment Methods</div>
+        {% if methods %}
+        <div class="methods-wrap">
+          {% for m in methods %}<span class="method-tag">{{ m }}</span>{% endfor %}
+        </div>
+        {% else %}
+        <div class="field-value muted">—</div>
+        {% endif %}
+      </div>
+      <div>
+        <div class="field-label" style="margin-bottom:8px">Processing Types</div>
+        {% if processing %}
+        <div class="methods-wrap">
+          {% for p in processing %}<span class="method-tag">{{ p }}</span>{% endfor %}
+        </div>
+        {% else %}
+        <div class="field-value muted">—</div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Contacts placeholder -->
+  <div class="section-card">
+    <div class="section-head">Contacts</div>
+    <div class="section-body">
+      <div class="placeholder-section" style="border:none;padding:12px">
+        <div class="placeholder-label">No contacts yet</div>
+        <div class="placeholder-sub">Will be added from partner data</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Commercial placeholder -->
+  <div class="section-card">
+    <div class="section-head">Commercial Terms</div>
+    <div class="section-body">
+      <div class="placeholder-section" style="border:none;padding:12px">
+        <div class="placeholder-label">No commercial data yet</div>
+        <div class="placeholder-sub">Will be added from partner data</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Coverage table -->
+  {% if coverage %}
+  <div class="section-card full">
+    <div class="section-head">Country Coverage ({{ countries | length }} countries)</div>
+    <div style="overflow-x:auto">
+      <table class="coverage-table">
+        <thead>
+          <tr>
+            <th>Country</th>
+            <th>Payment Method</th>
+            <th>Processing</th>
+            <th>Category</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in coverage %}
+          <tr>
+            <td><strong>{{ row.country }}</strong></td>
+            <td>{{ row.method }}</td>
+            <td style="color:var(--text2)">{{ row.processing }}</td>
+            <td style="color:var(--text2)">{{ row.category }}</td>
+            <td>
+              <span style="font-size:12px;font-weight:600;
+                {% if row.status == 'Live' %}color:#16a34a{% else %}color:#d97706{% endif %}">
+                {{ row.status }}
+              </span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% else %}
+  <div class="section-card full">
+    <div class="section-head">Country Coverage</div>
+    <div class="section-body">
+      <div class="placeholder-section" style="border:none">
+        <div class="placeholder-label">No coverage data available</div>
+        <div class="placeholder-sub">Coverage will be loaded from source of truth</div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}

@@ -1,4 +1,5 @@
 import os, json
+import pandas as pd
 from fastapi import FastAPI, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -7,7 +8,7 @@ from starlette.middleware.sessions import SessionMiddleware
 import plotly.graph_objects as go
 
 from data_layer import (
-    load_partners_excel, PIPELINE_STAGES, PIPELINE_DEALS,
+    load_partners_excel, load_sot_data, PIPELINE_STAGES, PIPELINE_DEALS,
     REVSHARE_BY_PARTNER, REVSHARE_MONTHLY, MERCHANTS, CONTACTS,
     REGION_STATS, COUNTRIES, find_partners, get_sot_countries, get_sot_providers,
     _ISO_TO_COUNTRY, _VERTICAL_COLS
@@ -135,6 +136,50 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         live_count=live_count, countries_count=countries_count,
         cats=cats, statuses=statuses, regions=regions, tiers=tiers,
         q=q, cat=cat, status=status, region=region, tier=tier
+    ))
+
+@app.get("/partners/{name}", response_class=HTMLResponse)
+def partner_detail(request: Request, name: str):
+    role = require_auth(request)
+    if not role:
+        return RedirectResponse("/login")
+    all_partners = load_partners_excel()
+    partner = next((p for p in all_partners if p["name"].lower() == name.lower()), None)
+    if not partner:
+        return RedirectResponse("/partners")
+    # Get SOT data for this partner
+    sot_df = load_sot_data()
+    coverage = []
+    if len(sot_df) > 0:
+        pdf = sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()]
+        for _, row in pdf.iterrows():
+            coverage.append({
+                "country_iso": str(row.get("COUNTRY_ISO", "")),
+                "country": _ISO_TO_COUNTRY.get(str(row.get("COUNTRY_ISO", "")), str(row.get("COUNTRY_ISO", ""))),
+                "method": str(row.get("PAYMENT_METHOD_TYPE", "")),
+                "processing": str(row.get("PROCESSING_TYPE", "")),
+                "status": str(row.get("Live/NonLive Partner/Contract signed", "")),
+                "category": str(row.get("PROVIDER_CATEGORY", "")),
+            })
+    countries = sorted(set(c["country"] for c in coverage if c["country"]))
+    methods = sorted(set(c["method"] for c in coverage if c["method"] and c["method"] != "nan"))
+    processing = sorted(set(c["processing"] for c in coverage if c["processing"] and c["processing"] != "nan"))
+    features = {
+        "Tokenization": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_TOKENIZATION", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
+        "Recurring Payments": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_RECURRING_PAYMENTS", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
+        "Payouts": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_PAYOUTS", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
+        "Installments": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_INSTALLMENTS", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
+        "3DS": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("3DS", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
+        "PayFac": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_PAYFAC", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
+    }
+    return tr(request, "partner_detail.html", ctx(
+        request, "partners",
+        partner=partner,
+        coverage=coverage,
+        countries=countries,
+        methods=methods,
+        processing=processing,
+        features=features,
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)
