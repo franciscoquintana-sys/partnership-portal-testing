@@ -112,12 +112,12 @@
 .partners-table tr:last-child td { border-bottom: none; }
 .partners-table tbody tr:hover td { background: #f8f8fb; }
 
-/* Column filter selects inside headers */
-.col-filter {
-  display: block;
+/* Multi-select filter button */
+.col-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   margin-top: 5px;
-  width: 100%;
-  min-width: 90px;
   font-family: var(--font);
   font-size: 10.5px;
   font-weight: 500;
@@ -125,13 +125,49 @@
   background: #fff;
   border: 1px solid var(--border2);
   border-radius: 5px;
-  padding: 3px 6px;
-  outline: none;
+  padding: 3px 7px;
   cursor: pointer;
+  white-space: nowrap;
   text-transform: none;
   letter-spacing: 0;
+  user-select: none;
+  position: relative;
 }
-.col-filter:focus { border-color: var(--indigo); }
+.col-filter-btn.active { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-light); }
+.col-filter-btn .badge { background: var(--indigo); color: #fff; border-radius: 3px; padding: 0 4px; font-size: 9px; font-weight: 700; }
+
+/* Dropdown */
+.col-filter-wrap { position: relative; display: inline-block; }
+.col-filter-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 160px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 999;
+  padding: 6px 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.col-filter-dropdown.open { display: block; }
+.col-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.col-filter-option:hover { background: #f5f5ff; }
+.col-filter-option input[type=checkbox] { accent-color: var(--indigo); width: 13px; height: 13px; cursor: pointer; }
+.col-filter-clear { padding: 5px 12px; font-size: 11px; color: #dc2626; cursor: pointer; border-top: 1px solid var(--border); margin-top: 2px; }
+.col-filter-clear:hover { background: #fff5f5; }
 
 .connector-name {
   font-weight: 600;
@@ -235,43 +271,76 @@
     <table class="partners-table" id="partners-table">
       <thead>
         <tr>
-          <th>Connector Name</th>
+          <th>
+            Connector
+            <div class="col-filter-wrap">
+              <div class="col-filter-btn" id="btn-connector" onclick="toggleDrop('connector',event)">All <span>▾</span></div>
+              <div class="col-filter-dropdown" id="drop-connector">
+                {% for p in partners %}<label class="col-filter-option"><input type="checkbox" value="{{ p.name | lower }}" onchange="applyFilters()"> {{ p.name }}</label>{% endfor %}
+                <div class="col-filter-clear" onclick="clearDrop('connector')">Clear</div>
+              </div>
+            </div>
+          </th>
           <th>
             Type
-            <select class="col-filter" id="f-cat" onchange="applyFilters()">
-              <option value="all">All</option>
-              {% for c in cats %}<option value="{{ c }}" {% if cat==c %}selected{% endif %}>{{ c }}</option>{% endfor %}
-            </select>
+            <div class="col-filter-wrap">
+              <div class="col-filter-btn" id="btn-cat" onclick="toggleDrop('cat',event)">All <span>▾</span></div>
+              <div class="col-filter-dropdown" id="drop-cat">
+                {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+                <div class="col-filter-clear" onclick="clearDrop('cat')">Clear</div>
+              </div>
+            </div>
           </th>
           <th>
             Region
-            <select class="col-filter" id="f-region" onchange="applyFilters()">
-              <option value="all">All</option>
-              {% for r in regions %}<option value="{{ r }}" {% if region==r %}selected{% endif %}>{{ r }}</option>{% endfor %}
-            </select>
+            <div class="col-filter-wrap">
+              <div class="col-filter-btn" id="btn-region" onclick="toggleDrop('region',event)">All <span>▾</span></div>
+              <div class="col-filter-dropdown" id="drop-region">
+                {% for r in regions %}<label class="col-filter-option"><input type="checkbox" value="{{ r }}" onchange="applyFilters()"> {{ r }}</label>{% endfor %}
+                <div class="col-filter-clear" onclick="clearDrop('region')">Clear</div>
+              </div>
+            </div>
           </th>
           <th>
             Country
-            <select class="col-filter" id="f-country" onchange="applyFilters()">
-              <option value="all">All</option>
-              {% for cn in countries %}<option value="{{ cn }}">{{ cn }}</option>{% endfor %}
-            </select>
+            <div class="col-filter-wrap">
+              <div class="col-filter-btn" id="btn-country" onclick="toggleDrop('country',event)">All <span>▾</span></div>
+              <div class="col-filter-dropdown" id="drop-country">
+                {% for cn in countries %}<label class="col-filter-option"><input type="checkbox" value="{{ cn }}" onchange="applyFilters()"> {{ cn }}</label>{% endfor %}
+                <div class="col-filter-clear" onclick="clearDrop('country')">Clear</div>
+              </div>
+            </div>
           </th>
           <th>
             Status
-            <select class="col-filter" id="f-status" onchange="applyFilters()">
-              <option value="all">All</option>
-              {% for s in statuses %}<option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s }}</option>{% endfor %}
-            </select>
+            <div class="col-filter-wrap">
+              <div class="col-filter-btn" id="btn-status" onclick="toggleDrop('status',event)">All <span>▾</span></div>
+              <div class="col-filter-dropdown" id="drop-status">
+                {% for s in statuses %}<label class="col-filter-option"><input type="checkbox" value="{{ s }}" onchange="applyFilters()"> {{ s }}</label>{% endfor %}
+                <div class="col-filter-clear" onclick="clearDrop('status')">Clear</div>
+              </div>
+            </div>
           </th>
           <th>
             Tier
-            <select class="col-filter" id="f-tier" onchange="applyFilters()">
-              <option value="all">All</option>
-              {% for t in tiers %}<option value="{{ t }}" {% if tier==t %}selected{% endif %}>{{ t }}</option>{% endfor %}
-            </select>
+            <div class="col-filter-wrap">
+              <div class="col-filter-btn" id="btn-tier" onclick="toggleDrop('tier',event)">All <span>▾</span></div>
+              <div class="col-filter-dropdown" id="drop-tier">
+                {% for t in tiers %}<label class="col-filter-option"><input type="checkbox" value="{{ t }}" onchange="applyFilters()"> {{ t }}</label>{% endfor %}
+                <div class="col-filter-clear" onclick="clearDrop('tier')">Clear</div>
+              </div>
+            </div>
           </th>
-          <th>Manager</th>
+          <th>
+            Manager
+            <div class="col-filter-wrap">
+              <div class="col-filter-btn" id="btn-manager" onclick="toggleDrop('manager',event)">All <span>▾</span></div>
+              <div class="col-filter-dropdown" id="drop-manager">
+                {% for m in managers %}<label class="col-filter-option"><input type="checkbox" value="{{ m | lower }}" onchange="applyFilters()"> {{ m }}</label>{% endfor %}
+                <div class="col-filter-clear" onclick="clearDrop('manager')">Clear</div>
+              </div>
+            </div>
+          </th>
         </tr>
       </thead>
       <tbody id="partners-tbody">
@@ -283,6 +352,7 @@
             data-country="{{ p.country }}"
             data-tier="{{ p.tier }}"
             data-partner="{{ p.name }}"
+            data-manager="{{ p.manager | lower }}"
             onclick="window.location='/partners/'+encodeURIComponent(this.dataset.partner)"
             style="cursor:pointer">
           <td>
@@ -313,26 +383,61 @@
 
 {% block scripts %}
 <script>
+const FILTERS = ['connector','cat','region','country','status','tier','manager'];
+
+function getSelected(key) {
+  return [...document.querySelectorAll(`#drop-${key} input[type=checkbox]:checked`)].map(c => c.value);
+}
+
+function updateBtn(key) {
+  const sel = getSelected(key);
+  const btn = document.getElementById(`btn-${key}`);
+  if (sel.length === 0) {
+    btn.innerHTML = `All <span>▾</span>`;
+    btn.classList.remove('active');
+  } else {
+    btn.innerHTML = `${sel.length} selected <span class="badge">${sel.length}</span> <span>▾</span>`;
+    btn.classList.add('active');
+  }
+}
+
 function applyFilters() {
   const q = document.getElementById('search').value.toLowerCase();
-  const cat = document.getElementById('f-cat').value;
-  const region = document.getElementById('f-region').value;
-  const country = document.getElementById('f-country').value;
-  const status = document.getElementById('f-status').value;
-  const tier = document.getElementById('f-tier').value;
-  const rows = document.querySelectorAll('#partners-tbody tr');
-  let count = 0;
-  rows.forEach(row => {
-    const name = row.dataset.name || '';
-    const show = (!q || name.includes(q))
-      && (cat === 'all' || row.dataset.type === cat)
-      && (region === 'all' || row.dataset.region === region)
-      && (country === 'all' || row.dataset.country === country)
-      && (status === 'all' || row.dataset.status === status)
-      && (tier === 'all' || row.dataset.tier === tier);
+  const sel = {};
+  FILTERS.forEach(k => { sel[k] = getSelected(k); updateBtn(k); });
+
+  document.querySelectorAll('#partners-tbody tr').forEach(row => {
+    const show =
+      (!q || (row.dataset.name || '').includes(q))
+      && (sel.connector.length === 0 || sel.connector.includes(row.dataset.name))
+      && (sel.cat.length === 0      || sel.cat.includes(row.dataset.type))
+      && (sel.region.length === 0   || sel.region.includes(row.dataset.region))
+      && (sel.country.length === 0  || sel.country.includes(row.dataset.country))
+      && (sel.status.length === 0   || sel.status.includes(row.dataset.status))
+      && (sel.tier.length === 0     || sel.tier.includes(row.dataset.tier))
+      && (sel.manager.length === 0  || sel.manager.includes(row.dataset.manager));
     row.style.display = show ? '' : 'none';
-    if (show) count++;
   });
 }
+
+function toggleDrop(key, e) {
+  e.stopPropagation();
+  const drop = document.getElementById(`drop-${key}`);
+  const isOpen = drop.classList.contains('open');
+  // close all
+  document.querySelectorAll('.col-filter-dropdown').forEach(d => d.classList.remove('open'));
+  if (!isOpen) drop.classList.add('open');
+}
+
+function clearDrop(key) {
+  event.stopPropagation();
+  document.querySelectorAll(`#drop-${key} input[type=checkbox]`).forEach(c => c.checked = false);
+  applyFilters();
+}
+
+// close dropdowns on outside click
+document.addEventListener('click', () => {
+  document.querySelectorAll('.col-filter-dropdown').forEach(d => d.classList.remove('open'));
+});
 </script>
 {% endblock %}
