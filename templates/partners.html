@@ -177,17 +177,24 @@
 </style>
 {% endblock %}
 
-{% block hero %}
-<div class="page-hero">
-  <div class="page-hero-left">
-    <div class="page-hero-title"><span>Partnerships Portal</span> | Partner Portfolio</div>
-    <div class="page-hero-sub">Search, filter and explore Yuno's payment partner ecosystem.</div>
-  </div>
-</div>
 {% endblock %}
 
 {% block content %}
 <div class="partners-page">
+
+  <!-- Dark banner -->
+  <div style="
+    background: linear-gradient(120deg, #0a1628 70%, #0f2044 100%);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  ">
+    <div style="position:absolute;right:-40px;top:-40px;width:300px;height:200px;background:radial-gradient(ellipse,rgba(79,70,229,0.25) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Yuno Connectors</div>
+    <div style="font-size:13px;color:#94a3b8">Search, filter and explore Yuno's payment partner ecosystem.</div>
+  </div>
 
   <!-- Stats bar -->
   <div class="stats-bar">
