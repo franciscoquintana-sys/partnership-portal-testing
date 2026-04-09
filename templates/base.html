@@ -54,7 +54,10 @@
     <div class="topbar">
       <a href="/logout" class="btn-signout">Sign out</a>
     </div>
-    {% block content %}{% endblock %}
+    {% block hero %}{% endblock %}
+    <div class="main-body">
+      {% block content %}{% endblock %}
+    </div>
   </main>
 
 </div>
