@@ -241,7 +241,7 @@ section[data-testid="stMain"] > div { background:var(--bg) !important; }
 [data-testid="stSidebar"] > div:first-child { padding:0 !important; }
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] { padding:0 !important; gap:2px !important; }
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div { padding:0 !important; margin:0 !important; }
-[data-testid="stSidebar"] [data-testid="stButton"] { padding:0 8px !important; margin:0 !important; }
+[data-testid="stSidebar"] [data-testid="stButton"] { padding:0 !important; margin:0 !important; }
 /* Role toggle buttons (inside columns in sidebar) */
 [data-testid="stSidebar"] [data-testid="column"] [data-testid="stButton"] > button {
   border-radius:20px !important; border:none !important; font-size:11.5px !important; font-weight:600 !important; padding:7px 12px !important;
@@ -256,7 +256,7 @@ section[data-testid="stMain"] > div { background:var(--bg) !important; }
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div > [data-testid="stButton"] > button {
   background:transparent !important; border:none !important; color:var(--text2) !important;
   text-align:left !important; justify-content:flex-start !important; border-radius:8px !important;
-  font-size:14px !important; font-weight:400 !important; padding:10px 14px !important;
+  font-size:14px !important; font-weight:400 !important; padding:10px 14px 10px 20px !important;
   display:flex !important; align-items:center !important; width:100% !important;
 }
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div > [data-testid="stButton"] > button:hover {
@@ -264,7 +264,7 @@ section[data-testid="stMain"] > div { background:var(--bg) !important; }
 }
 [data-testid="stSidebar"] button[data-nav-active="true"] {
   background:var(--indigo-light) !important; border-left:3px solid var(--indigo) !important;
-  border-radius:0 8px 8px 0 !important; color:var(--indigo) !important; font-weight:600 !important; padding-left:11px !important;
+  border-radius:0 8px 8px 0 !important; color:var(--indigo) !important; font-weight:600 !important; padding-left:17px !important;
 }
 [data-testid="stSidebar"] button[data-badge]::after {
   content:attr(data-badge); margin-left:auto; font-size:10px; font-family:var(--mono);
