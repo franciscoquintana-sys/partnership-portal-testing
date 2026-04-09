@@ -128,13 +128,14 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     statuses = sorted(set(p["status"] for p in all_partners if p["status"]))
     regions = sorted(set(p["region"] for p in all_partners if p["region"]))
     tiers = sorted(set(p["tier"] for p in all_partners if p.get("tier")))
+    countries = sorted(set(p["country"] for p in all_partners if p.get("country")))
     live_count = sum(1 for p in all_partners if p["status"] == "Live")
-    countries_count = len(set(p["country"] for p in all_partners if p["country"]))
+    countries_count = len(countries)
     return tr(request, "partners.html", ctx(
         request, "partners",
         partners=filtered, total=len(all_partners),
         live_count=live_count, countries_count=countries_count,
-        cats=cats, statuses=statuses, regions=regions, tiers=tiers,
+        cats=cats, statuses=statuses, regions=regions, tiers=tiers, countries=countries,
         q=q, cat=cat, status=status, region=region, tier=tier
     ))
 
