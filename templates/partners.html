@@ -1,82 +1,349 @@
 {% extends "base.html" %}
+{% block head %}
+<style>
+.partners-page { display: flex; flex-direction: column; gap: 0; }
+
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.stat-box {
+  background: #fff;
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.stat-box-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.stat-box-value.green { color: #16a34a; }
+.stat-box-value.amber { color: #d97706; }
+.stat-box-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+/* Search */
+.search-wrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+}
+.search-input {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 13.5px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--border2);
+  border-radius: 10px;
+  padding: 10px 14px 10px 40px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-input:focus {
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.08);
+}
+
+/* Quick filter chips */
+.chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+}
+.chip {
+  font-family: var(--font);
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border2);
+  background: #fff;
+  color: var(--text2);
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.chip:hover { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-light); }
+.chip.active { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-light); }
+
+/* Filter row */
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+.filter-count {
+  font-size: 12px;
+  color: var(--text3);
+  margin-left: auto;
+}
+.btn-export {
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--indigo);
+  border: none;
+  border-radius: 7px;
+  padding: 6px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Table */
+.partners-table-wrap {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.partners-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.partners-table th {
+  padding: 10px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text3);
+  background: #fafafa;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+}
+.partners-table td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+}
+.partners-table tr:last-child td { border-bottom: none; }
+.partners-table tbody tr:hover td { background: #f8f8fb; }
+
+.connector-name {
+  font-weight: 600;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.connector-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.type-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.type-Acquirer  { background: rgba(59,130,246,.12); color: #1d4ed8; }
+.type-PSP       { background: rgba(139,92,246,.12); color: #6d28d9; }
+.type-APM       { background: rgba(20,184,166,.12); color: #0f766e; }
+.type-Fraud     { background: rgba(239,68,68,.12);  color: #b91c1c; }
+.type-BaaS      { background: rgba(245,158,11,.12); color: #b45309; }
+.type-Other     { background: rgba(107,114,128,.12);color: #4b5563; }
+.type-Plug-In   { background: rgba(6,182,212,.12);  color: #0e7490; }
+
+.status-live     { color: #16a34a; font-weight: 600; }
+.status-prospect { color: #d97706; font-weight: 600; }
+.status-default  { color: var(--text2); }
+</style>
+{% endblock %}
+
 {% block content %}
+<div class="partners-page">
 
-<div class="page-header">
-  <div class="page-title">Partner Portfolio</div>
-  <div class="page-sub">{{ total }} partners · showing {{ partners | length }}</div>
-</div>
-
-<div class="filters">
-  <input class="filter-input" type="text" id="search" placeholder="Search partners…" value="{{ q }}" oninput="applyFilters()">
-  <select class="filter-select" id="cat" onchange="applyFilters()">
-    <option value="all" {% if cat=='all' %}selected{% endif %}>All types</option>
-    {% for c in cats %}
-    <option value="{{ c }}" {% if cat==c %}selected{% endif %}>{{ c }}</option>
-    {% endfor %}
-  </select>
-  <select class="filter-select" id="status" onchange="applyFilters()">
-    <option value="all" {% if status=='all' %}selected{% endif %}>All statuses</option>
-    {% for s in statuses %}
-    <option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s }}</option>
-    {% endfor %}
-  </select>
-  <select class="filter-select" id="region" onchange="applyFilters()">
-    <option value="all" {% if region=='all' %}selected{% endif %}>All regions</option>
-    {% for r in regions %}
-    <option value="{{ r }}" {% if region==r %}selected{% endif %}>{{ r }}</option>
-    {% endfor %}
-  </select>
-  <span style="font-size:12px;color:var(--text3);margin-left:4px" id="count-label">{{ partners | length }} results</span>
-</div>
-
-<div class="partner-grid" id="partner-grid">
-  {% for p in partners %}
-  <div class="partner-card"
-       data-name="{{ p.name | lower }}"
-       data-type="{{ p.type }}"
-       data-status="{{ p.status }}"
-       data-region="{{ p.region }}">
-    <div class="partner-card-header">
-      <div class="partner-logo" style="background:{{ p.color }}">{{ p.logo }}</div>
-      <div>
-        <div class="partner-name">{{ p.name }}</div>
-        <div class="partner-meta">{{ p.region }}{% if p.country %} · {{ p.country }}{% endif %}</div>
-      </div>
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="stat-box-value">{{ total }}</div>
+      <div class="stat-box-label">Total Connectors</div>
     </div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap">
-      <span class="pill {% if p.status == 'Live' %}pill-green{% elif p.status == 'Prospect' %}pill-amber{% elif p.status == 'Negotiation' %}pill-blue{% else %}pill-grey{% endif %}">
-        {{ p.status }}
-      </span>
-      <span class="pill pill-grey">{{ p.type }}</span>
-      {% if p.strategic %}<span class="pill pill-purple">Strategic</span>{% endif %}
+    <div class="stat-box">
+      <div class="stat-box-value green">{{ live_count }}</div>
+      <div class="stat-box-label">Live & Active</div>
     </div>
-    {% if p.manager %}
-    <div style="font-size:11px;color:var(--text3)">Manager: {{ p.manager }}</div>
+    <div class="stat-box">
+      <div class="stat-box-value">{{ countries_count }}</div>
+      <div class="stat-box-label">Countries</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-value amber">89.4%</div>
+      <div class="stat-box-label">Avg Approval Rate</div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-wrap">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input class="search-input" id="search" type="text" placeholder="Ask anything — contracts, features, pricing, settlement, regions…" value="{{ q }}" oninput="applyFilters()">
+  </div>
+
+  <!-- Quick filter chips -->
+  <div class="chips">
+    <span class="chip {% if cat=='Acquirer' %}active{% endif %}" onclick="setFilter('cat','Acquirer')">Acquirers</span>
+    <span class="chip {% if cat=='PSP' %}active{% endif %}" onclick="setFilter('cat','PSP')">PSPs</span>
+    <span class="chip {% if cat=='APM' %}active{% endif %}" onclick="setFilter('cat','APM')">APMs</span>
+    <span class="chip {% if cat=='Fraud' %}active{% endif %}" onclick="setFilter('cat','Fraud')">Fraud</span>
+    <span class="chip {% if status=='Live' %}active{% endif %}" onclick="setFilter('status','Live')">Live Partners</span>
+    <span class="chip {% if region=='Brazil' %}active{% endif %}" onclick="setFilter('region','Brazil')">Brazil</span>
+    <span class="chip {% if region=='LATAM' %}active{% endif %}" onclick="setFilter('region','LATAM')">LATAM</span>
+    <span class="chip {% if region=='APAC' %}active{% endif %}" onclick="setFilter('region','APAC')">APAC</span>
+    <span class="chip {% if region=='EMEA' %}active{% endif %}" onclick="setFilter('region','EMEA')">EMEA</span>
+    {% if q or cat != 'all' or status != 'all' or region != 'all' %}
+    <span class="chip" onclick="clearFilters()" style="color:#dc2626;border-color:#fca5a5">✕ Clear</span>
     {% endif %}
   </div>
-  {% endfor %}
-</div>
 
+  <!-- Filter row -->
+  <div class="filter-row">
+    <select class="filter-select" id="f-cat" onchange="applyFilters()">
+      <option value="all" {% if cat=='all' %}selected{% endif %}>Type</option>
+      {% for c in cats %}<option value="{{ c }}" {% if cat==c %}selected{% endif %}>{{ c }}</option>{% endfor %}
+    </select>
+    <select class="filter-select" id="f-region" onchange="applyFilters()">
+      <option value="all" {% if region=='all' %}selected{% endif %}>Region</option>
+      {% for r in regions %}<option value="{{ r }}" {% if region==r %}selected{% endif %}>{{ r }}</option>{% endfor %}
+    </select>
+    <select class="filter-select" id="f-status" onchange="applyFilters()">
+      <option value="all" {% if status=='all' %}selected{% endif %}>Status</option>
+      {% for s in statuses %}<option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s }}</option>{% endfor %}
+    </select>
+    <select class="filter-select" id="f-tier" onchange="applyFilters()">
+      <option value="all" {% if tier=='all' %}selected{% endif %}>Tier</option>
+      {% for t in tiers %}<option value="{{ t }}" {% if tier==t %}selected{% endif %}>{{ t }}</option>{% endfor %}
+    </select>
+    <span class="filter-count" id="count-label">{{ partners | length }} connectors</span>
+  </div>
+
+  <!-- Table -->
+  <div class="partners-table-wrap">
+    <table class="partners-table" id="partners-table">
+      <thead>
+        <tr>
+          <th>Connector Name</th>
+          <th>Type</th>
+          <th>Region</th>
+          <th>Country</th>
+          <th>Status</th>
+          <th>Manager</th>
+        </tr>
+      </thead>
+      <tbody id="partners-tbody">
+        {% for p in partners %}
+        <tr data-name="{{ p.name | lower }}"
+            data-type="{{ p.type }}"
+            data-status="{{ p.status }}"
+            data-region="{{ p.region }}"
+            data-tier="{{ p.tier }}">
+          <td>
+            <div class="connector-name">
+              <div class="connector-avatar" style="background:{{ p.color }}">{{ p.logo }}</div>
+              {{ p.name }}
+              {% if p.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 6px;border-radius:4px;font-weight:700">STRATEGIC</span>{% endif %}
+            </div>
+          </td>
+          <td><span class="type-pill type-{{ p.type | replace('/', '-') | replace(' ', '-') }}">{{ p.type }}</span></td>
+          <td style="color:var(--text2)">{{ p.region }}</td>
+          <td style="color:var(--text2)">{{ p.country }}</td>
+          <td>
+            <span class="{% if p.status == 'Live' %}status-live{% elif p.status == 'Prospect' %}status-prospect{% else %}status-default{% endif %}">
+              {{ p.status }}
+            </span>
+          </td>
+          <td style="color:var(--text2);font-size:12px">{{ p.manager }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
 {% endblock %}
+
 {% block scripts %}
 <script>
 function applyFilters() {
   const q = document.getElementById('search').value.toLowerCase();
-  const cat = document.getElementById('cat').value;
-  const status = document.getElementById('status').value;
-  const region = document.getElementById('region').value;
-  const cards = document.querySelectorAll('.partner-card');
+  const cat = document.getElementById('f-cat').value;
+  const region = document.getElementById('f-region').value;
+  const status = document.getElementById('f-status').value;
+  const tier = document.getElementById('f-tier').value;
+  const rows = document.querySelectorAll('#partners-tbody tr');
   let count = 0;
-  cards.forEach(card => {
-    const matchQ = !q || card.dataset.name.includes(q);
-    const matchCat = cat === 'all' || card.dataset.type === cat;
-    const matchStatus = status === 'all' || card.dataset.status === status;
-    const matchRegion = region === 'all' || card.dataset.region === region;
-    const show = matchQ && matchCat && matchStatus && matchRegion;
-    card.style.display = show ? '' : 'none';
+  rows.forEach(row => {
+    const name = row.dataset.name || '';
+    const show = (!q || name.includes(q))
+      && (cat === 'all' || row.dataset.type === cat)
+      && (region === 'all' || row.dataset.region === region)
+      && (status === 'all' || row.dataset.status === status)
+      && (tier === 'all' || row.dataset.tier === tier);
+    row.style.display = show ? '' : 'none';
     if (show) count++;
   });
-  document.getElementById('count-label').textContent = count + ' results';
+  document.getElementById('count-label').textContent = count + ' connectors';
+}
+
+function setFilter(key, val) {
+  const map = { cat: 'f-cat', region: 'f-region', status: 'f-status', tier: 'f-tier' };
+  const el = document.getElementById(map[key]);
+  if (el) { el.value = val; applyFilters(); }
+  // Update chip active states
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  event.target.classList.add('active');
+}
+
+function clearFilters() {
+  document.getElementById('search').value = '';
+  ['f-cat','f-region','f-status','f-tier'].forEach(id => document.getElementById(id).value = 'all');
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  applyFilters();
 }
 </script>
 {% endblock %}

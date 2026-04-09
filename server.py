@@ -106,7 +106,7 @@ def home(request: Request):
     return tr(request, "home.html", ctx(request, "home"))
 
 @app.get("/partners", response_class=HTMLResponse)
-def partners(request: Request, q: str = "", cat: str = "all", status: str = "all", region: str = "all"):
+def partners(request: Request, q: str = "", cat: str = "all", status: str = "all", region: str = "all", tier: str = "all"):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
@@ -114,21 +114,27 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     filtered = all_partners
     if q:
         ql = q.lower()
-        filtered = [p for p in filtered if ql in p["name"].lower()]
+        filtered = [p for p in filtered if ql in p["name"].lower() or ql in p.get("type","").lower() or ql in p.get("region","").lower() or ql in p.get("country","").lower()]
     if cat != "all":
         filtered = [p for p in filtered if p["type"] == cat]
     if status != "all":
         filtered = [p for p in filtered if p["status"] == status]
     if region != "all":
         filtered = [p for p in filtered if p["region"] == region]
+    if tier != "all":
+        filtered = [p for p in filtered if p.get("tier") == tier]
     cats = sorted(set(p["type"] for p in all_partners if p["type"]))
     statuses = sorted(set(p["status"] for p in all_partners if p["status"]))
     regions = sorted(set(p["region"] for p in all_partners if p["region"]))
+    tiers = sorted(set(p["tier"] for p in all_partners if p.get("tier")))
+    live_count = sum(1 for p in all_partners if p["status"] == "Live")
+    countries_count = len(set(p["country"] for p in all_partners if p["country"]))
     return tr(request, "partners.html", ctx(
         request, "partners",
         partners=filtered, total=len(all_partners),
-        cats=cats, statuses=statuses, regions=regions,
-        q=q, cat=cat, status=status, region=region
+        live_count=live_count, countries_count=countries_count,
+        cats=cats, statuses=statuses, regions=regions, tiers=tiers,
+        q=q, cat=cat, status=status, region=region, tier=tier
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)
