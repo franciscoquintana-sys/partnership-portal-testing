@@ -1,4 +1,4 @@
-import os, sys, functools
+import os, sys, time
 import pandas as pd
 
 _BASE = os.path.dirname(os.path.abspath(__file__))
@@ -21,53 +21,73 @@ _STAGE_MAP = {
     "Non-qualified Partner": "Non-Qualified"
 }
 
-@functools.lru_cache(maxsize=1)
-def load_partners_excel():
-    path = os.path.join(_BASE, "data", "strategic_accounts.xlsx")
-    try:
-        df = pd.read_excel(path, sheet_name="All partners")
-        seen, partners = set(), []
-        for _, row in df.iterrows():
-            name = str(row.get("Provider", "")).strip()
-            if not name or name in seen or name == "nan":
-                continue
-            seen.add(name)
-            offering = str(row.get("Partner offering (acquirer, APM, Fraud etc)", "Other")).strip()
-            stage_raw = str(row.get("Deal Stage", "")).strip()
-            region = str(row.get("Region", "")).strip()
-            country = str(row.get("Country", "")).strip()
-            tier = str(row.get("Type of Partner", "")).strip()
-            manager = str(row.get("Partner Manager", "")).strip()
-            strategic = bool(row.get("Strategic?", False))
-            mgmt_type = str(row.get("Type of Management", "")).strip()
-            initials = "".join(w[0] for w in name.replace("/", " ").replace("(", " ").split() if w)[:2].upper()
-            partners.append({
-                "name": name,
-                "type": _TYPE_SHORT.get(offering, offering),
-                "offering_raw": offering,
-                "region": region if region != "nan" else "",
-                "country": country if country != "nan" else "",
-                "status": _STAGE_MAP.get(stage_raw, stage_raw),
-                "stage_raw": stage_raw,
-                "tier": tier if tier != "nan" else "",
-                "manager": manager if manager != "nan" else "",
-                "strategic": strategic,
-                "mgmt_type": mgmt_type if mgmt_type != "nan" else "",
-                "logo": initials,
-                "color": _TYPE_COLOR.get(offering, "#64748b"),
-                "cat": _TYPE_SHORT.get(offering, offering),
-                "nda": bool(row.get("NDA Signed and in drive", False)),
-                "revshare": bool(row.get("Revshare Contract", False)),
-                "revshare_active": bool(row.get("Revshare active", False)),
-                "integration_ready": bool(row.get("Integration Ready by Yuno", False)),
-                "integration_used": bool(row.get("Integration Used by Merchants", False)),
-                "comments": str(row.get("Comments", "")).strip() if str(row.get("Comments", "")).strip() != "nan" else "",
-            })
-        return sorted(partners, key=lambda x: x["name"].lower())
-    except Exception:
-        return []
+_PARTNERS_SHEET_URL = (
+    "https://docs.google.com/spreadsheets/d/"
+    "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
+    "/export?format=csv&gid=1597186279"
+)
+_PARTNERS_CACHE = {"data": None, "ts": 0}
+_CACHE_TTL = 300  # 5 minutes
 
-@functools.lru_cache(maxsize=1)
+def _parse_partners_df(df):
+    seen, partners = set(), []
+    for _, row in df.iterrows():
+        name = str(row.get("Provider", "")).strip()
+        if not name or name in seen or name == "nan":
+            continue
+        seen.add(name)
+        offering = str(row.get("Partner offering (acquirer, APM, Fraud etc)", "Other")).strip()
+        stage_raw = str(row.get("Deal Stage", "")).strip()
+        region = str(row.get("Region", "")).strip()
+        country = str(row.get("Country", "")).strip()
+        tier = str(row.get("Type of Partner", "")).strip()
+        manager = str(row.get("Partner Manager", "")).strip()
+        strategic = bool(row.get("Strategic?", False))
+        mgmt_type = str(row.get("Type of Management", "")).strip()
+        initials = "".join(w[0] for w in name.replace("/", " ").replace("(", " ").split() if w)[:2].upper()
+        partners.append({
+            "name": name,
+            "type": _TYPE_SHORT.get(offering, offering),
+            "offering_raw": offering,
+            "region": region if region != "nan" else "",
+            "country": country if country != "nan" else "",
+            "status": _STAGE_MAP.get(stage_raw, stage_raw),
+            "stage_raw": stage_raw,
+            "tier": tier if tier != "nan" else "",
+            "manager": manager if manager != "nan" else "",
+            "strategic": strategic,
+            "mgmt_type": mgmt_type if mgmt_type != "nan" else "",
+            "logo": initials,
+            "color": _TYPE_COLOR.get(offering, "#64748b"),
+            "cat": _TYPE_SHORT.get(offering, offering),
+            "nda": bool(row.get("NDA Signed and in drive", False)),
+            "revshare": bool(row.get("Revshare Contract", False)),
+            "revshare_active": bool(row.get("Revshare active", False)),
+            "integration_ready": bool(row.get("Integration Ready by Yuno", False)),
+            "integration_used": bool(row.get("Integration Used by Merchants", False)),
+            "comments": str(row.get("Comments", "")).strip() if str(row.get("Comments", "")).strip() != "nan" else "",
+        })
+    return sorted(partners, key=lambda x: x["name"].lower())
+
+def load_partners_excel():
+    now = time.time()
+    if _PARTNERS_CACHE["data"] is not None and now - _PARTNERS_CACHE["ts"] < _CACHE_TTL:
+        return _PARTNERS_CACHE["data"]
+    try:
+        df = pd.read_csv(_PARTNERS_SHEET_URL)
+        result = _parse_partners_df(df)
+    except Exception:
+        # fall back to local file if sheet is unreachable
+        try:
+            path = os.path.join(_BASE, "data", "strategic_accounts.xlsx")
+            df = pd.read_excel(path, sheet_name="All partners")
+            result = _parse_partners_df(df)
+        except Exception:
+            result = _PARTNERS_CACHE["data"] or []
+    _PARTNERS_CACHE["data"] = result
+    _PARTNERS_CACHE["ts"] = now
+    return result
+
 def load_sot_data():
     path = os.path.join(_BASE, "data", "source_of_truth.xlsx")
     try:
