@@ -240,7 +240,7 @@ section[data-testid="stMain"] > div { background:var(--bg) !important; }
 [data-testid="stSidebar"] { background:#0A0F1E !important; border-right:0.5px solid rgba(255,255,255,0.05) !important; }
 [data-testid="stSidebar"] > div:first-child { padding:0 !important; }
 [data-testid="stSidebarContent"] { padding:0 !important; }
-[data-testid="stSidebarUserContent"] { padding:0 !important; }
+[data-testid="stSidebarUserContent"] { padding:0 8px !important; }
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] { padding:0 !important; gap:0 !important; }
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div { padding:0 !important; margin:0 !important; }
 [data-testid="stSidebar"] [data-testid="stButton"] { padding:0 !important; margin:0 !important; width:100% !important; }
@@ -255,26 +255,36 @@ section[data-testid="stMain"] > div { background:var(--bg) !important; }
 [data-testid="stSidebar"] [data-testid="column"] [data-testid="stButton"] > button[data-testid="baseButton-secondary"] {
   background:transparent !important; color:var(--text3) !important;
 }
-/* Nav buttons (sidebar buttons NOT in columns) */
-[data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div > [data-testid="stButton"] > button {
+/* Nav buttons */
+[data-testid="stSidebar"] button {
   background:transparent !important; border:none !important; color:var(--text2) !important;
   text-align:left !important; justify-content:flex-start !important; border-radius:8px !important;
-  font-size:14px !important; font-weight:400 !important; padding:10px 14px 10px 20px !important;
+  font-size:14px !important; font-weight:400 !important; padding:8px 12px 8px 16px !important;
   display:flex !important; align-items:center !important; width:100% !important;
 }
-[data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div > [data-testid="stButton"] > button:hover {
-  background:var(--bg3) !important; color:var(--text) !important;
+[data-testid="stSidebar"] button:hover {
+  background:rgba(255,255,255,0.06) !important; color:#E2E8F0 !important;
 }
 [data-testid="stSidebar"] button[data-nav-active="true"] {
   background:var(--indigo-light) !important; border-left:3px solid var(--indigo) !important;
-  border-radius:0 8px 8px 0 !important; color:var(--indigo) !important; font-weight:600 !important; padding-left:17px !important;
+  border-radius:0 8px 8px 0 !important; color:var(--indigo) !important; font-weight:600 !important; padding-left:13px !important;
 }
 [data-testid="stSidebar"] button[data-badge]::after {
   content:attr(data-badge); margin-left:auto; font-size:10px; font-family:var(--mono);
-  background:var(--bg3); color:var(--text3); padding:2px 7px; border-radius:10px; flex-shrink:0;
+  background:rgba(255,255,255,0.08); color:#94A3B8; padding:2px 7px; border-radius:10px; flex-shrink:0;
 }
 [data-testid="stSidebar"] button[data-nav-active="true"][data-badge]::after {
   background:var(--indigo-mid); color:var(--indigo);
+}
+/* Re-override role toggle pill buttons inside columns */
+[data-testid="stSidebar"] [data-testid="column"] button {
+  border-radius:20px !important; font-size:11.5px !important; font-weight:600 !important; padding:7px 12px !important; width:auto !important;
+}
+[data-testid="stSidebar"] [data-testid="column"] button[data-testid="baseButton-primary"] {
+  background:var(--indigo) !important; color:#fff !important; border:none !important;
+}
+[data-testid="stSidebar"] [data-testid="column"] button[data-testid="baseButton-secondary"] {
+  background:transparent !important; color:var(--text3) !important; border:none !important;
 }
 [data-testid="stTextInput"] input { background:#fff !important; border:1px solid var(--border2) !important; color:var(--text) !important; border-radius:8px !important; font-family:var(--font) !important; font-size:15px !important; }
 [data-testid="stTextInput"] input[type="password"] { background:#fff !important; color:var(--text) !important; -webkit-text-fill-color:var(--text) !important; caret-color:var(--text) !important; }
@@ -698,7 +708,7 @@ def show_sidebar():
         _NAV_BADGES = {"Partner Portfolio":"47","Partners In Flight":"3","Partner Leads":"24","Merchants":"12","Rev Share":"Apr 1","Recommendations":"12"}
 
         for section_label, items in NAV_SECTIONS:
-            st.markdown(f'<div style="padding:14px 0 4px 16px;font-size:9.5px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#334155;">{section_label}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="padding:16px 0 4px 16px;font-size:9.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#475569;">{section_label}</div>', unsafe_allow_html=True)
             for page_key, label in items:
                 if st.button(label, key=f"nav_{page_key}", use_container_width=True, type="secondary"):
                     st.session_state.page = page_key
