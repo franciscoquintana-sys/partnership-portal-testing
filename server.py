@@ -311,6 +311,75 @@ def merch_sim(request: Request):
         verticals=list(_VERTICAL_COLS.keys()),
     ))
 
+# ── AI Search ────────────────────────────────────────────────────────────────
+
+@app.post("/api/ai_search")
+async def ai_search(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    query = body.get("query", "").strip()
+    if not query:
+        return JSONResponse({"filters": {}, "explanation": ""})
+
+    all_partners = load_partners_excel()
+    cats     = sorted(set(p["type"]    for p in all_partners if p["type"]))
+    regions  = sorted(set(p["region"]  for p in all_partners if p["region"]))
+    countries= sorted(set(p["country"] for p in all_partners if p.get("country")))
+    statuses = sorted(set(p["status"]  for p in all_partners if p["status"]))
+    tiers    = sorted(set(p["tier"]    for p in all_partners if p.get("tier")))
+    managers = sorted(set(p["manager"] for p in all_partners if p.get("manager")))
+    names    = sorted(set(p["name"]    for p in all_partners))
+
+    import anthropic, json as _json
+    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY", ""))
+
+    system = f"""You are a filter assistant for Yuno's payment partner portal.
+Given a natural language query, extract filter criteria and return ONLY valid JSON.
+
+Available values:
+- types: {cats}
+- regions: {regions}
+- countries: {countries}
+- statuses: {statuses}
+- tiers: {tiers}
+- managers: {managers}
+- connector names: {names}
+
+Return ONLY a JSON object (no markdown, no explanation outside JSON):
+{{
+  "connector": [],   // exact names from connector names list
+  "cat": [],         // from types list
+  "region": [],      // from regions list
+  "country": [],     // from countries list
+  "status": [],      // from statuses list
+  "tier": [],        // from tiers list
+  "manager": [],     // from managers list (lowercase)
+  "explanation": ""  // 1 sentence: what you found/applied
+}}
+If a filter has no match, return empty array. Match loosely (e.g. "china" → "China")."""
+
+    try:
+        msg = client.messages.create(
+            model="claude-haiku-4-5-20251001",
+            max_tokens=512,
+            system=system,
+            messages=[{"role": "user", "content": query}]
+        )
+        raw = msg.content[0].text.strip()
+        # strip markdown code fences if present
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        filters = _json.loads(raw.strip())
+        # lowercase manager values for matching
+        if filters.get("manager"):
+            filters["manager"] = [m.lower() for m in filters["manager"]]
+        return JSONResponse({"filters": filters, "explanation": filters.pop("explanation", "")})
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 # ── API endpoints ─────────────────────────────────────────────────────────────
 
 @app.get("/api/partners")
