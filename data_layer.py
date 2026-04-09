@@ -1,4 +1,4 @@
-import os, sys, time
+import os, sys, time, json
 import pandas as pd
 
 _BASE = os.path.dirname(os.path.abspath(__file__))
@@ -21,13 +21,40 @@ _STAGE_MAP = {
     "Non-qualified Partner": "Non-Qualified"
 }
 
-_PARTNERS_SHEET_URL = (
-    "https://docs.google.com/spreadsheets/d/"
-    "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
-    "/export?format=csv&gid=1597186279"
-)
+_SHEET_ID = "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
+_SHEET_TAB = "All partners"
 _PARTNERS_CACHE = {"data": None, "ts": 0}
 _CACHE_TTL = 300  # 5 minutes
+
+def _get_gspread_client():
+    creds_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
+    if not creds_json:
+        return None
+    try:
+        import gspread
+        from google.oauth2.service_account import Credentials
+        scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
+        creds = Credentials.from_service_account_info(json.loads(creds_json), scopes=scopes)
+        return gspread.authorize(creds)
+    except Exception:
+        return None
+
+def _fetch_sheet_df():
+    gc = _get_gspread_client()
+    if gc:
+        try:
+            sh = gc.open_by_key(_SHEET_ID)
+            ws = sh.worksheet(_SHEET_TAB)
+            records = ws.get_all_records()
+            return pd.DataFrame(records)
+        except Exception:
+            pass
+    # fallback to local file
+    try:
+        path = os.path.join(_BASE, "data", "strategic_accounts.xlsx")
+        return pd.read_excel(path, sheet_name="All partners")
+    except Exception:
+        return pd.DataFrame()
 
 def _parse_partners_df(df):
     seen, partners = set(), []
@@ -73,17 +100,8 @@ def load_partners_excel():
     now = time.time()
     if _PARTNERS_CACHE["data"] is not None and now - _PARTNERS_CACHE["ts"] < _CACHE_TTL:
         return _PARTNERS_CACHE["data"]
-    try:
-        df = pd.read_csv(_PARTNERS_SHEET_URL)
-        result = _parse_partners_df(df)
-    except Exception:
-        # fall back to local file if sheet is unreachable
-        try:
-            path = os.path.join(_BASE, "data", "strategic_accounts.xlsx")
-            df = pd.read_excel(path, sheet_name="All partners")
-            result = _parse_partners_df(df)
-        except Exception:
-            result = _PARTNERS_CACHE["data"] or []
+    df = _fetch_sheet_df()
+    result = _parse_partners_df(df) if len(df) > 0 else (_PARTNERS_CACHE["data"] or [])
     _PARTNERS_CACHE["data"] = result
     _PARTNERS_CACHE["ts"] = now
     return result
