@@ -240,7 +240,7 @@ section[data-testid="stMain"] > div { background:var(--bg) !important; }
 [data-testid="stSidebar"] { background:#0A0F1E !important; border-right:0.5px solid rgba(255,255,255,0.05) !important; }
 [data-testid="stSidebar"] > div:first-child { padding:0 !important; }
 [data-testid="stSidebarContent"] { padding:0 !important; }
-[data-testid="stSidebarUserContent"] { padding:0 8px !important; }
+[data-testid="stSidebarUserContent"] { padding:0 !important; }
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] { padding:0 !important; gap:0 !important; }
 [data-testid="stSidebar"] [data-testid="stVerticalBlock"] > div { padding:0 !important; margin:0 !important; }
 [data-testid="stSidebar"] [data-testid="stButton"] { padding:0 !important; margin:0 !important; width:100% !important; }
@@ -294,6 +294,22 @@ section[data-testid="stMain"] > div { background:var(--bg) !important; }
 .stButton > button:hover { border-color:var(--indigo) !important; color:var(--indigo) !important; }
 .stButton > button[data-testid="baseButton-primary"] { background:var(--indigo) !important; color:#fff !important; border:none !important; }
 .stButton > button[data-testid="baseButton-primary"]:hover { background:#4338ca !important; }
+/* Sidebar nav button overrides — higher specificity than .stButton > button */
+[data-testid="stSidebar"] .stButton > button {
+  background:transparent !important; border:none !important; box-shadow:none !important;
+  color:#94A3B8 !important; text-align:left !important; justify-content:flex-start !important;
+  padding:8px 12px 8px 16px !important; border-radius:6px !important;
+  font-size:13.5px !important; font-weight:400 !important;
+  display:flex !important; align-items:center !important; width:100% !important;
+}
+[data-testid="stSidebar"] .stButton > button:hover {
+  background:rgba(255,255,255,0.06) !important; color:#E2E8F0 !important;
+}
+[data-testid="stSidebar"] .stButton > button[data-nav-active="true"] {
+  background:rgba(79,70,229,0.12) !important; border-left:3px solid #4F46E5 !important;
+  border-radius:0 6px 6px 0 !important; color:#818CF8 !important; font-weight:600 !important;
+  padding-left:13px !important;
+}
 .pill{display:inline-flex;align-items:center;font-size:10px;font-weight:600;padding:3px 9px;border-radius:20px;font-family:var(--mono);letter-spacing:.2px;white-space:nowrap;}
 .p-green{background:rgba(22,163,74,.1);color:#15803d;}
 .p-blue{background:rgba(37,99,235,.1);color:#1d4ed8;}
