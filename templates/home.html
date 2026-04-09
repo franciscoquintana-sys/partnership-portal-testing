@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <span class="page-badge">{{ role | upper }}</span>
+  <div class="page-title">{% if role == 'internal' %}Welcome back, Daniela{% else %}Welcome, Partner{% endif %}</div>
+  <div class="page-sub">{% if role == 'internal' %}Your partnership command center — everything in one place.{% else %}Your shared workspace with Yuno.{% endif %}</div>
+</div>
+
+<div class="action-cards">
+  {% if role == 'internal' %}
+
+  <div class="action-card" style="border-top-color:#5B5FDE">
+    <div class="action-card-header">
+      <span class="action-icon">◈</span>
+      <span class="action-title">Partners & Connectors</span>
+    </div>
+    <div class="action-desc">Yuno Connectors — search, filter and explore 460+ payment partners. Partners In Flight — track every deal from prospect to live.</div>
+    <div class="action-links">
+      <a href="/partners" class="action-link" style="color:#5B5FDE;border-color:rgba(91,95,222,0.25);background:rgba(91,95,222,0.06)">Partner Portfolio</a>
+      <a href="/mission" class="action-link" style="color:#5B5FDE;border-color:rgba(91,95,222,0.25);background:rgba(91,95,222,0.06)">Partners In Flight</a>
+    </div>
+  </div>
+
+  <div class="action-card" style="border-top-color:#0EA5E9">
+    <div class="action-card-header">
+      <span class="action-icon">✦</span>
+      <span class="action-title">Intelligence</span>
+    </div>
+    <div class="action-desc">Market insights across LATAM, MENAT, APAC and Europe. Coverage analysis and strategic context.</div>
+    <div class="action-links">
+      <a href="/insights" class="action-link" style="color:#0EA5E9;border-color:rgba(14,165,233,0.25);background:rgba(14,165,233,0.06)">Market Intel</a>
+    </div>
+  </div>
+
+  <div class="action-card" style="border-top-color:#10B981">
+    <div class="action-card-header">
+      <span class="action-icon">⟳</span>
+      <span class="action-title">Pipeline & Merchants</span>
+    </div>
+    <div class="action-desc">24 active deals in pipeline. Live merchant analytics — TPV, AOV, approval rates across all merchants.</div>
+    <div class="action-links">
+      <a href="/pipeline" class="action-link" style="color:#10B981;border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.06)">Partner Leads</a>
+    </div>
+  </div>
+
+  <div class="action-card" style="border-top-color:#F59E0B">
+    <div class="action-card-header">
+      <span class="action-icon">▲</span>
+      <span class="action-title">Performance & Tools</span>
+    </div>
+    <div class="action-desc">Partner health dashboards, rev share tracking ($123K/mo), and merchant checkout simulator.</div>
+    <div class="action-links">
+      <a href="/performance" class="action-link" style="color:#F59E0B;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)">Partner Health</a>
+      <a href="/benchmarks" class="action-link" style="color:#F59E0B;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)">Rev Share</a>
+      <a href="/merch_sim" class="action-link" style="color:#F59E0B;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)">Merchant Sim</a>
+    </div>
+  </div>
+
+  {% else %}
+
+  <div class="action-card" style="border-top-color:#5B5FDE">
+    <div class="action-card-header">
+      <span class="action-icon">◈</span>
+      <span class="action-title">Partners</span>
+    </div>
+    <div class="action-desc">Browse partner details, contacts, contracts, SLAs and integration status.</div>
+    <div class="action-links">
+      <a href="/partners" class="action-link" style="color:#5B5FDE;border-color:rgba(91,95,222,0.25);background:rgba(91,95,222,0.06)">Partner Portfolio</a>
+    </div>
+  </div>
+
+  <div class="action-card" style="border-top-color:#10B981">
+    <div class="action-card-header">
+      <span class="action-icon">⟳</span>
+      <span class="action-title">Pipeline</span>
+    </div>
+    <div class="action-desc">Shared merchant pipeline and live performance data — TPV, AOV, approval rates.</div>
+    <div class="action-links">
+      <a href="/pipeline" class="action-link" style="color:#10B981;border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.06)">Partner Leads</a>
+    </div>
+  </div>
+
+  <div class="action-card" style="border-top-color:#F59E0B">
+    <div class="action-card-header">
+      <span class="action-icon">▲</span>
+      <span class="action-title">Performance</span>
+    </div>
+    <div class="action-desc">Monitor TPV, auth rates, and transaction volumes for your Yuno integration.</div>
+    <div class="action-links">
+      <a href="/performance" class="action-link" style="color:#F59E0B;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)">Partner Health</a>
+      <a href="/benchmarks" class="action-link" style="color:#F59E0B;border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.06)">Benchmarks</a>
+    </div>
+  </div>
+
+  <div class="action-card" style="border-top-color:#0EA5E9">
+    <div class="action-card-header">
+      <span class="action-icon">◎</span>
+      <span class="action-title">Market Intel</span>
+    </div>
+    <div class="action-desc">Coverage analysis, payment trends, and strategic context for your region.</div>
+    <div class="action-links">
+      <a href="/insights" class="action-link" style="color:#0EA5E9;border-color:rgba(14,165,233,0.25);background:rgba(14,165,233,0.06)">Market Intel</a>
+    </div>
+  </div>
+
+  {% endif %}
+</div>
+
+{% endblock %}

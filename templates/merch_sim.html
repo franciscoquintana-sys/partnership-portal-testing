@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <div class="page-title">Merchant Sim</div>
+  <div class="page-sub">Simulate the revenue impact of adding a new payment partner for a merchant</div>
+</div>
+
+<div class="card" style="margin-bottom:20px">
+  <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:16px">Simulation Parameters</div>
+  <div class="sim-controls">
+    <div>
+      <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px">Merchant</label>
+      <select class="filter-select" style="width:100%" id="sim-merchant">
+        {% for m in merchants %}
+        <option value="{{ m.name }}">{{ m.name }} ({{ m.country }})</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px">Target Country</label>
+      <select class="filter-select" style="width:100%" id="sim-country">
+        {% for c in sot_countries %}
+        <option value="{{ c }}">{{ c }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label style="font-size:12px;font-weight:600;color:var(--text2);display:block;margin-bottom:6px">Add Partner</label>
+      <select class="filter-select" style="width:100%" id="sim-partner">
+        {% for p in sot_providers %}
+        <option value="{{ p }}">{{ p }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <button onclick="runSim()" style="font-family:var(--font);font-size:13px;font-weight:700;color:#fff;background:#4F46E5;border:none;border-radius:8px;padding:10px 24px;cursor:pointer;transition:background 0.15s" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4F46E5'">
+    Run Simulation
+  </button>
+</div>
+
+<div id="sim-result" style="display:none">
+  <div style="background:linear-gradient(160deg,#0a0e1a,#111827);border-radius:14px;padding:24px;margin-bottom:16px">
+    <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:16px" id="sim-headline">Projected Impact</div>
+    <div class="sim-result">
+      <div class="sim-metric">
+        <div class="sim-metric-value" style="color:#22c55e" id="res-ar">—</div>
+        <div class="sim-metric-label">New Auth Rate</div>
+        <div style="font-size:10px;color:#22c55e;margin-top:2px" id="res-ar-boost">—</div>
+      </div>
+      <div class="sim-metric">
+        <div class="sim-metric-value" style="color:#a5b4fc" id="res-txn">—</div>
+        <div class="sim-metric-label">Recovered Txns/mo</div>
+        <div style="font-size:10px;color:#94A3B8;margin-top:2px">previously declined</div>
+      </div>
+      <div class="sim-metric">
+        <div class="sim-metric-value" style="color:#fbbf24" id="res-rev">—</div>
+        <div class="sim-metric-label">Revenue Recovered/mo</div>
+        <div style="font-size:10px;color:#94A3B8;margin-top:2px">from retries</div>
+      </div>
+      <div class="sim-metric">
+        <div class="sim-metric-value" style="color:#fff" id="res-providers">—</div>
+        <div class="sim-metric-label">Total Providers</div>
+        <div style="font-size:10px;color:#22c55e;margin-top:2px">redundancy added</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:14px">Current Merchants</div>
+  <div class="merchant-grid">
+    {% for m in merchants %}
+    <div class="merchant-card" style="border-top-color:{{ m.color }}">
+      <div style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:4px">{{ m.name }}</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:12px">{{ m.country }}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <div><div style="font-size:10px;color:var(--text3)">Auth Rate</div><div style="font-size:14px;font-weight:700;color:{% if m.ar >= 93 %}#16a34a{% elif m.ar >= 88 %}#2563eb{% else %}#d97706{% endif %}">{{ m.ar }}%</div></div>
+        <div><div style="font-size:10px;color:var(--text3)">TPV/mo</div><div style="font-size:14px;font-weight:700;color:#0f172a">${{ m.tpv }}M</div></div>
+        <div><div style="font-size:10px;color:var(--text3)">Txn/mo</div><div style="font-size:13px;font-weight:600;color:#0f172a">{{ "{:,}".format(m.txn_mo) }}</div></div>
+        <div><div style="font-size:10px;color:var(--text3)">Providers</div><div style="font-size:13px;font-weight:600;color:#0f172a">{{ m.providers | length }}</div></div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+async function runSim() {
+  const merchant = document.getElementById('sim-merchant').value;
+  const country = document.getElementById('sim-country').value;
+  const partner = document.getElementById('sim-partner').value;
+  const res = await fetch('/api/merch_sim', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({merchant, country, partner})
+  });
+  const data = await res.json();
+  document.getElementById('sim-result').style.display = 'block';
+  document.getElementById('sim-headline').textContent = `Projected Impact: Adding ${partner} in ${country}`;
+  document.getElementById('res-ar').textContent = data.new_ar + '%';
+  document.getElementById('res-ar-boost').textContent = '+' + data.ar_boost + '%';
+  document.getElementById('res-txn').textContent = data.recovered_txn.toLocaleString();
+  document.getElementById('res-rev').textContent = data.revenue_gain >= 1000 ? '$' + (data.revenue_gain/1000).toFixed(0) + 'K' : '$' + data.revenue_gain;
+  document.getElementById('res-providers').textContent = data.total_providers;
+}
+</script>
+{% endblock %}

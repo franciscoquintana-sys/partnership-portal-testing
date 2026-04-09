@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAPO · Yuno Partner Portal</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <span></span><span class="dim"></span><span class="dim"></span><span class="off"></span>
+        <span class="dim"></span><span></span><span></span><span class="dim"></span>
+        <span class="dim"></span><span></span><span></span><span class="dim"></span>
+        <span class="off"></span><span class="dim"></span><span class="dim"></span><span></span>
+      </div>
+      <span class="sidebar-logo-text">yuno</span>
+      <span class="sidebar-badge">{{ role | upper }}</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      {% for section, items in nav %}
+      <div class="nav-section-title">{{ section }}</div>
+      {% for key, label in items %}
+      <a href="/{{ key }}" class="nav-item {% if page == key %}active{% endif %}">
+        {{ label }}
+        {% if key in badges %}
+          <span class="nav-badge {% if key == 'mission' %}red{% endif %}">{{ badges[key] }}</span>
+        {% endif %}
+      </a>
+      {% endfor %}
+      {% endfor %}
+    </nav>
+
+    <div class="sidebar-footer">
+      {% if role == 'internal' %}
+      <div class="sidebar-avatar" style="background:linear-gradient(135deg,#5B5FDE,#8B5CF6)">DR</div>
+      <div>
+        <div class="sidebar-user-name">Daniela Reyes</div>
+        <div class="sidebar-user-role">Head of Partnerships · Yuno</div>
+      </div>
+      {% else %}
+      <div class="sidebar-avatar" style="background:linear-gradient(135deg,#3B82F6,#60A5FA)">TK</div>
+      <div>
+        <div class="sidebar-user-name">Tom Kuehn</div>
+        <div class="sidebar-user-role">LATAM Partnerships · Adyen</div>
+      </div>
+      {% endif %}
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <a href="/logout" class="btn-signout">Sign out</a>
+    </div>
+    {% block content %}{% endblock %}
+  </main>
+
+</div>
+<script src="/static/js/app.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

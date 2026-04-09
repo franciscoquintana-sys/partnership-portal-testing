@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAPO · Sign In</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-logo">
+      <svg width="28" height="28" viewBox="0 0 20 20" fill="none">
+        <rect x="0" y="0" width="5" height="5" rx="1" fill="#5B5FDE"/>
+        <rect x="7" y="0" width="5" height="5" rx="1" fill="#5B5FDE" opacity=".4"/>
+        <rect x="14" y="0" width="5" height="5" rx="1" fill="#5B5FDE" opacity=".4"/>
+        <rect x="0" y="7" width="5" height="5" rx="1" fill="#5B5FDE" opacity=".4"/>
+        <rect x="7" y="7" width="5" height="5" rx="1" fill="#5B5FDE"/>
+        <rect x="14" y="7" width="5" height="5" rx="1" fill="#5B5FDE"/>
+        <rect x="0" y="14" width="5" height="5" rx="1" fill="#5B5FDE" opacity=".4"/>
+        <rect x="7" y="14" width="5" height="5" rx="1" fill="#5B5FDE"/>
+        <rect x="14" y="14" width="5" height="5" rx="1" fill="#5B5FDE"/>
+      </svg>
+      <span class="login-logo-text">yuno</span>
+    </div>
+    <div class="login-title">Welcome back</div>
+    <div class="login-sub">Enter your access code to continue.</div>
+    <form method="post" action="/login">
+      <label class="login-label" for="code">Access Code</label>
+      <input class="login-input" type="password" id="code" name="code" placeholder="••••••••" autocomplete="off" autofocus>
+      {% if error %}
+      <div class="login-error">{{ error }}</div>
+      {% endif %}
+      <button class="login-btn" type="submit">Continue</button>
+    </form>
+  </div>
+</div>
+</body>
+</html>

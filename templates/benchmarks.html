@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <div class="page-title">Rev Share</div>
+  <div class="page-sub">Partner revenue share dashboard · Feb 2026</div>
+</div>
+
+<div class="card-grid-3" style="margin-bottom:20px">
+  <div class="stat-card">
+    <div class="stat-label">Total Rev Share</div>
+    <div class="stat-value">${{ "{:,.0f}".format(total) }}</div>
+    <div class="stat-sub">Feb 2026</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Top Partner</div>
+    <div class="stat-value">DLocal</div>
+    <div class="stat-sub">$25,338 / mo</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Active Partners</div>
+    <div class="stat-value">{{ revshare | length }}</div>
+    <div class="stat-sub">with rev share</div>
+  </div>
+</div>
+
+<div class="card-grid-2" style="margin-bottom:20px">
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:14px">Share by Partner</div>
+    <div id="pie-chart"></div>
+  </div>
+  <div class="card">
+    <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:14px">Partner Breakdown</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Partner</th><th>Rev Share</th><th>Share %</th></tr>
+        </thead>
+        <tbody>
+          {% for name, amount in revshare.items() %}
+          <tr>
+            <td><strong>{{ name }}</strong></td>
+            <td>${{ "{:,}".format(amount) }}</td>
+            <td>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div style="flex:1;background:#f0f0f5;border-radius:4px;height:6px">
+                  <div style="width:{{ (amount / total * 100) | round(1) }}%;background:#4F46E5;height:6px;border-radius:4px"></div>
+                </div>
+                <span style="font-size:11px;color:var(--text3);width:34px;text-align:right">{{ (amount / total * 100) | round(1) }}%</span>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:14px">Monthly Trend</div>
+  <div id="line-chart"></div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+const pieData = {{ pie_chart | safe }};
+Plotly.newPlot('pie-chart', pieData.data, pieData.layout, {responsive: true, displayModeBar: false});
+const lineData = {{ line_chart | safe }};
+Plotly.newPlot('line-chart', lineData.data, lineData.layout, {responsive: true, displayModeBar: false});
+</script>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <div class="page-title">Partner Portfolio</div>
+  <div class="page-sub">{{ total }} partners · showing {{ partners | length }}</div>
+</div>
+
+<div class="filters">
+  <input class="filter-input" type="text" id="search" placeholder="Search partners…" value="{{ q }}" oninput="applyFilters()">
+  <select class="filter-select" id="cat" onchange="applyFilters()">
+    <option value="all" {% if cat=='all' %}selected{% endif %}>All types</option>
+    {% for c in cats %}
+    <option value="{{ c }}" {% if cat==c %}selected{% endif %}>{{ c }}</option>
+    {% endfor %}
+  </select>
+  <select class="filter-select" id="status" onchange="applyFilters()">
+    <option value="all" {% if status=='all' %}selected{% endif %}>All statuses</option>
+    {% for s in statuses %}
+    <option value="{{ s }}" {% if status==s %}selected{% endif %}>{{ s }}</option>
+    {% endfor %}
+  </select>
+  <select class="filter-select" id="region" onchange="applyFilters()">
+    <option value="all" {% if region=='all' %}selected{% endif %}>All regions</option>
+    {% for r in regions %}
+    <option value="{{ r }}" {% if region==r %}selected{% endif %}>{{ r }}</option>
+    {% endfor %}
+  </select>
+  <span style="font-size:12px;color:var(--text3);margin-left:4px" id="count-label">{{ partners | length }} results</span>
+</div>
+
+<div class="partner-grid" id="partner-grid">
+  {% for p in partners %}
+  <div class="partner-card"
+       data-name="{{ p.name | lower }}"
+       data-type="{{ p.type }}"
+       data-status="{{ p.status }}"
+       data-region="{{ p.region }}">
+    <div class="partner-card-header">
+      <div class="partner-logo" style="background:{{ p.color }}">{{ p.logo }}</div>
+      <div>
+        <div class="partner-name">{{ p.name }}</div>
+        <div class="partner-meta">{{ p.region }}{% if p.country %} · {{ p.country }}{% endif %}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <span class="pill {% if p.status == 'Live' %}pill-green{% elif p.status == 'Prospect' %}pill-amber{% elif p.status == 'Negotiation' %}pill-blue{% else %}pill-grey{% endif %}">
+        {{ p.status }}
+      </span>
+      <span class="pill pill-grey">{{ p.type }}</span>
+      {% if p.strategic %}<span class="pill pill-purple">Strategic</span>{% endif %}
+    </div>
+    {% if p.manager %}
+    <div style="font-size:11px;color:var(--text3)">Manager: {{ p.manager }}</div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const cat = document.getElementById('cat').value;
+  const status = document.getElementById('status').value;
+  const region = document.getElementById('region').value;
+  const cards = document.querySelectorAll('.partner-card');
+  let count = 0;
+  cards.forEach(card => {
+    const matchQ = !q || card.dataset.name.includes(q);
+    const matchCat = cat === 'all' || card.dataset.type === cat;
+    const matchStatus = status === 'all' || card.dataset.status === status;
+    const matchRegion = region === 'all' || card.dataset.region === region;
+    const show = matchQ && matchCat && matchStatus && matchRegion;
+    card.style.display = show ? '' : 'none';
+    if (show) count++;
+  });
+  document.getElementById('count-label').textContent = count + ' results';
+}
+</script>
+{% endblock %}

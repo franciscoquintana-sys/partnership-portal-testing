@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <div class="page-title">Partner Leads</div>
+  <div class="page-sub">24 active deals across 5 stages</div>
+</div>
+
+<div class="pipeline-board">
+  {% for stage_name, stage in stages.items() %}
+  <div class="pipeline-col">
+    <div class="pipeline-col-head">
+      <span class="stage-name" style="color:{{ stage.color }}">{{ stage_name }}</span>
+      <span class="stage-count">{{ stage.count }}</span>
+    </div>
+    <div class="pipeline-col-body">
+      {% for deal in deals.get(stage_name, []) %}
+      <div class="deal-card">
+        <div class="deal-name">{{ deal.name }}</div>
+        <div class="deal-meta">{{ deal.region }} · {{ deal.type }}</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:6px">
+          <span style="font-size:10px;color:var(--text3)">{{ deal.owner }}</span>
+          <span style="font-size:10px;color:var(--text3)">{{ deal.days }}d</span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

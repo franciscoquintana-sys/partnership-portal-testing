@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="page-header">
+  <div class="page-title">Partner Health</div>
+  <div class="page-sub">Live merchant analytics — TPV, approval rates, and transaction volumes</div>
+</div>
+
+<div class="card-grid-3" style="margin-bottom:20px">
+  <div class="stat-card">
+    <div class="stat-label">Avg Auth Rate</div>
+    <div class="stat-value">{{ avg_ar }}%</div>
+    <div class="stat-sub">across {{ merchants | length }} merchants</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Total TPV</div>
+    <div class="stat-value">${{ total_tpv }}M</div>
+    <div class="stat-sub">monthly volume</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-label">Active Merchants</div>
+    <div class="stat-value">{{ merchants | length }}</div>
+    <div class="stat-sub">live integrations</div>
+  </div>
+</div>
+
+<div class="card" style="margin-bottom:20px">
+  <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:14px">Authorization Rate by Merchant</div>
+  <div id="bar-chart"></div>
+</div>
+
+<div class="card">
+  <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:14px">Merchant Details</div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Merchant</th>
+          <th>Country</th>
+          <th>Region</th>
+          <th>TPV (M)</th>
+          <th>AOV</th>
+          <th>Txn/mo</th>
+          <th>Auth Rate</th>
+          <th>Providers</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in merchants %}
+        <tr>
+          <td><strong>{{ m.name }}</strong></td>
+          <td>{{ m.country }}</td>
+          <td>{{ m.region }}</td>
+          <td>${{ m.tpv }}</td>
+          <td>${{ m.aov }}</td>
+          <td>{{ "{:,}".format(m.txn_mo) }}</td>
+          <td>
+            <span class="pill {% if m.ar >= 93 %}pill-green{% elif m.ar >= 88 %}pill-blue{% else %}pill-amber{% endif %}">
+              {{ m.ar }}%
+            </span>
+          </td>
+          <td style="font-size:11px;color:var(--text3)">{{ m.providers | join(', ') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}
+{% block scripts %}
+<script>
+Plotly.newPlot('bar-chart', {{ bar_chart | safe }}.data, {{ bar_chart | safe }}.layout, {responsive: true, displayModeBar: false});
+</script>
+{% endblock %}
