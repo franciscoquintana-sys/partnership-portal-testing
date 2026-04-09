@@ -191,6 +191,135 @@
 .status-live     { color: #16a34a; font-weight: 600; }
 .status-prospect { color: #d97706; font-weight: 600; }
 .status-default  { color: var(--text2); }
+
+/* Clickable rows */
+.partners-table tbody tr { cursor: pointer; }
+.partners-table tbody tr.selected td { background: #f0f0ff !important; }
+
+/* Drawer overlay */
+.drawer-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.18);
+  z-index: 200;
+}
+.drawer-overlay.open { display: block; }
+
+/* Drawer panel */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 420px;
+  background: #fff;
+  box-shadow: -8px 0 32px rgba(0,0,0,0.12);
+  z-index: 201;
+  transform: translateX(100%);
+  transition: transform 0.25s cubic-bezier(0.4,0,0.2,1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.drawer.open { transform: translateX(0); }
+
+.drawer-header {
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  flex-shrink: 0;
+}
+.drawer-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.drawer-title { font-size: 18px; font-weight: 800; color: #0f172a; }
+.drawer-sub { font-size: 12px; color: var(--text3); margin-top: 2px; }
+.drawer-close {
+  margin-left: auto;
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: var(--text3);
+  cursor: pointer;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+.drawer-close:hover { background: var(--bg3); color: var(--text); }
+
+.drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.drawer-section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 10px;
+}
+
+.drawer-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.drawer-field-label {
+  font-size: 10px;
+  color: var(--text3);
+  margin-bottom: 3px;
+}
+.drawer-field-value {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.drawer-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.flag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 8px;
+}
+.flag-on  { background: rgba(22,163,74,.1);  color: #15803d; }
+.flag-off { background: rgba(107,114,128,.08); color: #9ca3af; }
+
+.drawer-comments {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+  background: var(--bg);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
 </style>
 {% endblock %}
 
@@ -281,7 +410,8 @@
             data-type="{{ p.type }}"
             data-status="{{ p.status }}"
             data-region="{{ p.region }}"
-            data-tier="{{ p.tier }}">
+            data-tier="{{ p.tier }}"
+            onclick="openDrawer({{ loop.index0 }})">
           <td>
             <div class="connector-name">
               <div class="connector-avatar" style="background:{{ p.color }}">{{ p.logo }}</div>
@@ -305,10 +435,94 @@
   </div>
 
 </div>
+<!-- Drawer overlay -->
+<div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
+
+<!-- Drawer panel -->
+<div class="drawer" id="drawer">
+  <div class="drawer-header">
+    <div class="drawer-avatar" id="d-avatar"></div>
+    <div>
+      <div class="drawer-title" id="d-name"></div>
+      <div class="drawer-sub" id="d-sub"></div>
+    </div>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body">
+    <div>
+      <div class="drawer-section-title">Details</div>
+      <div class="drawer-grid">
+        <div><div class="drawer-field-label">Type</div><div class="drawer-field-value" id="d-type"></div></div>
+        <div><div class="drawer-field-label">Status</div><div class="drawer-field-value" id="d-status"></div></div>
+        <div><div class="drawer-field-label">Region</div><div class="drawer-field-value" id="d-region"></div></div>
+        <div><div class="drawer-field-label">Country</div><div class="drawer-field-value" id="d-country"></div></div>
+        <div><div class="drawer-field-label">Tier</div><div class="drawer-field-value" id="d-tier"></div></div>
+        <div><div class="drawer-field-label">Manager</div><div class="drawer-field-value" id="d-manager"></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="drawer-section-title">Agreements & Integration</div>
+      <div class="drawer-flags" id="d-flags"></div>
+    </div>
+    <div id="d-comments-wrap" style="display:none">
+      <div class="drawer-section-title">Notes</div>
+      <div class="drawer-comments" id="d-comments"></div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 <script>
+const PARTNERS = {{ partners | tojson }};
+
+function openDrawer(idx) {
+  const p = PARTNERS[idx];
+  document.querySelectorAll('#partners-tbody tr').forEach((r,i) => r.classList.toggle('selected', i===idx));
+
+  document.getElementById('d-avatar').style.background = p.color;
+  document.getElementById('d-avatar').textContent = p.logo;
+  document.getElementById('d-name').textContent = p.name;
+  document.getElementById('d-sub').textContent = [p.type, p.region, p.country].filter(Boolean).join(' · ');
+  document.getElementById('d-type').textContent = p.type || '—';
+  document.getElementById('d-status').textContent = p.status || '—';
+  document.getElementById('d-region').textContent = p.region || '—';
+  document.getElementById('d-country').textContent = p.country || '—';
+  document.getElementById('d-tier').textContent = p.tier || '—';
+  document.getElementById('d-manager').textContent = p.manager || '—';
+
+  const flags = [
+    { label: 'NDA Signed',         on: p.nda },
+    { label: 'Rev Share Contract', on: p.revshare },
+    { label: 'Rev Share Active',   on: p.revshare_active },
+    { label: 'Integration Ready',  on: p.integration_ready },
+    { label: 'Used by Merchants',  on: p.integration_used },
+    { label: 'Strategic',          on: p.strategic },
+  ];
+  document.getElementById('d-flags').innerHTML = flags.map(f =>
+    `<span class="flag-badge ${f.on ? 'flag-on' : 'flag-off'}">${f.on ? '✓' : '○'} ${f.label}</span>`
+  ).join('');
+
+  const comments = p.comments || '';
+  const cWrap = document.getElementById('d-comments-wrap');
+  if (comments) {
+    document.getElementById('d-comments').textContent = comments;
+    cWrap.style.display = '';
+  } else {
+    cWrap.style.display = 'none';
+  }
+
+  document.getElementById('drawer-overlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('drawer-overlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+  document.querySelectorAll('#partners-tbody tr').forEach(r => r.classList.remove('selected'));
+}
+
 function applyFilters() {
   const q = document.getElementById('search').value.toLowerCase();
   const cat = document.getElementById('f-cat').value;
