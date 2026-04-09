@@ -411,7 +411,8 @@
             data-status="{{ p.status }}"
             data-region="{{ p.region }}"
             data-tier="{{ p.tier }}"
-            onclick="window.location='/partners/{{ p.name | urlencode }}'"
+            data-partner="{{ p.name }}"
+            onclick="window.location='/partners/'+encodeURIComponent(this.dataset.partner)"
             style="cursor:pointer">
           <td>
             <div class="connector-name">
