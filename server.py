@@ -133,11 +133,17 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     _COUNTED_STAGES = {"Agreement Review", "Agreement Signed", "Initial Negotiation", "Live Partner", "Only to be integrated"}
     live_count = sum(1 for p in all_partners if p.get("integration_stage", "").lower() == "live")
     total = sum(1 for p in all_partners if p["status"] in _COUNTED_STAGES)
+    strategic_count = sum(1 for p in all_partners if p.get("tier") == "Strategic Partner")
+    tier1_count = sum(1 for p in all_partners if p.get("tier") == "Tier 1")
+    tier2_count = sum(1 for p in all_partners if p.get("tier") == "Tier 2")
+    tier3_count = sum(1 for p in all_partners if p.get("tier") == "Tier 3")
     countries_count = len(countries)
     return tr(request, "partners.html", ctx(
         request, "partners",
         partners=filtered, total=total,
         live_count=live_count, countries_count=countries_count,
+        strategic_count=strategic_count, tier1_count=tier1_count,
+        tier2_count=tier2_count, tier3_count=tier3_count,
         cats=cats, statuses=statuses, regions=regions, tiers=tiers,
         countries=countries, managers=managers,
         q=q, cat=cat, status=status, region=region, tier=tier
