@@ -130,22 +130,24 @@
   border-radius: 5px; background: var(--bg3); color: var(--text2);
 }
 
-/* Placeholder section */
-.placeholder-section {
-  background: #fff;
-  border: 1px dashed var(--border2);
-  border-radius: 12px;
-  padding: 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  text-align: center;
-  min-height: 100px;
+/* Skeleton */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
 }
-.placeholder-label { font-size: 12px; font-weight: 600; color: var(--text3); }
-.placeholder-sub { font-size: 11px; color: #c0c0c8; }
+.skel {
+  display: inline-block;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #f0f0f4 25%, #e4e4ec 50%, #f0f0f4 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+}
+.skel-text  { height: 13px; width: 90px; }
+.skel-text-sm { height: 11px; width: 60px; }
+.skel-text-lg { height: 13px; width: 130px; }
+.skel-tag   { height: 22px; width: 70px; border-radius: 5px; }
+.skel-line  { height: 10px; border-radius: 4px; margin-bottom: 8px; }
+.skel-block { display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
 </style>
 {% endblock %}
 
@@ -219,15 +221,15 @@
       <div class="field-grid">
         <div>
           <div class="field-label">Manager</div>
-          <div class="field-value">{{ partner.manager or '—' }}</div>
+          {% if partner.manager %}<div class="field-value">{{ partner.manager }}</div>{% else %}<span class="skel skel-text"></span>{% endif %}
         </div>
         <div>
           <div class="field-label">Tier</div>
-          <div class="field-value">{{ partner.tier or '—' }}</div>
+          {% if partner.tier %}<div class="field-value">{{ partner.tier }}</div>{% else %}<span class="skel skel-text-sm"></span>{% endif %}
         </div>
         <div>
           <div class="field-label">Management Type</div>
-          <div class="field-value muted">{{ partner.mgmt_type or '—' }}</div>
+          {% if partner.mgmt_type %}<div class="field-value muted">{{ partner.mgmt_type }}</div>{% else %}<span class="skel skel-text-lg"></span>{% endif %}
         </div>
         <div>
           <div class="field-label">Rev Share Contract</div>
@@ -262,7 +264,7 @@
           {% for m in methods %}<span class="method-tag">{{ m }}</span>{% endfor %}
         </div>
         {% else %}
-        <div class="field-value muted">—</div>
+        <div class="methods-wrap"><span class="skel skel-tag"></span><span class="skel skel-tag" style="width:85px"></span><span class="skel skel-tag" style="width:55px"></span></div>
         {% endif %}
       </div>
       <div>
@@ -272,30 +274,38 @@
           {% for p in processing %}<span class="method-tag">{{ p }}</span>{% endfor %}
         </div>
         {% else %}
-        <div class="field-value muted">—</div>
+        <div class="methods-wrap"><span class="skel skel-tag" style="width:80px"></span><span class="skel skel-tag" style="width:65px"></span></div>
         {% endif %}
       </div>
     </div>
   </div>
 
-  <!-- Contacts placeholder -->
+  <!-- Contacts skeleton -->
   <div class="section-card">
     <div class="section-head">Contacts</div>
     <div class="section-body">
-      <div class="placeholder-section" style="border:none;padding:12px">
-        <div class="placeholder-label">No contacts yet</div>
-        <div class="placeholder-sub">Will be added from partner data</div>
+      <div class="skel-block">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:4px">
+          <span class="skel" style="width:32px;height:32px;border-radius:50%"></span>
+          <div><span class="skel skel-text" style="width:110px;display:block;margin-bottom:5px"></span><span class="skel skel-text-sm" style="width:70px;display:block"></span></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="skel" style="width:32px;height:32px;border-radius:50%"></span>
+          <div><span class="skel skel-text" style="width:90px;display:block;margin-bottom:5px"></span><span class="skel skel-text-sm" style="width:60px;display:block"></span></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Commercial placeholder -->
+  <!-- Commercial skeleton -->
   <div class="section-card">
     <div class="section-head">Commercial Terms</div>
     <div class="section-body">
-      <div class="placeholder-section" style="border:none;padding:12px">
-        <div class="placeholder-label">No commercial data yet</div>
-        <div class="placeholder-sub">Will be added from partner data</div>
+      <div class="skel-block">
+        <span class="skel skel-line" style="width:100%"></span>
+        <span class="skel skel-line" style="width:75%"></span>
+        <span class="skel skel-line" style="width:85%"></span>
+        <span class="skel skel-line" style="width:60%"></span>
       </div>
     </div>
   </div>
