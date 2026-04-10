@@ -119,35 +119,52 @@
 .partners-table th:nth-child(5) { width: 14%; }
 .partners-table th:nth-child(6) { width: 11%; }
 .partners-table th:nth-child(7) { width: 15%; }
-/* Last two dropdowns open to the left so they don't overflow */
-.partners-table th:nth-child(6) .col-filter-dropdown,
-.partners-table th:nth-child(7) .col-filter-dropdown {
-  left: auto;
-  right: 0;
-}
 .partners-table tr:last-child td { border-bottom: none; }
 .partners-table tbody tr:hover td { background: #f8f8fb; }
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  background: #fafafa;
+  border: 1px solid var(--border);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  padding: 10px 14px;
+}
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.filter-item-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
 
 /* Multi-select filter button */
 .col-filter-btn {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-top: 5px;
   font-family: var(--font);
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: 500;
   color: var(--text2);
   background: #fff;
   border: 1px solid var(--border2);
-  border-radius: 5px;
-  padding: 3px 7px;
+  border-radius: 6px;
+  padding: 5px 9px;
   cursor: pointer;
   white-space: nowrap;
   text-transform: none;
   letter-spacing: 0;
   user-select: none;
-  position: relative;
 }
 .col-filter-btn.active { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-light); }
 .col-filter-btn .badge { background: var(--indigo); color: #fff; border-radius: 3px; padding: 0 4px; font-size: 9px; font-weight: 700; }
@@ -317,83 +334,94 @@
     </div>
   </div>
 
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <div class="filter-item">
+      <span class="filter-item-label">Provider</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-connector" onclick="toggleDrop('connector',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-connector">
+          {% for p in partners %}<label class="col-filter-option"><input type="checkbox" value="{{ p.name | lower }}" onchange="applyFilters()"> {{ p.name }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('connector')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Region</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-region" onclick="toggleDrop('region',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-region">
+          {% for r in regions %}<label class="col-filter-option"><input type="checkbox" value="{{ r }}" onchange="applyFilters()"> {{ r }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('region')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Type</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cat" onclick="toggleDrop('cat',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cat">
+          {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cat')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Tier</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-tier" onclick="toggleDrop('tier',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-tier">
+          {% for t in tiers %}<label class="col-filter-option"><input type="checkbox" value="{{ t }}" onchange="applyFilters()"> {{ t }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('tier')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Deal Stage</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-status" onclick="toggleDrop('status',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-status">
+          {% for s in statuses %}<label class="col-filter-option"><input type="checkbox" value="{{ s }}" onchange="applyFilters()"> {{ s }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('status')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Integration Status</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-integration" onclick="toggleDrop('integration',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-integration">
+          <label class="col-filter-option"><input type="checkbox" value="Live" onchange="applyFilters()"> Live</label>
+          <label class="col-filter-option"><input type="checkbox" value="Ready" onchange="applyFilters()"> Ready</label>
+          <label class="col-filter-option"><input type="checkbox" value="Not Ready" onchange="applyFilters()"> Not Ready</label>
+          <div class="col-filter-clear" onclick="clearDrop('integration')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Partnership Manager</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-manager" onclick="toggleDrop('manager',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-manager">
+          {% for m in managers %}<label class="col-filter-option"><input type="checkbox" value="{{ m | lower }}" onchange="applyFilters()"> {{ m }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('manager')">Clear</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Table -->
-  <div class="partners-table-wrap">
+  <div class="partners-table-wrap" style="border-radius:0 0 12px 12px">
     <table class="partners-table" id="partners-table">
       <thead>
         <tr>
-          <th>
-            Provider
-            <div class="col-filter-wrap">
-              <div class="col-filter-btn" id="btn-connector" onclick="toggleDrop('connector',event)">All <span>▾</span></div>
-              <div class="col-filter-dropdown" id="drop-connector">
-                {% for p in partners %}<label class="col-filter-option"><input type="checkbox" value="{{ p.name | lower }}" onchange="applyFilters()"> {{ p.name }}</label>{% endfor %}
-                <div class="col-filter-clear" onclick="clearDrop('connector')">Clear</div>
-              </div>
-            </div>
-          </th>
-          <th>
-            Region
-            <div class="col-filter-wrap">
-              <div class="col-filter-btn" id="btn-region" onclick="toggleDrop('region',event)">All <span>▾</span></div>
-              <div class="col-filter-dropdown" id="drop-region">
-                {% for r in regions %}<label class="col-filter-option"><input type="checkbox" value="{{ r }}" onchange="applyFilters()"> {{ r }}</label>{% endfor %}
-                <div class="col-filter-clear" onclick="clearDrop('region')">Clear</div>
-              </div>
-            </div>
-          </th>
-          <th>
-            Type
-            <div class="col-filter-wrap">
-              <div class="col-filter-btn" id="btn-cat" onclick="toggleDrop('cat',event)">All <span>▾</span></div>
-              <div class="col-filter-dropdown" id="drop-cat">
-                {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
-                <div class="col-filter-clear" onclick="clearDrop('cat')">Clear</div>
-              </div>
-            </div>
-          </th>
-          <th>
-            Tier
-            <div class="col-filter-wrap">
-              <div class="col-filter-btn" id="btn-tier" onclick="toggleDrop('tier',event)">All <span>▾</span></div>
-              <div class="col-filter-dropdown" id="drop-tier">
-                {% for t in tiers %}<label class="col-filter-option"><input type="checkbox" value="{{ t }}" onchange="applyFilters()"> {{ t }}</label>{% endfor %}
-                <div class="col-filter-clear" onclick="clearDrop('tier')">Clear</div>
-              </div>
-            </div>
-          </th>
-          <th>
-            Deal Stage
-            <div class="col-filter-wrap">
-              <div class="col-filter-btn" id="btn-status" onclick="toggleDrop('status',event)">All <span>▾</span></div>
-              <div class="col-filter-dropdown" id="drop-status">
-                {% for s in statuses %}<label class="col-filter-option"><input type="checkbox" value="{{ s }}" onchange="applyFilters()"> {{ s }}</label>{% endfor %}
-                <div class="col-filter-clear" onclick="clearDrop('status')">Clear</div>
-              </div>
-            </div>
-          </th>
-          <th>
-            Integration Status
-            <div class="col-filter-wrap">
-              <div class="col-filter-btn" id="btn-integration" onclick="toggleDrop('integration',event)">All <span>▾</span></div>
-              <div class="col-filter-dropdown" id="drop-integration">
-                <label class="col-filter-option"><input type="checkbox" value="Live" onchange="applyFilters()"> Live</label>
-                <label class="col-filter-option"><input type="checkbox" value="Ready" onchange="applyFilters()"> Ready</label>
-                <label class="col-filter-option"><input type="checkbox" value="Not Ready" onchange="applyFilters()"> Not Ready</label>
-                <div class="col-filter-clear" onclick="clearDrop('integration')">Clear</div>
-              </div>
-            </div>
-          </th>
-          <th>
-            Partnership Manager
-            <div class="col-filter-wrap">
-              <div class="col-filter-btn" id="btn-manager" onclick="toggleDrop('manager',event)">All <span>▾</span></div>
-              <div class="col-filter-dropdown" id="drop-manager">
-                {% for m in managers %}<label class="col-filter-option"><input type="checkbox" value="{{ m | lower }}" onchange="applyFilters()"> {{ m }}</label>{% endfor %}
-                <div class="col-filter-clear" onclick="clearDrop('manager')">Clear</div>
-              </div>
-            </div>
-          </th>
+          <th>Provider</th>
+          <th>Region</th>
+          <th>Type</th>
+          <th>Tier</th>
+          <th>Deal Stage</th>
+          <th>Integration Status</th>
+          <th>Partnership Manager</th>
         </tr>
       </thead>
       <tbody id="partners-tbody">
