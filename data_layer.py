@@ -21,10 +21,10 @@ _STAGE_MAP = {
     "Non-qualified Partner": "Non-Qualified"
 }
 
-_SHEET_ID = "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
-_SHEET_TAB = "All partners"
+_SHEET_ID  = "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
+_SHEET_GID = 1597186279   # gid from the URL
 _PARTNERS_CACHE = {"data": None, "ts": 0}
-_CACHE_TTL = 300  # 5 minutes
+_CACHE_TTL = 300  # refresh every 5 minutes
 
 def _get_gspread_client():
     creds_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
@@ -44,12 +44,13 @@ def _fetch_sheet_df():
     if gc:
         try:
             sh = gc.open_by_key(_SHEET_ID)
-            ws = sh.worksheet(_SHEET_TAB)
+            ws = sh.get_worksheet_by_id(_SHEET_GID)
             records = ws.get_all_records()
-            return pd.DataFrame(records)
+            if records:
+                return pd.DataFrame(records)
         except Exception:
             pass
-    # fallback to local file
+    # fallback to local file if sheet unreachable
     try:
         path = os.path.join(_BASE, "data", "strategic_accounts.xlsx")
         return pd.read_excel(path, sheet_name="All partners")
