@@ -30,6 +30,10 @@
   width: 56px; height: 56px; border-radius: 14px;
   display: flex; align-items: center; justify-content: center;
   font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+  overflow: hidden;
+}
+.partner-header-avatar img {
+  display: none; width: 100%; height: 100%; object-fit: contain; padding: 6px;
 }
 .partner-header-name { font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
 .partner-header-meta { font-size: 13px; color: var(--text3); margin-top: 3px; display: flex; align-items: center; gap: 8px; }
@@ -159,7 +163,13 @@
 
 <!-- Partner header -->
 <div class="partner-header">
-  <div class="partner-header-avatar" style="background:{{ partner.color }}">{{ partner.logo }}</div>
+  <div class="partner-header-avatar" style="background:{{ partner.color }}">
+    <img src="https://logo.clearbit.com/{{ partner.name | lower | replace(' ','') | replace('/','') | replace('(','') | replace(')','') | replace('.','') | replace('-','') }}.com"
+         loading="lazy"
+         onload="this.style.display='block';this.parentElement.style.background='#f8fafc';this.parentElement.querySelector('span').style.display='none'"
+         onerror="this.remove()">
+    <span>{{ partner.logo }}</span>
+  </div>
   <div>
     <div class="partner-header-name">{{ partner.name }}</div>
     <div class="partner-header-meta">

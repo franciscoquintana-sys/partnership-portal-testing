@@ -236,9 +236,9 @@
   min-width: 0;
 }
 .connector-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 5px;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -246,6 +246,14 @@
   font-weight: 700;
   color: #fff;
   flex-shrink: 0;
+  overflow: hidden;
+}
+.connector-avatar img {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
 }
 
 .type-pill {
@@ -462,7 +470,14 @@
             style="cursor:pointer">
           <td>
             <div class="connector-name">
-              <div class="connector-avatar" style="background:{{ p.color }}">{{ p.logo }}</div>
+              <div class="connector-avatar" style="background:{{ p.color }}"
+                   data-color="{{ p.color }}">
+                <img src="https://logo.clearbit.com/{{ p.name | lower | replace(' ','') | replace('/','') | replace('(','') | replace(')','') | replace('.','') | replace('-','') }}.com"
+                     loading="lazy"
+                     onload="this.style.display='block';this.parentElement.style.background='#f8fafc';this.parentElement.querySelector('span').style.display='none'"
+                     onerror="this.remove()">
+                <span>{{ p.logo }}</span>
+              </div>
               <span class="connector-name-text">{{ p.name }}</span>
               {% if p.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 6px;border-radius:4px;font-weight:700;flex-shrink:0">STRATEGIC</span>{% endif %}
             </div>
