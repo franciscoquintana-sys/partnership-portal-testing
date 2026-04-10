@@ -125,19 +125,24 @@
 /* Filter bar */
 .filter-bar {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
   align-items: flex-end;
   background: #fafafa;
   border: 1px solid var(--border);
   border-bottom: none;
   border-radius: 12px 12px 0 0;
   padding: 10px 14px;
+  gap: 8px;
 }
 .filter-item {
   display: flex;
   flex-direction: column;
   gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+.filter-item .col-filter-btn {
+  width: 100%;
+  justify-content: space-between;
 }
 .filter-item-label {
   font-size: 9px;
@@ -145,6 +150,7 @@
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--text3);
+  white-space: nowrap;
 }
 
 /* Multi-select filter button */
