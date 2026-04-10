@@ -391,7 +391,7 @@
           </td>
           <td style="color:var(--text2)">{{ p.region }}</td>
           <td><span class="type-pill type-{{ p.type | replace('/', '-') | replace(' ', '-') }}">{{ p.type }}</span></td>
-          <td style="color:var(--text2);font-size:12px">{{ p.tier or '—' }}</td>
+          <td style="color:var(--text2)">{{ p.tier or '—' }}</td>
           <td>
             <span class="{% if 'Live' in p.status %}status-live{% elif 'Prospect' in p.status or 'Opportunity' in p.status %}status-prospect{% else %}status-default{% endif %}">
               {{ p.status }}
@@ -405,7 +405,7 @@
               {{ integ_status }}
             </span>
           </td>
-          <td style="color:var(--text2);font-size:12px">{{ p.manager or '—' }}</td>
+          <td style="color:var(--text2)">{{ p.manager or '—' }}</td>
         </tr>
         {% endfor %}
       </tbody>
