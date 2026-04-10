@@ -21,35 +21,21 @@ _STAGE_MAP = {
     "Non-qualified Partner": "Non-Qualified"
 }
 
-_SHEET_ID  = "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
-_SHEET_GID = 1597186279   # gid from the URL
+_SHEET_CSV_URL = (
+    "https://docs.google.com/spreadsheets/d/"
+    "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
+    "/export?format=csv&gid=1597186279"
+)
 _PARTNERS_CACHE = {"data": None, "ts": 0}
 _CACHE_TTL = 300  # refresh every 5 minutes
 
-def _get_gspread_client():
-    creds_json = os.environ.get("GOOGLE_SERVICE_ACCOUNT_JSON")
-    if not creds_json:
-        return None
-    try:
-        import gspread
-        from google.oauth2.service_account import Credentials
-        scopes = ["https://www.googleapis.com/auth/spreadsheets.readonly"]
-        creds = Credentials.from_service_account_info(json.loads(creds_json), scopes=scopes)
-        return gspread.authorize(creds)
-    except Exception:
-        return None
-
 def _fetch_sheet_df():
-    gc = _get_gspread_client()
-    if gc:
-        try:
-            sh = gc.open_by_key(_SHEET_ID)
-            ws = sh.get_worksheet_by_id(_SHEET_GID)
-            records = ws.get_all_records()
-            if records:
-                return pd.DataFrame(records)
-        except Exception:
-            pass
+    try:
+        df = pd.read_csv(_SHEET_CSV_URL)
+        if len(df) > 0:
+            return df
+    except Exception:
+        pass
     # fallback to local file if sheet unreachable
     try:
         path = os.path.join(_BASE, "data", "strategic_accounts.xlsx")
