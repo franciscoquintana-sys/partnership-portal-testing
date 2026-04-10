@@ -18,6 +18,9 @@ _TIER_MAP = {
     "Tier 2 Partners": "Tier 2",
     "Tier 3 Partners": "Tier 3",
     "Product Partners": "Product Partner",
+    "Product Partners (3Ds, Plugins)": "Product Partner",
+    "Non Managed Partners": "Non-Managed",
+    "Non-Managed Partners": "Non-Managed",
 }
 
 _STAGE_MAP = {
