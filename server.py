@@ -131,7 +131,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     countries = sorted(set(p["country"] for p in all_partners if p.get("country")))
     managers = sorted(set(p["manager"] for p in all_partners if p.get("manager")))
     _COUNTED_STAGES = {"Agreement Review", "Agreement Signed", "Initial Negotiation", "Live Partner", "Only to be integrated"}
-    live_count = sum(1 for p in all_partners if p["status"] == "Live Partner")
+    live_count = sum(1 for p in all_partners if p.get("integration_used"))
     total = sum(1 for p in all_partners if p["status"] in _COUNTED_STAGES)
     countries_count = len(countries)
     return tr(request, "partners.html", ctx(
