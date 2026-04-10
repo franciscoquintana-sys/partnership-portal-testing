@@ -130,9 +130,12 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     tiers = sorted(set(p["tier"] for p in all_partners if p.get("tier")))
     countries = sorted(set(p["country"] for p in all_partners if p.get("country")))
     managers = sorted(set(p["manager"] for p in all_partners if p.get("manager")))
-    _COUNTED_STAGES = {"Agreement Review", "Agreement Signed", "Initial Negotiation", "Live Partner", "Only to be integrated"}
+    _CONNECTED_STAGES = {"Agreement Review", "Agreement Signed", "Initial Negotiation", "Live Partner", "Only to be integrated"}
+    total_db = len(all_partners)
+    total_connected = sum(1 for p in all_partners if p["status"] in _CONNECTED_STAGES)
+    total_signed = sum(1 for p in all_partners if p["status"] == "Agreement Signed")
     live_count = sum(1 for p in all_partners if p.get("integration_stage", "").lower() == "live")
-    total = sum(1 for p in all_partners if p["status"] in _COUNTED_STAGES)
+    total = total_db
     strategic_count = sum(1 for p in all_partners if p.get("tier") == "Strategic Partner")
     tier1_count = sum(1 for p in all_partners if p.get("tier") == "Tier 1")
     tier2_count = sum(1 for p in all_partners if p.get("tier") == "Tier 2")
@@ -142,6 +145,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         request, "partners",
         partners=filtered, total=total,
         live_count=live_count, countries_count=countries_count,
+        total_db=total_db, total_connected=total_connected, total_signed=total_signed,
         strategic_count=strategic_count, tier1_count=tier1_count,
         tier2_count=tier2_count, tier3_count=tier3_count,
         cats=cats, statuses=statuses, regions=regions, tiers=tiers,

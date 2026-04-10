@@ -31,6 +31,7 @@
 }
 .stat-box-value.green { color: #16a34a; }
 .stat-box-value.amber { color: #d97706; }
+.stat-box-value.blue  { color: #2563eb; }
 .stat-box-label {
   font-size: 10px;
   font-weight: 700;
@@ -295,37 +296,20 @@
   <!-- Stats bar -->
   <div class="stats-bar">
     <div class="stat-box">
-      <div class="stat-box-value">{{ total }}</div>
-      <div class="stat-box-label">Total Connectors</div>
+      <div class="stat-box-value">{{ total_db }}</div>
+      <div class="stat-box-label">Total Database</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-value blue">{{ total_connected }}</div>
+      <div class="stat-box-label">Total with Connection</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-value amber">{{ total_signed }}</div>
+      <div class="stat-box-label">Total Signed</div>
     </div>
     <div class="stat-box">
       <div class="stat-box-value green">{{ live_count }}</div>
-      <div class="stat-box-label">Live & Active</div>
-    </div>
-    <div class="stat-box" style="gap:0">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Tier Breakdown</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 16px">
-        <div>
-          <div style="font-size:18px;font-weight:800;color:#4F46E5;line-height:1">{{ strategic_count }}</div>
-          <div style="font-size:9.5px;font-weight:600;color:var(--text3);margin-top:2px">Strategic</div>
-        </div>
-        <div>
-          <div style="font-size:18px;font-weight:800;color:#0f172a;line-height:1">{{ tier1_count }}</div>
-          <div style="font-size:9.5px;font-weight:600;color:var(--text3);margin-top:2px">Tier 1</div>
-        </div>
-        <div>
-          <div style="font-size:18px;font-weight:800;color:#0f172a;line-height:1">{{ tier2_count }}</div>
-          <div style="font-size:9.5px;font-weight:600;color:var(--text3);margin-top:2px">Tier 2</div>
-        </div>
-        <div>
-          <div style="font-size:18px;font-weight:800;color:#0f172a;line-height:1">{{ tier3_count }}</div>
-          <div style="font-size:9.5px;font-weight:600;color:var(--text3);margin-top:2px">Tier 3</div>
-        </div>
-      </div>
-    </div>
-    <div class="stat-box">
-      <div class="stat-box-value amber">89.4%</div>
-      <div class="stat-box-label">Avg Approval Rate</div>
+      <div class="stat-box-label">Live</div>
     </div>
   </div>
 
