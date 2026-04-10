@@ -122,16 +122,26 @@
 .partners-table tr:last-child td { border-bottom: none; }
 .partners-table tbody tr:hover td { background: #f8f8fb; }
 
+/* Section title */
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
 /* Filter bar */
 .filter-bar {
   display: flex;
   align-items: flex-end;
-  background: #fafafa;
+  background: #fff;
   border: 1px solid var(--border);
-  border-bottom: none;
-  border-radius: 12px 12px 0 0;
+  border-radius: 12px;
   padding: 12px 16px;
   gap: 8px;
+  margin-bottom: 14px;
 }
 .filter-item {
   display: flex;
@@ -340,7 +350,8 @@
     </div>
   </div>
 
-  <!-- Filter bar -->
+  <!-- Filters -->
+  <div class="section-title">Filters</div>
   <div class="filter-bar">
     <div class="filter-item">
       <span class="filter-item-label">Provider</span>
@@ -417,7 +428,8 @@
   </div>
 
   <!-- Table -->
-  <div class="partners-table-wrap" style="border-radius:0 0 12px 12px">
+  <div class="section-title">Partner Portfolio</div>
+  <div class="partners-table-wrap">
     <table class="partners-table" id="partners-table">
       <colgroup><col><col><col><col><col><col><col></colgroup>
       <tbody id="partners-tbody">
