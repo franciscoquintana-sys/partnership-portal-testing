@@ -296,19 +296,19 @@
   <!-- Stats bar -->
   <div class="stats-bar">
     <div class="stat-box">
-      <div class="stat-box-value">{{ total_db }}</div>
+      <div class="stat-box-value" id="stat-total-db">{{ total_db }}</div>
       <div class="stat-box-label">Total Database</div>
     </div>
     <div class="stat-box">
-      <div class="stat-box-value blue">{{ total_connected }}</div>
+      <div class="stat-box-value blue" id="stat-total-active">{{ total_connected }}</div>
       <div class="stat-box-label">Active Stage Partners</div>
     </div>
     <div class="stat-box">
-      <div class="stat-box-value amber">{{ total_signed }}</div>
+      <div class="stat-box-value amber" id="stat-total-signed">{{ total_signed }}</div>
       <div class="stat-box-label">Total Signed</div>
     </div>
     <div class="stat-box">
-      <div class="stat-box-value green">{{ live_count }}</div>
+      <div class="stat-box-value green" id="stat-total-live">{{ live_count }}</div>
       <div class="stat-box-label">Live</div>
     </div>
   </div>
@@ -513,10 +513,14 @@ function updateBtn(key) {
   }
 }
 
+const ACTIVE_STAGES = new Set(["Agreement Review","Agreement Signed","Initial Negotiation","Live Partner","Only to be integrated"]);
+
 function applyFilters() {
   const q = document.getElementById('search').value.toLowerCase();
   const sel = {};
   FILTERS.forEach(k => { sel[k] = getSelected(k); updateBtn(k); });
+
+  let totalDb = 0, totalActive = 0, totalSigned = 0, totalLive = 0;
 
   document.querySelectorAll('#partners-tbody tr').forEach(row => {
     const show =
@@ -529,7 +533,18 @@ function applyFilters() {
       && (sel.integration.length === 0  || sel.integration.includes(row.dataset.integration))
       && (sel.manager.length === 0      || sel.manager.includes(row.dataset.manager));
     row.style.display = show ? '' : 'none';
+    if (show) {
+      totalDb++;
+      if (ACTIVE_STAGES.has(row.dataset.status)) totalActive++;
+      if (row.dataset.status === 'Agreement Signed') totalSigned++;
+      if (row.dataset.integration === 'Live') totalLive++;
+    }
   });
+
+  document.getElementById('stat-total-db').textContent      = totalDb;
+  document.getElementById('stat-total-active').textContent  = totalActive;
+  document.getElementById('stat-total-signed').textContent  = totalSigned;
+  document.getElementById('stat-total-live').textContent    = totalLive;
 }
 
 function toggleDrop(key, e) {
