@@ -66,6 +66,7 @@ def _parse_partners_df(df):
         seen.add(name)
         offering = str(row.get("Type", "Other")).strip()
         stage_raw = str(row.get("Deal Stage", "")).strip()
+        integration_stage = str(row.get("Integration Stage", "")).strip()
         region = str(row.get("Region", "")).strip()
         country = str(row.get("Country", "")).strip()
         tier = str(row.get("Tier", "")).strip()
@@ -91,6 +92,7 @@ def _parse_partners_df(df):
             "nda": bool(row.get("NDA Signed and in drive", False)),
             "revshare": bool(row.get("Revshare Contract", False)),
             "revshare_active": bool(row.get("Revshare active", False)),
+            "integration_stage": integration_stage if integration_stage and integration_stage != "nan" else "",
             "integration_ready": bool(row.get("Integration Ready by Yuno", False)),
             "integration_used": bool(row.get("Integration Used by Merchants", False)),
             "comments": str(row.get("Comments", "")).strip() if str(row.get("Comments", "")).strip() != "nan" else "",
