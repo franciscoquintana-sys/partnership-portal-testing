@@ -432,6 +432,17 @@
   <div class="partners-table-wrap">
     <table class="partners-table" id="partners-table">
       <colgroup><col><col><col><col><col><col><col></colgroup>
+      <thead>
+        <tr>
+          <th>Provider</th>
+          <th>Region</th>
+          <th>Type</th>
+          <th>Tier</th>
+          <th>Deal Stage</th>
+          <th>Integration Status</th>
+          <th>Partnership Manager</th>
+        </tr>
+      </thead>
       <tbody id="partners-tbody">
         {% for p in partners %}
         {% set integ_status = 'Live' if p.integration_used else ('Ready' if p.integration_ready else 'Not Ready') %}
