@@ -84,11 +84,12 @@
 .partners-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12.5px;
+  font-size: 12px;
+  table-layout: fixed;
 }
 .partners-table th {
-  padding: 9px 12px 7px;
-  font-size: 10px;
+  padding: 8px 10px 6px;
+  font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -97,16 +98,27 @@
   border-bottom: 1px solid var(--border);
   text-align: left;
   white-space: nowrap;
+  overflow: hidden;
 }
 .partners-table td {
-  padding: 9px 12px;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--border);
   color: var(--text);
   vertical-align: middle;
   white-space: nowrap;
-  font-size: 12.5px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
   font-weight: 500;
 }
+/* Column widths */
+.partners-table th:nth-child(1) { width: 20%; }
+.partners-table th:nth-child(2) { width: 8%; }
+.partners-table th:nth-child(3) { width: 12%; }
+.partners-table th:nth-child(4) { width: 12%; }
+.partners-table th:nth-child(5) { width: 14%; }
+.partners-table th:nth-child(6) { width: 11%; }
+.partners-table th:nth-child(7) { width: 15%; }
 .partners-table tr:last-child td { border-bottom: none; }
 .partners-table tbody tr:hover td { background: #f8f8fb; }
 
@@ -172,17 +184,23 @@
   color: #0f172a;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 7px;
+  overflow: hidden;
+}
+.connector-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
+  min-width: 0;
 }
 .connector-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 24px;
+  height: 24px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   color: #fff;
   flex-shrink: 0;
@@ -389,8 +407,8 @@
           <td>
             <div class="connector-name">
               <div class="connector-avatar" style="background:{{ p.color }}">{{ p.logo }}</div>
-              {{ p.name }}
-              {% if p.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 6px;border-radius:4px;font-weight:700;white-space:nowrap">STRATEGIC</span>{% endif %}
+              <span class="connector-name-text">{{ p.name }}</span>
+              {% if p.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 6px;border-radius:4px;font-weight:700;flex-shrink:0">STRATEGIC</span>{% endif %}
             </div>
           </td>
           <td>{{ p.region or '—' }}</td>
