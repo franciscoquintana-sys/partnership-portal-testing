@@ -69,7 +69,7 @@ def tr(request: Request, name: str, context: dict):
 
 @app.get("/health")
 def health():
-    return {"status": "ok"}
+    return {"status": "ok", "version": "2026-04-10-v2", "routes": ["partners_detail"]}
 
 @app.get("/", response_class=HTMLResponse)
 def root(request: Request):
