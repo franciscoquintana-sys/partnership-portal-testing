@@ -50,22 +50,22 @@ def _parse_partners_df(df):
         if not name or name in seen or name == "nan":
             continue
         seen.add(name)
-        offering = str(row.get("Partner offering (acquirer, APM, Fraud etc)", "Other")).strip()
+        offering = str(row.get("Type", "Other")).strip()
         stage_raw = str(row.get("Deal Stage", "")).strip()
         region = str(row.get("Region", "")).strip()
         country = str(row.get("Country", "")).strip()
-        tier = str(row.get("Type of Partner", "")).strip()
+        tier = str(row.get("Tier", "")).strip()
         manager = str(row.get("Partner Manager", "")).strip()
         strategic = bool(row.get("Strategic?", False))
         mgmt_type = str(row.get("Type of Management", "")).strip()
         initials = "".join(w[0] for w in name.replace("/", " ").replace("(", " ").split() if w)[:2].upper()
         partners.append({
             "name": name,
-            "type": _TYPE_SHORT.get(offering, offering),
+            "type": offering if offering and offering != "nan" else "Other",
             "offering_raw": offering,
             "region": region if region != "nan" else "",
             "country": country if country != "nan" else "",
-            "status": _STAGE_MAP.get(stage_raw, stage_raw),
+            "status": stage_raw if stage_raw and stage_raw != "nan" else "",
             "stage_raw": stage_raw,
             "tier": tier if tier != "nan" else "",
             "manager": manager if manager != "nan" else "",
@@ -73,7 +73,7 @@ def _parse_partners_df(df):
             "mgmt_type": mgmt_type if mgmt_type != "nan" else "",
             "logo": initials,
             "color": _TYPE_COLOR.get(offering, "#64748b"),
-            "cat": _TYPE_SHORT.get(offering, offering),
+            "cat": offering if offering and offering != "nan" else "Other",
             "nda": bool(row.get("NDA Signed and in drive", False)),
             "revshare": bool(row.get("Revshare Contract", False)),
             "revshare_active": bool(row.get("Revshare active", False)),

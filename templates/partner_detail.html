@@ -100,13 +100,13 @@
   font-size: 11px; font-weight: 600;
   padding: 3px 10px; border-radius: 5px;
 }
-.type-Acquirer { background: rgba(59,130,246,.12); color: #1d4ed8; }
-.type-PSP      { background: rgba(139,92,246,.12); color: #6d28d9; }
-.type-APM      { background: rgba(20,184,166,.12); color: #0f766e; }
-.type-Fraud    { background: rgba(239,68,68,.12);  color: #b91c1c; }
-.type-BaaS     { background: rgba(245,158,11,.12); color: #b45309; }
-.type-Other    { background: rgba(107,114,128,.12);color: #4b5563; }
-.type-Plug-In  { background: rgba(6,182,212,.12);  color: #0e7490; }
+.type-Acquirer        { background: rgba(59,130,246,.12); color: #1d4ed8; }
+.type-PSP, .type-PSP-Aggregator { background: rgba(139,92,246,.12); color: #6d28d9; }
+.type-APM             { background: rgba(20,184,166,.12); color: #0f766e; }
+.type-Fraud, .type-Fraud-Provider { background: rgba(239,68,68,.12); color: #b91c1c; }
+.type-BaaS            { background: rgba(245,158,11,.12); color: #b45309; }
+.type-Other           { background: rgba(107,114,128,.12);color: #4b5563; }
+.type-Plug-In         { background: rgba(6,182,212,.12);  color: #0e7490; }
 
 /* Coverage table */
 .coverage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
@@ -170,8 +170,8 @@
   </div>
   <div style="margin-left:auto">
     <span style="font-size:14px;font-weight:700;
-      {% if partner.status == 'Live' %}color:#16a34a
-      {% elif partner.status == 'Prospect' %}color:#d97706
+      {% if 'Live' in partner.status %}color:#16a34a
+      {% elif 'Prospect' in partner.status or 'Opportunity' in partner.status %}color:#d97706
       {% else %}color:var(--text2){% endif %}">
       ● {{ partner.status }}
     </span>
@@ -193,7 +193,7 @@
     <div class="stat-box-label">Processing Types</div>
   </div>
   <div class="stat-box">
-    <div class="stat-box-value {% if partner.status == 'Live' %}green{% else %}amber{% endif %}">
+    <div class="stat-box-value {% if 'Live' in partner.status %}green{% else %}amber{% endif %}">
       {{ partner.status }}
     </div>
     <div class="stat-box-label">Partnership Status</div>
