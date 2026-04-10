@@ -12,6 +12,14 @@ _TYPE_SHORT = {
     "Acquirer": "Acquirer", "PSP/Aggregator": "PSP", "APM": "APM",
     "Fraud Provider": "Fraud", "BaaS": "BaaS", "Other": "Other", "Plug-In": "Plug-In"
 }
+_TIER_MAP = {
+    "Strategic Partners: Very Important": "Strategic Partner",
+    "Tier 1 Partners": "Tier 1",
+    "Tier 2 Partners": "Tier 2",
+    "Tier 3 Partners": "Tier 3",
+    "Product Partners": "Product Partner",
+}
+
 _STAGE_MAP = {
     "Live Partner": "Live", "Agreement Signed": "Agreement Signed",
     "Agreement Review": "Agreement Review", "Initial Negotiation": "Negotiation",
@@ -67,7 +75,7 @@ def _parse_partners_df(df):
             "country": country if country != "nan" else "",
             "status": stage_raw if stage_raw and stage_raw != "nan" else "",
             "stage_raw": stage_raw,
-            "tier": tier if tier != "nan" else "",
+            "tier": _TIER_MAP.get(tier, tier) if tier and tier != "nan" else "",
             "manager": manager if manager != "nan" else "",
             "strategic": strategic,
             "mgmt_type": mgmt_type if mgmt_type != "nan" else "",
