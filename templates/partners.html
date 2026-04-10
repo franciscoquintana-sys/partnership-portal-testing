@@ -119,6 +119,12 @@
 .partners-table th:nth-child(5) { width: 14%; }
 .partners-table th:nth-child(6) { width: 11%; }
 .partners-table th:nth-child(7) { width: 15%; }
+/* Last two dropdowns open to the left so they don't overflow */
+.partners-table th:nth-child(6) .col-filter-dropdown,
+.partners-table th:nth-child(7) .col-filter-dropdown {
+  left: auto;
+  right: 0;
+}
 .partners-table tr:last-child td { border-bottom: none; }
 .partners-table tbody tr:hover td { background: #f8f8fb; }
 
