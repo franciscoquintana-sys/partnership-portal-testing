@@ -88,16 +88,22 @@ def login_submit(request: Request, code: str = Form(...)):
     code = code.strip()
     if code.lower() == "yuno":
         request.session["role"] = "internal"
-        return RedirectResponse("/home", status_code=303)
     elif code.lower() == "partners":
         request.session["role"] = "partner"
-        return RedirectResponse("/home", status_code=303)
-    return tr(request, "login.html", {"error": "Invalid access code."})
+    else:
+        return tr(request, "login.html", {"error": "Invalid access code."})
+    # Use JS redirect so sessionStorage is set before navigating — this is what
+    # makes the "re-auth on browser close" mechanism work correctly.
+    return HTMLResponse("""<!DOCTYPE html><html><head></head><body>
+<script>sessionStorage.setItem('yuno_auth','1');window.location='/home';</script>
+</body></html>""")
 
 @app.get("/logout")
 def logout(request: Request):
     request.session.clear()
-    return RedirectResponse("/login")
+    return HTMLResponse("""<!DOCTYPE html><html><head></head><body>
+<script>sessionStorage.removeItem('yuno_auth');window.location='/login';</script>
+</body></html>""")
 
 @app.get("/home", response_class=HTMLResponse)
 def home(request: Request):

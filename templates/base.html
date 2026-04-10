@@ -63,5 +63,16 @@
 </div>
 <script src="/static/js/app.js"></script>
 {% block scripts %}{% endblock %}
+<script>
+// Re-auth on browser close: sessionStorage is wiped when the browser closes.
+// If the server session still exists but sessionStorage is gone, force logout.
+{% if role %}
+(function() {
+  if (!sessionStorage.getItem('yuno_auth')) {
+    window.location = '/logout';
+  }
+})();
+{% endif %}
+</script>
 </body>
 </html>
