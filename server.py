@@ -185,14 +185,6 @@ def partner_detail(request: Request, name: str):
     countries = sorted(set(c["country"] for c in coverage if c["country"]))
     methods = sorted(set(c["method"] for c in coverage if c["method"] and c["method"] != "nan"))
     processing = sorted(set(c["processing"] for c in coverage if c["processing"] and c["processing"] != "nan"))
-    features = {
-        "Tokenization": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_TOKENIZATION", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
-        "Recurring Payments": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_RECURRING_PAYMENTS", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
-        "Payouts": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_PAYOUTS", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
-        "Installments": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_INSTALLMENTS", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
-        "3DS": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("3DS", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
-        "PayFac": any(sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()].get("SUPPORTS_PAYFAC", pd.Series()).dropna().apply(lambda x: x == True or x == 1).values) if len(sot_df) > 0 else False,
-    }
     return tr(request, "partner_detail.html", ctx(
         request, "partners",
         partner=partner,
@@ -200,7 +192,6 @@ def partner_detail(request: Request, name: str):
         countries=countries,
         methods=methods,
         processing=processing,
-        features=features,
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)

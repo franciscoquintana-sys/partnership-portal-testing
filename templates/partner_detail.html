@@ -210,13 +210,8 @@
   </div>
 </div>
 
-<!-- Feature tags -->
+<!-- Tags row -->
 <div class="tags-row">
-  {% for name, active in features.items() %}
-  <span class="tag {% if active %}tag-on{% else %}tag-off{% endif %}">
-    {% if active %}✓{% else %}○{% endif %} {{ name }}
-  </span>
-  {% endfor %}
   {% if partner.nda %}<span class="tag tag-blue">✓ NDA Signed</span>{% endif %}
   {% if partner.revshare_active %}<span class="tag tag-purple">✓ Rev Share Active</span>{% endif %}
 </div>
