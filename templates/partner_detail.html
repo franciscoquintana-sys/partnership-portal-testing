@@ -246,18 +246,33 @@
 
   <!-- Contacts -->
   <div class="section-card">
-    <div class="section-head">Contacts</div>
+    <div class="section-head">Sales Contacts</div>
     <div class="section-body">
-      <div class="field-grid">
-        <div>
-          <div class="field-label">Contact</div>
-          <div class="field-value">{{ sales_contact.am_name }}</div>
+      {% if sales_contacts %}
+        {% for c in sales_contacts %}
+        <div class="field-grid" {% if not loop.first %}style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"{% endif %}>
+          <div>
+            <div class="field-label">Sales Contact</div>
+            <div class="field-value">{{ c.am_name }}</div>
+          </div>
+          <div>
+            <div class="field-label">Sales Email</div>
+            <div class="field-value">{{ c.am_email }}</div>
+          </div>
         </div>
-        <div>
-          <div class="field-label">AM Email</div>
-          <div class="field-value">{{ sales_contact.am_email }}</div>
+        {% endfor %}
+      {% else %}
+        <div class="field-grid">
+          <div>
+            <div class="field-label">Sales Contact</div>
+            <div class="field-value muted">N/A</div>
+          </div>
+          <div>
+            <div class="field-label">Sales Email</div>
+            <div class="field-value muted">N/A</div>
+          </div>
         </div>
-      </div>
+      {% endif %}
     </div>
   </div>
 

@@ -115,8 +115,8 @@ def load_partners_excel():
     _PARTNERS_CACHE["ts"] = now
     return result
 
-def load_sales_contact(provider_name: str) -> dict:
-    """Return Partnerships AM + email for a provider where Contact for AI is TRUE."""
+def load_sales_contacts(provider_name: str) -> list:
+    """Return all Partnerships AM + email for a provider where Contact for AI is TRUE."""
     now = time.time()
     if _CONTACTS_CACHE["data"] is None or now - _CONTACTS_CACHE["ts"] > _CACHE_TTL:
         try:
@@ -128,7 +128,7 @@ def load_sales_contact(provider_name: str) -> dict:
 
     df = _CONTACTS_CACHE["data"]
     if df is None or len(df) == 0:
-        return {"am_name": "N/A", "am_email": "N/A"}
+        return []
 
     pname = str(provider_name).strip().lower()
     mask = (
@@ -138,15 +138,17 @@ def load_sales_contact(provider_name: str) -> dict:
     )
     matches = df[mask]
     if matches.empty:
-        return {"am_name": "N/A", "am_email": "N/A"}
+        return []
 
-    row = matches.iloc[0]
-    am_name = str(row.get("Partnerships AM", "")).strip()
-    am_email = str(row.get("AM Email", "")).strip()
-    return {
-        "am_name": am_name if am_name and am_name != "nan" else "N/A",
-        "am_email": am_email if am_email and am_email != "nan" else "N/A",
-    }
+    contacts = []
+    for _, row in matches.iterrows():
+        am_name = str(row.get("Partnerships AM", "")).strip()
+        am_email = str(row.get("AM Email", "")).strip()
+        contacts.append({
+            "am_name": am_name if am_name and am_name != "nan" else "N/A",
+            "am_email": am_email if am_email and am_email != "nan" else "N/A",
+        })
+    return contacts
 
 def load_sot_data():
     path = os.path.join(_BASE, "data", "source_of_truth.xlsx")
