@@ -226,15 +226,23 @@
       <div class="field-grid">
         <div>
           <div class="field-label">Manager</div>
-          {% if partner.manager %}<div class="field-value">{{ partner.manager }}</div>{% else %}<span class="skel skel-text"></span>{% endif %}
-        </div>
-        <div>
-          <div class="field-label">Tier</div>
-          {% if partner.tier %}<div class="field-value">{{ partner.tier }}</div>{% else %}<span class="skel skel-text-sm"></span>{% endif %}
+          <div class="field-value">{{ partner.manager if partner.manager else "N/A" }}</div>
         </div>
         <div>
           <div class="field-label">Management Type</div>
-          {% if partner.mgmt_type %}<div class="field-value muted">{{ partner.mgmt_type }}</div>{% else %}<span class="skel skel-text-lg"></span>{% endif %}
+          <div class="field-value">{{ partner.mgmt_type if partner.mgmt_type else "N/A" }}</div>
+        </div>
+        <div>
+          <div class="field-label">Deal Stage</div>
+          <div class="field-value">{{ partner.status if partner.status else "N/A" }}</div>
+        </div>
+        <div>
+          <div class="field-label">Integration Stage</div>
+          <div class="field-value">{{ partner.integration_stage if partner.integration_stage else "N/A" }}</div>
+        </div>
+        <div>
+          <div class="field-label">Tier</div>
+          {% if partner.tier %}<div class="field-value">{{ partner.tier }}</div>{% else %}<div class="field-value muted">N/A</div>{% endif %}
         </div>
         <div>
           <div class="field-label">Rev Share Contract</div>
