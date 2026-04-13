@@ -177,10 +177,19 @@
       <span>{{ partner.region }}{% if partner.country %} · {{ partner.country }}{% endif %}</span>
       {% if partner.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 7px;border-radius:4px;font-weight:700">STRATEGIC</span>{% endif %}
     </div>
-    <div style="display:flex;gap:16px;margin-top:6px;font-size:12px;color:var(--text3)">
-      <span><strong style="color:var(--text)">{{ countries | length }}</strong> Countries</span>
-      <span><strong style="color:var(--text)">{{ methods | length }}</strong> Payment Methods</span>
-      <span><strong style="color:var(--text)">{{ processing | length }}</strong> Processing Types</span>
+    <div class="stats-bar" style="margin-top:10px;margin-bottom:0">
+      <div class="stat-box">
+        <div class="stat-box-value">{{ countries | length }}</div>
+        <div class="stat-box-label">Countries</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value blue">{{ methods | length }}</div>
+        <div class="stat-box-label">Payment Methods</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-box-value">{{ processing | length }}</div>
+        <div class="stat-box-label">Processing Types</div>
+      </div>
     </div>
   </div>
   <div style="margin-left:auto;text-align:right">
