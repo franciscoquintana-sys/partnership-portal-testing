@@ -5,13 +5,14 @@
 .stats-bar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 0;
-  background: transparent;
-  border: none;
-  border-radius: 0;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
   margin-bottom: 20px;
 }
-.stat-box { background: transparent; padding: 18px 24px; }
+.stat-box { background: #fff; padding: 18px 24px; }
 .stat-box-value { font-size: 30px; font-weight: 800; color: #0f172a; letter-spacing: -1px; line-height: 1; }
 .stat-box-value.green { color: #16a34a; }
 .stat-box-value.blue  { color: #2563eb; }
