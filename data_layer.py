@@ -1,4 +1,4 @@
-import os, sys, time, json
+import os, sys, time, json, threading
 import pandas as pd
 
 _BASE = os.path.dirname(os.path.abspath(__file__))
@@ -53,7 +53,7 @@ _TECH_CONTACTS_CSV_URL = (
 _PARTNERS_CACHE = {"data": None, "ts": 0}
 _CONTACTS_CACHE = {"data": None, "ts": 0}
 _TECH_CACHE = {"data": None, "ts": 0}
-_CACHE_TTL = 60  # refresh every 60 seconds
+_CACHE_TTL = 300  # refresh every 5 minutes
 
 def _fetch_sheet_df():
     try:
@@ -379,3 +379,20 @@ COUNTRIES = {
     "India": {"flag":"🇮🇳","currency":"INR","methods":["UPI","Credit Card","NetBanking","Paytm","PhonePe"],"settlement":"D+1 (UPI), D+2 (cards)","fx":"RBI controls. Repatriation requires documentation.","regulation":"RBI regulates. Payment Aggregator license required since 2021.","top_providers":["Razorpay","PayU","Cashfree","Instamojo","CCAvenue"]},
     "Singapore": {"flag":"🇸🇬","currency":"SGD","methods":["Credit Card","PayNow","FAST","GrabPay","DBS PayLah"],"settlement":"D+1","fx":"Open market. SGD stable.","regulation":"MAS regulates. MPI license required.","top_providers":["Stripe","Adyen","2C2P","Asiapay","PayNow"]},
 }
+
+# Preload all sheet caches in background at startup
+def _preload_caches():
+    try:
+        load_partners_excel()
+    except Exception:
+        pass
+    try:
+        load_technical_contact("")
+    except Exception:
+        pass
+    try:
+        load_sales_contacts("")
+    except Exception:
+        pass
+
+threading.Thread(target=_preload_caches, daemon=True).start()
