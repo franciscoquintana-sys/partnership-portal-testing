@@ -175,45 +175,8 @@
     <div class="partner-header-meta">
       <span class="type-pill type-{{ partner.type | replace('/', '-') | replace(' ', '-') }}">{{ partner.type }}</span>
       <span>{{ partner.region }}{% if partner.country %} · {{ partner.country }}{% endif %}</span>
-      {% if partner.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 7px;border-radius:4px;font-weight:700">STRATEGIC</span>{% endif %}
     </div>
   </div>
-  <div style="margin-left:auto">
-    <span style="font-size:14px;font-weight:700;
-      {% if 'Live' in partner.status %}color:#16a34a
-      {% elif 'Prospect' in partner.status or 'Opportunity' in partner.status %}color:#d97706
-      {% else %}color:var(--text2){% endif %}">
-      ● {{ partner.status }}
-    </span>
-  </div>
-</div>
-
-<!-- Stats bar -->
-<div class="stats-bar">
-  <div class="stat-box">
-    <div class="stat-box-value">{{ countries | length }}</div>
-    <div class="stat-box-label">Countries</div>
-  </div>
-  <div class="stat-box">
-    <div class="stat-box-value blue">{{ methods | length }}</div>
-    <div class="stat-box-label">Payment Methods</div>
-  </div>
-  <div class="stat-box">
-    <div class="stat-box-value">{{ processing | length }}</div>
-    <div class="stat-box-label">Processing Types</div>
-  </div>
-  <div class="stat-box">
-    <div class="stat-box-value {% if 'Live' in partner.status %}green{% else %}amber{% endif %}">
-      {{ partner.status }}
-    </div>
-    <div class="stat-box-label">Partnership Status</div>
-  </div>
-</div>
-
-<!-- Tags row -->
-<div class="tags-row">
-  {% if partner.nda %}<span class="tag tag-blue">✓ NDA Signed</span>{% endif %}
-  {% if partner.revshare_active %}<span class="tag tag-purple">✓ Rev Share Active</span>{% endif %}
 </div>
 
 <!-- Content grid -->
