@@ -53,7 +53,7 @@ _TECH_CONTACTS_CSV_URL = (
 _PARTNERS_CACHE = {"data": None, "ts": 0}
 _CONTACTS_CACHE = {"data": None, "ts": 0}
 _TECH_CACHE = {"data": None, "ts": 0}
-_CACHE_TTL = 300  # refresh every 5 minutes
+_CACHE_TTL = 3600  # refresh every 1 hour
 
 def _fetch_sheet_df():
     try:
