@@ -325,13 +325,13 @@
   <!-- Search -->
   <div class="search-bar-row">
     <div class="search-wrap" style="position:relative">
-      <div style="position:absolute;left:11px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px;pointer-events:none">
+      <div style="position:absolute;left:10px;top:50%;transform:translateY(-50%);display:flex;align-items:center;pointer-events:none">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
       <input class="search-input" id="search" type="text"
         placeholder="Search partners…"
         value="{{ q }}"
-        style="padding-left:34px"
+        style="padding-left:32px"
         oninput="applyFilters()"
         onkeydown="if(event.key==='Enter'){event.preventDefault();applyFilters()}">
     </div>
@@ -345,11 +345,11 @@
         Export <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
       </button>
       <div id="export-menu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);overflow:hidden;min-width:150px;z-index:999">
-        <div onclick="exportCSV()" style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:12.5px;font-weight:600;color:#15803d;cursor:pointer" onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background=''">
+        <div onclick="openExportModal('csv')" style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:12.5px;font-weight:600;color:#15803d;cursor:pointer" onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background=''">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
           Excel / CSV
         </div>
-        <div onclick="exportPDF()" style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:12.5px;font-weight:600;color:#dc2626;cursor:pointer;border-top:1px solid var(--border)" onmouseover="this.style.background='#fff5f5'" onmouseout="this.style.background=''">
+        <div onclick="openExportModal('pdf')" style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:12.5px;font-weight:600;color:#dc2626;cursor:pointer;border-top:1px solid var(--border)" onmouseover="this.style.background='#fff5f5'" onmouseout="this.style.background=''">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
           PDF
         </div>
@@ -480,6 +480,21 @@
   </div>
 
 </div>
+
+<!-- Export Column Selector Modal -->
+<div id="export-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;display:none;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:24px;min-width:320px;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+    <div style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:4px">Select Columns to Export</div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:16px" id="export-modal-format"></div>
+    <div id="export-col-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeExportModal()" style="font-family:var(--font);font-size:12px;font-weight:600;padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:#fff;color:#64748b;cursor:pointer">Cancel</button>
+      <button onclick="confirmExport()" style="font-family:var(--font);font-size:12px;font-weight:600;padding:8px 16px;border:none;border-radius:8px;background:#4F46E5;color:#fff;cursor:pointer">Export</button>
+    </div>
+  </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
@@ -576,42 +591,72 @@ function getVisibleRows() {
   return [...document.querySelectorAll('#partners-tbody tr')].filter(r => r.style.display !== 'none');
 }
 
-function exportCSV() {
+const ALL_EXPORT_COLS = [
+  {key:'partner', label:'Provider'},
+  {key:'type', label:'Type'},
+  {key:'region', label:'Region'},
+  {key:'country', label:'Country'},
+  {key:'status', label:'Deal Stage'},
+  {key:'integration', label:'Integration Status'},
+  {key:'tier', label:'Tier'},
+  {key:'manager', label:'Manager'},
+];
+
+let _exportFormat = 'csv';
+
+function openExportModal(format) {
   document.getElementById('export-menu').style.display = 'none';
+  _exportFormat = format;
+  const modal = document.getElementById('export-modal');
+  document.getElementById('export-modal-format').textContent = format === 'csv' ? 'Exporting as Excel / CSV' : 'Exporting as PDF';
+  const list = document.getElementById('export-col-list');
+  list.innerHTML = ALL_EXPORT_COLS.map((c,i) => `<label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:#334155;cursor:pointer"><input type="checkbox" class="export-col-cb" value="${c.key}" ${i < 6 ? 'checked' : ''}> ${c.label}</label>`).join('');
+  modal.style.display = 'flex';
+}
+
+function closeExportModal() {
+  document.getElementById('export-modal').style.display = 'none';
+}
+
+function getSelectedExportCols() {
+  return [...document.querySelectorAll('.export-col-cb:checked')].map(cb => {
+    const col = ALL_EXPORT_COLS.find(c => c.key === cb.value);
+    return col;
+  });
+}
+
+function confirmExport() {
+  closeExportModal();
+  if (_exportFormat === 'csv') doExportCSV();
+  else doExportPDF();
+}
+
+function doExportCSV() {
+  const cols = getSelectedExportCols();
+  if (!cols.length) return;
   const rows = getVisibleRows();
-  const headers = ['Provider', 'Type', 'Region', 'Country', 'Deal Stage', 'Integration Status'];
-  const data = rows.map(r => [
-    r.dataset.partner,
-    r.dataset.type,
-    r.dataset.region,
-    r.dataset.country,
-    r.dataset.status,
-    r.dataset.integration,
-  ]);
+  const headers = cols.map(c => c.label);
+  const data = rows.map(r => cols.map(c => r.dataset[c.key] || ''));
   const csv = [headers, ...data].map(row => row.map(v => `"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob = new Blob([csv], {type: 'text/csv'});
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'yuno_partners.csv'; a.click();
 }
 
-function exportPDF() {
-  document.getElementById('export-menu').style.display = 'none';
+function doExportPDF() {
+  const cols = getSelectedExportCols();
+  if (!cols.length) return;
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
   const rows = getVisibleRows();
   const now = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   const pageW = doc.internal.pageSize.getWidth();
 
-  // Header bar
   doc.setFillColor(10, 22, 40);
   doc.rect(0, 0, pageW, 56, 'F');
-
-  // Accent glow
   doc.setFillColor(79, 70, 229);
   doc.setGState(new doc.GState({ opacity: 0.18 }));
   doc.ellipse(pageW - 60, 28, 120, 60, 'F');
   doc.setGState(new doc.GState({ opacity: 1 }));
-
-  // Title
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(18);
   doc.setTextColor(255, 255, 255);
@@ -620,27 +665,13 @@ function exportPDF() {
   doc.setFontSize(11);
   doc.setTextColor(148, 163, 184);
   doc.text('Partner Portfolio Export', 32, 44);
-
-  // Date top right
   doc.setFontSize(9);
-  doc.setTextColor(148, 163, 184);
   doc.text(now, pageW - 32, 36, { align: 'right' });
-
-  // Summary line
-  doc.setFontSize(9);
   doc.setTextColor(100, 116, 139);
   doc.text(`${rows.length} connector${rows.length !== 1 ? 's' : ''} · Filtered export`, 32, 72);
 
-  // Table data
-  const headers = ['Provider', 'Type', 'Region', 'Country', 'Deal Stage', 'Integration Status'];
-  const body = rows.map(r => [
-    r.dataset.partner || '',
-    r.dataset.type || '',
-    r.dataset.region || '',
-    r.dataset.country || '',
-    r.dataset.status || '',
-    r.dataset.integration || '',
-  ]);
+  const headers = cols.map(c => c.label);
+  const body = rows.map(r => cols.map(c => r.dataset[c.key] || ''));
 
   doc.autoTable({
     startY: 84,
@@ -652,31 +683,12 @@ function exportPDF() {
       fontSize: 8.5, cellPadding: 8, halign: 'left',
     },
     alternateRowStyles: { fillColor: [248, 250, 252] },
-    columnStyles: {
-      0: { fontStyle: 'bold', cellWidth: 130 },
-      4: { cellWidth: 90 },
-      5: { cellWidth: 90 },
-    },
+    columnStyles: { 0: { fontStyle: 'bold' } },
     tableLineColor: [226, 232, 240],
     tableLineWidth: 0.5,
     margin: { left: 32, right: 32 },
-    didDrawCell: (data) => {
-      if (data.section === 'body' && data.column.index === 4) {
-        const val = data.cell.raw;
-        if (val === 'Live') doc.setTextColor(22, 163, 74);
-        else if (val === 'Prospect') doc.setTextColor(217, 119, 6);
-        else doc.setTextColor(100, 116, 139);
-      }
-      if (data.section === 'body' && data.column.index === 5) {
-        const val = data.cell.raw;
-        if (val === 'Live') doc.setTextColor(22, 163, 74);
-        else if (val === 'Ready') doc.setTextColor(37, 99, 235);
-        else doc.setTextColor(156, 163, 175);
-      }
-    },
   });
 
-  // Footer
   const finalY = doc.lastAutoTable.finalY + 20;
   doc.setDrawColor(226, 232, 240);
   doc.setLineWidth(0.5);
