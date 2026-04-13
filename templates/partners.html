@@ -607,7 +607,8 @@ function openExportModal(format) {
   const modal = document.getElementById('export-modal');
   document.getElementById('export-modal-format').textContent = format === 'csv' ? 'Exporting as Excel / CSV' : 'Exporting as PDF';
   const list = document.getElementById('export-col-list');
-  list.innerHTML = ALL_EXPORT_COLS.map((c,i) => `<label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:#334155;cursor:pointer"><input type="checkbox" class="export-col-cb" value="${c.key}" ${i < 6 ? 'checked' : ''}> ${c.label}</label>`).join('');
+  const defaultCols = ['partner','type','region','country','status','integration'];
+  list.innerHTML = ALL_EXPORT_COLS.map(c => `<label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:#334155;cursor:pointer"><input type="checkbox" class="export-col-cb" value="${c.key}" ${defaultCols.includes(c.key) ? 'checked' : ''}> ${c.label}</label>`).join('');
   modal.style.display = 'flex';
 }
 
