@@ -49,9 +49,7 @@ NAV = {
     ],
 }
 
-BADGES = {
-    "partners": "47", "mission": "3", "pipeline": "24",
-}
+BADGES = {}
 
 def ctx(request: Request, page: str, **kwargs):
     role = get_role(request)
