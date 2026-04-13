@@ -177,28 +177,34 @@
       <span>{{ partner.region }}{% if partner.country %} · {{ partner.country }}{% endif %}</span>
       {% if partner.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 7px;border-radius:4px;font-weight:700">STRATEGIC</span>{% endif %}
     </div>
-    <div class="stats-bar" style="margin-top:10px;margin-bottom:0">
-      <div class="stat-box">
-        <div class="stat-box-value">{{ countries | length }}</div>
-        <div class="stat-box-label">Countries</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-value blue">{{ methods | length }}</div>
-        <div class="stat-box-label">Payment Methods</div>
-      </div>
-      <div class="stat-box">
-        <div class="stat-box-value">{{ processing | length }}</div>
-        <div class="stat-box-label">Processing Types</div>
-      </div>
-    </div>
   </div>
   <div style="margin-left:auto;text-align:right">
-    <div style="font-size:14px;font-weight:700;{% if 'Live' in partner.status %}color:#16a34a{% elif 'Signed' in partner.status %}color:#2563eb{% elif 'Prospect' in partner.status or 'Opportunity' in partner.status %}color:#d97706{% else %}color:var(--text2){% endif %}">
-      {{ partner.status or 'N/A' }}
-    </div>
+    <span style="font-size:14px;font-weight:700;
+      {% if 'Live' in partner.status %}color:#16a34a
+      {% elif 'Signed' in partner.status %}color:#2563eb
+      {% elif 'Prospect' in partner.status or 'Opportunity' in partner.status %}color:#d97706
+      {% else %}color:var(--text2){% endif %}">
+      ● {{ partner.status or 'N/A' }}
+    </span>
     <div style="font-size:12px;color:var(--text3);margin-top:4px">
       Integration: <strong style="{% if partner.integration_stage == 'Live' %}color:#16a34a{% else %}color:var(--text2){% endif %}">{{ partner.integration_stage or 'N/A' }}</strong>
     </div>
+  </div>
+</div>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat-box">
+    <div class="stat-box-value">{{ countries | length }}</div>
+    <div class="stat-box-label">Countries</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-box-value blue">{{ methods | length }}</div>
+    <div class="stat-box-label">Payment Methods</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-box-value">{{ processing | length }}</div>
+    <div class="stat-box-label">Processing Types</div>
   </div>
 </div>
 
