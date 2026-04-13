@@ -45,8 +45,14 @@ _CONTACTS_CSV_URL = (
     "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
     "/export?format=csv&gid=695009227"
 )
+_TECH_CONTACTS_CSV_URL = (
+    "https://docs.google.com/spreadsheets/d/"
+    "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
+    "/export?format=csv&gid=1537055418"
+)
 _PARTNERS_CACHE = {"data": None, "ts": 0}
 _CONTACTS_CACHE = {"data": None, "ts": 0}
+_TECH_CACHE = {"data": None, "ts": 0}
 _CACHE_TTL = 60  # refresh every 60 seconds
 
 def _fetch_sheet_df():
@@ -116,19 +122,41 @@ def load_partners_excel():
     return result
 
 def load_technical_contact(provider_name: str) -> dict:
-    """Return technical contact for a provider from partner_contacts.py."""
-    try:
-        from data.partner_contacts import PARTNER_CONTACTS
-        key = provider_name.upper()
-        entry = PARTNER_CONTACTS.get(key, {})
-        name = entry.get("technical_contact", "").strip()
-        email = entry.get("technical_email", "").strip()
-        return {
-            "name": name if name else "N/A",
-            "email": email if email else "N/A",
-        }
-    except Exception:
-        return {"name": "N/A", "email": "N/A"}
+    """Return technical contact info from the Technical Contacts sheet."""
+    now = time.time()
+    if _TECH_CACHE["data"] is None or now - _TECH_CACHE["ts"] > _CACHE_TTL:
+        try:
+            df = pd.read_csv(_TECH_CONTACTS_CSV_URL)
+            _TECH_CACHE["data"] = df
+        except Exception:
+            _TECH_CACHE["data"] = pd.DataFrame()
+        _TECH_CACHE["ts"] = now
+
+    df = _TECH_CACHE["data"]
+    na = {"contact": "N/A", "contact_p1": "N/A", "sla": "N/A",
+          "escalation": "N/A", "slack": "N/A", "status_page": "N/A"}
+    if df is None or len(df) == 0:
+        return na
+
+    pname = str(provider_name).strip().lower()
+    mask = df["Provider"].astype(str).str.strip().str.lower() == pname
+    matches = df[mask]
+    if matches.empty:
+        return na
+
+    row = matches.iloc[0]
+    def val(col):
+        v = str(row.get(col, "")).strip()
+        return v if v and v != "nan" else "N/A"
+
+    return {
+        "contact": val("Technical Contact (Day to Day)"),
+        "contact_p1": val("Technical Contact P1"),
+        "sla": val("SLA"),
+        "escalation": val("Escalation Path"),
+        "slack": val("Slack Channel"),
+        "status_page": val("Status Page"),
+    }
 
 def load_sales_contacts(provider_name: str) -> list:
     """Return all Partnerships AM + email for a provider where Contact for AI is TRUE."""

@@ -298,14 +298,30 @@
   <div class="section-card full">
     <div class="section-head">Technical Contact</div>
     <div class="section-body">
-      <div style="display:flex;gap:48px">
+      <div style="display:flex;gap:48px;flex-wrap:wrap">
         <div>
-          <div class="field-label">Contact</div>
-          <div class="field-value">{{ technical_contact.name }}</div>
+          <div class="field-label">Technical Contact</div>
+          <div class="field-value">{{ technical_contact.contact }}</div>
         </div>
         <div>
-          <div class="field-label">Email</div>
-          <div class="field-value">{{ technical_contact.email }}</div>
+          <div class="field-label">Technical Contact P1</div>
+          <div class="field-value">{{ technical_contact.contact_p1 }}</div>
+        </div>
+        <div>
+          <div class="field-label">SLA</div>
+          <div class="field-value">{{ technical_contact.sla }}</div>
+        </div>
+        <div>
+          <div class="field-label">Escalation Path</div>
+          <div class="field-value">{{ technical_contact.escalation }}</div>
+        </div>
+        <div>
+          <div class="field-label">Slack Channel</div>
+          <div class="field-value">{{ technical_contact.slack }}</div>
+        </div>
+        <div>
+          <div class="field-label">Status Page</div>
+          <div class="field-value">{{ technical_contact.status_page }}</div>
         </div>
       </div>
     </div>
