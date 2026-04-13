@@ -47,7 +47,7 @@ _CONTACTS_CSV_URL = (
 )
 _PARTNERS_CACHE = {"data": None, "ts": 0}
 _CONTACTS_CACHE = {"data": None, "ts": 0}
-_CACHE_TTL = 300  # refresh every 5 minutes
+_CACHE_TTL = 60  # refresh every 60 seconds
 
 def _fetch_sheet_df():
     try:
@@ -141,11 +141,16 @@ def load_sales_contacts(provider_name: str) -> list:
         return []
 
     contacts = []
+    seen = set()
     for _, row in matches.iterrows():
         am_name = str(row.get("Partnerships AM", "")).strip()
         am_email = str(row.get("AM Email", "")).strip()
         am_role = str(row.get("AM Role", "")).strip()
         territory = str(row.get("Territory Scope", "")).strip()
+        key = (am_name.lower(), am_email.lower())
+        if key in seen:
+            continue
+        seen.add(key)
         contacts.append({
             "am_name": am_name if am_name and am_name != "nan" else "N/A",
             "am_email": am_email if am_email and am_email != "nan" else "N/A",
