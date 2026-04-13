@@ -240,22 +240,6 @@
           <div class="field-label">Integration Stage</div>
           <div class="field-value">{{ partner.integration_stage if partner.integration_stage else "N/A" }}</div>
         </div>
-        <div>
-          <div class="field-label">Tier</div>
-          {% if partner.tier %}<div class="field-value">{{ partner.tier }}</div>{% else %}<div class="field-value muted">N/A</div>{% endif %}
-        </div>
-        <div>
-          <div class="field-label">Rev Share Contract</div>
-          <div class="field-value">{% if partner.revshare %}Yes{% else %}No{% endif %}</div>
-        </div>
-        <div>
-          <div class="field-label">NDA</div>
-          <div class="field-value">{% if partner.nda %}Signed{% else %}Pending{% endif %}</div>
-        </div>
-        <div>
-          <div class="field-label">Integration Used</div>
-          <div class="field-value">{% if partner.integration_used %}Yes{% else %}No{% endif %}</div>
-        </div>
       </div>
       {% if partner.comments %}
       <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
