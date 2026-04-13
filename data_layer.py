@@ -115,6 +115,21 @@ def load_partners_excel():
     _PARTNERS_CACHE["ts"] = now
     return result
 
+def load_technical_contact(provider_name: str) -> dict:
+    """Return technical contact for a provider from partner_contacts.py."""
+    try:
+        from data.partner_contacts import PARTNER_CONTACTS
+        key = provider_name.upper()
+        entry = PARTNER_CONTACTS.get(key, {})
+        name = entry.get("technical_contact", "").strip()
+        email = entry.get("technical_email", "").strip()
+        return {
+            "name": name if name else "N/A",
+            "email": email if email else "N/A",
+        }
+    except Exception:
+        return {"name": "N/A", "email": "N/A"}
+
 def load_sales_contacts(provider_name: str) -> list:
     """Return all Partnerships AM + email for a provider where Contact for AI is TRUE."""
     now = time.time()
