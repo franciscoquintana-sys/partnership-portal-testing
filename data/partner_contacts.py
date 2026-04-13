@@ -2,6 +2,7 @@
 
 PARTNER_CONTACTS = {
     "2C2P": {
+        "parent_partner": "2C2P / Ant Intl",
         "commercial_contact": "Dita Ayun",
         "commercial_email": "dita.ayu@2c2p.com",
         "commercial_phone": "",
@@ -11,6 +12,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization",
     },
     "2CHECKOUT": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -20,6 +22,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "54PAY/PAYGATE": {
+        "parent_partner": "54pay/PayGate",
         "commercial_contact": "Olatunbosun Osikomaiya",
         "commercial_email": "olatunbosun@54pay.co",
         "commercial_phone": "",
@@ -29,6 +32,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ACCERTIFY": {
+        "parent_partner": "Accertify",
         "commercial_contact": "Pilar Payano",
         "commercial_email": "ppayano@accertify.com",
         "commercial_phone": "",
@@ -38,6 +42,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ACH COLOMBIA": {
+        "parent_partner": "",
         "commercial_contact": "Andres Caipa",
         "commercial_email": "acaipa@achcolombia.com.co",
         "commercial_phone": "57 350 283 5358",
@@ -47,6 +52,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ACUOTAZ": {
+        "parent_partner": "Acuotaz",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -56,6 +62,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ADDI": {
+        "parent_partner": "Addi",
         "commercial_contact": "Juan Camilo Castro",
         "commercial_email": "jcastro@addi.com",
         "commercial_phone": "57 310 323 3809",
@@ -65,6 +72,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ADFALI (EDFALI)": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -74,6 +82,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ADIQ": {
+        "parent_partner": "Adiq Pagamentos",
         "commercial_contact": "Willians Brasil",
         "commercial_email": "willians.brasil@adiq.com.brr",
         "commercial_phone": "",
@@ -83,6 +92,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ADYEN": {
+        "parent_partner": "Adyen",
         "commercial_contact": "Tiago Albano",
         "commercial_email": "tiago.albano@adyen.com",
         "commercial_phone": "55 11 99461-6350",
@@ -92,6 +102,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "AFIRME": {
+        "parent_partner": "Afirme",
         "commercial_contact": "Melina Yared Lechuga",
         "commercial_email": "melina.lechuga@afirme.com",
         "commercial_phone": "52 1 81 8018 0128",
@@ -101,6 +112,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments, Payouts, Installments, Network Tokens",
     },
     "AIRWALLEX": {
+        "parent_partner": "Airwallex APAC",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -110,6 +122,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Tokenization, Recurring Payments, Payouts, Network Tokens",
     },
     "AIRWALLEX APAC": {
+        "parent_partner": "Airwallex APAC",
         "commercial_contact": "Sid Sharma",
         "commercial_email": "siddharth.sharma@airwallex.com",
         "commercial_phone": "",
@@ -119,6 +132,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "AIRWALLEX USA": {
+        "parent_partner": "Airwallex USA - LATAM",
         "commercial_contact": "Colette Lewis",
         "commercial_email": "colette.lewis@airwallex.com",
         "commercial_phone": "",
@@ -128,6 +142,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ALELO": {
+        "parent_partner": "Alelo Brasil",
         "commercial_contact": "Danielle Vicente",
         "commercial_email": "dvicente.wayon@alelo.com.br",
         "commercial_phone": "55 11 96067-2512",
@@ -137,6 +152,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ALIGNET": {
+        "parent_partner": "Alignet",
         "commercial_contact": "Ever Rojas",
         "commercial_email": "ever.rojas@pay-me.com",
         "commercial_phone": "51 992 775 657",
@@ -146,6 +162,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ALLINPAY": {
+        "parent_partner": "AllinPay (International)",
         "commercial_contact": "Wallace Peh",
         "commercial_email": "wallacepeh@allinpayintl.com",
         "commercial_phone": "+65 84497785",
@@ -155,6 +172,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ALL_IN_PAY": {
+        "parent_partner": "AllinPay (International)",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -164,6 +182,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "AMAZON PAYMENT SERVICES": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -173,6 +192,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "AMERICAN EXPRESS MEXICO": {
+        "parent_partner": "American Express Mexico",
         "commercial_contact": "Alvaro Rubio",
         "commercial_email": "alvaro.rubio@aexp.com",
         "commercial_phone": "",
@@ -182,6 +202,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "AMEX": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -191,6 +212,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "AMWAL PAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -200,6 +222,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ANTOM / 2C2P": {
+        "parent_partner": "2C2P / Ant Intl",
         "commercial_contact": "Jason Zheng",
         "commercial_email": "jason@2c2p.com",
         "commercial_phone": "+65 9667 7770",
@@ -209,6 +232,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "APLAZO": {
+        "parent_partner": "Aplazo",
         "commercial_contact": "Manuel Ceniceros",
         "commercial_email": "ceniceros@aplazo.mx",
         "commercial_phone": "52 55 65602479",
@@ -218,6 +242,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, High Risk",
     },
     "APPLE PAY": {
+        "parent_partner": "Apple Pay",
         "commercial_contact": "Shawn Munyon",
         "commercial_email": "smunyon@apple.com",
         "commercial_phone": "1 (646) 771-6992",
@@ -227,6 +252,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "APPLE PAY BR": {
+        "parent_partner": "Apple Pay",
         "commercial_contact": "Claudia Bahia",
         "commercial_email": "cblima@apple.com",
         "commercial_phone": "55 11 98924 1999",
@@ -236,6 +262,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "APPLE_PAY": {
+        "parent_partner": "Apple Pay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -245,6 +272,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization",
     },
     "ARABI_NEXT": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -254,6 +282,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ARCUS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -263,6 +292,7 @@ PARTNER_CONTACTS = {
         "verticals": "Payouts",
     },
     "AREEBA": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -272,6 +302,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ASTROPAY": {
+        "parent_partner": "Astropay",
         "commercial_contact": "Nicolás Vilensky",
         "commercial_email": "nicolas.vilensky@astropay.com",
         "commercial_phone": "598 98 355 253",
@@ -281,6 +312,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "AU10TIX": {
+        "parent_partner": "Au10tix",
         "commercial_contact": "Felipe Mora",
         "commercial_email": "Felipe.Mora@au10tix.com",
         "commercial_phone": "52 5544783087",
@@ -290,6 +322,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing",
     },
     "AZUL": {
+        "parent_partner": "Azul",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -299,6 +332,7 @@ PARTNER_CONTACTS = {
         "verticals": "Payouts",
     },
     "BAASKIT": {
+        "parent_partner": "Baaskit",
         "commercial_contact": "Jose Tomas Novoa",
         "commercial_email": "josetomas.novoa@baaskit.com",
         "commercial_phone": "",
@@ -308,6 +342,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAC CREDOMATIC": {
+        "parent_partner": "BAC International Bank",
         "commercial_contact": "Elena Alvarez Quesada",
         "commercial_email": "elena.alvarez@baccredomatic.com",
         "commercial_phone": "",
@@ -317,6 +352,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAC CREDOMATIC COSTA RICA": {
+        "parent_partner": "BAC International Bank",
         "commercial_contact": "Alvin Hernandez",
         "commercial_email": "ahernandezra@baccredomatic.cr",
         "commercial_phone": "",
@@ -326,6 +362,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAC CREDOMATIC EL SALVADOR": {
+        "parent_partner": "BAC International Bank",
         "commercial_contact": "Walter Marroquin",
         "commercial_email": "walter_marroquin@baccredomatic.sv",
         "commercial_phone": "",
@@ -335,6 +372,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAC CREDOMATIC GUATEMALA": {
+        "parent_partner": "BAC International Bank",
         "commercial_contact": "Paulo Gonzalez",
         "commercial_email": "pcgonzalezm@baccredomatic.gt",
         "commercial_phone": "",
@@ -344,6 +382,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAC CREDOMATIC HONDURAS": {
+        "parent_partner": "BAC International Bank",
         "commercial_contact": "Fernando Quezada",
         "commercial_email": "fernando.quezada@baccredomatic.hn",
         "commercial_phone": "",
@@ -353,6 +392,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAC CREDOMATIC NICARAGUA": {
+        "parent_partner": "BAC International Bank",
         "commercial_contact": "Juan Picado",
         "commercial_email": "jpicado@baccredomatic.ni",
         "commercial_phone": "",
@@ -362,6 +402,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAC CREDOMATIC PANAMÁ": {
+        "parent_partner": "",
         "commercial_contact": "Yasmicel Gonzalez",
         "commercial_email": "yasmicel.gonzalez@pa.bac.net",
         "commercial_phone": "",
@@ -371,6 +412,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAC CREDOMATIC REGIONAL": {
+        "parent_partner": "",
         "commercial_contact": "Elena Alvarez Quesada",
         "commercial_email": "elena.alvarez@baccredomatic.com",
         "commercial_phone": "506 8308 9235",
@@ -380,6 +422,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAC_CREDOMATIC": {
+        "parent_partner": "BAC International Bank",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -389,6 +432,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "BAMBOO": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -398,6 +442,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "BAMBOO PAYMENTS": {
+        "parent_partner": "Bamboo Payments",
         "commercial_contact": "Delfina Quarta",
         "commercial_email": "dquartara@bamboopayment.com",
         "commercial_phone": "598 99 395 676",
@@ -407,6 +452,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANBAJIO": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -416,6 +462,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "BANCARD": {
+        "parent_partner": "Bancard",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -425,6 +472,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANCO AZTECA/ BAZ": {
+        "parent_partner": "BAZ / Banco Azteca",
         "commercial_contact": "Angel de la Tijera",
         "commercial_email": "angel.tijera@bancoazteca.com.mx",
         "commercial_phone": "52 1 55 4349 4983",
@@ -434,6 +482,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANCO DE BOGOTA": {
+        "parent_partner": "Banco de Bogotá",
         "commercial_contact": "Johan Salamanca",
         "commercial_email": "jsalam9@bancodebogota.com.co",
         "commercial_phone": "57 1 3043252410",
@@ -443,6 +492,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANCO DO BRASIL": {
+        "parent_partner": "Banco do Brasil",
         "commercial_contact": "Lisandra Gois",
         "commercial_email": "lisandra.gois@bb.com.br",
         "commercial_phone": "55 11 97665-3397",
@@ -452,6 +502,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANCO ESTADO DE CHILE": {
+        "parent_partner": "Banco Estado de Chile",
         "commercial_contact": "Natalia Galarce",
         "commercial_email": "natalia.galarce@compraqui.cl",
         "commercial_phone": "(+56) 9 90033661",
@@ -461,6 +512,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANCO MERCANTIL": {
+        "parent_partner": "Banco Mercantil",
         "commercial_contact": "Alexandra Henríquez",
         "commercial_email": "alexandra@mftech.io",
         "commercial_phone": "",
@@ -470,6 +522,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANCOLOMBIA": {
+        "parent_partner": "Bancolombia",
         "commercial_contact": "Vivian Andrea Rodriguez",
         "commercial_email": "virodrvi@bancolombia.com.co",
         "commercial_phone": "57 318 7945878",
@@ -479,6 +532,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments, Payouts",
     },
     "BANCO_AZTECA": {
+        "parent_partner": "BAZ / Banco Azteca",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -488,6 +542,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Installments",
     },
     "BANCO_COOPCENTRAL": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -497,6 +552,7 @@ PARTNER_CONTACTS = {
         "verticals": "Payouts",
     },
     "BANCO_DE_BOGOTA": {
+        "parent_partner": "Banco de Bogotá",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -506,6 +562,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments, Payouts",
     },
     "BANCO_DO_BRASIL": {
+        "parent_partner": "Banco do Brasil",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -515,6 +572,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, High Risk",
     },
     "BANCO_ESTADO_DE_CHILE": {
+        "parent_partner": "Banco Estado de Chile",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -524,6 +582,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANCO_RENDIMENTO": {
+        "parent_partner": "Banco Rendimento",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -533,6 +592,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANK OF AMERICA USA": {
+        "parent_partner": "Bank of America",
         "commercial_contact": "Robin Reodica",
         "commercial_email": "robin.reodica@bofa.com",
         "commercial_phone": "",
@@ -542,6 +602,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BANORTE": {
+        "parent_partner": "Banorte",
         "commercial_contact": "Carolina Gomez Rueda",
         "commercial_email": "Carolina.gomez.rueda@banorte.com",
         "commercial_phone": "",
@@ -551,6 +612,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "BANREGIO": {
+        "parent_partner": "Banregio",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -560,6 +622,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "BARTE": {
+        "parent_partner": "Barte",
         "commercial_contact": "Edward Konig",
         "commercial_email": "edward.konig@barte.com",
         "commercial_phone": "55 11 97414-2802",
@@ -569,6 +632,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "BASIS THEORY": {
+        "parent_partner": "Basis Theory",
         "commercial_contact": "Chris Howard",
         "commercial_email": "chris@basistheory.com>",
         "commercial_phone": "",
@@ -578,6 +642,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAYONET": {
+        "parent_partner": "Bayonet.io",
         "commercial_contact": "Armando Padilla",
         "commercial_email": "armando.padilla@bayonet.io",
         "commercial_phone": "52 1 614 140 9669",
@@ -587,6 +652,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BAYONET.IO": {
+        "parent_partner": "Bayonet.io",
         "commercial_contact": "Jose Andres Chavez",
         "commercial_email": "jose@bayonet.io",
         "commercial_phone": "52 1 55 9125 3372",
@@ -596,6 +662,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BBVA": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -605,6 +672,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments, Payouts",
     },
     "BBVA COLOMBIA": {
+        "parent_partner": "BBVA Colombia",
         "commercial_contact": "Liliana Orjuela",
         "commercial_email": "liliana.orjuela@bbva.com",
         "commercial_phone": "57 3150620441",
@@ -614,6 +682,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BBVA MÉXICO": {
+        "parent_partner": "BBVA México",
         "commercial_contact": "Jose Alberto Cervates",
         "commercial_email": "josealberto.cervantes.mendez@bbva.com",
         "commercial_phone": "52 1 55 1228 7955",
@@ -623,6 +692,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BELVO": {
+        "parent_partner": "Belvo",
         "commercial_contact": "Iramar Yeo",
         "commercial_email": "iramar.yeo@belvo.com",
         "commercial_phone": "52 56 6044 3691",
@@ -632,6 +702,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments",
     },
     "BHD_LEON": {
+        "parent_partner": "Banco BHD Leon",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -641,6 +712,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "BILLDESK": {
+        "parent_partner": "Billdesk",
         "commercial_contact": "Chinmaya Sahu",
         "commercial_email": "chinmaya.sahu@billdesk.com",
         "commercial_phone": "+917829235059",
@@ -650,6 +722,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BITPAY": {
+        "parent_partner": "",
         "commercial_contact": "Aaron Schneider",
         "commercial_email": "aschneider@bitpay.com",
         "commercial_phone": "1 954 558 0252",
@@ -659,6 +732,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BOKU": {
+        "parent_partner": "Boku Inc - New Deal",
         "commercial_contact": "Trishla Mehta",
         "commercial_email": "Trishla.mehta@boku.com",
         "commercial_phone": "+91 9833911502",
@@ -668,6 +742,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BOOMFI": {
+        "parent_partner": "Boomfi",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -677,6 +752,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BRADESCO": {
+        "parent_partner": "Banco Bradesco",
         "commercial_contact": "Cesar Augusto Silveira",
         "commercial_email": "cesar.silveira@bradesco.com.br",
         "commercial_phone": "55 11 94897-4458",
@@ -686,6 +762,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BRAINTREE": {
+        "parent_partner": "Paypal / Braintree",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -695,6 +772,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "BRINTA": {
+        "parent_partner": "Brinta",
         "commercial_contact": "Candela Rodriguez",
         "commercial_email": "cande@brinta.com",
         "commercial_phone": "59 8 96 107 877",
@@ -704,6 +782,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BRITE": {
+        "parent_partner": "Brite",
         "commercial_contact": "Jasper Scheffer",
         "commercial_email": "jasper.scheffer@britepayments.com",
         "commercial_phone": "",
@@ -713,6 +792,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BTG": {
+        "parent_partner": "BTG Pactual BR",
         "commercial_contact": "Rodrigo Del Monaco",
         "commercial_email": "rodrigo-del.monaco@btgpactual.com",
         "commercial_phone": "55 11 99631-2246",
@@ -722,6 +802,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "BTG_PACTUAL": {
+        "parent_partner": "BTG Pactual BR",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -731,6 +812,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk",
     },
     "BVNK": {
+        "parent_partner": "BVNK",
         "commercial_contact": "Jonathan Lavieri",
         "commercial_email": "jonathan.lavieri@bvnk.com",
         "commercial_phone": "",
@@ -740,6 +822,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CARDNET": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -749,6 +832,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CARRY1ST": {
+        "parent_partner": "Carry1st",
         "commercial_contact": "Sam Pottinger",
         "commercial_email": "sam@carry1st.com",
         "commercial_phone": "",
@@ -758,6 +842,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Payouts",
     },
     "CARUSELL / ZESTA": {
+        "parent_partner": "Zesta / 8b / Carussel",
         "commercial_contact": "Dmitry Pukhalskiy",
         "commercial_email": "d.pukhalskiy@carusell.world",
         "commercial_phone": "",
@@ -767,6 +852,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CASHFREE": {
+        "parent_partner": "Cashfree",
         "commercial_contact": "Harish Bansal",
         "commercial_email": "harish.bansal@cashfree.com",
         "commercial_phone": "",
@@ -776,6 +862,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CHARGEBACKS 911": {
+        "parent_partner": "Chargeback 911",
         "commercial_contact": "Zak Matthews",
         "commercial_email": "zak.matthews@chargebacks911.com",
         "commercial_phone": "1-920-420-09",
@@ -785,6 +872,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CHARGILY_PAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -794,6 +882,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CHECKOUT": {
+        "parent_partner": "Checkout",
         "commercial_contact": "Ginny Huber",
         "commercial_email": "ginny.huber@checkout.com",
         "commercial_phone": "",
@@ -803,6 +892,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CHECKOUTCOM": {
+        "parent_partner": "Checkout",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -812,6 +902,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, High Risk, Airlines, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "CIBC": {
+        "parent_partner": "CIBC",
         "commercial_contact": "Jorge Enriquez",
         "commercial_email": "Jorge.Enriquez@cibc.com",
         "commercial_phone": "",
@@ -821,6 +912,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "CIELO": {
+        "parent_partner": "Cielo",
         "commercial_contact": "Fernandino Melo",
         "commercial_email": "fernandino.melo@cielo.com.br",
         "commercial_phone": "55 11 94778 5963",
@@ -830,6 +922,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Adult, Multi-Level Marketing, Installments",
     },
     "CIRCLE": {
+        "parent_partner": "Circle",
         "commercial_contact": "Alexandra Koliastos",
         "commercial_email": "alexandra.koliatsos@circle.com",
         "commercial_phone": "",
@@ -839,6 +932,7 @@ PARTNER_CONTACTS = {
         "verticals": "Crypto, High Risk",
     },
     "CLEARSALE": {
+        "parent_partner": "ClearSale BR",
         "commercial_contact": "Amanda Oliveira",
         "commercial_email": "amanda.foliveira@experian.com",
         "commercial_phone": "55 11 96591-1705",
@@ -848,6 +942,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CLEARSALE LATAM": {
+        "parent_partner": "ClearSale LATAM",
         "commercial_contact": "Carolina Correa",
         "commercial_email": "carolina.serrano@clear.sale",
         "commercial_phone": "52 55 8526 3814",
@@ -857,6 +952,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CLEAR_SALE": {
+        "parent_partner": "ClearSale BR",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -866,6 +962,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Adult, Multi-Level Marketing",
     },
     "CLEO": {
+        "parent_partner": "Cleo",
         "commercial_contact": "Cristobal Anwandter",
         "commercial_email": "cristobal@cleo.cl",
         "commercial_phone": "",
@@ -875,6 +972,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, High Risk",
     },
     "CMI": {
+        "parent_partner": "CMI",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -884,6 +982,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "COBRE": {
+        "parent_partner": "Cobre",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -893,6 +992,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Forex, High Risk, Payouts",
     },
     "COBRO DIGITAL": {
+        "parent_partner": "Cobro Digital",
         "commercial_contact": "Jorge Alberto Lopez",
         "commercial_email": "jlopez@cobrodigital.com",
         "commercial_phone": "54 9 11 47779400",
@@ -902,6 +1002,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "COBRO_DIGITAL": {
+        "parent_partner": "Cobro Digital",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -911,6 +1012,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "CODA PAYMENT": {
+        "parent_partner": "Coda Payment",
         "commercial_contact": "Aimun Baloch",
         "commercial_email": "aimun.baloch@coda.co",
         "commercial_phone": "+923212859757",
@@ -920,6 +1022,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "COINFLOW": {
+        "parent_partner": "CoinFlow",
         "commercial_contact": "Kerry Frank",
         "commercial_email": "Kerry@coinflowlabs.app",
         "commercial_phone": "",
@@ -929,6 +1032,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, High Risk, Airlines, Multi-Level Marketing",
     },
     "COINSPAID": {
+        "parent_partner": "CoinsPaid",
         "commercial_contact": "Anastasiya Ustsinava",
         "commercial_email": "anastasiya.ustsinava@coinspaid.com",
         "commercial_phone": "44 75646 00109",
@@ -938,6 +1042,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "COINSUB": {
+        "parent_partner": "CoinSub",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -947,6 +1052,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Airlines, Multi-Level Marketing, Recurring Payments, Payouts",
     },
     "COINS_PAID": {
+        "parent_partner": "CoinsPaid",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -956,6 +1062,7 @@ PARTNER_CONTACTS = {
         "verticals": "Crypto, High Risk",
     },
     "COMMERCE_GATE": {
+        "parent_partner": "CommerceGate",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -965,6 +1072,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Adult, High Risk, Multi-Level Marketing",
     },
     "CONDUIT": {
+        "parent_partner": "Conduit",
         "commercial_contact": "Diego Coronado",
         "commercial_email": "diego.coronado@conduit.financial",
         "commercial_phone": "52 77 1189 6789",
@@ -974,6 +1082,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CONEKTA": {
+        "parent_partner": "",
         "commercial_contact": "Leo Fischer",
         "commercial_email": "leo@conekta.com",
         "commercial_phone": "",
@@ -983,6 +1092,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "COPPEL": {
+        "parent_partner": "Coppel Pay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -992,6 +1102,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "COPPEL PAY": {
+        "parent_partner": "Coppel Pay",
         "commercial_contact": "Sara Fernanda Juárez",
         "commercial_email": "sara.juarez@coppel.com",
         "commercial_phone": "55 728 305 25",
@@ -1001,6 +1112,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CREDIBANCO": {
+        "parent_partner": "Credibanco",
         "commercial_contact": "Johana Mateus Medina",
         "commercial_email": "johana.mateus@credibanco.com",
         "commercial_phone": "57 312 513 1680",
@@ -1010,6 +1122,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments",
     },
     "CREDITEA": {
+        "parent_partner": "Creditea",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1019,6 +1132,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CRYPTO.COM": {
+        "parent_partner": "Crypto.com",
         "commercial_contact": "Alfredo Sanchez",
         "commercial_email": "alfredo.sanchez@crypto.com",
         "commercial_phone": "1(305)-979-7612",
@@ -1028,6 +1142,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CULQI": {
+        "parent_partner": "Culqi",
         "commercial_contact": "Cristhian Carpio",
         "commercial_email": "cristhian.carpio@culqi.com",
         "commercial_phone": "51 984 324 938",
@@ -1037,6 +1152,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "CUOTEALO": {
+        "parent_partner": "Cuotealo BCP",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1046,6 +1162,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CUOTEALO BCP": {
+        "parent_partner": "Cuotealo BCP",
         "commercial_contact": "Nathalie Galeano",
         "commercial_email": "ngalleno@bcp.com.pe",
         "commercial_phone": "",
@@ -1055,6 +1172,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CUOTEALO_BCP": {
+        "parent_partner": "Cuotealo BCP",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1064,6 +1182,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CYBERSOURCE": {
+        "parent_partner": "Cybersource",
         "commercial_contact": "Emilio Vasquez",
         "commercial_email": "mavazque@visa.com",
         "commercial_phone": "",
@@ -1073,6 +1192,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CYBERSOURCE BR": {
+        "parent_partner": "Cybersource",
         "commercial_contact": "Sérgio Virissimo",
         "commercial_email": "svirissi@visa.com",
         "commercial_phone": "55 11 97579-4613",
@@ -1082,6 +1202,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CYBERSOURCE LATAM": {
+        "parent_partner": "Cybersource",
         "commercial_contact": "Jair Constantino",
         "commercial_email": "jair.constantino@visa.com",
         "commercial_phone": "52 1 55 8067 4641",
@@ -1091,6 +1212,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CYBERSOURCE_3DS": {
+        "parent_partner": "Cybersource",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1100,6 +1222,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "CYBERSOURCE_GTW": {
+        "parent_partner": "Cybersource",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1109,6 +1232,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "DANA": {
+        "parent_partner": "DANA",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1118,6 +1242,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DANAR": {
+        "parent_partner": "DANA",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1127,6 +1252,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DATAFAST": {
+        "parent_partner": "Datafast",
         "commercial_contact": "Mario Tamayo",
         "commercial_email": "mtamayo@datafast.com.ec",
         "commercial_phone": "",
@@ -1136,6 +1262,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "DATRANSFER": {
+        "parent_partner": "Datransfer",
         "commercial_contact": "Ramon Escobedo",
         "commercial_email": "ramon.escobedo@datransfer.com",
         "commercial_phone": "",
@@ -1145,6 +1272,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DAVIPLATA": {
+        "parent_partner": "Daviplata",
         "commercial_contact": "Jairo Camilo Gonzalez Carrascal",
         "commercial_email": "jacgonza@davivienda.com",
         "commercial_phone": "57 301 3714688",
@@ -1154,6 +1282,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, High Risk, Tokenization, Recurring Payments, Payouts",
     },
     "DAVIVIENDA": {
+        "parent_partner": "Davivienda",
         "commercial_contact": "Diana Garcia",
         "commercial_email": "dmgarciaf@davivienda.com",
         "commercial_phone": "57 305 7047208",
@@ -1163,6 +1292,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments, Payouts",
     },
     "DEUNA WALLET": {
+        "parent_partner": "DeUna Wallet",
         "commercial_contact": "Juan Andres Amador",
         "commercial_email": "jamadorp@pichincha.com",
         "commercial_phone": "593 99 984 344",
@@ -1172,6 +1302,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DEVTECS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1181,6 +1312,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DE_UNA": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1190,6 +1322,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DGFT": {
+        "parent_partner": "DGFT",
         "commercial_contact": "Takahide Fukuyama",
         "commercial_email": "takahide-fukuyama@dgft.jp",
         "commercial_phone": "",
@@ -1199,6 +1332,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DIBSY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1208,6 +1342,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DIGITNINE": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1217,6 +1352,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Airlines, Payouts",
     },
     "DINERS ECUADOR": {
+        "parent_partner": "Diners Club del Ecuador",
         "commercial_contact": "Antonio Andrés Andrade Cornejo",
         "commercial_email": "aandrade@dinersclub.com.ec",
         "commercial_phone": "",
@@ -1226,6 +1362,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DINERS_ECUADOR": {
+        "parent_partner": "Diners Club del Ecuador",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1235,6 +1372,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments",
     },
     "DIRECTA 24": {
+        "parent_partner": "",
         "commercial_contact": "Ogtay Bayli",
         "commercial_email": "ogtay.bayli@eroninternational.com",
         "commercial_phone": "(+34) 604 98 0330",
@@ -1244,6 +1382,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DIRECTA24": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1253,6 +1392,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Payouts",
     },
     "DLOCAL": {
+        "parent_partner": "DLocal",
         "commercial_contact": "Horacio Raviolo",
         "commercial_email": "hraviolo@dlocal.com",
         "commercial_phone": "34 655 24 00 70",
@@ -1262,6 +1402,7 @@ PARTNER_CONTACTS = {
         "verticals": "Airlines, Tokenization, Recurring Payments, Payouts",
     },
     "DOKU": {
+        "parent_partner": "Doku",
         "commercial_contact": "Timothy Pujiono",
         "commercial_email": "timothy.pradeto@doku.com",
         "commercial_phone": "",
@@ -1271,6 +1412,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Crypto, Forex, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Installments",
     },
     "DOLARAPP": {
+        "parent_partner": "DolarApp Pay",
         "commercial_contact": "Maria Galmes",
         "commercial_email": "maria.galmes@dolarapp.com",
         "commercial_phone": "",
@@ -1280,6 +1422,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DO_PAYMENTS": {
+        "parent_partner": "Do Payments",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1289,6 +1432,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, High Risk, Multi-Level Marketing, Payouts",
     },
     "DPAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1298,6 +1442,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "DRUO": {
+        "parent_partner": "Druo",
         "commercial_contact": "Simon Pinilla",
         "commercial_email": "s.pinilla@druo.com",
         "commercial_phone": "57 310 3308370",
@@ -1307,6 +1452,7 @@ PARTNER_CONTACTS = {
         "verticals": "Payouts",
     },
     "E-PAY": {
+        "parent_partner": "Epayco",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1316,6 +1462,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "EBANX": {
+        "parent_partner": "Ebanx",
         "commercial_contact": "Daniel Kornitzer",
         "commercial_email": "daniel.kornitzer@ebanx.com",
         "commercial_phone": "1 514 581 5016",
@@ -1325,6 +1472,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments, Payouts",
     },
     "ECPAY": {
+        "parent_partner": "ECPay",
         "commercial_contact": "Luke Liao",
         "commercial_email": "luke.liao@ecpay.com.tw",
         "commercial_phone": "02-2655-0557 #3812",
@@ -1334,6 +1482,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "EDENRED": {
+        "parent_partner": "Edenred",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1343,6 +1492,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization",
     },
     "EFECTY": {
+        "parent_partner": "Efecty",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1352,6 +1502,7 @@ PARTNER_CONTACTS = {
         "verticals": "High Risk",
     },
     "ELAVON, INC. USA": {
+        "parent_partner": "Elavon, Inc.",
         "commercial_contact": "Luke Derango",
         "commercial_email": "luke.derango@elavon.com",
         "commercial_phone": "",
@@ -1361,6 +1512,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ELO": {
+        "parent_partner": "Elo",
         "commercial_contact": "Vilma Lorey",
         "commercial_email": "vanessa@elo.com.br",
         "commercial_phone": "55 41 9905-0453",
@@ -1370,6 +1522,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "EMERCHANTPAY": {
+        "parent_partner": "Emerchant Pay",
         "commercial_contact": "Juan Torrealba",
         "commercial_email": "juan.torrealba@emerchantpay.com",
         "commercial_phone": "44 7379 739231",
@@ -1379,6 +1532,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "EMERCHANT_PAY": {
+        "parent_partner": "Emerchant Pay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1388,6 +1542,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "EPAG": {
+        "parent_partner": "Epag",
         "commercial_contact": "Yonathan Ospina",
         "commercial_email": "yonathan.ospina@epag.com",
         "commercial_phone": "",
@@ -1397,6 +1552,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "EPAYCO": {
+        "parent_partner": "Epayco",
         "commercial_contact": "Laura Madrigal",
         "commercial_email": "laura.madrigal@epayco.com",
         "commercial_phone": "57 4 448 49 52 ext. 150",
@@ -1406,6 +1562,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Tokenization, Recurring Payments",
     },
     "ETPAY": {
+        "parent_partner": "ETPay",
         "commercial_contact": "Jorge Aguilera",
         "commercial_email": "jorge.aguilera@etpay.com",
         "commercial_phone": "56 962195228",
@@ -1415,6 +1572,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Payouts",
     },
     "EVERTEC": {
+        "parent_partner": "PlacetoPay by Evertec",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1424,6 +1582,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "EVERTEC / PLACE TO PAY": {
+        "parent_partner": "PlacetoPay by Evertec",
         "commercial_contact": "Juliana Grajales",
         "commercial_email": "juliana.grajales@evertecinc.com",
         "commercial_phone": "574 4442310",
@@ -1433,6 +1592,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "EVO": {
+        "parent_partner": "Evo Payments",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1442,6 +1602,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "EVO/ GLOBAL PAYMENTS MEXICO": {
+        "parent_partner": "Evo Payments",
         "commercial_contact": "Carlos Colinas",
         "commercial_email": "carlos.colinasfuertes@globalpay.com",
         "commercial_phone": "52 1 55 5432 8685",
@@ -1451,6 +1612,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "EVO_PAYMENTS": {
+        "parent_partner": "Evo Payments",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1460,6 +1622,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "FAC": {
+        "parent_partner": "FAC/Powertranz",
         "commercial_contact": "Eldred F. Garcia",
         "commercial_email": "egarcia@fac.bm",
         "commercial_phone": "305 302-8907",
@@ -1469,6 +1632,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "FACILITAPAY": {
+        "parent_partner": "FacilitaPay",
         "commercial_contact": "Juliana Di Pietro",
         "commercial_email": "juliana.martins@facilitapay.com",
         "commercial_phone": "55 11 99257-1190",
@@ -1478,6 +1642,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, High Risk, Multi-Level Marketing",
     },
     "FASTPAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1487,6 +1652,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FAWRICO": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1496,6 +1662,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FAWRY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1505,6 +1672,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FINFAN": {
+        "parent_partner": "FinFan",
         "commercial_contact": "Huy Huynh (Harry)",
         "commercial_email": "huy.huynh@finfan.vn",
         "commercial_phone": "",
@@ -1514,6 +1682,7 @@ PARTNER_CONTACTS = {
         "verticals": "Airlines, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "FINTOC": {
+        "parent_partner": "Fintoc",
         "commercial_contact": "Felipe Hanna",
         "commercial_email": "felipe@fintoc.com",
         "commercial_phone": "569 92891298",
@@ -1523,6 +1692,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Recurring Payments, Payouts",
     },
     "FISERV": {
+        "parent_partner": "Fiserv BR",
         "commercial_contact": "Gabriele Travaglia",
         "commercial_email": "gabriele.travaglia@fiserv.com",
         "commercial_phone": "39 340 45 15 102",
@@ -1532,6 +1702,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments, Payouts",
     },
     "FISERV APAC": {
+        "parent_partner": "Fiserv APAC",
         "commercial_contact": "Ben Bartholomaeus",
         "commercial_email": "ben.bartholomaeus@fiserv.com",
         "commercial_phone": "",
@@ -1541,6 +1712,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FISERV ARG": {
+        "parent_partner": "Fiserv Argentina",
         "commercial_contact": "Sergio Luaiza",
         "commercial_email": "sergiodaniel.luaiza@fiserv.com",
         "commercial_phone": "54 9 11 2784 1316",
@@ -1550,6 +1722,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FISERV EMEA": {
+        "parent_partner": "Fiserv EMEA",
         "commercial_contact": "Bradley Slater",
         "commercial_email": "bradley.slater@fiserv.com",
         "commercial_phone": "44 (0)735325026",
@@ -1559,6 +1732,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FISERV MEXICO": {
+        "parent_partner": "Fiserv MX",
         "commercial_contact": "Gabriel Meneses",
         "commercial_email": "gabriel.meneses@fiserv.com",
         "commercial_phone": "52 1 55 2083 0520",
@@ -1568,6 +1742,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FIUU": {
+        "parent_partner": "Fiuu.com",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1577,6 +1752,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FIUU.COM": {
+        "parent_partner": "Fiuu.com",
         "commercial_contact": "Ashley Ang",
         "commercial_email": "ashley.ang@fiuu.com",
         "commercial_phone": "+65 8517 6606",
@@ -1586,6 +1762,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FLOID": {
+        "parent_partner": "Floid",
         "commercial_contact": "Maria Ignacia Cornejo",
         "commercial_email": "ignacia@floid.io",
         "commercial_phone": "",
@@ -1595,6 +1772,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Forex, High Risk, Airlines, Tokenization, Recurring Payments, Payouts",
     },
     "FLOUCI": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1604,6 +1782,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FLUTTERWAVE": {
+        "parent_partner": "Flutterwave",
         "commercial_contact": "Iyembi Nkanza",
         "commercial_email": "iyembi@flutterwavego.com",
         "commercial_phone": "",
@@ -1613,6 +1792,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FLUTTER_WAVE": {
+        "parent_partner": "Flutterwave",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1622,6 +1802,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, High Risk, Tokenization, Recurring Payments",
     },
     "FRAUD": {
+        "parent_partner": "Fraudio",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1631,6 +1812,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FRAUDIO": {
+        "parent_partner": "Fraudio",
         "commercial_contact": "Gadi Erel",
         "commercial_email": "gadi@fraudio.com",
         "commercial_phone": "34 682048492",
@@ -1640,6 +1822,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FRAUGSTER": {
+        "parent_partner": "",
         "commercial_contact": "Giuseppe Serra",
         "commercial_email": "giuseppe@fraugster.com",
         "commercial_phone": "49 305 55794810",
@@ -1649,6 +1832,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "FUZE": {
+        "parent_partner": "Fuze",
         "commercial_contact": "Ronit Ogra",
         "commercial_email": "ronit@fuze.finance",
         "commercial_phone": "",
@@ -1658,6 +1842,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Airlines, Multi-Level Marketing, Payouts",
     },
     "GALICIA": {
+        "parent_partner": "Banco Galicia / Nave",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1667,6 +1852,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GARANTI BBVA": {
+        "parent_partner": "Garanti BBVA Bank",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1676,6 +1862,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GEIDEA": {
+        "parent_partner": "Geidea",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1685,6 +1872,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GETNET": {
+        "parent_partner": "Getnet BR",
         "commercial_contact": "Daniel Viera",
         "commercial_email": "daniel.vieira@getnet.com.br",
         "commercial_phone": "",
@@ -1694,6 +1882,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Airlines, Tokenization, Recurring Payments",
     },
     "GETNET BR": {
+        "parent_partner": "Getnet BR",
         "commercial_contact": "Jemima Oliveira",
         "commercial_email": "jemima.oliveira@getnet.com.br",
         "commercial_phone": "55 11 99127-1386",
@@ -1703,6 +1892,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GETNET BR ?": {
+        "parent_partner": "Getnet BR",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1712,6 +1902,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GETNET GLOBAL": {
+        "parent_partner": "GetNet Global",
         "commercial_contact": "Fabrice Mendez.",
         "commercial_email": "fabrice.mendez@getnet.net",
         "commercial_phone": "34 695 88 99 55",
@@ -1721,6 +1912,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GIE MONETIQUE": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1730,6 +1922,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GLOBAL PAYMENTS": {
+        "parent_partner": "Global Payments",
         "commercial_contact": "Daniel Lee",
         "commercial_email": "daniel.lee@globalpay.com",
         "commercial_phone": "",
@@ -1739,6 +1932,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GLOBAL PAYMENTS MÉXICO/ HSBC": {
+        "parent_partner": "Global Payments",
         "commercial_contact": "Helga Argumedo",
         "commercial_email": "helga.argumedo@hgpay.com.mx",
         "commercial_phone": "",
@@ -1748,6 +1942,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GLOBAL_PAYMENTS": {
+        "parent_partner": "Global Payments",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1757,6 +1952,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments",
     },
     "GOOGLE PAY": {
+        "parent_partner": "Google Pay",
         "commercial_contact": "Bruno Barbieri",
         "commercial_email": "bbarbieri@google.com",
         "commercial_phone": "55 11 93734-2293",
@@ -1766,6 +1962,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GOOGLE PAY BR": {
+        "parent_partner": "Google Pay",
         "commercial_contact": "Bruno Barbieri",
         "commercial_email": "bbarbieri@google.com",
         "commercial_phone": "55 11 93734-2293",
@@ -1775,6 +1972,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "GOOGLE_PAY": {
+        "parent_partner": "Google Pay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1784,6 +1982,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization",
     },
     "GUENO": {
+        "parent_partner": "Gueno",
         "commercial_contact": "Juan Manuel Suarez",
         "commercial_email": "juanmanuel@gueno.com",
         "commercial_phone": "54 911 2361 7620",
@@ -1793,6 +1992,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "HANDS IN": {
+        "parent_partner": "HandsIn",
         "commercial_contact": "Samuel Flynn",
         "commercial_email": "samuel@handsin.com",
         "commercial_phone": "",
@@ -1802,6 +2002,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "HANDS_IN": {
+        "parent_partner": "HandsIn",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1811,6 +2012,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "HECTO FINANCIAL": {
+        "parent_partner": "Hecto Financial",
         "commercial_contact": "Kim Kim",
         "commercial_email": "kimkim@hecto.co.kr",
         "commercial_phone": "02-6203-1334",
@@ -1820,6 +2022,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "HECTO_FINANCIAL": {
+        "parent_partner": "Hecto Financial",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1829,6 +2032,7 @@ PARTNER_CONTACTS = {
         "verticals": "High Risk",
     },
     "HITPAY": {
+        "parent_partner": "HitPay",
         "commercial_contact": "Aditya Haripurkar",
         "commercial_email": "aditya@hit-pay.com",
         "commercial_phone": "",
@@ -1838,6 +2042,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts, Network Tokens",
     },
     "HSBC_BR": {
+        "parent_partner": "HSBC BR",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1847,6 +2052,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "HYPERPAY": {
+        "parent_partner": "HyperPay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1856,6 +2062,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "IBEX": {
+        "parent_partner": "Ibex",
         "commercial_contact": "Mario Aguiluz",
         "commercial_email": "mario@ibexmercado.com",
         "commercial_phone": "51 902 742 622",
@@ -1865,6 +2072,7 @@ PARTNER_CONTACTS = {
         "verticals": "Crypto, High Risk, Payouts",
     },
     "IBURAQ": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1874,6 +2082,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "INSWITCH": {
+        "parent_partner": "Inswitch",
         "commercial_contact": "Liber Fernandez",
         "commercial_email": "liber.fernandez@inswitch.com",
         "commercial_phone": "",
@@ -1883,6 +2092,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "IPAY": {
+        "parent_partner": "Hipay",
         "commercial_contact": "Camilo Ocampo",
         "commercial_email": "camilo.ocampo@credibanco.com",
         "commercial_phone": "57 320 254 9009",
@@ -1892,6 +2102,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ITAU": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1901,6 +2112,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "IYZICO": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1910,6 +2122,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "IZIPAY": {
+        "parent_partner": "Izipay",
         "commercial_contact": "Alisson Pérez",
         "commercial_email": "APerezB@izipay.pe",
         "commercial_phone": "51 972 420 697",
@@ -1919,6 +2132,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments",
     },
     "JAWALPAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1928,6 +2142,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "JP MORGAN CHASE USA": {
+        "parent_partner": "JP Morgan chase USA",
         "commercial_contact": "Amy Ahrenhold",
         "commercial_email": "amy.ahrenhold@chasepaymentech.com",
         "commercial_phone": "945.360.9632",
@@ -1937,6 +2152,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "JPMORGAN": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1946,6 +2162,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "JUMIO": {
+        "parent_partner": "Jumio",
         "commercial_contact": "Pilar Pereira",
         "commercial_email": "pilar.pereira@jumio.com",
         "commercial_phone": "57 3213594491",
@@ -1955,6 +2172,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KASIKORN GLOBAL PAYMENT": {
+        "parent_partner": "Kasikorn Global Payment",
         "commercial_contact": "Athicha Korkiertsatean (Ploy)",
         "commercial_email": "athicha.k@kinvesture.com",
         "commercial_phone": "6695-545-2462",
@@ -1964,6 +2182,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KASIKORN_GLOBAL_PAYMENT": {
+        "parent_partner": "Kasikorn Global Payment",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -1973,6 +2192,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KHIPU": {
+        "parent_partner": "Khipu",
         "commercial_contact": "Eduardo Charme",
         "commercial_email": "eduardo.charme@khipu.com",
         "commercial_phone": "34 662 564 019",
@@ -1982,6 +2202,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Payouts",
     },
     "KLAP": {
+        "parent_partner": "Klap",
         "commercial_contact": "Attilio Ferretti",
         "commercial_email": "attilio.ferretti@klap.cl",
         "commercial_phone": "56 9 7519 9694",
@@ -1991,6 +2212,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "KLAP_2": {
+        "parent_partner": "Klap",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2000,6 +2222,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KLARNA": {
+        "parent_partner": "Klarna",
         "commercial_contact": "Lorena Pulido",
         "commercial_email": "lorena.pulido@klarna.com",
         "commercial_phone": "",
@@ -2009,6 +2232,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KOIN": {
+        "parent_partner": "Koin BR",
         "commercial_contact": "Dieter Spangenberg",
         "commercial_email": "dieter.spangenberg@koin.com.br",
         "commercial_phone": "55 11 97366 2003",
@@ -2018,6 +2242,7 @@ PARTNER_CONTACTS = {
         "verticals": "Installments",
     },
     "KOIN BNPL": {
+        "parent_partner": "",
         "commercial_contact": "Matheus Russo",
         "commercial_email": "matheus.russo@koin.com.br",
         "commercial_phone": "55 11 9 7366-2003",
@@ -2027,6 +2252,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KOIN BR": {
+        "parent_partner": "Koin BR",
         "commercial_contact": "Debora Eorendjian Eiras",
         "commercial_email": "debora.eiras@koin.com.br",
         "commercial_phone": "55 11 99374-9855",
@@ -2036,6 +2262,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KOIN LATAM": {
+        "parent_partner": "Koin Latam",
         "commercial_contact": "Juliana Bolívar",
         "commercial_email": "juliana.bolivar@koin.com.br",
         "commercial_phone": "57 314 2693364",
@@ -2045,6 +2272,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KONDUTO": {
+        "parent_partner": "Konduto",
         "commercial_contact": "Patricia Quadros",
         "commercial_email": "patricia.quadros@equifax.com",
         "commercial_phone": "55 11 99198-6173",
@@ -2054,6 +2282,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Adult, High Risk",
     },
     "KONNECT": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2063,6 +2292,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KOREA CYBER PAYMENT": {
+        "parent_partner": "Korea Cyber Payment (KCP)",
         "commercial_contact": "Lionel Tan",
         "commercial_email": "lionel.tan@kcpboundless.com",
         "commercial_phone": "",
@@ -2072,6 +2302,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KOUNT": {
+        "parent_partner": "Kount (Equifax)",
         "commercial_contact": "Carlos Osuna",
         "commercial_email": "carlos.osuna@equifax.com",
         "commercial_phone": "1 (404) 985-7254",
@@ -2081,6 +2312,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Adult, High Risk",
     },
     "KUESKI": {
+        "parent_partner": "Kueski",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2090,6 +2322,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KUESKI PAY": {
+        "parent_partner": "Kueski",
         "commercial_contact": "Alain Villegas",
         "commercial_email": "alain.villegas@kueski.com",
         "commercial_phone": "",
@@ -2099,6 +2332,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "KUSHKI": {
+        "parent_partner": "Kushki",
         "commercial_contact": "Gaëlle de Penanros",
         "commercial_email": "gaelle.depenanros@kushkipagos.com",
         "commercial_phone": "521  5516791215",
@@ -2108,6 +2342,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "KYC": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2117,6 +2352,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "LEGITI / SIGNIFYD": {
+        "parent_partner": "Signifyd",
         "commercial_contact": "Pedro Sanzovo",
         "commercial_email": "pedro@legiti.com",
         "commercial_phone": "",
@@ -2126,6 +2362,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "LETPAY/EPAG": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2135,6 +2372,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Adult, High Risk, Multi-Level Marketing, Payouts",
     },
     "LEXISNEXIS": {
+        "parent_partner": "LexisNexis",
         "commercial_contact": "Cleiva Aguilar",
         "commercial_email": "cleiva.aguilar@lexisnexisrisk.com",
         "commercial_phone": "57 310 700 5012",
@@ -2144,6 +2382,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "LEXIS_NEXIS": {
+        "parent_partner": "LexisNexis",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2153,6 +2392,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "LIANLIAN PAY": {
+        "parent_partner": "Lian Lian",
         "commercial_contact": "Adora Wang",
         "commercial_email": "adora.wang@lianlian.com",
         "commercial_phone": "",
@@ -2162,6 +2402,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "LIDIO": {
+        "parent_partner": "Lidio",
         "commercial_contact": "Ecem Öztürk Kuyumcu Lidio",
         "commercial_email": "ecem.kuyumcu@lidio.com",
         "commercial_phone": "90 533 681 6477",
@@ -2171,6 +2412,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "LINEPAY": {
+        "parent_partner": "LinePay",
         "commercial_contact": "Witthawat (Jet) Maneepan",
         "commercial_email": "witthawat.m@lmwn.com",
         "commercial_phone": "",
@@ -2180,6 +2422,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "LOCAL PAYMENT": {
+        "parent_partner": "Local Payment",
         "commercial_contact": "Ezequiel Israel",
         "commercial_email": "ezequiel@localpayment.com",
         "commercial_phone": "",
@@ -2189,6 +2432,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "LOCAL_PAYMENT": {
+        "parent_partner": "Local Payment",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2198,6 +2442,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments, Payouts",
     },
     "LYRA / PAYZEN": {
+        "parent_partner": "Payzen/Lyra",
         "commercial_contact": "Juan Pablo Angulo",
         "commercial_email": "jp.angulo@lyra.com",
         "commercial_phone": "57 301 5500755",
@@ -2207,6 +2452,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "LÍQUIDO": {
+        "parent_partner": "",
         "commercial_contact": "Jose Soto",
         "commercial_email": "jose@liquido.com",
         "commercial_phone": "1 650 9247820",
@@ -2216,6 +2462,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MACH": {
+        "parent_partner": "Mach Pay",
         "commercial_contact": "Benjamin Arenas",
         "commercial_email": "benjamin.arenas@bci.cl",
         "commercial_phone": "226927000",
@@ -2225,6 +2472,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MACH_PAY": {
+        "parent_partner": "Mach Pay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2234,6 +2482,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Payouts",
     },
     "MAMO": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2243,6 +2492,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MASTERCARD": {
+        "parent_partner": "Mastercard",
         "commercial_contact": "Eunice Cueto",
         "commercial_email": "eunice.cueto@mastercard.com",
         "commercial_phone": "",
@@ -2252,6 +2502,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing",
     },
     "MASTERCARD BR": {
+        "parent_partner": "Mastercard BR",
         "commercial_contact": "Vanessa Narumi",
         "commercial_email": "vanessa.narumi@mastercard.com",
         "commercial_phone": "55 11 97365-4107",
@@ -2261,6 +2512,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MASTERCARD LATAM": {
+        "parent_partner": "Mastercard",
         "commercial_contact": "Nicolas Duarte",
         "commercial_email": "nicolas.duarte@mastercard.com",
         "commercial_phone": "57 318 1695730",
@@ -2270,6 +2522,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MAYA": {
+        "parent_partner": "Maya",
         "commercial_contact": "Spencer Romano",
         "commercial_email": "Mikhail.Romano@maya.ph",
         "commercial_phone": "",
@@ -2279,6 +2532,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MEDIANET": {
+        "parent_partner": "Medianet",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2288,6 +2542,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "MERCADO PAGO": {
+        "parent_partner": "MercadoPago",
         "commercial_contact": "Joaquin Capatti",
         "commercial_email": "joaquin.capatti@mercadolibre.com",
         "commercial_phone": "54 11 3781 1224",
@@ -2297,6 +2552,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MERCADO PAGO BR": {
+        "parent_partner": "MercadoPago BR",
         "commercial_contact": "Renata Rodrigues",
         "commercial_email": "renata.rcandrade@mercadopago.com.br",
         "commercial_phone": "5511978734903",
@@ -2306,6 +2562,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MERCADO PAGO LATAM": {
+        "parent_partner": "MercadoPago",
         "commercial_contact": "Rufino Jurado",
         "commercial_email": "rufino.jurado@mercadolibre.com",
         "commercial_phone": "54 911 4075 1105",
@@ -2315,6 +2572,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MERCADO_PAGO": {
+        "parent_partner": "MercadoPago",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2324,6 +2582,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "MIDTRANS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2333,6 +2592,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MODO": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2342,6 +2602,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MONNET": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2351,6 +2612,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "MONNET PAYMENTS": {
+        "parent_partner": "Monnet Payments",
         "commercial_contact": "Karen Pushkovits",
         "commercial_email": "karen.puskovitz@monnetpayments.com",
         "commercial_phone": "51 987 210 703",
@@ -2360,6 +2622,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MONOOVA": {
+        "parent_partner": "Monoova",
         "commercial_contact": "Mac Cherry",
         "commercial_email": "Mac.Cherry@monoova.com",
         "commercial_phone": "",
@@ -2369,6 +2632,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Adult, High Risk, Airlines, Payouts",
     },
     "MORE PAYMENTS / UNITELLER": {
+        "parent_partner": "More Payments / Uniteller",
         "commercial_contact": "Serrana Blanco",
         "commercial_email": "sblanco@moremt.com",
         "commercial_phone": "598 95 019 339",
@@ -2378,6 +2642,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MOREPAYMENTS": {
+        "parent_partner": "More Payments / Uniteller",
         "commercial_contact": "Julieta Decurnex",
         "commercial_email": "jmdecurnex@moremt.com",
         "commercial_phone": "",
@@ -2387,6 +2652,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MORE_PAYMENTS/UNITELLER": {
+        "parent_partner": "More Payments / Uniteller",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2396,6 +2662,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Payouts",
     },
     "MOVII": {
+        "parent_partner": "Movii",
         "commercial_contact": "Luis de la Rosa",
         "commercial_email": "luis.delarosa@movii.com.co",
         "commercial_phone": "",
@@ -2405,6 +2672,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, High Risk, Tokenization, Recurring Payments, Payouts",
     },
     "MOYASAR": {
+        "parent_partner": "Moyasar",
         "commercial_contact": "Abdulaziz Alshetwi",
         "commercial_email": "abdulaziz@moyasar.com",
         "commercial_phone": "966 505804999",
@@ -2414,6 +2682,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "MYFATOORAH": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2423,6 +2692,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NAPS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2432,6 +2702,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NASS E-PAYMENT": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2441,6 +2712,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NASSWALLET": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2450,6 +2722,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NAVE": {
+        "parent_partner": "Banco Galicia / Nave",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2459,6 +2732,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NEQUI": {
+        "parent_partner": "Nequi",
         "commercial_contact": "Andrea Duarte",
         "commercial_email": "andduart@nequi.com",
         "commercial_phone": "57 316 4044675",
@@ -2468,6 +2742,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments, Payouts",
     },
     "NET PROTECTIONS": {
+        "parent_partner": "Net Protections",
         "commercial_contact": "濱田真輔",
         "commercial_email": "hshinsuke@netprotections.co.jp",
         "commercial_phone": "080-4927-5366",
@@ -2477,6 +2752,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NETCETERA_3DS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2486,6 +2762,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NETPAY": {
+        "parent_partner": "NetPay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2495,6 +2772,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "NETSTARS": {
+        "parent_partner": "Netstars",
         "commercial_contact": "Manami Kiten",
         "commercial_email": "manami.kiten@netstars.co.jp",
         "commercial_phone": "",
@@ -2504,6 +2782,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NETWORK INTERNATIONAL": {
+        "parent_partner": "Network International",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2513,6 +2792,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NIUBIZ": {
+        "parent_partner": "Niubiz",
         "commercial_contact": "Melissa Pelosi",
         "commercial_email": "mpelosi@niubiz.com.pe",
         "commercial_phone": "51 946 022 778",
@@ -2522,6 +2802,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments",
     },
     "NIUM": {
+        "parent_partner": "Nium",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2531,6 +2812,7 @@ PARTNER_CONTACTS = {
         "verticals": "Payouts",
     },
     "NMI": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2540,6 +2822,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NOMUPAY": {
+        "parent_partner": "Nomupay",
         "commercial_contact": "Alson Lau",
         "commercial_email": "alson.lau@nomupay.com",
         "commercial_phone": "+852 93631729",
@@ -2549,6 +2832,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NOON_PAYMENTS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2558,6 +2842,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NOQOODY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2567,6 +2852,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NOTOLITIX": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2576,6 +2862,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NOTOLITYX": {
+        "parent_partner": "Notolityx (KYC)",
         "commercial_contact": "Hristian Drensky",
         "commercial_email": "hristian.drensky@notolytix.com",
         "commercial_phone": "359 889 988254",
@@ -2585,6 +2872,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NOVALNET": {
+        "parent_partner": "Novalnet",
         "commercial_contact": "Jose Agustine",
         "commercial_email": "ja@novalnet.de",
         "commercial_phone": "",
@@ -2594,6 +2882,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments",
     },
     "NOWPAYMENTS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2603,6 +2892,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NSURE": {
+        "parent_partner": "",
         "commercial_contact": "Chris Pike",
         "commercial_email": "chris.pike@nsure.ai",
         "commercial_phone": "1 623 523 9093",
@@ -2612,6 +2902,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NTT DATA": {
+        "parent_partner": "NTTD",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2621,6 +2912,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Tokenization, Recurring Payments, Payouts, Installments",
     },
     "NTTD": {
+        "parent_partner": "NTTD",
         "commercial_contact": "Wenzhao",
         "commercial_email": "Wenzhao.Zhu@nttdata.com",
         "commercial_phone": "",
@@ -2630,6 +2922,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NUBANK": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2639,6 +2932,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Tokenization, Recurring Payments, Installments",
     },
     "NUPAY": {
+        "parent_partner": "NuPay",
         "commercial_contact": "Brena Silva",
         "commercial_email": "brena.silva@nubank.com.br",
         "commercial_phone": "55 11 94884-2008",
@@ -2648,6 +2942,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NUPAY FOR BUSINESS": {
+        "parent_partner": "",
         "commercial_contact": "Charles Viana",
         "commercial_email": "charles.viana@nubank.com.br",
         "commercial_phone": "55 11 97988-9188",
@@ -2657,6 +2952,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NUVEI": {
+        "parent_partner": "Nuvei",
         "commercial_contact": "Bruna Rebello",
         "commercial_email": "Bruna.Rebello@nuvei.com",
         "commercial_phone": "55 11 99967 5542",
@@ -2666,6 +2962,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Airlines, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "NUVEI EUR": {
+        "parent_partner": "Nuvei",
         "commercial_contact": "Bruna Rebello",
         "commercial_email": "bruna.rebello@nuvei.com",
         "commercial_phone": "58 11 99967 5542",
@@ -2675,6 +2972,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NUVEI LATAM": {
+        "parent_partner": "Nuvei LATAM",
         "commercial_contact": "Bruna Rebello",
         "commercial_email": "bruna.rebello@nuvei.com",
         "commercial_phone": "55 11 99967 5542",
@@ -2684,6 +2982,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NUVEI MEA": {
+        "parent_partner": "Nuvei",
         "commercial_contact": "Bruna Rebello",
         "commercial_email": "bruna.rebello@nuvei.com",
         "commercial_phone": "56 11 99967 5542",
@@ -2693,6 +2992,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "NUVEI USA": {
+        "parent_partner": "Nuvei USA",
         "commercial_contact": "Bruna Rebello",
         "commercial_email": "bruna.rebello@nuvei.com",
         "commercial_phone": "57 11 99967 5542",
@@ -2702,6 +3002,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "OKTO": {
+        "parent_partner": "OKTO Payments",
         "commercial_contact": "Mayra Scarpelli",
         "commercial_email": "Mayra.SCARPELLI@ingenico.com",
         "commercial_phone": "55 11 99780-5358",
@@ -2711,6 +3012,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "OMISE": {
+        "parent_partner": "Opn Payments (Omise)",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2720,6 +3022,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "OMT PAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2729,6 +3032,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ONAFRIQ": {
+        "parent_partner": "Onafriq",
         "commercial_contact": "Howell Magondu",
         "commercial_email": "howell.magondu@onafriq.com",
         "commercial_phone": "254 712 733011",
@@ -2738,6 +3042,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, High Risk, Airlines, Payouts",
     },
     "ONE_CASH": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2747,6 +3052,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ONFIDO": {
+        "parent_partner": "Onfido (KYC)",
         "commercial_contact": "Scott Runkle",
         "commercial_email": "scott.runkle@onfido.com",
         "commercial_phone": "1 724 831 6200",
@@ -2756,6 +3062,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "OPENCO": {
+        "parent_partner": "OpenCo",
         "commercial_contact": "Tainá Godoi",
         "commercial_email": "taina.godoi@open-co.com",
         "commercial_phone": "55 21 97436-3995",
@@ -2765,6 +3072,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "OPENNODE": {
+        "parent_partner": "OpenNode",
         "commercial_contact": "John Miles",
         "commercial_email": "john@opennode.com",
         "commercial_phone": "",
@@ -2774,6 +3082,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "OPENPAY": {
+        "parent_partner": "OpenPay Peru",
         "commercial_contact": "Héctor Jeraldo Vera",
         "commercial_email": "hectorjeraldo.vera@openpay.mx",
         "commercial_phone": "51 966 641 334",
@@ -2783,6 +3092,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments, Payouts",
     },
     "OPENPAY COLOMBIA": {
+        "parent_partner": "OpenPay Colombia",
         "commercial_contact": "Juan David Herrera",
         "commercial_email": "Juan David Herrera",
         "commercial_phone": "57 321 3527524",
@@ -2792,6 +3102,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "OPENPAY MEXICO": {
+        "parent_partner": "OpenPay Mexico",
         "commercial_contact": "Héctor Jeraldo Vera",
         "commercial_email": "hectorjeraldo.vera@openpay.mx",
         "commercial_phone": "",
@@ -2801,6 +3112,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "OPENPAY PERÚ": {
+        "parent_partner": "OpenPay Peru",
         "commercial_contact": "Daniela Velez",
         "commercial_email": "daniela.velez@openpay.pe",
         "commercial_phone": "51 966 641 334",
@@ -2810,6 +3122,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "OPEN_NODE": {
+        "parent_partner": "OpenNode",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2819,6 +3132,7 @@ PARTNER_CONTACTS = {
         "verticals": "Crypto, High Risk",
     },
     "OXXO_PAY": {
+        "parent_partner": "FEMSA - Oxxo Pay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2828,6 +3142,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAGA CON RAPPI": {
+        "parent_partner": "",
         "commercial_contact": "Juliana Escalante",
         "commercial_email": "juliana.escalante@rappi.com",
         "commercial_phone": "57 316 221 7650",
@@ -2837,6 +3152,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAGALEVE": {
+        "parent_partner": "Pagaleve",
         "commercial_contact": "Guilherme Cirino",
         "commercial_email": "guilherme.cirino@pagaleve.com.br",
         "commercial_phone": "55 85 9134-3173",
@@ -2846,6 +3162,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAGALO": {
+        "parent_partner": "Pagalo",
         "commercial_contact": "Steven Cremer",
         "commercial_email": "scremer@pagalo.co",
         "commercial_phone": "502 5865 1909",
@@ -2855,6 +3172,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "PAGARME": {
+        "parent_partner": "Pagar.me",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2864,6 +3182,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, High Risk, Tokenization, Recurring Payments, Installments",
     },
     "PAGBANK": {
+        "parent_partner": "PagBank Brasil",
         "commercial_contact": "Luana Pulegio",
         "commercial_email": "lpulegio@pagbank.com",
         "commercial_phone": "55 11 98245-4947",
@@ -2873,6 +3192,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments, Payouts, Installments",
     },
     "PAGBRASIL": {
+        "parent_partner": "PagBrasil",
         "commercial_contact": "Marina Scomazzon",
         "commercial_email": "marina.scomazzon@pagbrasil.com",
         "commercial_phone": "34 644 704 365",
@@ -2882,6 +3202,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAGONEXT": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2891,6 +3212,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAGO_EFECTIVO": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2900,6 +3222,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAGO_PLUX": {
+        "parent_partner": "PagoPlux",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2909,6 +3232,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments",
     },
     "PAGSEGURO": {
+        "parent_partner": "PagSeguro Latam",
         "commercial_contact": "Clarena Furtado",
         "commercial_email": "cfurtado@pagseguro.com",
         "commercial_phone": "1 954 225 7938",
@@ -2918,6 +3242,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments, Payouts",
     },
     "PAGSEGURO / PAGBANK BRASIL": {
+        "parent_partner": "PagBank Brasil",
         "commercial_contact": "Renato Lahud",
         "commercial_email": "rlahud@pagseguro.com",
         "commercial_phone": "55 11 98202-3301",
@@ -2927,6 +3252,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAGSEGURO / PAGBANK LATAM": {
+        "parent_partner": "PagSeguro Latam",
         "commercial_contact": "Clarena Furtado",
         "commercial_email": "cfurtado@pagseguro.com",
         "commercial_phone": "1 954 225 7938",
@@ -2936,6 +3262,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAGSMILE": {
+        "parent_partner": "PagSmile",
         "commercial_contact": "Belen Luque",
         "commercial_email": "belen.luque@pagsmile.com",
         "commercial_phone": "54 9 11 5813-6369",
@@ -2945,6 +3272,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAG_BRASIL": {
+        "parent_partner": "PagBrasil",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2954,6 +3282,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments, Payouts",
     },
     "PAG_SMILE": {
+        "parent_partner": "PagSmile",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2963,6 +3292,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Tokenization, Recurring Payments, Payouts",
     },
     "PALPAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2972,6 +3302,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PANDABLUE": {
+        "parent_partner": "Pandablue",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2981,6 +3312,7 @@ PARTNER_CONTACTS = {
         "verticals": "Adult, High Risk, Payouts",
     },
     "PAPARA": {
+        "parent_partner": "Papara",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -2990,6 +3322,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PARAM": {
+        "parent_partner": "PARAM",
         "commercial_contact": "Serlan Yildiz",
         "commercial_email": "serkan.yildiz@param.eu",
         "commercial_phone": "",
@@ -2999,6 +3332,7 @@ PARTNER_CONTACTS = {
         "verticals": "Airlines, Multi-Level Marketing, Tokenization",
     },
     "PAY10": {
+        "parent_partner": "Pay10",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3008,6 +3342,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Airlines, Tokenization, Recurring Payments, Payouts",
     },
     "PAY4FUN": {
+        "parent_partner": "Pay4Fun",
         "commercial_contact": "Leonardo Baptista",
         "commercial_email": "leo@p4f.com",
         "commercial_phone": "55 11 98297-6510",
@@ -3017,6 +3352,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYABL": {
+        "parent_partner": "Payabl",
         "commercial_contact": "Florin Cimpoca",
         "commercial_email": "florin.cimpoca@payabl.com",
         "commercial_phone": "357 25 332590",
@@ -3026,6 +3362,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Tokenization, Recurring Payments, Payouts",
     },
     "PAYAMIGO": {
+        "parent_partner": "Payamigo",
         "commercial_contact": "Erica Smalley",
         "commercial_email": "esmalley@payamigo.com",
         "commercial_phone": "1 (310) 997-5832",
@@ -3035,6 +3372,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYBY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3044,6 +3382,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYCASH": {
+        "parent_partner": "PayCash",
         "commercial_contact": "Alejandro Guillermo Maldonado",
         "commercial_email": "amaldonado@paycash.mx",
         "commercial_phone": "52 55 7274 7105",
@@ -3053,6 +3392,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing",
     },
     "PAYFLEX": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3062,6 +3402,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYGATE / 54PAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3071,6 +3412,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, High Risk, Airlines, Payouts",
     },
     "PAYLATER": {
+        "parent_partner": "Paylater",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3080,6 +3422,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYMEE": {
+        "parent_partner": "PayMee",
         "commercial_contact": "Daniel Cremonezi",
         "commercial_email": "danielc@paymee.com.br",
         "commercial_phone": "55 11 96161-5995",
@@ -3089,6 +3432,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYMENTEZ": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3098,6 +3442,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYMENTS_WAY": {
+        "parent_partner": "Payments Way",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3107,6 +3452,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "PAYMENT_WALL": {
+        "parent_partner": "Paymentwall",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3116,6 +3462,7 @@ PARTNER_CONTACTS = {
         "verticals": "Recurring Payments",
     },
     "PAYMOB": {
+        "parent_partner": "Paymob",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3125,6 +3472,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYNETICS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3134,6 +3482,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "PAYOUTS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3143,6 +3492,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYPAL": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3152,6 +3502,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Forex, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "PAYPAL BR": {
+        "parent_partner": "Paypal / Braintree",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3161,6 +3512,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYPAL GLOBAL": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3170,6 +3522,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYPAL/ BRAINTREE": {
+        "parent_partner": "Paypal / Braintree",
         "commercial_contact": "Paola Fuentes Duclaud",
         "commercial_email": "pfuentes@paypal.com",
         "commercial_phone": "52 55 2270 9263",
@@ -3179,6 +3532,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYPAL/ BRAINTREE BR": {
+        "parent_partner": "PayPal/ Braintree BR",
         "commercial_contact": "Danilo Mendoça",
         "commercial_email": "damendona@paypal.com",
         "commercial_phone": "55 11 94530-8921",
@@ -3188,6 +3542,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYPAPL/ BRAINTREE": {
+        "parent_partner": "",
         "commercial_contact": "Partnership Leads",
         "commercial_email": "latampartnerleads@paypal.com",
         "commercial_phone": "",
@@ -3197,6 +3552,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYPAPL/ BRAINTREE BR": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "latampartnerleads@paypal.com",
         "commercial_phone": "",
@@ -3206,6 +3562,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYPHONE": {
+        "parent_partner": "PayPhone",
         "commercial_contact": "Carlos Flores",
         "commercial_email": "cflores@payphone.app",
         "commercial_phone": "593 983799585",
@@ -3215,6 +3572,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYPLUG": {
+        "parent_partner": "Payplug",
         "commercial_contact": "Clara fortea",
         "commercial_email": "cfortea@payplug.com",
         "commercial_phone": "",
@@ -3224,6 +3582,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments",
     },
     "PAYRETAILERS": {
+        "parent_partner": "PayRetailers",
         "commercial_contact": "Patricia Álvarez Sabio",
         "commercial_email": "patricia.alvarez@payretailers.com",
         "commercial_phone": "34 647 81 78 50",
@@ -3233,6 +3592,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYSAFE": {
+        "parent_partner": "PaySafe Europe / Skrill",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3242,6 +3602,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Airlines, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "PAYSAFE USA": {
+        "parent_partner": "Paysafe USA",
         "commercial_contact": "Pratik Chitre",
         "commercial_email": "pratik.chitre@paysafe.com",
         "commercial_phone": "",
@@ -3251,6 +3612,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYSQUAD": {
+        "parent_partner": "PaySquad",
         "commercial_contact": "Cam Richardson",
         "commercial_email": "cam@paysquad.co",
         "commercial_phone": "64 27 768 3231",
@@ -3260,6 +3622,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Tokenization, Recurring Payments, Payouts",
     },
     "PAYSTACK": {
+        "parent_partner": "Paystack by Stripe",
         "commercial_contact": "Joel Bronkowski",
         "commercial_email": "joel@paystack.com",
         "commercial_phone": "",
@@ -3269,6 +3632,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYTABS": {
+        "parent_partner": "Paytabs",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3278,6 +3642,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYTEN": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3287,6 +3652,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYTR": {
+        "parent_partner": "PayTR",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3296,6 +3662,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYU": {
+        "parent_partner": "PayU",
         "commercial_contact": "Juan G Martin",
         "commercial_email": "juan.martin@payu.com",
         "commercial_phone": "34 627 333 733",
@@ -3305,6 +3672,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Airlines",
     },
     "PAYU APAC": {
+        "parent_partner": "PayU APAC",
         "commercial_contact": "Monika Jain",
         "commercial_email": "monika.jain@payu.in",
         "commercial_phone": "+91 8302237940",
@@ -3314,6 +3682,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYU/ RAPYD LATAM": {
+        "parent_partner": "",
         "commercial_contact": "Maria Jose Bermudez",
         "commercial_email": "mariabe@rapyd.net",
         "commercial_phone": "57 315 224 030",
@@ -3323,6 +3692,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYVALIDA": {
+        "parent_partner": "PayValida",
         "commercial_contact": "Luis Javier Medina",
         "commercial_email": "lmedina@payvalida.com",
         "commercial_phone": "57 310 892 6946",
@@ -3332,6 +3702,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Tokenization, Recurring Payments, Payouts",
     },
     "PAYWAY/ PRISMA": {
+        "parent_partner": "PayWay/Prisma",
         "commercial_contact": "Manuel Vega",
         "commercial_email": "mvega@payway.com.ar",
         "commercial_phone": "54 9 11 3291-4478",
@@ -3341,6 +3712,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAYWAY/PRISMA": {
+        "parent_partner": "PayWay/Prisma",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3350,6 +3722,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Tokenization, Recurring Payments",
     },
     "PAYZEN": {
+        "parent_partner": "Payzen/Lyra",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3359,6 +3732,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "PAYZONE": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3368,6 +3742,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAY_FUTURE": {
+        "parent_partner": "Payfuture",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3377,6 +3752,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Airlines",
     },
     "PAY_IT": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3386,6 +3762,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PAY_RETAILERS": {
+        "parent_partner": "PayRetailers",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3395,6 +3772,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, High Risk, Airlines, Multi-Level Marketing, Payouts",
     },
     "PAZE": {
+        "parent_partner": "Paze",
         "commercial_contact": "Ryan Noland",
         "commercial_email": "Ryan.Noland@earlywarning.com",
         "commercial_phone": "530.902.0965",
@@ -3404,6 +3782,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PICPAY": {
+        "parent_partner": "PicPay",
         "commercial_contact": "Gabriela de Assis Lima Cestaro",
         "commercial_email": "gabriela.cestaro@picpay.com",
         "commercial_phone": "55 11 95730-4710",
@@ -3413,6 +3792,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Adult, High Risk, Tokenization, Recurring Payments",
     },
     "PINBANK": {
+        "parent_partner": "Pinbank",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3422,6 +3802,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Recurring Payments, Installments",
     },
     "PINGPONG": {
+        "parent_partner": "PingPong",
         "commercial_contact": "Carlos Guzman",
         "commercial_email": "carlos.guzman@pingpongx.com",
         "commercial_phone": "",
@@ -3431,6 +3812,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PINGPONG_PAYMENT": {
+        "parent_partner": "PingPong",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3440,6 +3822,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PINPAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3449,6 +3832,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PLACE TO PAY": {
+        "parent_partner": "PlacetoPay by Evertec",
         "commercial_contact": "Juliana Grajales",
         "commercial_email": "juliana.grajales@evertecinc.com",
         "commercial_phone": "574 4442310",
@@ -3458,6 +3842,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PLACE_TO_PAY": {
+        "parent_partner": "PlacetoPay by Evertec",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3467,6 +3852,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "PLUTU": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3476,6 +3862,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PLUXEE": {
+        "parent_partner": "Pluxee",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3485,6 +3872,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "POST_PAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3494,6 +3882,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "POWERPAY": {
+        "parent_partner": "",
         "commercial_contact": "Marko Van Oordt",
         "commercial_email": "marko.vanoordt@powerpay.pe",
         "commercial_phone": "",
@@ -3503,6 +3892,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PPRO": {
+        "parent_partner": "PPRO",
         "commercial_contact": "Emma Barradell",
         "commercial_email": "emma.barradell@ppro.com",
         "commercial_phone": "",
@@ -3512,6 +3902,7 @@ PARTNER_CONTACTS = {
         "verticals": "Recurring Payments",
     },
     "PRECISION": {
+        "parent_partner": "Precision",
         "commercial_contact": "Andreea Pap",
         "commercial_email": "andreea.pap@precisionrisk.com",
         "commercial_phone": "",
@@ -3521,6 +3912,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PRIMEFY": {
+        "parent_partner": "Primefy",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3530,6 +3922,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "PRONTO PAGA": {
+        "parent_partner": "ProntoPaga",
         "commercial_contact": "‎Sebastián Salazar",
         "commercial_email": "sebastian@prontopaga.com‎",
         "commercial_phone": "",
@@ -3539,6 +3932,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PRONTO_PAGA": {
+        "parent_partner": "ProntoPaga",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3548,6 +3942,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "PROSA": {
+        "parent_partner": "Prosa",
         "commercial_contact": "Antonio Guerrero",
         "commercial_email": "antonio.guerrero@prosa.com.mx",
         "commercial_phone": "52 55 8556 2651",
@@ -3557,6 +3952,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments",
     },
     "PROSA_ISO": {
+        "parent_partner": "Prosa",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3566,6 +3962,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PROTECT GROUP": {
+        "parent_partner": "Protect Group",
         "commercial_contact": "Arun Panday",
         "commercial_email": "arunp@protect.group",
         "commercial_phone": "+66 63 519 6141",
@@ -3575,6 +3972,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PROVIDER_ID": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3584,6 +3982,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "PUNTOXPRESS": {
+        "parent_partner": "Puntoxpress",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3593,6 +3992,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "QNB": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3602,6 +4002,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "QPAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3611,6 +4012,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "RAPPI": {
+        "parent_partner": "",
         "commercial_contact": "Nelson Cuervo",
         "commercial_email": "nelson.cuervo@rappi.com",
         "commercial_phone": "",
@@ -3620,6 +4022,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "RAPPIBANK": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3629,6 +4032,7 @@ PARTNER_CONTACTS = {
         "verticals": "High Risk",
     },
     "RAPYD": {
+        "parent_partner": "Rapyd",
         "commercial_contact": "Sam Moses",
         "commercial_email": "samuelm@rapyd.net",
         "commercial_phone": "31 68 7068386",
@@ -3638,6 +4042,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments",
     },
     "RAZORPAY": {
+        "parent_partner": "RazorPay",
         "commercial_contact": "Suravi Patnaik",
         "commercial_email": "suravi.patnaik@razorpay.com",
         "commercial_phone": "+91-8851634410",
@@ -3647,6 +4052,7 @@ PARTNER_CONTACTS = {
         "verticals": "Forex, Tokenization, Recurring Payments, Payouts, Installments, Network Tokens",
     },
     "REDE": {
+        "parent_partner": "Rede",
         "commercial_contact": "Vagner Sarria",
         "commercial_email": "vagner.sarria@userede.com.br",
         "commercial_phone": "55 11 98832-2525",
@@ -3656,6 +4062,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Adult, High Risk, Recurring Payments, Installments",
     },
     "REDE/ITAÚ": {
+        "parent_partner": "Rede",
         "commercial_contact": "Juliano Dantas Barella",
         "commercial_email": "juliano.dantas-barrella@userede.com.br",
         "commercial_phone": "55 11 96183-2322",
@@ -3665,6 +4072,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "REDEBAN": {
+        "parent_partner": "Redeban",
         "commercial_contact": "Jessica Suarez",
         "commercial_email": "jsuarez@rbm.com.co",
         "commercial_phone": "57 312 3797388",
@@ -3674,6 +4082,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments",
     },
     "REDEBAN_DIRECT": {
+        "parent_partner": "Redeban",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3683,6 +4092,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "REDSYS": {
+        "parent_partner": "Redsys (& 7 local banks)",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3692,6 +4102,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "REVOLUT": {
+        "parent_partner": "Revolut",
         "commercial_contact": "Swastik Gupta",
         "commercial_email": "swastik.gupta@revolut.com",
         "commercial_phone": "",
@@ -3701,6 +4112,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Adult, High Risk, Airlines, Multi-Level Marketing, Tokenization, Recurring Payments",
     },
     "RISKIFIED": {
+        "parent_partner": "Riskified",
         "commercial_contact": "Ana Perez",
         "commercial_email": "ana.perezmahiques@riskified.com",
         "commercial_phone": "1 (917) 991-3494",
@@ -3710,6 +4122,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, High Risk, Multi-Level Marketing",
     },
     "SADAD (ALMADAR)": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3719,6 +4132,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SAFE2PAY": {
+        "parent_partner": "Safe2Pay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3728,6 +4142,7 @@ PARTNER_CONTACTS = {
         "verticals": "High Risk, Installments",
     },
     "SAFETYPAY": {
+        "parent_partner": "SafetyPay",
         "commercial_contact": "Jannytt Vidal",
         "commercial_email": "jannytt.vidal@paysafe.com",
         "commercial_phone": "50 765 875 708",
@@ -3737,6 +4152,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Payouts",
     },
     "SAFRA PAY": {
+        "parent_partner": "SafraPay",
         "commercial_contact": "Juliana Valerio Inocenti",
         "commercial_email": "juliana.inocenti@safra.com.br",
         "commercial_phone": "",
@@ -3746,6 +4162,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SAFRAPAY": {
+        "parent_partner": "SafraPay",
         "commercial_contact": "Rodolfo Lucena",
         "commercial_email": "rodolfo.lucena@safra.com.br",
         "commercial_phone": "55 11 99749-6184",
@@ -3755,6 +4172,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "SAMSUNG_PAY": {
+        "parent_partner": "Samsung Pay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3764,6 +4182,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SANTANDER": {
+        "parent_partner": "Banco Santander (Brasil) S.A.",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3773,6 +4192,7 @@ PARTNER_CONTACTS = {
         "verticals": "Payouts",
     },
     "SANTANDER BRASIL": {
+        "parent_partner": "Banco Santander (Brasil) S.A.",
         "commercial_contact": "Sergio Polydoro",
         "commercial_email": "sergio.polydoro@santander.com.br",
         "commercial_phone": "55 11 99011-7171",
@@ -3782,6 +4202,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SARDINE": {
+        "parent_partner": "Sardine",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3791,6 +4212,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing",
     },
     "SATIM": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3800,6 +4222,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SATISPAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3809,6 +4232,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SEON": {
+        "parent_partner": "SEON",
         "commercial_contact": "Jimmy Fog",
         "commercial_email": "jimmyfong@seon.io",
         "commercial_phone": "",
@@ -3818,6 +4242,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SHIFT4": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3827,6 +4252,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "SHOPEEPAY": {
+        "parent_partner": "ShopeePay",
         "commercial_contact": "Savanna Gan Shue-Anne",
         "commercial_email": "savanna.gansa@seamoney.com",
         "commercial_phone": "",
@@ -3836,6 +4262,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SIBS": {
+        "parent_partner": "SIBS",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3845,6 +4272,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SIFT": {
+        "parent_partner": "Sift",
         "commercial_contact": "Dave Scholtz",
         "commercial_email": "dscholtz@sift.com",
         "commercial_phone": "1 303 883 2752",
@@ -3854,6 +4282,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SIGNIFYD": {
+        "parent_partner": "Signifyd",
         "commercial_contact": "Miguel Alcazar",
         "commercial_email": "miguel.alcazar@signifyd.com",
         "commercial_phone": "52 81 26 221 550",
@@ -3863,6 +4292,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SIGNIFYD BR": {
+        "parent_partner": "Signifyd BR",
         "commercial_contact": "Katharina Junqueira",
         "commercial_email": "katharina.junqueira@signifyd.com",
         "commercial_phone": "55 11 98336-0009",
@@ -3872,6 +4302,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SILVERFLOW": {
+        "parent_partner": "Silverflow (Product)",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3881,6 +4312,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SIMPAISA": {
+        "parent_partner": "Simpaisa",
         "commercial_contact": "Harika Ashfaq",
         "commercial_email": "harika.ashfaq@simpaisa.com",
         "commercial_phone": "",
@@ -3890,6 +4322,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SIPAY": {
+        "parent_partner": "Sipay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3899,6 +4332,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SISTECREDITO": {
+        "parent_partner": "Sistecrédito",
         "commercial_contact": "Emilio Villegas",
         "commercial_email": "evillegas@sistecredito.com",
         "commercial_phone": "57 310 3148075",
@@ -3908,6 +4342,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SOBFLOUS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3917,6 +4352,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "SOGEBANK_HAITI": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3926,6 +4362,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "SPLITIT": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3935,6 +4372,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "STARKBANK": {
+        "parent_partner": "StarkBank",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3944,6 +4382,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "STARK_BANK": {
+        "parent_partner": "StarkBank",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3953,6 +4392,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments",
     },
     "STONE": {
+        "parent_partner": "Stone",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -3962,6 +4402,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, High Risk, Tokenization, Recurring Payments, Installments, Network Tokens",
     },
     "STONE/ PAGARME": {
+        "parent_partner": "Pagar.me",
         "commercial_contact": "Dan Magidman Ayrosa",
         "commercial_email": "dan.ayrosa@stone.com.br",
         "commercial_phone": "55 11 99214-9267",
@@ -3971,6 +4412,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "STP": {
+        "parent_partner": "STP",
         "commercial_contact": "Juan Pablo López",
         "commercial_email": "juan.lopez@stpmex.com",
         "commercial_phone": "",
@@ -3980,6 +4422,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Adult, High Risk, Payouts",
     },
     "STRIPE": {
+        "parent_partner": "Stripe",
         "commercial_contact": "Javier Ortiz de la Peña",
         "commercial_email": "jortiz@stripe.com",
         "commercial_phone": "52 552728 2654",
@@ -3989,6 +4432,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gaming, Crypto, Tokenization, Recurring Payments, Payouts",
     },
     "SUMSUB": {
+        "parent_partner": "Sumsub (kyc)",
         "commercial_contact": "Guilherme Terrengui",
         "commercial_email": "guilherme.terrengui@sumsub.com",
         "commercial_phone": "55 11 9 3469 1020",
@@ -3998,6 +4442,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TABBY": {
+        "parent_partner": "Tabby",
         "commercial_contact": "Mark Muthukumaran",
         "commercial_email": "mark.muthukumaran@tabby.ai",
         "commercial_phone": "971 501105575",
@@ -4007,6 +4452,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TAMANNA": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4016,6 +4462,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TAMARA": {
+        "parent_partner": "Tamara",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4025,6 +4472,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TAP": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4034,6 +4482,7 @@ PARTNER_CONTACTS = {
         "verticals": "High Risk",
     },
     "TAP PAYMENTS": {
+        "parent_partner": "Tap Payments",
         "commercial_contact": "Tuleen Abu Soud",
         "commercial_email": "t.abusoud@tap.company",
         "commercial_phone": "90 5326691192",
@@ -4043,6 +4492,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TAPPAY": {
+        "parent_partner": "Tappay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4052,6 +4502,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TAP_PAYMENTS": {
+        "parent_partner": "Tap Payments",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4061,6 +4512,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TAZAPAY": {
+        "parent_partner": "Tazapay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4070,6 +4522,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TELR": {
+        "parent_partner": "Telr",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4079,6 +4532,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TERRAPAY": {
+        "parent_partner": "TerraPay",
         "commercial_contact": "Disha Patne",
         "commercial_email": "disha.p@terrapay.com",
         "commercial_phone": "91-8879470275",
@@ -4088,6 +4542,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments, Payouts",
     },
     "THAWANI PAY": {
+        "parent_partner": "Thawani Pay",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4097,6 +4552,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "THUNES": {
+        "parent_partner": "Thunes",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4106,6 +4562,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments, Payouts",
     },
     "TLYNC": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4115,6 +4572,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TOTALNET": {
+        "parent_partner": "Totalnet (ex-Visanet)",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4124,6 +4582,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "TPAGA": {
+        "parent_partner": "Tpaga",
         "commercial_contact": "Julian Zamudio",
         "commercial_email": "jzamudio@tpaga.co",
         "commercial_phone": "57 305 779 9035",
@@ -4133,6 +4592,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Payouts",
     },
     "TRACE_FINANCE": {
+        "parent_partner": "Trace Finance",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4142,6 +4602,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Crypto, High Risk",
     },
     "TRANSBANK": {
+        "parent_partner": "Transbank",
         "commercial_contact": "Mauricio Ardiles Vergara",
         "commercial_email": "mardiles@transbank.cl",
         "commercial_phone": "56 7 44 269501",
@@ -4151,6 +4612,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, High Risk, Tokenization, Recurring Payments",
     },
     "TRANSBANK_2": {
+        "parent_partner": "Transbank",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4160,6 +4622,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TRANSFEERA": {
+        "parent_partner": "Transfeera",
         "commercial_contact": "Priscila Reis",
         "commercial_email": "priscila.reis@transfeera.com",
         "commercial_phone": "‪55 11 93619‑2553‬",
@@ -4169,6 +4632,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, High Risk",
     },
     "TRANSFERO": {
+        "parent_partner": "Transfero",
         "commercial_contact": "Pierre Emmanuel Roussel",
         "commercial_email": "pierre.emmanuel@transfero.com",
         "commercial_phone": "54 911 2300 8272",
@@ -4178,6 +4642,7 @@ PARTNER_CONTACTS = {
         "verticals": "Crypto, High Risk, Payouts",
     },
     "TRUST DECISION": {
+        "parent_partner": "TrustDecision",
         "commercial_contact": "Jiayiin Sun",
         "commercial_email": "jiayin.sun@trustdecision.com",
         "commercial_phone": "8613581603379",
@@ -4187,6 +4652,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "TRUSTLY": {
+        "parent_partner": "Trustly",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4196,6 +4662,7 @@ PARTNER_CONTACTS = {
         "verticals": "Payouts",
     },
     "TRUSTPAYMENTS": {
+        "parent_partner": "Trust Payments",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4205,6 +4672,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "UATP": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4214,6 +4682,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "UNIBANK_HAITI": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4223,6 +4692,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "UNICO": {
+        "parent_partner": "Unico",
         "commercial_contact": "Felipe Canedo",
         "commercial_email": "felipe.matarazzo@unico.io",
         "commercial_phone": "55 11 91077-5803",
@@ -4232,6 +4702,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "UNLIMINT": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4241,6 +4712,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "UNLIMIT": {
+        "parent_partner": "Unlimit",
         "commercial_contact": "Tala El Oubari",
         "commercial_email": "t.oubari@unlimit.com",
         "commercial_phone": "35 796 272 892",
@@ -4250,6 +4722,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "UPAYMENTS": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4259,6 +4732,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "VALU": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4268,6 +4742,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "VENTIPAY": {
+        "parent_partner": "Ventipay",
         "commercial_contact": "Augustin Correa",
         "commercial_email": "acorrea@ventipay.com",
         "commercial_phone": "",
@@ -4277,6 +4752,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "VESTA": {
+        "parent_partner": "",
         "commercial_contact": "Gabriel Pascual",
         "commercial_email": "gabriel.pascual@vesta.io",
         "commercial_phone": "1 (786) 708-1611",
@@ -4286,6 +4762,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "VINDI": {
+        "parent_partner": "Vindi",
         "commercial_contact": "Alexandra Papangelacos",
         "commercial_email": "ale.papangelacos@vindi.com.br",
         "commercial_phone": "",
@@ -4295,6 +4772,7 @@ PARTNER_CONTACTS = {
         "verticals": "Installments",
     },
     "VISA BR": {
+        "parent_partner": "Visa BR",
         "commercial_contact": "Alfredo da Costa",
         "commercial_email": "aldacost@visa.com",
         "commercial_phone": "55 11 94921-8382",
@@ -4304,6 +4782,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "VISA LAC": {
+        "parent_partner": "Visa",
         "commercial_contact": "Rodrigo Amaris",
         "commercial_email": "ramariss@visa.com",
         "commercial_phone": "",
@@ -4313,6 +4792,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "VOLT": {
+        "parent_partner": "Volt BR",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4322,6 +4802,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, High Risk, Payouts",
     },
     "VOLT GLOBAL": {
+        "parent_partner": "Volt Global",
         "commercial_contact": "Richard Drury",
         "commercial_email": "richard.drury@volt.io",
         "commercial_phone": "44 7366 591654",
@@ -4331,6 +4812,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "VR": {
+        "parent_partner": "VR Beneficios",
         "commercial_contact": "Felipe Pierro",
         "commercial_email": "fpierro@vr.com.br",
         "commercial_phone": "55 11 93472-3986",
@@ -4340,6 +4822,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, High Risk",
     },
     "VTEX": {
+        "parent_partner": "VTEX Latam",
         "commercial_contact": "Marcos Pueyrredon",
         "commercial_email": "marcos@vtex.com.br",
         "commercial_phone": "54 911 540-80984",
@@ -4349,6 +4832,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming",
     },
     "WALAPAY": {
+        "parent_partner": "Walapay",
         "commercial_contact": "Thomas Borges",
         "commercial_email": "tom@walapay.io",
         "commercial_phone": "",
@@ -4358,6 +4842,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "WENET": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4367,6 +4852,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "WEPAYMENTS": {
+        "parent_partner": "WEpayments",
         "commercial_contact": "Fernanda Rachel",
         "commercial_email": "fzago@wepayments.com.br",
         "commercial_phone": "55 41 9620-9866",
@@ -4376,6 +4862,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "WE_PAYMENTS": {
+        "parent_partner": "WEpayments",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4385,6 +4872,7 @@ PARTNER_CONTACTS = {
         "verticals": "Gambling, Gaming, Crypto, Forex, Adult, High Risk, Multi-Level Marketing, Tokenization, Recurring Payments, Payouts",
     },
     "WHISH": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4394,6 +4882,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "WIBOND": {
+        "parent_partner": "Wibond",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4403,6 +4892,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "WOMPI": {
+        "parent_partner": "Wompi",
         "commercial_contact": "Natalia Molina",
         "commercial_email": "namarang@bancolombia.com.co",
         "commercial_phone": "57 3166800102",
@@ -4412,6 +4902,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "WORLDLINE": {
+        "parent_partner": "Worldline",
         "commercial_contact": "Jeffrey van der Linden",
         "commercial_email": "jeffrey.vanderlinden@worldline.com",
         "commercial_phone": "31 (0)6 29345089",
@@ -4421,6 +4912,7 @@ PARTNER_CONTACTS = {
         "verticals": "Tokenization, Recurring Payments",
     },
     "WORLDPAY": {
+        "parent_partner": "WorldPay",
         "commercial_contact": "Jake Melito",
         "commercial_email": "jacob.melito@fisglobal.com",
         "commercial_phone": "1 6178234406",
@@ -4430,6 +4922,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "XENDIT": {
+        "parent_partner": "Xendit",
         "commercial_contact": "Charisse Chin",
         "commercial_email": "charisse@xendit.co",
         "commercial_phone": "+65 81334451",
@@ -4439,6 +4932,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "YAPE": {
+        "parent_partner": "Yape",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4448,6 +4942,7 @@ PARTNER_CONTACTS = {
         "verticals": "Payouts",
     },
     "YAPPY": {
+        "parent_partner": "",
         "commercial_contact": "Juan Andres Gerbaud",
         "commercial_email": "jgerbaud@yappy.com.pa",
         "commercial_phone": "",
@@ -4457,6 +4952,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ZEN": {
+        "parent_partner": "Zen",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4466,6 +4962,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ZENKI": {
+        "parent_partner": "Zenki",
         "commercial_contact": "Eric Nuñez",
         "commercial_email": "eric@zenki.fi",
         "commercial_phone": "52 4424236425",
@@ -4475,6 +4972,7 @@ PARTNER_CONTACTS = {
         "verticals": "Crypto, High Risk",
     },
     "ZOODPAY": {
+        "parent_partner": "",
         "commercial_contact": "",
         "commercial_email": "",
         "commercial_phone": "",
@@ -4484,6 +4982,7 @@ PARTNER_CONTACTS = {
         "verticals": "",
     },
     "ZOOP": {
+        "parent_partner": "Zoop",
         "commercial_contact": "Marina Graça",
         "commercial_email": "marina.graca@ifood.com.br",
         "commercial_phone": "55 11 97651-4908",
