@@ -1,4 +1,5 @@
 import os, json
+from urllib.parse import unquote
 import pandas as pd
 from fastapi import FastAPI, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
@@ -159,8 +160,9 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         q=q, cat=cat, status=status, region=region, tier=tier
     ))
 
-@app.get("/partners/{name}", response_class=HTMLResponse)
+@app.get("/partners/{name:path}", response_class=HTMLResponse)
 def partner_detail(request: Request, name: str):
+    name = unquote(name)
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
