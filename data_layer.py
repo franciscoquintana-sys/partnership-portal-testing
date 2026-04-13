@@ -144,9 +144,13 @@ def load_sales_contacts(provider_name: str) -> list:
     for _, row in matches.iterrows():
         am_name = str(row.get("Partnerships AM", "")).strip()
         am_email = str(row.get("AM Email", "")).strip()
+        am_role = str(row.get("AM Role", "")).strip()
+        territory = str(row.get("Territory Scope", "")).strip()
         contacts.append({
             "am_name": am_name if am_name and am_name != "nan" else "N/A",
             "am_email": am_email if am_email and am_email != "nan" else "N/A",
+            "am_role": am_role if am_role and am_role != "nan" else "N/A",
+            "territory": territory if territory and territory != "nan" else "N/A",
         })
     return contacts
 

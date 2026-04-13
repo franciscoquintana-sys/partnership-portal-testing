@@ -250,27 +250,33 @@
     <div class="section-body">
       {% if sales_contacts %}
         {% for c in sales_contacts %}
-        <div class="field-grid" {% if not loop.first %}style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border)"{% endif %}>
-          <div>
-            <div class="field-label">Sales Contact</div>
-            <div class="field-value">{{ c.am_name }}</div>
-          </div>
-          <div>
-            <div class="field-label">Sales Email</div>
-            <div class="field-value">{{ c.am_email }}</div>
+        <div {% if not loop.first %}style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)"{% endif %}>
+          <div class="field-grid">
+            <div>
+              <div class="field-label">Sales Contact</div>
+              <div class="field-value">{{ c.am_name }}</div>
+            </div>
+            <div>
+              <div class="field-label">Sales Email</div>
+              <div class="field-value">{{ c.am_email }}</div>
+            </div>
+            <div>
+              <div class="field-label">Role</div>
+              <div class="field-value">{{ c.am_role }}</div>
+            </div>
+            <div>
+              <div class="field-label">Territory Scope</div>
+              <div class="field-value">{{ c.territory }}</div>
+            </div>
           </div>
         </div>
         {% endfor %}
       {% else %}
         <div class="field-grid">
-          <div>
-            <div class="field-label">Sales Contact</div>
-            <div class="field-value muted">N/A</div>
-          </div>
-          <div>
-            <div class="field-label">Sales Email</div>
-            <div class="field-value muted">N/A</div>
-          </div>
+          <div><div class="field-label">Sales Contact</div><div class="field-value muted">N/A</div></div>
+          <div><div class="field-label">Sales Email</div><div class="field-value muted">N/A</div></div>
+          <div><div class="field-label">Role</div><div class="field-value muted">N/A</div></div>
+          <div><div class="field-label">Territory Scope</div><div class="field-value muted">N/A</div></div>
         </div>
       {% endif %}
     </div>
