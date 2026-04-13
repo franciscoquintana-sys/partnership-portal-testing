@@ -327,91 +327,33 @@
     </div>
   </div>
 
-  <!-- Payment methods & processing -->
+  <!-- Countries -->
   <div class="section-card">
-    <div class="section-head">Capabilities</div>
-    <div class="section-body" style="display:flex;flex-direction:column;gap:16px">
-      <div>
-        <div class="field-label" style="margin-bottom:8px">Payment Methods</div>
-        {% if methods %}
-        <div class="methods-wrap">
-          {% for m in methods %}<span class="method-tag">{{ m }}</span>{% endfor %}
-        </div>
-        {% else %}
-        <div class="methods-wrap"><span class="skel skel-tag"></span><span class="skel skel-tag" style="width:85px"></span><span class="skel skel-tag" style="width:55px"></span></div>
-        {% endif %}
+    <div class="section-head">Countries ({{ countries | length }})</div>
+    <div class="section-body">
+      {% if countries %}
+      <div class="methods-wrap">
+        {% for c in countries %}<span class="method-tag">{{ c }}</span>{% endfor %}
       </div>
-      <div>
-        <div class="field-label" style="margin-bottom:8px">Processing Types</div>
-        {% if processing %}
-        <div class="methods-wrap">
-          {% for p in processing %}<span class="method-tag">{{ p }}</span>{% endfor %}
-        </div>
-        {% else %}
-        <div class="methods-wrap"><span class="skel skel-tag" style="width:80px"></span><span class="skel skel-tag" style="width:65px"></span></div>
-        {% endif %}
-      </div>
+      {% else %}
+      <div class="field-value muted">N/A</div>
+      {% endif %}
     </div>
   </div>
 
-  <!-- Commercial skeleton -->
+  <!-- Payment Methods -->
   <div class="section-card">
-    <div class="section-head">Commercial Terms</div>
+    <div class="section-head">Payment Methods ({{ methods | length }})</div>
     <div class="section-body">
-      <div class="skel-block">
-        <span class="skel skel-line" style="width:100%"></span>
-        <span class="skel skel-line" style="width:75%"></span>
-        <span class="skel skel-line" style="width:85%"></span>
-        <span class="skel skel-line" style="width:60%"></span>
+      {% if methods %}
+      <div class="methods-wrap">
+        {% for m in methods %}<span class="method-tag">{{ m }}</span>{% endfor %}
       </div>
+      {% else %}
+      <div class="field-value muted">N/A</div>
+      {% endif %}
     </div>
   </div>
-
-  <!-- Coverage table -->
-  {% if coverage %}
-  <div class="section-card full">
-    <div class="section-head">Country Coverage ({{ countries | length }} countries)</div>
-    <div style="overflow-x:auto">
-      <table class="coverage-table">
-        <thead>
-          <tr>
-            <th>Country</th>
-            <th>Payment Method</th>
-            <th>Processing</th>
-            <th>Category</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for row in coverage %}
-          <tr>
-            <td><strong>{{ row.country }}</strong></td>
-            <td>{{ row.method }}</td>
-            <td style="color:var(--text2)">{{ row.processing }}</td>
-            <td style="color:var(--text2)">{{ row.category }}</td>
-            <td>
-              <span style="font-size:12px;font-weight:600;
-                {% if row.status == 'Live' %}color:#16a34a{% else %}color:#d97706{% endif %}">
-                {{ row.status }}
-              </span>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
-  {% else %}
-  <div class="section-card full">
-    <div class="section-head">Country Coverage</div>
-    <div class="section-body">
-      <div class="placeholder-section" style="border:none">
-        <div class="placeholder-label">No coverage data available</div>
-        <div class="placeholder-sub">Coverage will be loaded from source of truth</div>
-      </div>
-    </div>
-  </div>
-  {% endif %}
 
 </div>
 
