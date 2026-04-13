@@ -326,17 +326,13 @@
   <div class="search-bar-row">
     <div class="search-wrap" style="position:relative">
       <div style="position:absolute;left:11px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:6px;pointer-events:none">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4F46E5" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="19" cy="5" r="3" fill="#4F46E5" stroke="none"/></svg>
-        <span style="font-size:10px;font-weight:700;color:#4F46E5;letter-spacing:.04em">AI</span>
-        <div style="width:1px;height:14px;background:var(--border2)"></div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       </div>
       <input class="search-input" id="search" type="text"
-        placeholder="Ask AI: find providers in Brazil with card processing…"
+        placeholder="Search partners…"
         value="{{ q }}"
-        style="padding-left:58px"
-        onkeydown="if(event.key==='Enter') runAISearch()"
-        oninput="if(!this.value) { clearAllFilters(); }">
-      <div id="ai-status" style="display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;color:#4F46E5;font-weight:600"></div>
+        style="padding-left:34px"
+        oninput="applyFilters()">
     </div>
     <button onclick="clearAllFilters()" style="font-family:var(--font);font-size:12px;font-weight:600;color:#dc2626;background:#fff;border:1px solid #fca5a5;border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.15s" onmouseover="this.style.background='#fff5f5'" onmouseout="this.style.background='#fff'">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
@@ -564,46 +560,6 @@ function clearAllFilters() {
   document.getElementById('search').value = '';
   document.querySelectorAll('.col-filter-dropdown input[type=checkbox]').forEach(c => c.checked = false);
   applyFilters();
-}
-
-async function runAISearch() {
-  const query = document.getElementById('search').value.trim();
-  if (!query) return;
-  const status = document.getElementById('ai-status');
-  status.textContent = '⏳ Thinking…';
-  status.style.display = 'block';
-  try {
-    const res = await fetch('/api/ai_search', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({query})
-    });
-    const data = await res.json();
-    if (data.error) { status.textContent = '⚠ Error'; return; }
-
-    // clear existing filters first
-    document.querySelectorAll('.col-filter-dropdown input[type=checkbox]').forEach(c => c.checked = false);
-
-    const f = data.filters || {};
-    const MAP = { connector:'connector', cat:'cat', region:'region', country:'country', status:'status', tier:'tier', manager:'manager' };
-    Object.entries(MAP).forEach(([key, dropKey]) => {
-      const vals = f[key] || [];
-      vals.forEach(val => {
-        const cb = [...document.querySelectorAll(`#drop-${dropKey} input[type=checkbox]`)]
-          .find(c => c.value.toLowerCase() === val.toLowerCase());
-        if (cb) cb.checked = true;
-      });
-    });
-
-    applyFilters();
-    const explanation = data.explanation || 'Filters applied.';
-    status.style.color = '#16a34a';
-    status.textContent = '✓ ' + explanation;
-    setTimeout(() => { status.style.display = 'none'; status.style.color = '#4F46E5'; }, 4000);
-  } catch(e) {
-    status.textContent = '⚠ Failed';
-    setTimeout(() => { status.style.display = 'none'; }, 3000);
-  }
 }
 
 function toggleExportMenu(e) {
