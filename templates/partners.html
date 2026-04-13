@@ -368,6 +368,16 @@
       </div>
     </div>
     <div class="filter-item">
+      <span class="filter-item-label">Country</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-country" onclick="toggleDrop('country',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-country">
+          {% for c in countries %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('country')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
       <span class="filter-item-label">Region</span>
       <div class="col-filter-wrap">
         <div class="col-filter-btn" id="btn-region" onclick="toggleDrop('region',event)">All <span>▾</span></div>
@@ -498,7 +508,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
-const FILTERS = ['connector','cat','region','status','integration'];
+const FILTERS = ['connector','cat','country','region','status','integration'];
 
 function getSelected(key) {
   return [...document.querySelectorAll(`#drop-${key} input[type=checkbox]:checked`)].map(c => c.value);
@@ -530,6 +540,7 @@ function applyFilters() {
       (!q || (row.dataset.name || '').includes(q))
       && (sel.connector.length === 0   || sel.connector.includes(row.dataset.name))
       && (sel.cat.length === 0         || sel.cat.includes(row.dataset.type))
+      && (sel.country.length === 0     || sel.country.includes(row.dataset.country))
       && (sel.region.length === 0      || sel.region.includes(row.dataset.region))
       && (sel.status.length === 0      || sel.status.includes(row.dataset.status))
       && (sel.integration.length === 0 || sel.integration.includes(row.dataset.integration));
