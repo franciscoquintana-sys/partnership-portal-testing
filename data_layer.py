@@ -40,7 +40,13 @@ _SHEET_CSV_URL = (
     "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
     "/export?format=csv&gid=1597186279"
 )
+_CONTACTS_CSV_URL = (
+    "https://docs.google.com/spreadsheets/d/"
+    "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
+    "/export?format=csv&gid=695009227"
+)
 _PARTNERS_CACHE = {"data": None, "ts": 0}
+_CONTACTS_CACHE = {"data": None, "ts": 0}
 _CACHE_TTL = 300  # refresh every 5 minutes
 
 def _fetch_sheet_df():
@@ -108,6 +114,39 @@ def load_partners_excel():
     _PARTNERS_CACHE["data"] = result
     _PARTNERS_CACHE["ts"] = now
     return result
+
+def load_sales_contact(provider_name: str) -> dict:
+    """Return Partnerships AM + email for a provider where Contact for AI is TRUE."""
+    now = time.time()
+    if _CONTACTS_CACHE["data"] is None or now - _CONTACTS_CACHE["ts"] > _CACHE_TTL:
+        try:
+            df = pd.read_csv(_CONTACTS_CSV_URL)
+            _CONTACTS_CACHE["data"] = df
+        except Exception:
+            _CONTACTS_CACHE["data"] = pd.DataFrame()
+        _CONTACTS_CACHE["ts"] = now
+
+    df = _CONTACTS_CACHE["data"]
+    if df is None or len(df) == 0:
+        return {"am_name": "N/A", "am_email": "N/A"}
+
+    pname = str(provider_name).strip().lower()
+    mask = (
+        df["Parent Partner"].str.strip().str.lower() == pname
+    ) & (
+        df["Contact for AI"].astype(str).str.strip().str.upper() == "TRUE"
+    )
+    matches = df[mask]
+    if matches.empty:
+        return {"am_name": "N/A", "am_email": "N/A"}
+
+    row = matches.iloc[0]
+    am_name = str(row.get("Partnerships AM", "")).strip()
+    am_email = str(row.get("AM Email", "")).strip()
+    return {
+        "am_name": am_name if am_name and am_name != "nan" else "N/A",
+        "am_email": am_email if am_email and am_email != "nan" else "N/A",
+    }
 
 def load_sot_data():
     path = os.path.join(_BASE, "data", "source_of_truth.xlsx")
