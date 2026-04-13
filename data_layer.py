@@ -126,7 +126,14 @@ def load_technical_contact(provider_name: str) -> dict:
     now = time.time()
     if _TECH_CACHE["data"] is None or now - _TECH_CACHE["ts"] > _CACHE_TTL:
         try:
-            df = pd.read_csv(_TECH_CONTACTS_CSV_URL)
+            df = pd.read_csv(_TECH_CONTACTS_CSV_URL, header=None, skiprows=5)
+            df.columns = [
+                "Rank", "Provider", "Provider2", "Total Transactions",
+                "Approved Transactions", "Approval Rate", "Status",
+                "Partnership Manager", "Technical Contact (Day to Day)",
+                "Technical Contact P1", "SLA", "Escalation Path",
+                "Slack Channel", "Status Page",
+            ] + [f"extra_{i}" for i in range(max(0, len(df.columns) - 14))]
             _TECH_CACHE["data"] = df
         except Exception:
             _TECH_CACHE["data"] = pd.DataFrame()
@@ -139,7 +146,8 @@ def load_technical_contact(provider_name: str) -> dict:
         return na
 
     pname = str(provider_name).strip().lower()
-    mask = df["Provider"].astype(str).str.strip().str.lower() == pname
+    mask = (df["Provider"].astype(str).str.strip().str.lower() == pname) | \
+           (df["Provider2"].astype(str).str.strip().str.lower() == pname)
     matches = df[mask]
     if matches.empty:
         return na
