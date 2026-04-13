@@ -486,7 +486,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script>
-const FILTERS = ['connector','cat','region','country','status','integration'];
+const FILTERS = ['connector','cat','region','status','integration'];
 
 function getSelected(key) {
   return [...document.querySelectorAll(`#drop-${key} input[type=checkbox]:checked`)].map(c => c.value);
@@ -519,7 +519,6 @@ function applyFilters() {
       && (sel.connector.length === 0   || sel.connector.includes(row.dataset.name))
       && (sel.cat.length === 0         || sel.cat.includes(row.dataset.type))
       && (sel.region.length === 0      || sel.region.includes(row.dataset.region))
-      && (sel.country.length === 0     || sel.country.includes(row.dataset.country))
       && (sel.status.length === 0      || sel.status.includes(row.dataset.status))
       && (sel.integration.length === 0 || sel.integration.includes(row.dataset.integration));
     row.style.display = show ? '' : 'none';
