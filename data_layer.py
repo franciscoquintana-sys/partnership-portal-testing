@@ -210,16 +210,23 @@ def load_sales_contacts(provider_name: str) -> list:
         })
     return contacts
 
+_SOT_CACHE = {"data": None, "ts": 0}
+
 def load_sot_data():
+    now = time.time()
+    if _SOT_CACHE["data"] is not None and now - _SOT_CACHE["ts"] < _CACHE_TTL:
+        return _SOT_CACHE["data"]
     path = os.path.join(_BASE, "data", "source_of_truth.xlsx")
     try:
         df = pd.read_excel(path, sheet_name="Partners")
         df = df[df["PROVIDER_CATEGORY"].isin(
             ["ACQUIRER","GATEWAY","AGREGATOR","AGREGATOR / GATEWAY","PAYMENT_METHOD"]
         )].copy()
+        _SOT_CACHE["data"] = df
+        _SOT_CACHE["ts"] = now
         return df
     except Exception:
-        return pd.DataFrame()
+        return _SOT_CACHE["data"] or pd.DataFrame()
 
 _ISO_TO_COUNTRY = {}
 try:
@@ -384,6 +391,10 @@ COUNTRIES = {
 def _preload_caches():
     try:
         load_partners_excel()
+    except Exception:
+        pass
+    try:
+        load_sot_data()
     except Exception:
         pass
     try:
