@@ -13,7 +13,7 @@ from data_layer import (
     REVSHARE_BY_PARTNER, REVSHARE_MONTHLY, MERCHANTS, CONTACTS,
     REGION_STATS, COUNTRIES, find_partners, get_sot_countries, get_sot_providers,
     _ISO_TO_COUNTRY, _VERTICAL_COLS, load_sales_contacts, load_technical_contact,
-    load_partner_countries, load_partner_payment_methods
+    load_partner_countries, load_partner_coverage
 )
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -186,8 +186,7 @@ def partner_detail(request: Request, name: str):
     processing = sorted(set(c["processing"] for c in coverage if c["processing"] and c["processing"] != "nan"))
     sales_contacts = load_sales_contacts(partner["name"])
     technical_contact = load_technical_contact(partner["name"])
-    country_data = load_partner_countries(partner["name"])
-    methods_data = load_partner_payment_methods(partner["name"])
+    cov = load_partner_coverage(partner["name"])
     return tr(request, "partner_detail.html", ctx(
         request, "partners",
         partner=partner,
@@ -197,10 +196,12 @@ def partner_detail(request: Request, name: str):
         processing=processing,
         sales_contacts=sales_contacts,
         technical_contact=technical_contact,
-        partner_countries=country_data["countries"],
-        partner_regions=country_data["regions"],
-        partner_methods=methods_data["methods"],
-        method_categories=methods_data["categories"],
+        partner_countries=cov["countries"],
+        partner_regions=cov["regions"],
+        partner_methods=cov["methods"],
+        method_categories=cov["categories"],
+        region_methods=cov["region_methods"],
+        category_countries=cov["category_countries"],
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)

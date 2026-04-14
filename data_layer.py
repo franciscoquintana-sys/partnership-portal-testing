@@ -318,35 +318,63 @@ def load_partner_countries(provider_name: str) -> dict:
     regions = {r: sorted(cs) for r, cs in sorted(region_map.items())}
     return {"countries": sorted(all_countries), "regions": regions}
 
-def load_partner_payment_methods(provider_name: str) -> dict:
-    """Return unique payment methods grouped by category. If type is CARD, use CARD_BRAND."""
+def load_partner_coverage(provider_name: str) -> dict:
+    """Return full coverage data: countries, regions, methods, categories, and cross-mappings."""
     df = _load_partners_sot()
     if df is None or len(df) == 0:
-        return {"methods": [], "categories": {}}
+        return {"countries": [], "regions": {}, "methods": [], "categories": {},
+                "region_methods": {}, "category_countries": {}}
     pname = str(provider_name).strip().upper()
     mask = df["PROVIDER_NAME"].astype(str).str.strip().str.upper() == pname
     matches = df[mask]
     if matches.empty:
-        return {"methods": [], "categories": {}}
+        return {"countries": [], "regions": {}, "methods": [], "categories": {},
+                "region_methods": {}, "category_countries": {}}
+
+    all_countries = set()
     all_methods = set()
+    region_map = {}
     cat_map = {}
+    region_methods = {}
+    category_countries = {}
+
     for _, row in matches.iterrows():
+        country = str(row.get("COUNTRY", "")).strip()
+        region = str(row.get("REGION", "")).strip()
         pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
         brand = str(row.get("CARD_BRAND", "")).strip()
         cat = str(row.get("PAYMENT_METHOD_CATEGORY", "")).strip().replace("_", " ")
+
         if pmt.upper() == "CARD" and brand and brand != "nan" and brand != "FALSE":
             method = brand
         elif pmt and pmt != "nan":
             method = pmt.replace("_", " ")
         else:
-            continue
-        all_methods.add(method)
-        if cat and cat != "nan":
-            if cat not in cat_map:
-                cat_map[cat] = set()
-            cat_map[cat].add(method)
-    categories = {c: sorted(ms) for c, ms in sorted(cat_map.items())}
-    return {"methods": sorted(all_methods), "categories": categories}
+            method = None
+
+        if country and country != "nan":
+            all_countries.add(country)
+            if region and region != "nan":
+                region_map.setdefault(region, set()).add(country)
+        if method:
+            all_methods.add(method)
+            if cat and cat != "nan":
+                cat_map.setdefault(cat, set()).add(method)
+
+        # Cross-mappings
+        if region and region != "nan" and method:
+            region_methods.setdefault(region, set()).add(method)
+        if cat and cat != "nan" and country and country != "nan":
+            category_countries.setdefault(cat, set()).add(country)
+
+    return {
+        "countries": sorted(all_countries),
+        "regions": {r: sorted(cs) for r, cs in sorted(region_map.items())},
+        "methods": sorted(all_methods),
+        "categories": {c: sorted(ms) for c, ms in sorted(cat_map.items())},
+        "region_methods": {r: sorted(ms) for r, ms in sorted(region_methods.items())},
+        "category_countries": {c: sorted(cs) for c, cs in sorted(category_countries.items())},
+    }
 
 def load_sales_contacts(provider_name: str) -> list:
     """Return all Partnerships AM + email for a provider where Contact for AI is TRUE."""

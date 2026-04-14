@@ -380,30 +380,6 @@
       {% endif %}
     </div>
   </div>
-  <script>
-  const REGION_COUNTRIES = {{ partner_regions | tojson }};
-  function filterByRegion() {
-    const sel = document.getElementById('region-filter').value;
-    const tags = document.querySelectorAll('.country-tag');
-    let count = 0;
-    tags.forEach(tag => {
-      const country = tag.textContent.trim();
-      if (sel === 'all') {
-        tag.style.display = '';
-        count++;
-      } else {
-        const regionCountries = REGION_COUNTRIES[sel] || [];
-        if (regionCountries.includes(country)) {
-          tag.style.display = '';
-          count++;
-        } else {
-          tag.style.display = 'none';
-        }
-      }
-    });
-    document.getElementById('country-count').textContent = count;
-  }
-  </script>
 
   <!-- Payment Methods -->
   <div class="section-card">
@@ -428,28 +404,48 @@
       {% endif %}
     </div>
   <script>
+  const REGION_COUNTRIES = {{ partner_regions | tojson }};
   const CAT_METHODS = {{ method_categories | tojson }};
-  function filterByCategory() {
-    const sel = document.getElementById('method-cat-filter').value;
-    const tags = document.querySelectorAll('.method-tag-item');
-    let count = 0;
-    tags.forEach(tag => {
-      const method = tag.textContent.trim();
-      if (sel === 'all') {
+  const REGION_METHODS = {{ region_methods | tojson }};
+  const CAT_COUNTRIES = {{ category_countries | tojson }};
+
+  function crossFilter() {
+    const regionSel = document.getElementById('region-filter') ? document.getElementById('region-filter').value : 'all';
+    const catSel = document.getElementById('method-cat-filter') ? document.getElementById('method-cat-filter').value : 'all';
+
+    // Filter countries: by region AND by category
+    let countryCount = 0;
+    document.querySelectorAll('.country-tag').forEach(tag => {
+      const country = tag.textContent.trim();
+      const inRegion = regionSel === 'all' || (REGION_COUNTRIES[regionSel] || []).includes(country);
+      const inCat = catSel === 'all' || (CAT_COUNTRIES[catSel] || []).includes(country);
+      if (inRegion && inCat) {
         tag.style.display = '';
-        count++;
+        countryCount++;
       } else {
-        const catMethods = CAT_METHODS[sel] || [];
-        if (catMethods.includes(method)) {
-          tag.style.display = '';
-          count++;
-        } else {
-          tag.style.display = 'none';
-        }
+        tag.style.display = 'none';
       }
     });
-    document.getElementById('method-count').textContent = count;
+    document.getElementById('country-count').textContent = countryCount;
+
+    // Filter methods: by category AND by region
+    let methodCount = 0;
+    document.querySelectorAll('.method-tag-item').forEach(tag => {
+      const method = tag.textContent.trim();
+      const inCat = catSel === 'all' || (CAT_METHODS[catSel] || []).includes(method);
+      const inRegion = regionSel === 'all' || (REGION_METHODS[regionSel] || []).includes(method);
+      if (inCat && inRegion) {
+        tag.style.display = '';
+        methodCount++;
+      } else {
+        tag.style.display = 'none';
+      }
+    });
+    document.getElementById('method-count').textContent = methodCount;
   }
+
+  function filterByRegion() { crossFilter(); }
+  function filterByCategory() { crossFilter(); }
   </script>
   </div>
 
