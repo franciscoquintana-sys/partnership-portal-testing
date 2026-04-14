@@ -389,6 +389,31 @@ def load_partner_coverage(provider_name: str) -> dict:
             country_methods.setdefault(country, set()).add(method)
             method_countries.setdefault(method, set()).add(country)
 
+    # Other characteristics — collect TRUE values per provider
+    _CHAR_COLS = [
+        "MERCHANT_OF_RECORD", "HAS_CHARGEBACKS", "ACCEPTS_HIGH_RISK",
+        "ACCEPTS_GAMBLING", "ACCEPTS_GAMING", "ACCEPTS_FOREX", "ACCEPTS_CRYPTO",
+        "ACCEPTS_ADULT", "ACCEPTS_MULTI_LEVEL_MARKETING", "ACCEPTS_AIRLINES",
+        "SUPPORTS_TOKENIZATION", "SUPPORTS_RECURRING_PAYMENTS", "SUPPORTS_PAYOUTS",
+        "SUPPORT_CAPTURE", "SUPPORT_PARTIAL_CAPTURE", "SUPPORT_MULTIPLE_CAPTURE",
+        "SUPPORTS_VOID", "SUPPORTS_REFUND", "SUPPORTS_PARTIAL_REFUND",
+        "SUPPORTS_MULTIPLE_REFUND", "SUPPORTS_EXTERNAL_REFUND", "SUPPORTS_REVERSE",
+        "SUPPORTS_VERIFY", "SUPPORTS_GET_PAYMENT", "SUPPORTS_GET_INSTALLMENTS",
+        "SUPPORTS_CHARGEBACK_NOTIFICATIONS", "SUPPORTS_PAYFAC",
+        "SUPPORTS_SPLIT_PAYMENTS", "SUPPORTS_INSTALLMENTS", "3DS",
+        "SUPPORTS_PROVIDER_3DS", "SUPPORTS_AGNOSTIC_3DS",
+        "SUPPORTS_SENDING_STORED_CREDENTIALS", "SUPPORTS_TRX_NO_CVV",
+        "SUPPORTS_NETWORK_TOKENS", "CONTRACT_SIGNED",
+        "ACCEPT CRYPTO IN CHECKOUT?", "ON_RAMP_CRYPTO",
+    ]
+    characteristics = set()
+    for _, row in matches.iterrows():
+        for col in _CHAR_COLS:
+            val = str(row.get(col, "")).strip().upper()
+            if val in ("TRUE", "1", "YES"):
+                label = col.replace("_", " ").title()
+                characteristics.add(label)
+
     # Processing type label
     has_local = "LOCAL" in all_processing
     has_cross = "CROSS_BORDER" in all_processing or "CROSS BORDER" in all_processing
@@ -411,6 +436,7 @@ def load_partner_coverage(provider_name: str) -> dict:
         "country_methods": {c: sorted(ms) for c, ms in sorted(country_methods.items())},
         "method_countries": {m: sorted(cs) for m, cs in sorted(method_countries.items())},
         "processing_label": processing_label,
+        "characteristics": sorted(characteristics),
     }
 
 def load_sales_contacts(provider_name: str) -> list:

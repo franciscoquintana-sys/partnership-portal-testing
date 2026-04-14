@@ -479,7 +479,13 @@
   <div class="section-card full">
     <div class="section-head"><span class="icon">⚙️</span> Other Characteristics</div>
     <div class="section-body">
+      {% if characteristics %}
+      <div class="methods-wrap">
+        {% for c in characteristics %}<span class="method-tag">{{ c }}</span>{% endfor %}
+      </div>
+      {% else %}
       <div class="field-value muted">N/A</div>
+      {% endif %}
     </div>
   </div>
 
