@@ -333,6 +333,7 @@ def load_partner_coverage(provider_name: str) -> dict:
 
     all_countries = set()
     all_methods = set()
+    all_processing = set()
     region_map = {}
     cat_map = {}
     region_methods = {}
@@ -344,6 +345,7 @@ def load_partner_coverage(provider_name: str) -> dict:
         pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
         brand = str(row.get("CARD_BRAND", "")).strip()
         cat = str(row.get("PAYMENT_METHOD_CATEGORY", "")).strip().replace("_", " ")
+        proc = str(row.get("PROCESSING_TYPE", "")).strip().upper()
 
         if pmt.upper() == "CARD" and brand and brand != "nan" and brand != "FALSE":
             method = brand
@@ -351,6 +353,9 @@ def load_partner_coverage(provider_name: str) -> dict:
             method = pmt.replace("_", " ")
         else:
             method = None
+
+        if proc and proc != "nan" and proc != "FALSE":
+            all_processing.add(proc)
 
         if country and country != "nan":
             all_countries.add(country)
@@ -384,6 +389,18 @@ def load_partner_coverage(provider_name: str) -> dict:
             country_methods.setdefault(country, set()).add(method)
             method_countries.setdefault(method, set()).add(country)
 
+    # Processing type label
+    has_local = "LOCAL" in all_processing
+    has_cross = "CROSS_BORDER" in all_processing or "CROSS BORDER" in all_processing
+    if has_local and has_cross:
+        processing_label = "Local - Cross Border"
+    elif has_local:
+        processing_label = "Local"
+    elif has_cross:
+        processing_label = "Cross Border"
+    else:
+        processing_label = "N/A"
+
     return {
         "countries": sorted(all_countries),
         "regions": {r: sorted(cs) for r, cs in sorted(region_map.items())},
@@ -393,6 +410,7 @@ def load_partner_coverage(provider_name: str) -> dict:
         "category_countries": {c: sorted(cs) for c, cs in sorted(category_countries.items())},
         "country_methods": {c: sorted(ms) for c, ms in sorted(country_methods.items())},
         "method_countries": {m: sorted(cs) for m, cs in sorted(method_countries.items())},
+        "processing_label": processing_label,
     }
 
 def load_sales_contacts(provider_name: str) -> list:

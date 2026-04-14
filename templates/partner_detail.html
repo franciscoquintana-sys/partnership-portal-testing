@@ -236,16 +236,16 @@
 <!-- Stats bar -->
 <div class="stats-bar">
   <div class="stat-box">
-    <div class="stat-box-value">{{ countries | length }}</div>
+    <div class="stat-box-value" id="stat-countries">{{ partner_countries | length }}</div>
     <div class="stat-box-label">Countries</div>
   </div>
   <div class="stat-box">
-    <div class="stat-box-value blue">{{ methods | length }}</div>
+    <div class="stat-box-value blue" id="stat-methods">{{ partner_methods | length }}</div>
     <div class="stat-box-label">Payment Methods</div>
   </div>
   <div class="stat-box">
-    <div class="stat-box-value">{{ processing | length }}</div>
-    <div class="stat-box-label">Processing Types</div>
+    <div class="stat-box-value" style="font-size:18px">{{ processing_label }}</div>
+    <div class="stat-box-label">Processing Type</div>
   </div>
 </div>
 
@@ -436,6 +436,7 @@
       tag.classList.toggle('tag-selected', country === selectedCountry);
     });
     document.getElementById('country-count').textContent = countryCount;
+    document.getElementById('stat-countries').textContent = countryCount;
 
     let methodCount = 0;
     document.querySelectorAll('.method-tag-item').forEach(tag => {
@@ -452,6 +453,7 @@
       tag.classList.toggle('tag-selected', method === selectedMethod);
     });
     document.getElementById('method-count').textContent = methodCount;
+    document.getElementById('stat-methods').textContent = methodCount;
   }
 
   function clickCountry(el) {

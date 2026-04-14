@@ -205,6 +205,7 @@ def partner_detail(request: Request, name: str):
         category_countries=cov["category_countries"],
         country_methods=cov["country_methods"],
         method_countries=cov["method_countries"],
+        processing_label=cov["processing_label"],
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)
