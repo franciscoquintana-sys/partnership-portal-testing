@@ -12,8 +12,8 @@
   overflow: hidden;
   margin-bottom: 20px;
 }
-.stat-box { background: #fff; padding: 18px 24px; }
-.stat-box-value { font-size: 30px; font-weight: 800; color: #0f172a; letter-spacing: -1px; line-height: 1; }
+.stat-box { background: #fff; padding: 18px 24px; display: flex; flex-direction: column; justify-content: flex-end; }
+.stat-box-value { font-size: 30px; font-weight: 800; color: #0f172a; letter-spacing: -1px; line-height: 1; flex: 1; display: flex; align-items: flex-end; }
 .stat-box-value.green { color: #16a34a; }
 .stat-box-value.blue  { color: #2563eb; }
 .stat-box-value.amber { color: #d97706; }
@@ -244,7 +244,7 @@
     <div class="stat-box-label">Payment Methods</div>
   </div>
   <div class="stat-box">
-    <div class="stat-box-value" style="font-size:18px">{{ processing_label }}</div>
+    <div class="stat-box-value" style="font-size:18px;text-transform:uppercase">{{ processing_label }}</div>
     <div class="stat-box-label">Processing Type</div>
   </div>
 </div>
