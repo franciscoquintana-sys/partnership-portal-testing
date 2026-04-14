@@ -1,5 +1,6 @@
-import os, sys, time, json, threading
+import os, sys, time, json, threading, io
 import pandas as pd
+import requests
 
 _BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(_BASE, "data"))
@@ -50,6 +51,43 @@ _TECH_CONTACTS_CSV_URL = (
     "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
     "/export?format=csv&gid=1537055418"
 )
+# ── Google OAuth token management ─────────────────────────────────────────────
+_GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
+_GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
+_GOOGLE_REFRESH_TOKEN = os.environ.get("GOOGLE_REFRESH_TOKEN", "")
+_ACCESS_TOKEN = {"token": None, "expires": 0}
+
+def _get_access_token():
+    now = time.time()
+    if _ACCESS_TOKEN["token"] and now < _ACCESS_TOKEN["expires"]:
+        return _ACCESS_TOKEN["token"]
+    if not _GOOGLE_REFRESH_TOKEN:
+        return None
+    try:
+        resp = requests.post("https://oauth2.googleapis.com/token", data={
+            "client_id": _GOOGLE_CLIENT_ID,
+            "client_secret": _GOOGLE_CLIENT_SECRET,
+            "refresh_token": _GOOGLE_REFRESH_TOKEN,
+            "grant_type": "refresh_token",
+        })
+        data = resp.json()
+        _ACCESS_TOKEN["token"] = data.get("access_token")
+        _ACCESS_TOKEN["expires"] = now + data.get("expires_in", 3500) - 60
+        return _ACCESS_TOKEN["token"]
+    except Exception:
+        return None
+
+def _fetch_csv(url, **kwargs):
+    """Fetch a CSV URL with Google auth if available, fallback to public."""
+    token = _get_access_token()
+    if token:
+        headers = {"Authorization": f"Bearer {token}"}
+        resp = requests.get(url, headers=headers)
+        resp.raise_for_status()
+        return pd.read_csv(io.StringIO(resp.text), **kwargs)
+    return pd.read_csv(url, **kwargs)
+
+# ── Caches ────────────────────────────────────────────────────────────────────
 _PARTNERS_CACHE = {"data": None, "ts": 0}
 _CONTACTS_CACHE = {"data": None, "ts": 0}
 _TECH_CACHE = {"data": None, "ts": 0}
@@ -57,7 +95,7 @@ _CACHE_TTL = 3600  # refresh every 1 hour
 
 def _fetch_sheet_df():
     try:
-        df = pd.read_csv(_SHEET_CSV_URL)
+        df = _fetch_csv(_SHEET_CSV_URL)
         if len(df) > 0:
             return df
     except Exception:
@@ -126,7 +164,7 @@ def load_technical_contact(provider_name: str) -> dict:
     now = time.time()
     if _TECH_CACHE["data"] is None or now - _TECH_CACHE["ts"] > _CACHE_TTL:
         try:
-            df = pd.read_csv(_TECH_CONTACTS_CSV_URL, header=None, skiprows=5)
+            df = _fetch_csv(_TECH_CONTACTS_CSV_URL, header=None, skiprows=5)
             df.columns = [
                 "Rank", "Provider", "Provider2", "Total Transactions",
                 "Approved Transactions", "Approval Rate", "Status",
@@ -171,7 +209,7 @@ def load_sales_contacts(provider_name: str) -> list:
     now = time.time()
     if _CONTACTS_CACHE["data"] is None or now - _CONTACTS_CACHE["ts"] > _CACHE_TTL:
         try:
-            df = pd.read_csv(_CONTACTS_CSV_URL)
+            df = _fetch_csv(_CONTACTS_CSV_URL)
             _CONTACTS_CACHE["data"] = df
         except Exception:
             _CONTACTS_CACHE["data"] = pd.DataFrame()

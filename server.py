@@ -7,7 +7,6 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 import plotly.graph_objects as go
-from authlib.integrations.starlette_client import OAuth
 
 from data_layer import (
     load_partners_excel, load_sot_data, PIPELINE_STAGES, PIPELINE_DEALS,
@@ -22,20 +21,6 @@ app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "yuno-portal-secret-2026"))
 app.mount("/static", StaticFiles(directory=os.path.join(BASE, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(BASE, "templates"))
-
-# ── Google OAuth ──────────────────────────────────────────────────────────────
-GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
-GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
-ALLOWED_DOMAINS = ["yuno.com"]
-
-oauth = OAuth()
-oauth.register(
-    name="google",
-    client_id=GOOGLE_CLIENT_ID,
-    client_secret=GOOGLE_CLIENT_SECRET,
-    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
-    client_kwargs={"scope": "openid email profile https://www.googleapis.com/auth/spreadsheets.readonly"},
-)
 
 # ── Auth helpers ──────────────────────────────────────────────────────────────
 
@@ -96,33 +81,6 @@ def login_page(request: Request):
     if get_role(request):
         return RedirectResponse("/home")
     return tr(request, "login.html", {"error": ""})
-
-@app.get("/login/google")
-async def login_google(request: Request):
-    redirect_uri = str(request.url_for("auth_callback"))
-    # Force HTTPS for production
-    if redirect_uri.startswith("http://") and "localhost" not in redirect_uri:
-        redirect_uri = redirect_uri.replace("http://", "https://", 1)
-    return await oauth.google.authorize_redirect(request, redirect_uri)
-
-@app.get("/auth/callback")
-async def auth_callback(request: Request):
-    try:
-        token = await oauth.google.authorize_access_token(request)
-    except Exception:
-        return tr(request, "login.html", {"error": "Authentication failed. Please try again."})
-    user_info = token.get("userinfo", {})
-    email = user_info.get("email", "")
-    domain = email.split("@")[-1].lower() if "@" in email else ""
-    if domain not in ALLOWED_DOMAINS:
-        return tr(request, "login.html", {"error": f"Access restricted to Yuno accounts. {email} is not allowed."})
-    request.session["role"] = "internal"
-    request.session["user_email"] = email
-    request.session["user_name"] = user_info.get("name", email)
-    request.session["google_token"] = token.get("access_token", "")
-    return HTMLResponse("""<!DOCTYPE html><html><head></head><body>
-<script>sessionStorage.setItem('yuno_auth','1');window.location='/home';</script>
-</body></html>""")
 
 @app.post("/login", response_class=HTMLResponse)
 def login_submit(request: Request, code: str = Form(...)):
