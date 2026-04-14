@@ -367,6 +367,23 @@ def load_partner_coverage(provider_name: str) -> dict:
         if cat and cat != "nan" and country and country != "nan":
             category_countries.setdefault(cat, set()).add(country)
 
+    # Per-country methods and per-method countries
+    country_methods = {}
+    method_countries = {}
+    for _, row in matches.iterrows():
+        country = str(row.get("COUNTRY", "")).strip()
+        pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
+        brand = str(row.get("CARD_BRAND", "")).strip()
+        if pmt.upper() == "CARD" and brand and brand != "nan" and brand != "FALSE":
+            method = brand
+        elif pmt and pmt != "nan":
+            method = pmt.replace("_", " ")
+        else:
+            method = None
+        if country and country != "nan" and method:
+            country_methods.setdefault(country, set()).add(method)
+            method_countries.setdefault(method, set()).add(country)
+
     return {
         "countries": sorted(all_countries),
         "regions": {r: sorted(cs) for r, cs in sorted(region_map.items())},
@@ -374,6 +391,8 @@ def load_partner_coverage(provider_name: str) -> dict:
         "categories": {c: sorted(ms) for c, ms in sorted(cat_map.items())},
         "region_methods": {r: sorted(ms) for r, ms in sorted(region_methods.items())},
         "category_countries": {c: sorted(cs) for c, cs in sorted(category_countries.items())},
+        "country_methods": {c: sorted(ms) for c, ms in sorted(country_methods.items())},
+        "method_countries": {m: sorted(cs) for m, cs in sorted(method_countries.items())},
     }
 
 def load_sales_contacts(provider_name: str) -> list:

@@ -153,7 +153,10 @@
 .method-tag {
   font-size: 11px; font-weight: 500; padding: 3px 9px;
   border-radius: 5px; background: var(--bg3); color: var(--text2);
+  transition: background 0.15s, color 0.15s;
 }
+.method-tag:hover { background: rgba(79,70,229,.12); color: #4F46E5; }
+.method-tag.tag-selected { background: #4F46E5; color: #fff; }
 
 /* Skeleton */
 @keyframes shimmer {
@@ -373,7 +376,7 @@
     <div class="section-body">
       {% if partner_countries %}
       <div class="methods-wrap" id="countries-wrap">
-        {% for c in partner_countries %}<span class="method-tag country-tag" data-region="{{ partner_regions.keys() | select('string') | list | join(',') }}">{{ c }}</span>{% endfor %}
+        {% for c in partner_countries %}<span class="method-tag country-tag" style="cursor:pointer" onclick="clickCountry(this)">{{ c }}</span>{% endfor %}
       </div>
       {% else %}
       <div class="field-value muted">N/A</div>
@@ -397,7 +400,7 @@
     <div class="section-body">
       {% if partner_methods %}
       <div class="methods-wrap" id="methods-wrap">
-        {% for m in partner_methods %}<span class="method-tag method-tag-item">{{ m }}</span>{% endfor %}
+        {% for m in partner_methods %}<span class="method-tag method-tag-item" style="cursor:pointer" onclick="clickMethod(this)">{{ m }}</span>{% endfor %}
       </div>
       {% else %}
       <div class="field-value muted">N/A</div>
@@ -408,44 +411,65 @@
   const CAT_METHODS = {{ method_categories | tojson }};
   const REGION_METHODS = {{ region_methods | tojson }};
   const CAT_COUNTRIES = {{ category_countries | tojson }};
+  const COUNTRY_METHODS = {{ country_methods | tojson }};
+  const METHOD_COUNTRIES = {{ method_countries | tojson }};
+
+  let selectedCountry = null;
+  let selectedMethod = null;
 
   function crossFilter() {
     const regionSel = document.getElementById('region-filter') ? document.getElementById('region-filter').value : 'all';
     const catSel = document.getElementById('method-cat-filter') ? document.getElementById('method-cat-filter').value : 'all';
 
-    // Filter countries: by region AND by category
     let countryCount = 0;
     document.querySelectorAll('.country-tag').forEach(tag => {
       const country = tag.textContent.trim();
       const inRegion = regionSel === 'all' || (REGION_COUNTRIES[regionSel] || []).includes(country);
       const inCat = catSel === 'all' || (CAT_COUNTRIES[catSel] || []).includes(country);
-      if (inRegion && inCat) {
+      const inMethod = !selectedMethod || (METHOD_COUNTRIES[selectedMethod] || []).includes(country);
+      if (inRegion && inCat && inMethod) {
         tag.style.display = '';
         countryCount++;
       } else {
         tag.style.display = 'none';
       }
+      tag.classList.toggle('tag-selected', country === selectedCountry);
     });
     document.getElementById('country-count').textContent = countryCount;
 
-    // Filter methods: by category AND by region
     let methodCount = 0;
     document.querySelectorAll('.method-tag-item').forEach(tag => {
       const method = tag.textContent.trim();
       const inCat = catSel === 'all' || (CAT_METHODS[catSel] || []).includes(method);
       const inRegion = regionSel === 'all' || (REGION_METHODS[regionSel] || []).includes(method);
-      if (inCat && inRegion) {
+      const inCountry = !selectedCountry || (COUNTRY_METHODS[selectedCountry] || []).includes(method);
+      if (inCat && inRegion && inCountry) {
         tag.style.display = '';
         methodCount++;
       } else {
         tag.style.display = 'none';
       }
+      tag.classList.toggle('tag-selected', method === selectedMethod);
     });
     document.getElementById('method-count').textContent = methodCount;
   }
 
-  function filterByRegion() { crossFilter(); }
-  function filterByCategory() { crossFilter(); }
+  function clickCountry(el) {
+    const country = el.textContent.trim();
+    selectedCountry = selectedCountry === country ? null : country;
+    selectedMethod = null;
+    crossFilter();
+  }
+
+  function clickMethod(el) {
+    const method = el.textContent.trim();
+    selectedMethod = selectedMethod === method ? null : method;
+    selectedCountry = null;
+    crossFilter();
+  }
+
+  function filterByRegion() { selectedCountry = null; selectedMethod = null; crossFilter(); }
+  function filterByCategory() { selectedCountry = null; selectedMethod = null; crossFilter(); }
   </script>
   </div>
 
