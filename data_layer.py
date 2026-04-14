@@ -51,6 +51,8 @@ _TECH_CONTACTS_CSV_URL = (
     "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
     "/export?format=csv&gid=1537055418"
 )
+_PARTNERS_SOT_SHEET_ID = "11kdtbqu9alq3B90CYw2Uk5oxi-MHYbYW2tceHY4r_Y4"
+_PARTNERS_SOT_CACHE = {"data": None, "ts": 0}
 # ── Google OAuth token management ─────────────────────────────────────────────
 _GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
 _GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", "")
@@ -259,6 +261,52 @@ def load_technical_contact(provider_name: str) -> dict:
         "slack": val("Slack Channel"),
         "status_page": val("Status Page"),
     }
+
+def _load_partners_sot():
+    """Load the Partners SOT sheet (countries, payment methods, etc.)."""
+    now = time.time()
+    if _PARTNERS_SOT_CACHE["data"] is not None and now - _PARTNERS_SOT_CACHE["ts"] < _CACHE_TTL:
+        return _PARTNERS_SOT_CACHE["data"]
+    token = _get_access_token()
+    if not token:
+        return pd.DataFrame()
+    try:
+        url = f"https://sheets.googleapis.com/v4/spreadsheets/{_PARTNERS_SOT_SHEET_ID}/values/Partners"
+        headers = {"Authorization": f"Bearer {token}"}
+        resp = requests.get(url, headers=headers)
+        resp.raise_for_status()
+        values = resp.json().get("values", [])
+        if len(values) < 2:
+            return pd.DataFrame()
+        hdr = values[0]
+        rows = values[1:]
+        for i, row in enumerate(rows):
+            if len(row) < len(hdr):
+                rows[i] = row + [""] * (len(hdr) - len(row))
+            elif len(row) > len(hdr):
+                rows[i] = row[:len(hdr)]
+        df = pd.DataFrame(rows, columns=hdr)
+        _PARTNERS_SOT_CACHE["data"] = df
+        _PARTNERS_SOT_CACHE["ts"] = now
+        return df
+    except Exception:
+        return _PARTNERS_SOT_CACHE["data"] or pd.DataFrame()
+
+def load_partner_countries(provider_name: str) -> list:
+    """Return unique countries for a provider from the Partners SOT sheet."""
+    df = _load_partners_sot()
+    if df is None or len(df) == 0:
+        return []
+    pname = str(provider_name).strip().upper()
+    mask = df["PROVIDER_NAME"].astype(str).str.strip().str.upper() == pname
+    matches = df[mask]
+    if matches.empty:
+        return []
+    countries = sorted(set(
+        c for c in matches["COUNTRY"].astype(str).str.strip()
+        if c and c != "nan" and c != ""
+    ))
+    return countries
 
 def load_sales_contacts(provider_name: str) -> list:
     """Return all Partnerships AM + email for a provider where Contact for AI is TRUE."""
@@ -497,6 +545,10 @@ def _preload_caches():
         pass
     try:
         load_sales_contacts("")
+    except Exception:
+        pass
+    try:
+        _load_partners_sot()
     except Exception:
         pass
 

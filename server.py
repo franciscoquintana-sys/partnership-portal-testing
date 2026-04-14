@@ -12,7 +12,8 @@ from data_layer import (
     load_partners_excel, load_sot_data, PIPELINE_STAGES, PIPELINE_DEALS,
     REVSHARE_BY_PARTNER, REVSHARE_MONTHLY, MERCHANTS, CONTACTS,
     REGION_STATS, COUNTRIES, find_partners, get_sot_countries, get_sot_providers,
-    _ISO_TO_COUNTRY, _VERTICAL_COLS, load_sales_contacts, load_technical_contact
+    _ISO_TO_COUNTRY, _VERTICAL_COLS, load_sales_contacts, load_technical_contact,
+    load_partner_countries
 )
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -185,6 +186,7 @@ def partner_detail(request: Request, name: str):
     processing = sorted(set(c["processing"] for c in coverage if c["processing"] and c["processing"] != "nan"))
     sales_contacts = load_sales_contacts(partner["name"])
     technical_contact = load_technical_contact(partner["name"])
+    partner_countries = load_partner_countries(partner["name"])
     return tr(request, "partner_detail.html", ctx(
         request, "partners",
         partner=partner,
@@ -194,6 +196,7 @@ def partner_detail(request: Request, name: str):
         processing=processing,
         sales_contacts=sales_contacts,
         technical_contact=technical_contact,
+        partner_countries=partner_countries,
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)
