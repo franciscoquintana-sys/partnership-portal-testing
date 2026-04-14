@@ -340,7 +340,7 @@ def load_partner_coverage(provider_name: str) -> dict:
 
     for _, row in matches.iterrows():
         country = str(row.get("COUNTRY", "")).strip()
-        region = str(row.get("REGION", "")).strip()
+        region = str(row.get("REGION", "")).strip().replace("_", " ")
         pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
         brand = str(row.get("CARD_BRAND", "")).strip()
         cat = str(row.get("PAYMENT_METHOD_CATEGORY", "")).strip().replace("_", " ")
