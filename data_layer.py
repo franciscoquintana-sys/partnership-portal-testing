@@ -179,8 +179,7 @@ def _parse_partners_df(df):
         country = str(row.get("Country", "")).strip()
         tier = str(row.get("Tier", "")).strip()
         manager = str(row.get("Partner Manager", "")).strip()
-        strategic_raw = str(row.get("Strategic?", "")).strip().upper()
-        strategic = tier.startswith("Strategic") or strategic_raw in ("TRUE", "1", "YES")
+        strategic = tier.startswith("Strategic")
         mgmt_type = str(row.get("Type of Management", "")).strip()
         initials = "".join(w[0] for w in name.replace("/", " ").replace("(", " ").split() if w)[:2].upper()
         partners.append({
