@@ -376,7 +376,7 @@
     <div class="section-body">
       {% if partner_countries %}
       <div class="methods-wrap" id="countries-wrap">
-        {% for c in partner_countries %}<span class="method-tag country-tag" style="cursor:pointer" onclick="clickCountry(this)">{{ c }}</span>{% endfor %}
+        {% for c in partner_countries %}<span class="method-tag country-tag" style="cursor:pointer;text-transform:uppercase" onclick="clickCountry(this)">{{ c }}</span>{% endfor %}
       </div>
       {% else %}
       <div class="field-value muted">N/A</div>
