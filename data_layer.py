@@ -318,6 +318,26 @@ def load_partner_countries(provider_name: str) -> dict:
     regions = {r: sorted(cs) for r, cs in sorted(region_map.items())}
     return {"countries": sorted(all_countries), "regions": regions}
 
+def load_partner_payment_methods(provider_name: str) -> list:
+    """Return unique payment methods for a provider. If type is CARD, use CARD_BRAND instead."""
+    df = _load_partners_sot()
+    if df is None or len(df) == 0:
+        return []
+    pname = str(provider_name).strip().upper()
+    mask = df["PROVIDER_NAME"].astype(str).str.strip().str.upper() == pname
+    matches = df[mask]
+    if matches.empty:
+        return []
+    methods = set()
+    for _, row in matches.iterrows():
+        pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
+        brand = str(row.get("CARD_BRAND", "")).strip()
+        if pmt.upper() == "CARD" and brand and brand != "nan" and brand != "FALSE":
+            methods.add(brand)
+        elif pmt and pmt != "nan":
+            methods.add(pmt)
+    return sorted(methods)
+
 def load_sales_contacts(provider_name: str) -> list:
     """Return all Partnerships AM + email for a provider where Contact for AI is TRUE."""
     now = time.time()

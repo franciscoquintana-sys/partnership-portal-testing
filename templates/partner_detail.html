@@ -407,9 +407,15 @@
 
   <!-- Payment Methods -->
   <div class="section-card">
-    <div class="section-head"><span class="icon">💳</span> Payment Methods</div>
+    <div class="section-head"><span class="icon">💳</span> Payment Methods ({{ partner_methods | length }})</div>
     <div class="section-body">
+      {% if partner_methods %}
+      <div class="methods-wrap">
+        {% for m in partner_methods %}<span class="method-tag">{{ m }}</span>{% endfor %}
+      </div>
+      {% else %}
       <div class="field-value muted">N/A</div>
+      {% endif %}
     </div>
   </div>
 

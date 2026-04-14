@@ -13,7 +13,7 @@ from data_layer import (
     REVSHARE_BY_PARTNER, REVSHARE_MONTHLY, MERCHANTS, CONTACTS,
     REGION_STATS, COUNTRIES, find_partners, get_sot_countries, get_sot_providers,
     _ISO_TO_COUNTRY, _VERTICAL_COLS, load_sales_contacts, load_technical_contact,
-    load_partner_countries
+    load_partner_countries, load_partner_payment_methods
 )
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -187,6 +187,7 @@ def partner_detail(request: Request, name: str):
     sales_contacts = load_sales_contacts(partner["name"])
     technical_contact = load_technical_contact(partner["name"])
     country_data = load_partner_countries(partner["name"])
+    partner_methods = load_partner_payment_methods(partner["name"])
     return tr(request, "partner_detail.html", ctx(
         request, "partners",
         partner=partner,
@@ -198,6 +199,7 @@ def partner_detail(request: Request, name: str):
         technical_contact=technical_contact,
         partner_countries=country_data["countries"],
         partner_regions=country_data["regions"],
+        partner_methods=partner_methods,
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)
