@@ -78,13 +78,31 @@ def _get_access_token():
         return None
 
 def _fetch_csv(url, **kwargs):
-    """Fetch a CSV URL with Google auth if available, fallback to public."""
+    """Fetch a CSV URL with Google auth cookie or fallback to public."""
     token = _get_access_token()
     if token:
-        headers = {"Authorization": f"Bearer {token}"}
-        resp = requests.get(url, headers=headers)
-        resp.raise_for_status()
-        return pd.read_csv(io.StringIO(resp.text), **kwargs)
+        # Use access_token as query param — works with /export URLs
+        sep = "&" if "?" in url else "?"
+        auth_url = f"{url}{sep}access_token={token}"
+        try:
+            resp = requests.get(auth_url)
+            resp.raise_for_status()
+            # Verify we got CSV, not an HTML error page
+            if resp.text.strip().startswith("<"):
+                raise ValueError("Got HTML instead of CSV")
+            return pd.read_csv(io.StringIO(resp.text), **kwargs)
+        except Exception:
+            pass
+        # Fallback: try Bearer header
+        try:
+            headers = {"Authorization": f"Bearer {token}"}
+            resp = requests.get(url, headers=headers)
+            resp.raise_for_status()
+            if resp.text.strip().startswith("<"):
+                raise ValueError("Got HTML instead of CSV")
+            return pd.read_csv(io.StringIO(resp.text), **kwargs)
+        except Exception:
+            pass
     return pd.read_csv(url, **kwargs)
 
 # ── Caches ────────────────────────────────────────────────────────────────────
