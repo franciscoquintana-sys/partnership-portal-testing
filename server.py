@@ -71,6 +71,13 @@ def tr(request: Request, name: str, context: dict):
 def health():
     return {"status": "ok", "version": "2026-04-10-v2", "routes": ["partners_detail"]}
 
+@app.get("/api/refresh-cache")
+def refresh_cache():
+    from data_layer import _PARTNERS_CACHE, _CONTACTS_CACHE, _TECH_CACHE, _SOT_CACHE, _PARTNERS_SOT_CACHE
+    for c in [_PARTNERS_CACHE, _CONTACTS_CACHE, _TECH_CACHE, _SOT_CACHE, _PARTNERS_SOT_CACHE]:
+        c["ts"] = 0
+    return {"status": "ok", "message": "Cache cleared. Next request will fetch fresh data."}
+
 @app.get("/", response_class=HTMLResponse)
 def root(request: Request):
     if get_role(request):
