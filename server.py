@@ -134,6 +134,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     tiers = sorted(set(p["tier"] for p in all_partners if p.get("tier")))
     countries = sorted(set(p["country"] for p in all_partners if p.get("country")))
     managers = sorted(set(p["manager"] for p in all_partners if p.get("manager")))
+    integration_stages = sorted(set(p["integration_stage"] for p in all_partners if p.get("integration_stage")))
     _CONNECTED_STAGES = {"Agreement Review", "Agreement Signed", "Initial Negotiation", "Live Partner", "Only to be integrated"}
     total_db = len(all_partners)
     total_connected = sum(1 for p in all_partners if p["status"] in _CONNECTED_STAGES)
@@ -153,7 +154,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         strategic_count=strategic_count, tier1_count=tier1_count,
         tier2_count=tier2_count, tier3_count=tier3_count,
         cats=cats, statuses=statuses, regions=regions, tiers=tiers,
-        countries=countries, managers=managers,
+        countries=countries, managers=managers, integration_stages=integration_stages,
         q=q, cat=cat, status=status, region=region, tier=tier
     ))
 

@@ -412,9 +412,7 @@
       <div class="col-filter-wrap">
         <div class="col-filter-btn" id="btn-integration" onclick="toggleDrop('integration',event)">All <span>▾</span></div>
         <div class="col-filter-dropdown" id="drop-integration">
-          <label class="col-filter-option"><input type="checkbox" value="Live" onchange="applyFilters()"> Live</label>
-          <label class="col-filter-option"><input type="checkbox" value="Ready" onchange="applyFilters()"> Ready</label>
-          <label class="col-filter-option"><input type="checkbox" value="Not Ready" onchange="applyFilters()"> Not Ready</label>
+          {% for s in integration_stages %}<label class="col-filter-option"><input type="checkbox" value="{{ s }}" onchange="applyFilters()"> {{ s }}</label>{% endfor %}
           <div class="col-filter-clear" onclick="clearDrop('integration')">Clear</div>
         </div>
       </div>
@@ -438,7 +436,7 @@
       </thead>
       <tbody id="partners-tbody">
         {% for p in partners %}
-        {% set integ_status = 'Live' if p.integration_used else ('Ready' if p.integration_ready else 'Not Ready') %}
+        {% set integ_status = p.integration_stage if p.integration_stage else 'N/A' %}
         <tr data-name="{{ p.name | lower }}"
             data-type="{{ p.type }}"
             data-status="{{ p.status }}"
