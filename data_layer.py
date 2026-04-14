@@ -77,30 +77,68 @@ def _get_access_token():
     except Exception:
         return None
 
+def _parse_sheets_api_url(export_url):
+    """Extract spreadsheet ID and gid from an export URL."""
+    import re
+    m = re.search(r'/d/([a-zA-Z0-9_-]+)', export_url)
+    sheet_id = m.group(1) if m else None
+    m2 = re.search(r'gid=(\d+)', export_url)
+    gid = m2.group(1) if m2 else "0"
+    return sheet_id, gid
+
+def _fetch_via_sheets_api(spreadsheet_id, gid, token):
+    """Fetch sheet data via Google Sheets API, returns a DataFrame."""
+    # First get sheet name from gid
+    meta_url = f"https://sheets.googleapis.com/v4/spreadsheets/{spreadsheet_id}?fields=sheets.properties"
+    headers = {"Authorization": f"Bearer {token}"}
+    resp = requests.get(meta_url, headers=headers)
+    resp.raise_for_status()
+    sheets = resp.json().get("sheets", [])
+    sheet_name = None
+    for s in sheets:
+        if str(s["properties"].get("sheetId")) == str(gid):
+            sheet_name = s["properties"]["title"]
+            break
+    if not sheet_name:
+        sheet_name = sheets[0]["properties"]["title"] if sheets else "Sheet1"
+
+    # Fetch all values
+    data_url = f"https://sheets.googleapis.com/v4/spreadsheets/{spreadsheet_id}/values/{requests.utils.quote(sheet_name)}"
+    resp = requests.get(data_url, headers=headers)
+    resp.raise_for_status()
+    values = resp.json().get("values", [])
+    if len(values) < 2:
+        return pd.DataFrame()
+    headers_row = values[0]
+    data_rows = values[1:]
+    # Pad rows to match header length
+    for i, row in enumerate(data_rows):
+        if len(row) < len(headers_row):
+            data_rows[i] = row + [""] * (len(headers_row) - len(row))
+        elif len(row) > len(headers_row):
+            data_rows[i] = row[:len(headers_row)]
+    return pd.DataFrame(data_rows, columns=headers_row)
+
 def _fetch_csv(url, **kwargs):
-    """Fetch a CSV URL with Google auth cookie or fallback to public."""
+    """Fetch sheet data via Sheets API if authenticated, fallback to public CSV."""
     token = _get_access_token()
     if token:
-        # Use access_token as query param — works with /export URLs
-        sep = "&" if "?" in url else "?"
-        auth_url = f"{url}{sep}access_token={token}"
         try:
-            resp = requests.get(auth_url)
-            resp.raise_for_status()
-            # Verify we got CSV, not an HTML error page
-            if resp.text.strip().startswith("<"):
-                raise ValueError("Got HTML instead of CSV")
-            return pd.read_csv(io.StringIO(resp.text), **kwargs)
-        except Exception:
-            pass
-        # Fallback: try Bearer header
-        try:
-            headers = {"Authorization": f"Bearer {token}"}
-            resp = requests.get(url, headers=headers)
-            resp.raise_for_status()
-            if resp.text.strip().startswith("<"):
-                raise ValueError("Got HTML instead of CSV")
-            return pd.read_csv(io.StringIO(resp.text), **kwargs)
+            sheet_id, gid = _parse_sheets_api_url(url)
+            if sheet_id:
+                skiprows = kwargs.pop("skiprows", 0)
+                kwargs.pop("header", None)
+                df = _fetch_via_sheets_api(sheet_id, gid, token)
+                if skiprows and len(df) > 0:
+                    # Re-parse: treat row at skiprows as header
+                    values = [df.columns.tolist()] + df.values.tolist()
+                    values = values[skiprows:]
+                    if len(values) < 2:
+                        return pd.DataFrame()
+                    new_headers = [str(v) for v in values[0]]
+                    data_rows = values[1:]
+                    df = pd.DataFrame(data_rows, columns=new_headers)
+                return df
         except Exception:
             pass
     return pd.read_csv(url, **kwargs)
