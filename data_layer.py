@@ -318,25 +318,35 @@ def load_partner_countries(provider_name: str) -> dict:
     regions = {r: sorted(cs) for r, cs in sorted(region_map.items())}
     return {"countries": sorted(all_countries), "regions": regions}
 
-def load_partner_payment_methods(provider_name: str) -> list:
-    """Return unique payment methods for a provider. If type is CARD, use CARD_BRAND instead."""
+def load_partner_payment_methods(provider_name: str) -> dict:
+    """Return unique payment methods grouped by category. If type is CARD, use CARD_BRAND."""
     df = _load_partners_sot()
     if df is None or len(df) == 0:
-        return []
+        return {"methods": [], "categories": {}}
     pname = str(provider_name).strip().upper()
     mask = df["PROVIDER_NAME"].astype(str).str.strip().str.upper() == pname
     matches = df[mask]
     if matches.empty:
-        return []
-    methods = set()
+        return {"methods": [], "categories": {}}
+    all_methods = set()
+    cat_map = {}
     for _, row in matches.iterrows():
         pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
         brand = str(row.get("CARD_BRAND", "")).strip()
+        cat = str(row.get("PAYMENT_METHOD_CATEGORY", "")).strip().replace("_", " ")
         if pmt.upper() == "CARD" and brand and brand != "nan" and brand != "FALSE":
-            methods.add(brand)
+            method = brand
         elif pmt and pmt != "nan":
-            methods.add(pmt)
-    return sorted(methods)
+            method = pmt.replace("_", " ")
+        else:
+            continue
+        all_methods.add(method)
+        if cat and cat != "nan":
+            if cat not in cat_map:
+                cat_map[cat] = set()
+            cat_map[cat].add(method)
+    categories = {c: sorted(ms) for c, ms in sorted(cat_map.items())}
+    return {"methods": sorted(all_methods), "categories": categories}
 
 def load_sales_contacts(provider_name: str) -> list:
     """Return all Partnerships AM + email for a provider where Contact for AI is TRUE."""

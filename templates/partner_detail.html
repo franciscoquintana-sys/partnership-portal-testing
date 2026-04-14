@@ -407,16 +407,50 @@
 
   <!-- Payment Methods -->
   <div class="section-card">
-    <div class="section-head"><span class="icon">💳</span> Payment Methods ({{ partner_methods | length }})</div>
+    <div class="section-head" style="display:flex;justify-content:space-between;align-items:center">
+      <span><span class="icon">💳</span> Payment Methods (<span id="method-count">{{ partner_methods | length }}</span>)</span>
+      {% if method_categories %}
+      <select id="method-cat-filter" onchange="filterByCategory()" style="font-family:var(--font);font-size:11px;font-weight:600;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);cursor:pointer">
+        <option value="all">All Categories</option>
+        {% for cat in method_categories %}
+        <option value="{{ cat }}">{{ cat }}</option>
+        {% endfor %}
+      </select>
+      {% endif %}
+    </div>
     <div class="section-body">
       {% if partner_methods %}
-      <div class="methods-wrap">
-        {% for m in partner_methods %}<span class="method-tag">{{ m }}</span>{% endfor %}
+      <div class="methods-wrap" id="methods-wrap">
+        {% for m in partner_methods %}<span class="method-tag method-tag-item">{{ m }}</span>{% endfor %}
       </div>
       {% else %}
       <div class="field-value muted">N/A</div>
       {% endif %}
     </div>
+  <script>
+  const CAT_METHODS = {{ method_categories | tojson }};
+  function filterByCategory() {
+    const sel = document.getElementById('method-cat-filter').value;
+    const tags = document.querySelectorAll('.method-tag-item');
+    let count = 0;
+    tags.forEach(tag => {
+      const method = tag.textContent.trim();
+      if (sel === 'all') {
+        tag.style.display = '';
+        count++;
+      } else {
+        const catMethods = CAT_METHODS[sel] || [];
+        if (catMethods.includes(method)) {
+          tag.style.display = '';
+          count++;
+        } else {
+          tag.style.display = 'none';
+        }
+      }
+    });
+    document.getElementById('method-count').textContent = count;
+  }
+  </script>
   </div>
 
   <!-- Other Characteristics -->

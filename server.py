@@ -187,7 +187,7 @@ def partner_detail(request: Request, name: str):
     sales_contacts = load_sales_contacts(partner["name"])
     technical_contact = load_technical_contact(partner["name"])
     country_data = load_partner_countries(partner["name"])
-    partner_methods = load_partner_payment_methods(partner["name"])
+    methods_data = load_partner_payment_methods(partner["name"])
     return tr(request, "partner_detail.html", ctx(
         request, "partners",
         partner=partner,
@@ -199,7 +199,8 @@ def partner_detail(request: Request, name: str):
         technical_contact=technical_contact,
         partner_countries=country_data["countries"],
         partner_regions=country_data["regions"],
-        partner_methods=partner_methods,
+        partner_methods=methods_data["methods"],
+        method_categories=methods_data["categories"],
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)
