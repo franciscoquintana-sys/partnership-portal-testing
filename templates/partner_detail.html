@@ -430,7 +430,8 @@
       const inRegion = regionSel === 'all' || (REGION_COUNTRIES[regionSel] || []).includes(country);
       const inCat = catSel === 'all' || (CAT_COUNTRIES[catSel] || []).includes(country);
       const inMethod = !selectedMethod || (METHOD_COUNTRIES[selectedMethod] || []).includes(country);
-      if (inRegion && inCat && inMethod) {
+      const inCountrySel = !selectedCountry || country === selectedCountry;
+      if (inRegion && inCat && inMethod && inCountrySel) {
         tag.style.display = '';
         countryCount++;
       } else {
@@ -448,7 +449,8 @@
       const inCat = catSel === 'all' || (CAT_METHODS[catSel] || []).includes(method);
       const inRegion = regionSel === 'all' || (REGION_METHODS[regionSel] || []).includes(method);
       const inCountry = !selectedCountry || (COUNTRY_METHODS[selectedCountry] || []).includes(method);
-      if (inCat && inRegion && inCountry) {
+      const inMethodSel = !selectedMethod || method === selectedMethod;
+      if (inCat && inRegion && inCountry && inMethodSel) {
         tag.style.display = '';
         methodCount++;
       } else {
