@@ -197,12 +197,12 @@ def _parse_partners_df(df):
             "logo": initials,
             "color": _TYPE_COLOR.get(offering, "#64748b"),
             "cat": offering if offering and offering != "nan" else "Other",
-            "nda": bool(row.get("NDA Signed and in drive", False)),
-            "revshare": bool(row.get("Revshare Contract", False)),
-            "revshare_active": bool(row.get("Revshare active", False)),
+            "nda": str(row.get("NDA Signed and in drive", "")).strip().upper() in ("TRUE", "1", "YES"),
+            "revshare": str(row.get("Revshare Contract", "")).strip().upper() in ("TRUE", "1", "YES"),
+            "revshare_active": str(row.get("Revshare active", "")).strip().upper() in ("TRUE", "1", "YES"),
             "integration_stage": integration_stage if integration_stage and integration_stage != "nan" else "",
-            "integration_ready": bool(row.get("Integration Ready by Yuno", False)),
-            "integration_used": bool(row.get("Integration Used by Merchants", False)),
+            "integration_ready": str(row.get("Integration Ready by Yuno", "")).strip().upper() in ("TRUE", "1", "YES"),
+            "integration_used": str(row.get("Integration Used by Merchants", "")).strip().upper() in ("TRUE", "1", "YES"),
             "comments": str(row.get("Comments", "")).strip() if str(row.get("Comments", "")).strip() != "nan" else "",
         })
     return sorted(partners, key=lambda x: x["name"].lower())
