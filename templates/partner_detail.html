@@ -359,17 +359,51 @@
 
   <!-- Countries -->
   <div class="section-card">
-    <div class="section-head"><span class="icon">🌍</span> Countries ({{ partner_countries | length }})</div>
+    <div class="section-head" style="display:flex;justify-content:space-between;align-items:center">
+      <span><span class="icon">🌍</span> Countries (<span id="country-count">{{ partner_countries | length }}</span>)</span>
+      {% if partner_regions %}
+      <select id="region-filter" onchange="filterByRegion()" style="font-family:var(--font);font-size:11px;font-weight:600;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);cursor:pointer">
+        <option value="all">All Regions</option>
+        {% for region in partner_regions %}
+        <option value="{{ region }}">{{ region }}</option>
+        {% endfor %}
+      </select>
+      {% endif %}
+    </div>
     <div class="section-body">
       {% if partner_countries %}
-      <div class="methods-wrap">
-        {% for c in partner_countries %}<span class="method-tag">{{ c }}</span>{% endfor %}
+      <div class="methods-wrap" id="countries-wrap">
+        {% for c in partner_countries %}<span class="method-tag country-tag" data-region="{{ partner_regions.keys() | select('string') | list | join(',') }}">{{ c }}</span>{% endfor %}
       </div>
       {% else %}
       <div class="field-value muted">N/A</div>
       {% endif %}
     </div>
   </div>
+  <script>
+  const REGION_COUNTRIES = {{ partner_regions | tojson }};
+  function filterByRegion() {
+    const sel = document.getElementById('region-filter').value;
+    const tags = document.querySelectorAll('.country-tag');
+    let count = 0;
+    tags.forEach(tag => {
+      const country = tag.textContent.trim();
+      if (sel === 'all') {
+        tag.style.display = '';
+        count++;
+      } else {
+        const regionCountries = REGION_COUNTRIES[sel] || [];
+        if (regionCountries.includes(country)) {
+          tag.style.display = '';
+          count++;
+        } else {
+          tag.style.display = 'none';
+        }
+      }
+    });
+    document.getElementById('country-count').textContent = count;
+  }
+  </script>
 
   <!-- Payment Methods -->
   <div class="section-card">

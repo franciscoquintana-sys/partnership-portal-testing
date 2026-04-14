@@ -186,7 +186,7 @@ def partner_detail(request: Request, name: str):
     processing = sorted(set(c["processing"] for c in coverage if c["processing"] and c["processing"] != "nan"))
     sales_contacts = load_sales_contacts(partner["name"])
     technical_contact = load_technical_contact(partner["name"])
-    partner_countries = load_partner_countries(partner["name"])
+    country_data = load_partner_countries(partner["name"])
     return tr(request, "partner_detail.html", ctx(
         request, "partners",
         partner=partner,
@@ -196,7 +196,8 @@ def partner_detail(request: Request, name: str):
         processing=processing,
         sales_contacts=sales_contacts,
         technical_contact=technical_contact,
-        partner_countries=partner_countries,
+        partner_countries=country_data["countries"],
+        partner_regions=country_data["regions"],
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)

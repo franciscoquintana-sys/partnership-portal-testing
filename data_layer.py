@@ -292,21 +292,31 @@ def _load_partners_sot():
     except Exception:
         return _PARTNERS_SOT_CACHE["data"] or pd.DataFrame()
 
-def load_partner_countries(provider_name: str) -> list:
-    """Return unique countries for a provider from the Partners SOT sheet."""
+def load_partner_countries(provider_name: str) -> dict:
+    """Return unique countries grouped by region for a provider from the Partners SOT sheet."""
     df = _load_partners_sot()
     if df is None or len(df) == 0:
-        return []
+        return {"countries": [], "regions": {}}
     pname = str(provider_name).strip().upper()
     mask = df["PROVIDER_NAME"].astype(str).str.strip().str.upper() == pname
     matches = df[mask]
     if matches.empty:
-        return []
-    countries = sorted(set(
-        c for c in matches["COUNTRY"].astype(str).str.strip()
-        if c and c != "nan" and c != ""
-    ))
-    return countries
+        return {"countries": [], "regions": {}}
+    # Build region -> countries mapping
+    region_map = {}
+    all_countries = set()
+    for _, row in matches.iterrows():
+        country = str(row.get("COUNTRY", "")).strip()
+        region = str(row.get("REGION", "")).strip()
+        if country and country != "nan":
+            all_countries.add(country)
+            if region and region != "nan":
+                if region not in region_map:
+                    region_map[region] = set()
+                region_map[region].add(country)
+    # Sort everything
+    regions = {r: sorted(cs) for r, cs in sorted(region_map.items())}
+    return {"countries": sorted(all_countries), "regions": regions}
 
 def load_sales_contacts(provider_name: str) -> list:
     """Return all Partnerships AM + email for a provider where Contact for AI is TRUE."""
