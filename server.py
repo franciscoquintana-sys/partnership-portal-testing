@@ -36,14 +36,16 @@ def require_auth(request: Request):
 
 NAV = {
     "internal": [
-        ("PARTNERS & CONNECTORS", [("home","Home"),("partners","Partner Portfolio"),("mission","Partners In Flight")]),
-        ("INTELLIGENCE",          [("insights","Market Analysis")]),
-        ("PERFORMANCE & TOOLS",   [("performance","Partner Health"),("benchmarks","Rev Share"),("pipeline","Partner Leads"),("merch_sim","Merchant Simulator")]),
+        ("", [("home","Home")]),
+        ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight")]),
+        ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("pipeline","Partner Leads"),("introduction","Partner Introduction")]),
+        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
     ],
     "partner": [
-        ("PARTNERS & CONNECTORS", [("home","Home"),("partners","Partner Portfolio")]),
-        ("INTELLIGENCE",          [("insights","Market Analysis")]),
-        ("PERFORMANCE & TOOLS",   [("performance","Partner Health"),("benchmarks","Benchmarks"),("pipeline","Partner Leads")]),
+        ("", [("home","Home")]),
+        ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio")]),
+        ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("pipeline","Partner Leads")]),
+        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis")]),
     ],
 }
 
@@ -265,6 +267,24 @@ def mission(request: Request):
         request, "mission", board=board, total_in_flight=total_in_flight,
         types=types, regions=regions, countries=countries, managers=managers,
     ))
+
+@app.get("/introduction", response_class=HTMLResponse)
+def introduction(request: Request):
+    role = require_auth(request)
+    if not role:
+        return RedirectResponse("/login")
+    if role != "internal":
+        return RedirectResponse("/home")
+    return tr(request, "introduction.html", ctx(request, "introduction"))
+
+@app.get("/intake", response_class=HTMLResponse)
+def intake(request: Request):
+    role = require_auth(request)
+    if not role:
+        return RedirectResponse("/login")
+    if role != "internal":
+        return RedirectResponse("/home")
+    return tr(request, "intake.html", ctx(request, "intake"))
 
 @app.get("/performance", response_class=HTMLResponse)
 def performance(request: Request):

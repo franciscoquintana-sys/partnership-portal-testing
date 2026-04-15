@@ -20,7 +20,7 @@
 
     <nav class="sidebar-nav">
       {% for section, items in nav %}
-      <div class="nav-section-title">{{ section }}</div>
+      {% if section %}<div class="nav-section-title">{{ section }}</div>{% endif %}
       {% for key, label in items %}
       <a href="/{{ key }}" class="nav-item {% if page == key %}active{% endif %}">
         {{ label }}
