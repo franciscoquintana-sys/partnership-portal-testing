@@ -182,13 +182,10 @@
       </div>
       <div class="kanban-col-body">
         {% for p in partners %}
-        <a href="/partners/{{ p.name | urlencode }}" class="kanban-card" style="text-decoration:none;border-left:3px solid {{ p.color }}">
+        <a href="/partners/{{ p.name | urlencode }}" class="kanban-card" style="text-decoration:none;border-left:3px solid {{ p.color }};display:flex;flex-direction:column;gap:8px">
           <div class="kanban-card-name">{{ p.name }}</div>
-          <div class="kanban-tag" style="background:{{ p.color }}18;color:{{ p.color }}">{{ p.type }}</div>
-          <div class="kanban-card-meta">
-            {% if p.region %}<span>{{ p.region }}</span>{% endif %}
-            {% if p.manager %}<span>{{ p.manager }}</span>{% endif %}
-          </div>
+          <div><span class="kanban-tag" style="background:{{ p.color }}18;color:{{ p.color }}">{{ p.type }}</span></div>
+          <div class="kanban-card-meta">{% if p.region %}{{ p.region }}{% endif %}{% if p.region and p.manager %} · {% endif %}{% if p.manager %}{{ p.manager }}{% endif %}</div>
         </a>
         {% endfor %}
         {% if partners|length == 0 %}
