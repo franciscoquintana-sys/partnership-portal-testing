@@ -103,73 +103,76 @@
   {% endif %}
 </div>
 
-<!-- Team Structure -->
-<div style="margin-top:28px">
-  <div style="font-size:10px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Team Structure</div>
-  <div style="background:#fff;border:1px solid var(--border);border-radius:14px;padding:28px 32px;display:flex;flex-direction:column;align-items:center;gap:0">
-
-    <!-- Juan Pablo Ortega -->
-    <div style="text-align:center">
-      <div style="width:48px;height:48px;border-radius:12px;background:#0a1628;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff">JP</div>
-      <div style="font-size:13px;font-weight:700;color:#0f172a;margin-top:6px">Juan Pablo Ortega</div>
-      <div style="font-size:10.5px;color:#64748b">CEO and Cofounder</div>
+<!-- Team Structure — as action-card spanning full width -->
+<div class="action-cards" style="margin-top:14px">
+  <div class="action-card" style="border-top-color:#0a1628;grid-column:1/-1;padding:20px 24px">
+    <div class="action-card-header">
+      <span class="action-icon">&#9673;</span>
+      <span class="action-title">Team Structure</span>
     </div>
-    <div style="width:1px;height:20px;background:var(--border)"></div>
 
-    <!-- Justo Benetti -->
-    <div style="text-align:center">
-      <div style="width:48px;height:48px;border-radius:12px;background:#4F46E5;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff">JB</div>
-      <div style="font-size:13px;font-weight:700;color:#0f172a;margin-top:6px">Justo Benetti</div>
-      <div style="font-size:10.5px;color:#64748b">CRO</div>
+    <!-- Top chain: JPO → JB → DR (horizontal) -->
+    <div style="display:flex;align-items:center;justify-content:center;gap:0;margin:12px 0 14px">
+      <div style="text-align:center;min-width:120px">
+        <div style="width:36px;height:36px;border-radius:8px;background:#0a1628;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JP</div>
+        <div style="font-size:11px;font-weight:700;color:#0f172a;margin-top:4px">Juan Pablo Ortega</div>
+        <div style="font-size:9.5px;color:#64748b">CEO and Cofounder</div>
+      </div>
+      <div style="width:32px;height:1px;background:var(--border);flex-shrink:0"></div>
+      <div style="text-align:center;min-width:100px">
+        <div style="width:36px;height:36px;border-radius:8px;background:#4F46E5;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">JB</div>
+        <div style="font-size:11px;font-weight:700;color:#0f172a;margin-top:4px">Justo Benetti</div>
+        <div style="font-size:9.5px;color:#64748b">CRO</div>
+      </div>
+      <div style="width:32px;height:1px;background:var(--border);flex-shrink:0"></div>
+      <div style="text-align:center;min-width:140px">
+        <div style="width:36px;height:36px;border-radius:8px;background:#8b5cf6;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">DR</div>
+        <div style="font-size:11px;font-weight:700;color:#0f172a;margin-top:4px">Daniela Reyes</div>
+        <div style="font-size:9.5px;color:#64748b">Global Head of Partnerships</div>
+      </div>
     </div>
-    <div style="width:1px;height:20px;background:var(--border)"></div>
 
-    <!-- Daniela Reyes -->
-    <div style="text-align:center">
-      <div style="width:48px;height:48px;border-radius:12px;background:#8b5cf6;display:inline-flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff">DR</div>
-      <div style="font-size:13px;font-weight:700;color:#0f172a;margin-top:6px">Daniela Reyes</div>
-      <div style="font-size:10.5px;color:#64748b">Global Head of Partnerships</div>
-    </div>
-    <div style="width:1px;height:20px;background:var(--border)"></div>
+    <!-- Connector down from Daniela to reports row -->
+    <div style="display:flex;justify-content:center"><div style="width:1px;height:14px;background:var(--border)"></div></div>
 
-    <!-- Reports to Daniela -->
-    <div style="display:flex;align-items:flex-start;gap:0;position:relative;width:100%;justify-content:center">
-      <!-- Horizontal connector line -->
-      <div style="position:absolute;top:0;left:calc(50% - 250px);width:500px;height:1px;background:var(--border)"></div>
+    <!-- Reports row -->
+    <div style="display:flex;align-items:flex-start;justify-content:center;gap:0;position:relative">
+      <!-- Horizontal connector -->
+      <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:75%;height:1px;background:var(--border)"></div>
 
       <!-- Talita + Johanderson -->
-      <div style="display:flex;flex-direction:column;align-items:center;flex:1;max-width:180px">
-        <div style="width:1px;height:20px;background:var(--border)"></div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+        <div style="width:1px;height:14px;background:var(--border)"></div>
         <div style="text-align:center">
-          <div style="width:44px;height:44px;border-radius:10px;background:#10b981;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">TG</div>
-          <div style="font-size:12px;font-weight:700;color:#0f172a;margin-top:5px">Talita Gama</div>
-          <div style="font-size:10px;color:#64748b">Head of LATAM</div>
+          <div style="width:34px;height:34px;border-radius:8px;background:#10b981;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">TG</div>
+          <div style="font-size:11px;font-weight:700;color:#0f172a;margin-top:4px">Talita Gama</div>
+          <div style="font-size:9.5px;color:#64748b">Head of LATAM</div>
         </div>
-        <div style="width:1px;height:16px;background:var(--border)"></div>
+        <div style="width:1px;height:10px;background:var(--border)"></div>
         <div style="text-align:center">
-          <div style="width:40px;height:40px;border-radius:10px;background:#14b8a6;display:inline-flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff">JG</div>
-          <div style="font-size:12px;font-weight:700;color:#0f172a;margin-top:5px">Johanderson Guevara</div>
-          <div style="font-size:10px;color:#64748b">Strategic Partnership Manager Brasil</div>
+          <div style="width:30px;height:30px;border-radius:7px;background:#14b8a6;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff">JG</div>
+          <div style="font-size:10.5px;font-weight:700;color:#0f172a;margin-top:3px">Johanderson Guevara</div>
+          <div style="font-size:9px;color:#64748b">SPM Brasil</div>
         </div>
       </div>
 
       <!-- Francisco -->
-      <div style="display:flex;flex-direction:column;align-items:center;flex:1;max-width:180px">
-        <div style="width:1px;height:20px;background:var(--border)"></div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+        <div style="width:1px;height:14px;background:var(--border)"></div>
         <div style="text-align:center">
-          <div style="width:44px;height:44px;border-radius:10px;background:#3b82f6;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">FQ</div>
-          <div style="font-size:12px;font-weight:700;color:#0f172a;margin-top:5px">Francisco Quintana</div>
-          <div style="font-size:10px;color:#64748b">Strategic Partnership Manager MEA</div>
+          <div style="width:34px;height:34px;border-radius:8px;background:#3b82f6;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">FQ</div>
+          <div style="font-size:11px;font-weight:700;color:#0f172a;margin-top:4px">Francisco Quintana</div>
+          <div style="font-size:9.5px;color:#64748b">SPM MEA</div>
         </div>
       </div>
 
       <!-- Alessandra -->
-      <div style="display:flex;flex-direction:column;align-items:center;flex:1;max-width:180px">
-        <div style="width:1px;height:20px;background:var(--border)"></div>
+      <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+        <div style="width:1px;height:14px;background:var(--border)"></div>
         <div style="text-align:center">
-          <div style="width:44px;height:44px;border-radius:10px;background:#f59e0b;display:inline-flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff">AR</div>
-          <div style="font-size:12px;font-weight:700;color:#0f172a;margin-top:5px">Alessandra Rospigliossi</div>
-          <div style="font-size:10px;color:#64748b">Strategic Partnership Manager Europe</div>
+          <div style="width:34px;height:34px;border-radius:8px;background:#f59e0b;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">AR</div>
+          <div style="font-size:11px;font-weight:700;color:#0f172a;margin-top:4px">Alessandra Rospigliossi</div>
+          <div style="font-size:9.5px;color:#64748b">SPM Europe</div>
         </div>
       </div>
     </div>
