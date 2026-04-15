@@ -215,7 +215,7 @@
     <div class="partner-header-name">{{ partner.name }}</div>
     <div class="partner-header-meta">
       <span class="type-pill type-{{ partner.type | replace('/', '-') | replace(' ', '-') }}">{{ partner.type }}</span>
-      <span>{{ partner.country or partner.region }}</span>
+      <span>{{ partner.region or partner.country }}</span>
       {% if partner.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 7px;border-radius:4px;font-weight:700">STRATEGIC</span>{% endif %}
     </div>
   </div>
