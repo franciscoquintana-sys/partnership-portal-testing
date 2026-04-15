@@ -166,6 +166,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
 
 @app.get("/partners/{name:path}", response_class=HTMLResponse)
 def partner_detail(request: Request, name: str):
+    import traceback
     name = unquote(name)
     role = require_auth(request)
     if not role:
@@ -174,46 +175,51 @@ def partner_detail(request: Request, name: str):
     partner = next((p for p in all_partners if p["name"].lower() == name.lower()), None)
     if not partner:
         return RedirectResponse("/partners")
-    # Get SOT data for this partner
-    sot_df = load_sot_data()
-    coverage = []
-    if len(sot_df) > 0:
-        pdf = sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()]
-        for _, row in pdf.iterrows():
-            coverage.append({
-                "country_iso": str(row.get("COUNTRY_ISO", "")),
-                "country": _ISO_TO_COUNTRY.get(str(row.get("COUNTRY_ISO", "")), str(row.get("COUNTRY_ISO", ""))),
-                "method": str(row.get("PAYMENT_METHOD_TYPE", "")),
-                "processing": str(row.get("PROCESSING_TYPE", "")),
-                "status": str(row.get("Live/NonLive Partner/Contract signed", "")),
-                "category": str(row.get("PROVIDER_CATEGORY", "")),
-            })
-    countries = sorted(set(c["country"] for c in coverage if c["country"]))
-    methods = sorted(set(c["method"] for c in coverage if c["method"] and c["method"] != "nan"))
-    processing = sorted(set(c["processing"] for c in coverage if c["processing"] and c["processing"] != "nan"))
-    sales_contacts = load_sales_contacts(partner["name"])
-    technical_contact = load_technical_contact(partner["name"])
-    cov = load_partner_coverage(partner["name"])
-    return tr(request, "partner_detail.html", ctx(
-        request, "partners",
-        partner=partner,
-        coverage=coverage,
-        countries=countries,
-        methods=methods,
-        processing=processing,
-        sales_contacts=sales_contacts,
-        technical_contact=technical_contact,
-        partner_countries=cov["countries"],
-        partner_regions=cov["regions"],
-        partner_methods=cov["methods"],
-        method_categories=cov["categories"],
-        region_methods=cov["region_methods"],
-        category_countries=cov["category_countries"],
-        country_methods=cov["country_methods"],
-        method_countries=cov["method_countries"],
-        processing_label=cov["processing_label"],
-        characteristics=cov["characteristics"],
-    ))
+    try:
+        # Get SOT data for this partner
+        sot_df = load_sot_data()
+        coverage = []
+        if len(sot_df) > 0:
+            pdf = sot_df[sot_df["PROVIDER_NAME"].str.lower() == name.lower()]
+            for _, row in pdf.iterrows():
+                coverage.append({
+                    "country_iso": str(row.get("COUNTRY_ISO", "")),
+                    "country": _ISO_TO_COUNTRY.get(str(row.get("COUNTRY_ISO", "")), str(row.get("COUNTRY_ISO", ""))),
+                    "method": str(row.get("PAYMENT_METHOD_TYPE", "")),
+                    "processing": str(row.get("PROCESSING_TYPE", "")),
+                    "status": str(row.get("Live/NonLive Partner/Contract signed", "")),
+                    "category": str(row.get("PROVIDER_CATEGORY", "")),
+                })
+        countries = sorted(set(c["country"] for c in coverage if c["country"]))
+        methods = sorted(set(c["method"] for c in coverage if c["method"] and c["method"] != "nan"))
+        processing = sorted(set(c["processing"] for c in coverage if c["processing"] and c["processing"] != "nan"))
+        sales_contacts = load_sales_contacts(partner["name"])
+        technical_contact = load_technical_contact(partner["name"])
+        cov = load_partner_coverage(partner["name"])
+        return tr(request, "partner_detail.html", ctx(
+            request, "partners",
+            partner=partner,
+            coverage=coverage,
+            countries=countries,
+            methods=methods,
+            processing=processing,
+            sales_contacts=sales_contacts,
+            technical_contact=technical_contact,
+            partner_countries=cov["countries"],
+            partner_regions=cov["regions"],
+            partner_methods=cov["methods"],
+            method_categories=cov["categories"],
+            region_methods=cov["region_methods"],
+            category_countries=cov["category_countries"],
+            country_methods=cov["country_methods"],
+            method_countries=cov["method_countries"],
+            processing_label=cov["processing_label"],
+            characteristics=cov["characteristics"],
+        ))
+    except Exception as e:
+        print(f"ERROR loading partner detail for '{name}': {e}")
+        traceback.print_exc()
+        return HTMLResponse(f"<h3>Error loading {name}</h3><pre>{traceback.format_exc()}</pre>", status_code=500)
 
 @app.get("/pipeline", response_class=HTMLResponse)
 def pipeline(request: Request):
