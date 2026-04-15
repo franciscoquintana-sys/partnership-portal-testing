@@ -233,7 +233,33 @@ def mission(request: Request):
         return RedirectResponse("/login")
     if role != "internal":
         return RedirectResponse("/home")
-    return tr(request, "mission.html", ctx(request, "mission"))
+    all_partners = load_partners_excel()
+    # Build Kanban columns from Deal Stage (stage_raw) + Integration Stage
+    board = {
+        "Prospect": [],
+        "Initial Negotiation": [],
+        "Agreement Review": [],
+        "Agreement Signed but Not Integrated": [],
+        "Agreement Signed and Integrated": [],
+        "Integrated without Agreement": [],
+    }
+    for p in all_partners:
+        deal = (p.get("stage_raw") or "").strip()
+        integ = (p.get("integration_stage") or "").strip().lower()
+        if deal == "Opportunity Identification":
+            board["Prospect"].append(p)
+        elif deal == "Initial Negotiation":
+            board["Initial Negotiation"].append(p)
+        elif deal == "Agreement Review":
+            board["Agreement Review"].append(p)
+        elif deal == "Agreement Signed" and integ == "live":
+            board["Agreement Signed and Integrated"].append(p)
+        elif deal == "Agreement Signed":
+            board["Agreement Signed but Not Integrated"].append(p)
+        elif integ == "live" and deal != "Agreement Signed" and deal != "Live Partner":
+            board["Integrated without Agreement"].append(p)
+    total_in_flight = sum(len(v) for v in board.values())
+    return tr(request, "mission.html", ctx(request, "mission", board=board, total_in_flight=total_in_flight))
 
 @app.get("/performance", response_class=HTMLResponse)
 def performance(request: Request):
