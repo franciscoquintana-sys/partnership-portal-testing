@@ -182,22 +182,13 @@
       </div>
       <div class="kanban-col-body">
         {% for p in partners %}
-        <a href="/partners/{{ p.name | urlencode }}" class="kanban-card" style="text-decoration:none">
-          <div class="kanban-card-name">
-            <div class="kanban-avatar" style="background:{{ p.color }}">{{ p.logo }}</div>
-            <span>{{ p.name }}</span>
-          </div>
+        <a href="/partners/{{ p.name | urlencode }}" class="kanban-card" style="text-decoration:none;border-left:3px solid {{ p.color }}">
+          <div class="kanban-card-name">{{ p.name }}</div>
+          <div class="kanban-tag" style="background:{{ p.color }}18;color:{{ p.color }}">{{ p.type }}</div>
           <div class="kanban-card-meta">
             {% if p.region %}<span>{{ p.region }}</span>{% endif %}
-            {% if p.type and p.type != 'Other' %}<span>{{ p.type }}</span>{% endif %}
             {% if p.manager %}<span>{{ p.manager }}</span>{% endif %}
           </div>
-          {% if p.tier %}
-          <div class="kanban-tag" style="background:rgba(79,70,229,0.1);color:#4F46E5">{{ p.tier }}</div>
-          {% endif %}
-          {% if p.integration_stage and p.integration_stage != 'nan' %}
-          <div class="kanban-tag" style="background:rgba(16,185,129,0.1);color:#059669">{{ p.integration_stage }}</div>
-          {% endif %}
         </a>
         {% endfor %}
         {% if partners|length == 0 %}
