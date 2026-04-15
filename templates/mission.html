@@ -358,7 +358,7 @@
       </div>
       <div class="kanban-col-body">
         {% for p in partners %}
-        <a href="/partners/{{ p.name | urlencode }}" class="kanban-card"
+        <a href="/partners/{{ p.name | replace(' ', '%20') | replace('/', '%2F') }}" class="kanban-card"
            data-name="{{ p.name | lower }}"
            data-type="{{ p.type }}"
            data-region="{{ p.region }}"
