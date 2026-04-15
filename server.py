@@ -39,14 +39,14 @@ NAV = {
         ("OVERVIEW",        [("home","Home"),("partners","Partner Portfolio")]),
         ("PIPELINE & FLOW", [("mission","Partners In Flight"),("pipeline","Partner Leads")]),
         ("PERFORMANCE",     [("performance","Partner Health"),("benchmarks","Rev Share")]),
-        ("INTELLIGENCE",    [("insights","Market Intel")]),
-        ("TOOLS",           [("merch_sim","Merchant Sim")]),
+        ("INTELLIGENCE",    [("insights","Market Analysis")]),
+        ("TOOLS",           [("merch_sim","Merchant Simulator")]),
     ],
     "partner": [
         ("OVERVIEW",        [("home","Home"),("partners","Partner Portfolio")]),
         ("PIPELINE & FLOW", [("pipeline","Partner Leads")]),
         ("PERFORMANCE",     [("performance","Partner Health"),("benchmarks","Benchmarks")]),
-        ("INTELLIGENCE",    [("insights","Market Intel")]),
+        ("INTELLIGENCE",    [("insights","Market Analysis")]),
     ],
 }
 
