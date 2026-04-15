@@ -259,7 +259,15 @@ def mission(request: Request):
         elif integ == "live" and deal != "Agreement Signed" and deal != "Live Partner":
             board["Integrated without Agreement"].append(p)
     total_in_flight = sum(len(v) for v in board.values())
-    return tr(request, "mission.html", ctx(request, "mission", board=board, total_in_flight=total_in_flight))
+    all_in_flight = [p for col in board.values() for p in col]
+    types = sorted(set(p["type"] for p in all_in_flight if p.get("type")))
+    regions = sorted(set(p["region"] for p in all_in_flight if p.get("region")))
+    countries = sorted(set(p["country"] for p in all_in_flight if p.get("country")))
+    managers = sorted(set(p["manager"] for p in all_in_flight if p.get("manager")))
+    return tr(request, "mission.html", ctx(
+        request, "mission", board=board, total_in_flight=total_in_flight,
+        types=types, regions=regions, countries=countries, managers=managers,
+    ))
 
 @app.get("/performance", response_class=HTMLResponse)
 def performance(request: Request):

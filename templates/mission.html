@@ -116,6 +116,127 @@
 .kanban-col[data-col="signed-not-integrated"] { border-top: 3px solid #f59e0b; }
 .kanban-col[data-col="signed-integrated"] { border-top: 3px solid #10b981; }
 .kanban-col[data-col="integrated-no-agreement"] { border-top: 3px solid #ef4444; }
+
+/* Search & Filters */
+.search-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.search-wrap {
+  position: relative;
+  flex: 1;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+}
+.search-input {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 12.5px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 7px 12px 7px 32px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-input:focus {
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.08);
+}
+.filter-bar {
+  display: flex;
+  align-items: flex-end;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+.filter-item .col-filter-btn {
+  width: 100%;
+  justify-content: space-between;
+}
+.filter-item-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text3);
+  white-space: nowrap;
+}
+.col-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text2);
+  background: #fff;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 5px 9px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+.col-filter-btn.active { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-light); }
+.col-filter-btn .badge { background: var(--indigo); color: #fff; border-radius: 3px; padding: 0 4px; font-size: 9px; font-weight: 700; }
+.col-filter-wrap { position: relative; display: inline-block; }
+.col-filter-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 999;
+  padding: 6px 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.col-filter-dropdown.open { display: block; }
+.col-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.col-filter-option:hover { background: #f5f5ff; }
+.col-filter-option input[type=checkbox] { accent-color: var(--indigo); width: 13px; height: 13px; cursor: pointer; }
+.col-filter-clear { padding: 5px 12px; font-size: 11px; color: #dc2626; cursor: pointer; border-top: 1px solid var(--border); margin-top: 2px; }
+.col-filter-clear:hover { background: #fff5f5; }
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
 </style>
 {% endblock %}
 
@@ -152,10 +273,70 @@
     ] %}
     {% for label, count, key, color in cols %}
     <div style="background:#fff;padding:16px 18px;display:flex;flex-direction:column;gap:3px;align-items:flex-start">
-      <div style="font-size:28px;font-weight:800;color:{{ color }};letter-spacing:-1px;line-height:1">{{ count }}</div>
+      <div class="stat-count" data-col="{{ key }}" style="font-size:28px;font-weight:800;color:{{ color }};letter-spacing:-1px;line-height:1">{{ count }}</div>
       <div style="font-size:9.5px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3)">{{ label }}</div>
     </div>
     {% endfor %}
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar-row">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="search" type="text"
+        placeholder="Search partners…"
+        oninput="applyFilters()"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();applyFilters()}">
+    </div>
+    <button onclick="clearAllFilters()" style="font-family:var(--font);font-size:12px;font-weight:600;color:#dc2626;background:#fff;border:1px solid #fca5a5;border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.15s" onmouseover="this.style.background='#fff5f5'" onmouseout="this.style.background='#fff'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      Clear filters
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="section-title">Filters</div>
+  <div class="filter-bar">
+    <div class="filter-item">
+      <span class="filter-item-label">Type</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-type" onclick="toggleDrop('type',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-type">
+          {% for t in types %}<label class="col-filter-option"><input type="checkbox" value="{{ t }}" onchange="applyFilters()"> {{ t }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('type')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Region</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-region" onclick="toggleDrop('region',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-region">
+          {% for r in regions %}<label class="col-filter-option"><input type="checkbox" value="{{ r }}" onchange="applyFilters()"> {{ r }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('region')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Country</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-country" onclick="toggleDrop('country',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-country">
+          {% for c in countries %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('country')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Partner Manager</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-manager" onclick="toggleDrop('manager',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-manager">
+          {% for m in managers %}<label class="col-filter-option"><input type="checkbox" value="{{ m }}" onchange="applyFilters()"> {{ m }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('manager')">Clear</div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Kanban Board -->
@@ -177,18 +358,115 @@
       </div>
       <div class="kanban-col-body">
         {% for p in partners %}
-        <a href="/partners/{{ p.name | urlencode }}" class="kanban-card" style="text-decoration:none;border-left:3px solid {{ p.color }};display:flex;flex-direction:column;gap:8px">
+        <a href="/partners/{{ p.name | urlencode }}" class="kanban-card"
+           data-name="{{ p.name | lower }}"
+           data-type="{{ p.type }}"
+           data-region="{{ p.region }}"
+           data-country="{{ p.country }}"
+           data-manager="{{ p.manager }}"
+           style="text-decoration:none;border-left:3px solid {{ p.color }};display:flex;flex-direction:column;gap:8px">
           <div class="kanban-card-name">{{ p.name }}</div>
           <div><span class="kanban-tag" style="background:{{ p.color }}18;color:{{ p.color }}">{{ p.type }}</span></div>
           <div class="kanban-card-meta">{% if p.region %}{{ p.region }}{% endif %}{% if p.region and p.manager %} · {% endif %}{% if p.manager %}{{ p.manager }}{% endif %}</div>
         </a>
         {% endfor %}
         {% if partners|length == 0 %}
-        <div style="text-align:center;padding:20px 10px;color:#94a3b8;font-size:12px">No partners</div>
+        <div class="kanban-empty" style="text-align:center;padding:20px 10px;color:#94a3b8;font-size:12px">No partners</div>
         {% endif %}
       </div>
     </div>
     {% endfor %}
   </div>
 
+{% endblock %}
+
+{% block scripts %}
+<script>
+const FILTERS = ['type','region','country','manager'];
+
+function getSelected(key) {
+  return [...document.querySelectorAll(`#drop-${key} input[type=checkbox]:checked`)].map(c => c.value);
+}
+
+function updateBtn(key) {
+  const sel = getSelected(key);
+  const btn = document.getElementById(`btn-${key}`);
+  if (sel.length === 0) {
+    btn.innerHTML = `All <span>▾</span>`;
+    btn.classList.remove('active');
+  } else {
+    btn.innerHTML = `${sel.length} selected <span class="badge">${sel.length}</span> <span>▾</span>`;
+    btn.classList.add('active');
+  }
+}
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const sel = {};
+  FILTERS.forEach(k => { sel[k] = getSelected(k); updateBtn(k); });
+
+  document.querySelectorAll('.kanban-col').forEach(col => {
+    const cards = col.querySelectorAll('.kanban-card');
+    let visible = 0;
+    cards.forEach(card => {
+      const show =
+        (!q || (card.dataset.name || '').includes(q))
+        && (sel.type.length === 0     || sel.type.includes(card.dataset.type))
+        && (sel.region.length === 0   || sel.region.includes(card.dataset.region))
+        && (sel.country.length === 0  || sel.country.includes(card.dataset.country))
+        && (sel.manager.length === 0  || sel.manager.includes(card.dataset.manager));
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    // Update column count
+    const countEl = col.querySelector('.kanban-col-count');
+    if (countEl) countEl.textContent = visible;
+    // Show/hide empty message
+    let emptyEl = col.querySelector('.kanban-empty');
+    if (visible === 0 && !emptyEl) {
+      emptyEl = document.createElement('div');
+      emptyEl.className = 'kanban-empty';
+      emptyEl.style.cssText = 'text-align:center;padding:20px 10px;color:#94a3b8;font-size:12px';
+      emptyEl.textContent = 'No partners';
+      col.querySelector('.kanban-col-body').appendChild(emptyEl);
+    } else if (emptyEl) {
+      emptyEl.style.display = visible === 0 ? '' : 'none';
+    }
+  });
+
+  // Update stats bar counts
+  const statEls = document.querySelectorAll('.stat-count');
+  statEls.forEach(el => {
+    const colKey = el.dataset.col;
+    const col = document.querySelector(`.kanban-col[data-col="${colKey}"]`);
+    if (col) {
+      el.textContent = col.querySelector('.kanban-col-count').textContent;
+    }
+  });
+}
+
+function toggleDrop(key, e) {
+  e.stopPropagation();
+  const drop = document.getElementById(`drop-${key}`);
+  const isOpen = drop.classList.contains('open');
+  document.querySelectorAll('.col-filter-dropdown').forEach(d => d.classList.remove('open'));
+  if (!isOpen) drop.classList.add('open');
+}
+
+function clearDrop(key) {
+  event.stopPropagation();
+  document.querySelectorAll(`#drop-${key} input[type=checkbox]`).forEach(c => c.checked = false);
+  applyFilters();
+}
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.col-filter-dropdown').forEach(d => d.classList.remove('open'));
+});
+
+function clearAllFilters() {
+  document.getElementById('search').value = '';
+  document.querySelectorAll('.col-filter-dropdown input[type=checkbox]').forEach(c => c.checked = false);
+  applyFilters();
+}
+</script>
 {% endblock %}
