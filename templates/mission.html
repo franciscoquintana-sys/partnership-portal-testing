@@ -358,17 +358,19 @@
       </div>
       <div class="kanban-col-body">
         {% for p in partners %}
-        <a href="/partners/{{ p.name | replace(' ', '%20') | replace('/', '%2F') }}" class="kanban-card"
+        <div class="kanban-card"
+           data-partner="{{ p.name }}"
            data-name="{{ p.name | lower }}"
            data-type="{{ p.type }}"
            data-region="{{ p.region }}"
            data-country="{{ p.country }}"
            data-manager="{{ p.manager }}"
-           style="text-decoration:none;border-left:3px solid {{ p.color }};display:flex;flex-direction:column;gap:8px">
+           onclick="window.location='/partners/'+encodeURIComponent(this.dataset.partner)"
+           style="border-left:3px solid {{ p.color }};display:flex;flex-direction:column;gap:8px">
           <div class="kanban-card-name">{{ p.name }}</div>
           <div><span class="kanban-tag" style="background:{{ p.color }}18;color:{{ p.color }}">{{ p.type }}</span></div>
           <div class="kanban-card-meta">{% if p.region %}{{ p.region }}{% endif %}{% if p.region and p.manager %} · {% endif %}{% if p.manager %}{{ p.manager }}{% endif %}</div>
-        </a>
+        </div>
         {% endfor %}
         {% if partners|length == 0 %}
         <div class="kanban-empty" style="text-align:center;padding:20px 10px;color:#94a3b8;font-size:12px">No partners</div>
