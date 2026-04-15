@@ -165,7 +165,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     ))
 
 @app.get("/partners/{name:path}", response_class=HTMLResponse)
-def partner_detail(request: Request, name: str):
+def partner_detail(request: Request, name: str, ref: str = ""):
     name = unquote(name)
     role = require_auth(request)
     if not role:
@@ -229,6 +229,7 @@ def partner_detail(request: Request, name: str):
         method_countries=cov.get("method_countries", {}),
         processing_label=cov.get("processing_label", "N/A"),
         characteristics=cov.get("characteristics", []),
+        back_ref=ref,
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)

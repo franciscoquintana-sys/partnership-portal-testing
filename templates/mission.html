@@ -365,7 +365,7 @@
            data-region="{{ p.region }}"
            data-country="{{ p.country }}"
            data-manager="{{ p.manager }}"
-           onclick="window.location='/partners/'+encodeURIComponent(this.dataset.partner)"
+           onclick="window.location='/partners/'+encodeURIComponent(this.dataset.partner)+'?ref=mission'"
            style="border-left:3px solid {{ p.color }};display:flex;flex-direction:column;gap:8px">
           <div class="kanban-card-name">{{ p.name }}</div>
           <div><span class="kanban-tag" style="background:{{ p.color }}18;color:{{ p.color }}">{{ p.type }}</span></div>
