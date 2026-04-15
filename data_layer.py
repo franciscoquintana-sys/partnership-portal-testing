@@ -321,15 +321,17 @@ def load_partner_countries(provider_name: str) -> dict:
 def load_partner_coverage(provider_name: str) -> dict:
     """Return full coverage data: countries, regions, methods, categories, and cross-mappings."""
     df = _load_partners_sot()
+    _empty = {"countries": [], "regions": {}, "methods": [], "categories": {},
+              "region_methods": {}, "category_countries": {},
+              "country_methods": {}, "method_countries": {},
+              "processing_label": "N/A", "characteristics": []}
     if df is None or len(df) == 0:
-        return {"countries": [], "regions": {}, "methods": [], "categories": {},
-                "region_methods": {}, "category_countries": {}}
+        return _empty
     pname = str(provider_name).strip().upper()
     mask = df["PROVIDER_NAME"].astype(str).str.strip().str.upper() == pname
     matches = df[mask]
     if matches.empty:
-        return {"countries": [], "regions": {}, "methods": [], "categories": {},
-                "region_methods": {}, "category_countries": {}}
+        return _empty
 
     all_countries = set()
     all_methods = set()
