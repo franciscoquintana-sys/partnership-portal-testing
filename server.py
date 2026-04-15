@@ -36,17 +36,14 @@ def require_auth(request: Request):
 
 NAV = {
     "internal": [
-        ("OVERVIEW",        [("home","Home"),("partners","Partner Portfolio")]),
-        ("PIPELINE & FLOW", [("mission","Partners In Flight"),("pipeline","Partner Leads")]),
-        ("PERFORMANCE",     [("performance","Partner Health"),("benchmarks","Rev Share")]),
-        ("INTELLIGENCE",    [("insights","Market Analysis")]),
-        ("TOOLS",           [("merch_sim","Merchant Simulator")]),
+        ("PARTNERS & CONNECTORS", [("home","Home"),("partners","Partner Portfolio"),("mission","Partners In Flight")]),
+        ("INTELLIGENCE",          [("insights","Market Analysis")]),
+        ("PERFORMANCE & TOOLS",   [("performance","Partner Health"),("benchmarks","Rev Share"),("pipeline","Partner Leads"),("merch_sim","Merchant Simulator")]),
     ],
     "partner": [
-        ("OVERVIEW",        [("home","Home"),("partners","Partner Portfolio")]),
-        ("PIPELINE & FLOW", [("pipeline","Partner Leads")]),
-        ("PERFORMANCE",     [("performance","Partner Health"),("benchmarks","Benchmarks")]),
-        ("INTELLIGENCE",    [("insights","Market Analysis")]),
+        ("PARTNERS & CONNECTORS", [("home","Home"),("partners","Partner Portfolio")]),
+        ("INTELLIGENCE",          [("insights","Market Analysis")]),
+        ("PERFORMANCE & TOOLS",   [("performance","Partner Health"),("benchmarks","Benchmarks"),("pipeline","Partner Leads")]),
     ],
 }
 
