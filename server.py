@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+from authlib.integrations.starlette_client import OAuth
 import plotly.graph_objects as go
 
 from data_layer import (
@@ -20,6 +21,21 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 
 app = FastAPI()
 app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "yuno-portal-secret-2026"))
+# -- Google OAuth setup --------------------------------------------------------
+
+oauth = OAuth()
+oauth.register(
+    name="google",
+    client_id=os.environ.get("GOOGLE_CLIENT_ID", ""),
+    client_secret=os.environ.get("GOOGLE_CLIENT_SECRET", ""),
+    server_metadata_url="https://accounts.google.com/.well-known/openid-configuration",
+    client_kwargs={"scope": "openid email profile"},
+)
+
+ALLOWED_DOMAIN = "y.uno"
+
+# ------------------------------------------------------------------------------
+
 app.mount("/static", StaticFiles(directory=os.path.join(BASE, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(BASE, "templates"))
 
@@ -58,6 +74,9 @@ def ctx(request: Request, page: str, **kwargs):
         "page": page,
         "nav": NAV.get(role, []),
         "badges": BADGES,
+        "user_name": request.session.get("user_name", ""),
+        "user_picture": request.session.get("user_picture", ""),
+        "user_email": request.session.get("user_email", ""),
         **kwargs
     }
 
@@ -87,20 +106,36 @@ def root(request: Request):
 def login_page(request: Request):
     if get_role(request):
         return RedirectResponse("/home")
-    return tr(request, "login.html", {"error": ""})
+    error = request.query_params.get("error", "")
+    return tr(request, "login.html", {"error": error})
 
-@app.post("/login", response_class=HTMLResponse)
-def login_submit(request: Request, code: str = Form(...)):
-    code = code.strip()
-    if code.lower() == "yuno":
-        request.session["role"] = "internal"
-    elif code.lower() == "partners":
-        request.session["role"] = "partner"
-    else:
-        return tr(request, "login.html", {"error": "Invalid access code."})
-    return HTMLResponse("""<!DOCTYPE html><html><head></head><body>
-<script>sessionStorage.setItem('yuno_auth','1');window.location='/home';</script>
-</body></html>""")
+# -- Google OAuth routes -------------------------------------------------------
+
+@app.get("/auth/google")
+async def auth_google(request: Request):
+    redirect_uri = request.url_for("auth_callback")
+    return await oauth.google.authorize_redirect(request, str(redirect_uri))
+
+@app.get("/auth/callback")
+async def auth_callback(request: Request):
+    try:
+        token = await oauth.google.authorize_access_token(request)
+    except Exception:
+        return RedirectResponse("/login?error=Authentication+failed.+Please+try+again.")
+    user_info = token.get("userinfo")
+    if not user_info:
+        return RedirectResponse("/login?error=Could+not+retrieve+account+information.")
+    email = user_info.get("email", "")
+    domain = email.split("@")[-1].lower() if "@" in email else ""
+    if domain != ALLOWED_DOMAIN:
+        return tr(request, "access_denied.html", {"request": request, "email": email})
+    request.session["role"] = "internal"
+    request.session["user_email"] = email
+    request.session["user_name"] = user_info.get("name", email)
+    request.session["user_picture"] = user_info.get("picture", "")
+    return HTMLResponse("<!DOCTYPE html><html><head></head><body>"
+        "<script>sessionStorage.setItem(\"yuno_auth\",\"1\");window.location=\"/home\";</script>"
+        "</body></html>")
 
 @app.get("/logout")
 def logout(request: Request):
