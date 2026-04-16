@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PAPO · Access Denied</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+<div class="login-page">
+  <div class="login-card" style="text-align:center;">
+    <div style="margin-bottom:24px;">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+      </svg>
+    </div>
+    <div class="login-title" style="color:#FCA5A5;margin-bottom:12px;">Access Not Permitted</div>
+    <div class="login-sub" style="margin-bottom:8px;font-size:14px;color:#94A3B8;">
+      The account <strong style="color:#E2E8F0;">{{ email }}</strong> is not authorized to access this portal.
+    </div>
+    <div class="login-sub" style="margin-bottom:28px;color:#64748b;">
+      Only <strong style="color:#A5B4FC;">@y.uno</strong> email accounts are permitted. Please sign in with your Yuno corporate account.
+    </div>
+    <a href="/login" class="login-btn" style="display:inline-block;text-decoration:none;width:auto;padding:12px 32px;">
+      Try Again
+    </a>
+  </div>
+</div>
+</body>
+</html>
