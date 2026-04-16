@@ -6,6 +6,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from authlib.integrations.starlette_client import OAuth
 import plotly.graph_objects as go
 
@@ -20,6 +21,7 @@ from data_layer import (
 BASE = os.path.dirname(os.path.abspath(__file__))
 
 app = FastAPI()
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "yuno-portal-secret-2026"))
 # -- Google OAuth setup --------------------------------------------------------
 
@@ -113,14 +115,15 @@ def login_page(request: Request):
 
 @app.get("/auth/google")
 async def auth_google(request: Request):
-    redirect_uri = str(request.url_for("auth_callback")).replace("http://", "https://")
+    redirect_uri = str(request.url_for("auth_callback"))
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
     try:
         token = await oauth.google.authorize_access_token(request)
-    except Exception:
+    except Exception as e:
+        import traceback; traceback.print_exc()
         return RedirectResponse("/login?error=Authentication+failed.+Please+try+again.")
     user_info = token.get("userinfo")
     if not user_info:
