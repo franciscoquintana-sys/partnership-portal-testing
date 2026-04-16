@@ -113,8 +113,8 @@ def login_page(request: Request):
 
 @app.get("/auth/google")
 async def auth_google(request: Request):
-    redirect_uri = request.url_for("auth_callback")
-    return await oauth.google.authorize_redirect(request, str(redirect_uri))
+    redirect_uri = str(request.url_for("auth_callback")).replace("http://", "https://")
+    return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
