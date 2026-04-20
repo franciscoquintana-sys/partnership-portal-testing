@@ -404,7 +404,7 @@
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
     {% for r in deck_stats.keys() %}
     {% set color = region_colors.get(r, '#64748b') %}
-    <a href="/insights?view=country{% if r != 'Global' %}&region={{ r | urlencode }}{% endif %}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;height:120px;border-radius:12px;background:{{ color }};color:#fff;font-family:var(--font);font-size:18px;font-weight:800;letter-spacing:0.02em;transition:transform 0.12s, box-shadow 0.12s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(15,23,42,0.15)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">{{ r }}</a>
+    <a href="/insights?view=country{% if r != 'Global' %}&region={{ r | urlencode }}{% endif %}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;height:120px;border-radius:12px;background:#fff;border:2px solid {{ color }};color:{{ color }};font-family:var(--font);font-size:18px;font-weight:800;letter-spacing:0.02em;transition:transform 0.12s, box-shadow 0.12s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(15,23,42,0.08)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">{{ r }}</a>
     {% endfor %}
   </div>
   {% endif %}
