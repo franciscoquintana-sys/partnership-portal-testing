@@ -401,10 +401,6 @@
     'North America': '#6366f1',
     'Global':        '#0f172a',
   } %}
-  <div style="margin-bottom:18px">
-    <div style="font-size:18px;font-weight:800;color:#0f172a;margin-bottom:4px">⬇ Download the Market Insight Deck</div>
-    <div style="font-size:13px;color:var(--text3)">Pick a region below to download the full market research and competitive intelligence deck.</div>
-  </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">
     {% for r in deck_stats.keys() %}
     {% set color = region_colors.get(r, '#64748b') %}
