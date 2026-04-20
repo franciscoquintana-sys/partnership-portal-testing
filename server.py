@@ -418,6 +418,7 @@ def benchmarks(request: Request):
     ))
 
 COUNTRY_TO_REGION = {
+    # Anchors with rich data
     "Brazil": "Brazil",
     "Mexico": "LATAM", "Colombia": "LATAM", "Argentina": "LATAM", "Chile": "LATAM", "Peru": "LATAM",
     "UAE": "Middle East", "Saudi Arabia": "Middle East",
@@ -429,6 +430,13 @@ COUNTRY_ISO = {
     "UAE": "ae", "Saudi Arabia": "sa",
     "India": "in", "Singapore": "sg",
 }
+
+# Pull in extended catalogue from COUNTRIES dict (which was extended in data_layer.py)
+for _c, _meta in COUNTRIES.items():
+    if _c not in COUNTRY_TO_REGION and _meta.get("region"):
+        COUNTRY_TO_REGION[_c] = _meta["region"]
+    if _c not in COUNTRY_ISO and _meta.get("iso"):
+        COUNTRY_ISO[_c] = _meta["iso"]
 
 INSIGHTS_HIDDEN_REGIONS = {"Global", "EMEA", "Regional"}
 INSIGHTS_EXTRA_REGION_STATS = {

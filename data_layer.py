@@ -662,6 +662,71 @@ COUNTRIES = {
     "Singapore": {"flag":"🇸🇬","currency":"SGD","methods":["Credit Card","PayNow","FAST","GrabPay","DBS PayLah"],"settlement":"D+1","fx":"Open market. SGD stable.","regulation":"MAS regulates. MPI license required.","top_providers":["Stripe","Adyen","2C2P","Asiapay","PayNow"]},
 }
 
+_DEFAULT_METHODS   = ["Credit Card", "Debit Card"]
+_DEFAULT_SETTLE    = "T+1 to T+3"
+_DEFAULT_FX        = "Subject to local financial authority controls."
+_DEFAULT_REG       = "Regulated by the local financial authority."
+_DEFAULT_PROVIDERS = []
+
+# (country_name, iso2, currency, region) — extended catalogue for Market Analysis
+_EXTRA_COUNTRIES = [
+    # LATAM
+    ("Uruguay","uy","UYU","LATAM"),("Ecuador","ec","USD","LATAM"),("Bolivia","bo","BOB","LATAM"),
+    ("Paraguay","py","PYG","LATAM"),("Venezuela","ve","VES","LATAM"),("Costa Rica","cr","CRC","LATAM"),
+    ("Dominican Republic","do","DOP","LATAM"),("Panama","pa","PAB","LATAM"),("Guatemala","gt","GTQ","LATAM"),
+    ("El Salvador","sv","USD","LATAM"),("Honduras","hn","HNL","LATAM"),("Nicaragua","ni","NIO","LATAM"),
+    ("Cuba","cu","CUP","LATAM"),("Puerto Rico","pr","USD","LATAM"),("Jamaica","jm","JMD","LATAM"),
+    ("Trinidad and Tobago","tt","TTD","LATAM"),
+    # North America
+    ("United States","us","USD","North America"),("Canada","ca","CAD","North America"),
+    # Europe
+    ("United Kingdom","gb","GBP","Europe"),("Germany","de","EUR","Europe"),("France","fr","EUR","Europe"),
+    ("Spain","es","EUR","Europe"),("Italy","it","EUR","Europe"),("Portugal","pt","EUR","Europe"),
+    ("Netherlands","nl","EUR","Europe"),("Belgium","be","EUR","Europe"),("Switzerland","ch","CHF","Europe"),
+    ("Sweden","se","SEK","Europe"),("Norway","no","NOK","Europe"),("Denmark","dk","DKK","Europe"),
+    ("Finland","fi","EUR","Europe"),("Ireland","ie","EUR","Europe"),("Austria","at","EUR","Europe"),
+    ("Poland","pl","PLN","Europe"),("Czech Republic","cz","CZK","Europe"),("Hungary","hu","HUF","Europe"),
+    ("Romania","ro","RON","Europe"),("Greece","gr","EUR","Europe"),("Ukraine","ua","UAH","Europe"),
+    ("Bulgaria","bg","BGN","Europe"),("Croatia","hr","EUR","Europe"),("Slovakia","sk","EUR","Europe"),
+    ("Slovenia","si","EUR","Europe"),("Estonia","ee","EUR","Europe"),("Latvia","lv","EUR","Europe"),
+    ("Lithuania","lt","EUR","Europe"),("Luxembourg","lu","EUR","Europe"),("Iceland","is","ISK","Europe"),
+    ("Cyprus","cy","EUR","Europe"),("Malta","mt","EUR","Europe"),("Serbia","rs","RSD","Europe"),
+    # Middle East
+    ("Israel","il","ILS","Middle East"),("Qatar","qa","QAR","Middle East"),("Kuwait","kw","KWD","Middle East"),
+    ("Bahrain","bh","BHD","Middle East"),("Oman","om","OMR","Middle East"),("Jordan","jo","JOD","Middle East"),
+    ("Lebanon","lb","LBP","Middle East"),("Iraq","iq","IQD","Middle East"),("Iran","ir","IRR","Middle East"),
+    ("Turkey","tr","TRY","Middle East"),
+    # APAC
+    ("China","cn","CNY","APAC"),("Japan","jp","JPY","APAC"),("South Korea","kr","KRW","APAC"),
+    ("Hong Kong","hk","HKD","APAC"),("Taiwan","tw","TWD","APAC"),("Malaysia","my","MYR","APAC"),
+    ("Thailand","th","THB","APAC"),("Indonesia","id","IDR","APAC"),("Philippines","ph","PHP","APAC"),
+    ("Vietnam","vn","VND","APAC"),("Australia","au","AUD","APAC"),("New Zealand","nz","NZD","APAC"),
+    ("Bangladesh","bd","BDT","APAC"),("Pakistan","pk","PKR","APAC"),("Sri Lanka","lk","LKR","APAC"),
+    ("Nepal","np","NPR","APAC"),("Cambodia","kh","KHR","APAC"),("Myanmar","mm","MMK","APAC"),
+    # Africa
+    ("South Africa","za","ZAR","Africa"),("Nigeria","ng","NGN","Africa"),("Kenya","ke","KES","Africa"),
+    ("Egypt","eg","EGP","Africa"),("Morocco","ma","MAD","Africa"),("Ghana","gh","GHS","Africa"),
+    ("Ethiopia","et","ETB","Africa"),("Tanzania","tz","TZS","Africa"),("Uganda","ug","UGX","Africa"),
+    ("Algeria","dz","DZD","Africa"),("Tunisia","tn","TND","Africa"),("Senegal","sn","XOF","Africa"),
+    ("Côte d'Ivoire","ci","XOF","Africa"),("Cameroon","cm","XAF","Africa"),("Angola","ao","AOA","Africa"),
+    ("Mozambique","mz","MZN","Africa"),("Zimbabwe","zw","ZWL","Africa"),("Botswana","bw","BWP","Africa"),
+    ("Mauritius","mu","MUR","Africa"),("Rwanda","rw","RWF","Africa"),("Zambia","zm","ZMW","Africa"),
+]
+
+for _name, _iso, _ccy, _region in _EXTRA_COUNTRIES:
+    if _name not in COUNTRIES:
+        COUNTRIES[_name] = {
+            "flag":          "",
+            "iso":           _iso,
+            "currency":      _ccy,
+            "region":        _region,
+            "methods":       _DEFAULT_METHODS,
+            "settlement":    _DEFAULT_SETTLE,
+            "fx":            _DEFAULT_FX,
+            "regulation":    _DEFAULT_REG,
+            "top_providers": _DEFAULT_PROVIDERS,
+        }
+
 # Preload all sheet caches in background at startup
 def _preload_caches():
     try:

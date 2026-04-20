@@ -53,15 +53,12 @@
     {% if view != 'regions' %}
     <div style="display:flex;flex-direction:column;gap:6px">
       <label style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3)">Country</label>
-      <select name="country" onchange="this.form.submit()" {% if not countries %}disabled{% endif %} style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:200px;background:#fff">
-        {% if countries %}
-          {% for c in countries %}
-          <option value="{{ c }}" {% if c == selected %}selected{% endif %}>{{ c }}</option>
-          {% endfor %}
-        {% else %}
-          <option>No countries in this region</option>
-        {% endif %}
-      </select>
+      <input type="text" name="country" list="country-options" value="{{ selected }}" placeholder="Type to search…" autocomplete="off" {% if not countries %}disabled{% endif %} onchange="this.form.submit()" style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:240px;background:#fff">
+      <datalist id="country-options">
+        {% for c in countries %}
+        <option value="{{ c }}">{{ country_to_region.get(c, '') }}</option>
+        {% endfor %}
+      </datalist>
     </div>
     {% endif %}
     <noscript><button type="submit" class="btn">Apply</button></noscript>
