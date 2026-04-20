@@ -393,32 +393,18 @@
   {% elif view == 'regions' %}
   <!-- View 3: Regions Decks -->
   {% set region_colors = {
-    'LATAM':         {'accent': '#10b981', 'tint': '#ecfdf5', 'icon': '🌎'},
-    'APAC':          {'accent': '#ef4444', 'tint': '#fef2f2', 'icon': '🌏'},
-    'Europe':        {'accent': '#3b82f6', 'tint': '#eff6ff', 'icon': '🇪🇺'},
-    'Middle East':   {'accent': '#a855f7', 'tint': '#faf5ff', 'icon': '🕌'},
-    'Africa':        {'accent': '#f97316', 'tint': '#fff7ed', 'icon': '🌍'},
-    'North America': {'accent': '#6366f1', 'tint': '#eef2ff', 'icon': '🗽'},
-    'Global':        {'accent': '#0f172a', 'tint': '#f1f5f9', 'icon': '🌐'},
+    'LATAM':         '#10b981',
+    'APAC':          '#ef4444',
+    'Europe':        '#3b82f6',
+    'Middle East':   '#a855f7',
+    'Africa':        '#f97316',
+    'North America': '#6366f1',
+    'Global':        '#0f172a',
   } %}
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">
-    {% for r, s in deck_stats.items() %}
-    {% set col = region_colors.get(r, {'accent': '#64748b', 'tint': '#f8fafc', 'icon': '📍'}) %}
-    <a href="/insights?view=country{% if r != 'Global' %}&region={{ r | urlencode }}{% endif %}" class="card" style="text-decoration:none;color:inherit;border:1px solid #e2e8f0;border-top:4px solid {{ col.accent }};padding:16px;transition:transform 0.12s, box-shadow 0.12s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(15,23,42,0.08)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-        <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:32px;height:32px;border-radius:8px;background:{{ col.tint }};display:flex;align-items:center;justify-content:center;font-size:18px">{{ col.icon }}</div>
-          <div style="font-size:14px;font-weight:800;color:#0f172a">{{ r }}</div>
-        </div>
-        <span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.04em;padding:3px 8px;border-radius:6px;background:{{ col.tint }};color:{{ col.accent }}">{{ s.tier1 }} T1</span>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px">
-        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Total</div><div style="font-weight:800;color:#0f172a;font-size:16px">{{ s.total }}</div></div>
-        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Live</div><div style="font-weight:800;color:#10b981;font-size:16px">{{ s.live }}</div></div>
-        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Strategic</div><div style="font-weight:800;color:#0f172a;font-size:16px">{{ s.strategic }}</div></div>
-        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Rev Share</div><div style="font-weight:800;color:#0f172a;font-size:14px">{{ s.revshare }}</div></div>
-      </div>
-    </a>
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
+    {% for r in deck_stats.keys() %}
+    {% set color = region_colors.get(r, '#64748b') %}
+    <a href="/insights?view=country{% if r != 'Global' %}&region={{ r | urlencode }}{% endif %}" style="text-decoration:none;display:flex;align-items:center;justify-content:center;height:120px;border-radius:12px;background:{{ color }};color:#fff;font-family:var(--font);font-size:18px;font-weight:800;letter-spacing:0.02em;transition:transform 0.12s, box-shadow 0.12s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 8px 20px rgba(15,23,42,0.15)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">{{ r }}</a>
     {% endfor %}
   </div>
   {% endif %}
