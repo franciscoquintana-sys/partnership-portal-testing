@@ -725,8 +725,7 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
     else:
         visible_countries = all_countries
     has_market_data = bool(country) and country in COUNTRIES
-    show_heatmap       = (view == "country") and (region == "all") and not country
-    show_country_picker = (view == "country") and (region != "all") and not country
+    show_heatmap = (view == "country") and not country
     data = COUNTRIES.get(country) if has_market_data else None
     region_stats = {
         r: REGION_STATS.get(r, {"total":0,"live":0,"strategic":0,"tier1":0,"revshare":"-"})
@@ -734,22 +733,37 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
     }
     heatmap_json = None
     if show_heatmap:
-        locs, vals = zip(*sorted(ECOMMERCE_DEVELOPMENT_INDEX.items(), key=lambda kv: kv[0]))
+        if region == "all":
+            items = sorted(ECOMMERCE_DEVELOPMENT_INDEX.items(), key=lambda kv: kv[0])
+        else:
+            items = sorted(
+                ((c, v) for c, v in ECOMMERCE_DEVELOPMENT_INDEX.items()
+                 if COUNTRY_TO_REGION.get(c) == region),
+                key=lambda kv: kv[0],
+            )
+        locs = [c for c, _ in items]
+        vals = [v for _, v in items]
         fig = go.Figure(go.Choropleth(
-            locations=list(locs),
-            z=list(vals),
+            locations=locs,
+            z=vals,
             locationmode="country names",
             colorscale=[[0, "#eef2ff"], [0.5, "#818cf8"], [1, "#1e1b4b"]],
             zmin=0, zmax=100,
             marker_line_color="#ffffff", marker_line_width=0.4,
             colorbar=dict(title="Index", thickness=10, len=0.7),
-            hovertemplate="<b>%{location}</b><br>Ecommerce development: %{z}/100<extra></extra>",
+            hovertemplate="<b>%{location}</b><br>Ecommerce development: %{z}/100<br><i>Click for market detail</i><extra></extra>",
         ))
+        geo_kwargs = dict(
+            showframe=False, showcoastlines=False, projection_type="natural earth",
+            bgcolor="rgba(0,0,0,0)",
+        )
+        if region != "all" and locs:
+            geo_kwargs["fitbounds"] = "locations"
+            geo_kwargs["visible"] = True
         fig.update_layout(
             paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
             margin=dict(l=0, r=0, t=0, b=0), height=520,
-            geo=dict(showframe=False, showcoastlines=False, projection_type="natural earth",
-                     bgcolor="rgba(0,0,0,0)"),
+            geo=geo_kwargs,
             font=dict(family="Titillium Web", size=12, color="#0f172a"),
         )
         heatmap_json = fig.to_json()
@@ -800,7 +814,6 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         data=data,
         rich=rich_country,
         show_heatmap=show_heatmap,
-        show_country_picker=show_country_picker,
         heatmap_chart=heatmap_json,
         has_market_data=has_market_data,
         news=LATEST_NEWS.get(country, []) if has_market_data else [],
