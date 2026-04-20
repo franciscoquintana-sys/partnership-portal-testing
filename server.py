@@ -432,12 +432,12 @@ INSIGHTS_EXTRA_REGION_STATS = {
 COUNTRY_DETAIL_RICH = {
     "India": {
         "overview": {
-            "Population": "1.43B",
-            "GDP (nominal)": "$3.7T",
-            "Ecommerce market": "$112B (2026e)",
-            "Online users": "880M",
-            "Mobile commerce share": "~70%",
-            "Smartphone penetration": "76%",
+            "Population":                 "🇮🇳 1.43B (2024)",
+            "GDP (nominal)":              "🇮🇳 $3.7T (2024)",
+            "Ecommerce market":           "🇮🇳 $112B (2026e)",
+            "Online users":               "🇮🇳 880M (2024)",
+            "Smartphone penetration":     "🇮🇳 76% (2024)",
+            "In-Store : Ecommerce ratio": "🇮🇳 92 : 8 (2024)",
         },
         "payment_methods_breakdown": [
             {"name": "UPI",                 "share": "65%", "growth": "+18% YoY", "note": "NPCI-operated; instant rail"},
