@@ -71,24 +71,47 @@
   <!-- View 1: Country Detail -->
   {% if has_market_data and data %}
 
-  {# Hero card #}
-  <div class="card" style="margin-bottom:14px">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:{% if rich %}20px{% else %}20px{% endif %}">
-      <span style="font-size:40px">{{ data.flag }}</span>
-      <div style="flex:1">
-        <div style="font-size:20px;font-weight:800;color:#0f172a">{{ selected }}</div>
-        <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }} · Region: {{ country_to_region.get(selected, '—') }}</div>
+  {# Hero card + Local Payments side panel #}
+  <div style="display:grid;grid-template-columns:{% if rich and rich.local_payments %}1fr 280px{% else %}1fr{% endif %};gap:14px;margin-bottom:14px">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+        <span style="font-size:40px">{{ data.flag }}</span>
+        <div style="flex:1">
+          <div style="font-size:20px;font-weight:800;color:#0f172a">{{ selected }}</div>
+          <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }} · Region: {{ country_to_region.get(selected, '—') }}</div>
+        </div>
       </div>
+
+      {% if rich and rich.overview %}
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding-top:16px;border-top:1px solid #eef2f7">
+        {% for k, v in rich.overview.items() %}
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">{{ k }}</div>
+          <div style="font-size:15px;font-weight:800;color:#0f172a">{{ v }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
     </div>
 
-    {% if rich and rich.overview %}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding-top:16px;border-top:1px solid #eef2f7">
-      {% for k, v in rich.overview.items() %}
-      <div>
-        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">{{ k }}</div>
-        <div style="font-size:15px;font-weight:800;color:#0f172a">{{ v }}</div>
+    {% if rich and rich.local_payments %}
+    <div class="card" style="display:flex;flex-direction:column;gap:14px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a">Local Payments</div>
+
+      <div style="padding:12px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">💳 Local Scheme</div>
+        <div style="font-size:16px;font-weight:800;color:{% if rich.local_payments.scheme and rich.local_payments.scheme != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.scheme or 'N/A' }}</div>
       </div>
-      {% endfor %}
+
+      <div style="padding:12px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">⚡ Local A2A</div>
+        <div style="font-size:16px;font-weight:800;color:{% if rich.local_payments.a2a and rich.local_payments.a2a != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.a2a or 'N/A' }}</div>
+      </div>
+
+      <div style="padding:12px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">📱 Most Relevant APM</div>
+        <div style="font-size:16px;font-weight:800;color:{% if rich.local_payments.apm and rich.local_payments.apm != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.apm or 'N/A' }}</div>
+      </div>
     </div>
     {% endif %}
   </div>

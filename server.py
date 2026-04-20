@@ -439,6 +439,11 @@ COUNTRY_DETAIL_RICH = {
             "Smartphone penetration":     "76% (2024)",
             "In-Store : Ecommerce ratio": "92 : 8 (2024)",
         },
+        "local_payments": {
+            "scheme":  "RuPay",
+            "a2a":     "UPI",
+            "apm":     "Paytm",
+        },
         "payment_methods_breakdown": [
             {"name": "UPI",                 "share": "65%", "growth": "+18% YoY", "note": "NPCI-operated; instant rail"},
             {"name": "Credit & Debit Cards","share": "12%", "growth": "+4% YoY",  "note": "RuPay leads volume; Visa/MC lead value"},
