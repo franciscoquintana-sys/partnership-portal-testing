@@ -419,8 +419,14 @@ def benchmarks(request: Request):
 COUNTRY_TO_REGION = {
     "Brazil": "Brazil",
     "Mexico": "LATAM", "Colombia": "LATAM", "Argentina": "LATAM", "Chile": "LATAM", "Peru": "LATAM",
-    "UAE": "EMEA", "Saudi Arabia": "EMEA",
+    "UAE": "Middle East", "Saudi Arabia": "Middle East",
     "India": "APAC", "Singapore": "APAC",
+}
+
+INSIGHTS_HIDDEN_REGIONS = {"Global", "EMEA", "APAC", "Regional"}
+INSIGHTS_EXTRA_REGION_STATS = {
+    "Europe":      {"total":49,"live":1,"strategic":2,"tier1":13,"revshare":"-"},
+    "Middle East": {"total":32,"live":1,"strategic":1,"tier1":8,"revshare":"-"},
 }
 
 LATEST_NEWS = {
@@ -444,7 +450,8 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
     if view not in ("country", "news", "regions"):
         view = "country"
     all_partners = load_partners_excel()
-    regions = sorted(r for r in set(p["region"] for p in all_partners if p.get("region")) if r != "Global")
+    raw_regions = set(p["region"] for p in all_partners if p.get("region"))
+    regions = sorted((raw_regions - INSIGHTS_HIDDEN_REGIONS) | set(INSIGHTS_EXTRA_REGION_STATS.keys()))
     all_countries = sorted(COUNTRIES.keys())
     has_market_data = True
     if region != "all":
@@ -456,7 +463,10 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
     else:
         visible_countries = all_countries
     data = COUNTRIES.get(country, COUNTRIES["Brazil"]) if has_market_data else None
-    region_stats = {r: REGION_STATS.get(r, {"total":0,"live":0,"strategic":0,"tier1":0,"revshare":"-"}) for r in regions}
+    region_stats = {
+        r: INSIGHTS_EXTRA_REGION_STATS.get(r) or REGION_STATS.get(r, {"total":0,"live":0,"strategic":0,"tier1":0,"revshare":"-"})
+        for r in regions
+    }
     return tr(request, "insights.html", ctx(
         request, "insights",
         countries=visible_countries,
