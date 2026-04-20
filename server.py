@@ -423,7 +423,7 @@ COUNTRY_TO_REGION = {
     "India": "APAC", "Singapore": "APAC",
 }
 
-INSIGHTS_HIDDEN_REGIONS = {"Global", "EMEA", "APAC", "Regional"}
+INSIGHTS_HIDDEN_REGIONS = {"Global", "EMEA", "Regional"}
 INSIGHTS_EXTRA_REGION_STATS = {
     "Europe":      {"total":49,"live":1,"strategic":2,"tier1":13,"revshare":"-"},
     "Middle East": {"total":32,"live":1,"strategic":1,"tier1":8,"revshare":"-"},

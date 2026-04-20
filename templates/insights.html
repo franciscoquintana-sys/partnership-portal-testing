@@ -56,7 +56,7 @@
       <select name="country" onchange="this.form.submit()" {% if not countries %}disabled{% endif %} style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:200px;background:#fff">
         {% if countries %}
           {% for c in countries %}
-          <option value="{{ c }}" {% if c == selected %}selected{% endif %}>{{ c }} · {{ country_to_region.get(c, '—') }}</option>
+          <option value="{{ c }}" {% if c == selected %}selected{% endif %}>{{ c }}</option>
           {% endfor %}
         {% else %}
           <option>No countries in this region</option>
