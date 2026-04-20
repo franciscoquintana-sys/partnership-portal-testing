@@ -459,12 +459,15 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Net Banking",      "share": 7,  "growth": "flat"},
             {"name": "Cash on Delivery", "share": 7,  "growth": "-12% YoY"},
         ],
-        "acquirers": [
-            {"name": "Razorpay",  "type": "PA + Payouts",   "yuno": "Live"},
-            {"name": "PayU",      "type": "PA",             "yuno": "Live"},
-            {"name": "Cashfree",  "type": "PA + Banking",   "yuno": "In negotiation"},
-            {"name": "CCAvenue",  "type": "PG",             "yuno": "Prospect"},
-            {"name": "Juspay",    "type": "Orchestrator",   "yuno": "Prospect"},
+        "partners_landscape": [
+            {"name": "Razorpay",  "type": "PSP + Payouts"},
+            {"name": "PayU",      "type": "PSP"},
+            {"name": "Cashfree",  "type": "PSP + Banking"},
+            {"name": "CCAvenue",  "type": "Gateway"},
+            {"name": "BillDesk",  "type": "Gateway"},
+            {"name": "Juspay",    "type": "Orchestrator"},
+            {"name": "Pine Labs", "type": "Acquirer"},
+            {"name": "Worldline", "type": "Acquirer"},
         ],
         "regulation": {
             "Primary regulator":   "Reserve Bank of India (RBI)",
@@ -549,6 +552,20 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
         r: INSIGHTS_EXTRA_REGION_STATS.get(r) or REGION_STATS.get(r, {"total":0,"live":0,"strategic":0,"tier1":0,"revshare":"-"})
         for r in regions
     }
+    rich_country = COUNTRY_DETAIL_RICH.get(country) if has_market_data else None
+    if rich_country and rich_country.get("partners_landscape"):
+        partners_lookup = {p.get("name", "").lower(): p for p in all_partners}
+        signed_statuses = {"agreement signed", "live partner"}
+        enriched = []
+        for entry in rich_country["partners_landscape"]:
+            p = partners_lookup.get(entry["name"].lower())
+            enriched.append({
+                "name":   entry["name"],
+                "type":   entry["type"],
+                "signed": bool(p and (p.get("status", "") or "").strip().lower() in signed_statuses),
+                "live":   bool(p and (p.get("integration_stage", "") or "").strip().lower() == "live"),
+            })
+        rich_country = {**rich_country, "partners_landscape": enriched}
     return tr(request, "insights.html", ctx(
         request, "insights",
         countries=visible_countries,
@@ -561,7 +578,7 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
         selected_region=region,
         view=view,
         data=data,
-        rich=COUNTRY_DETAIL_RICH.get(country) if has_market_data else None,
+        rich=rich_country,
         has_market_data=has_market_data,
         news=LATEST_NEWS.get(country, []) if has_market_data else [],
     ))
