@@ -690,6 +690,7 @@ _EXTRA_COUNTRIES = [
     ("Slovenia","si","EUR","Europe"),("Estonia","ee","EUR","Europe"),("Latvia","lv","EUR","Europe"),
     ("Lithuania","lt","EUR","Europe"),("Luxembourg","lu","EUR","Europe"),("Iceland","is","ISK","Europe"),
     ("Cyprus","cy","EUR","Europe"),("Malta","mt","EUR","Europe"),("Serbia","rs","RSD","Europe"),
+    ("Russia","ru","RUB","Europe"),
     # Middle East
     ("Israel","il","ILS","Middle East"),("Qatar","qa","QAR","Middle East"),("Kuwait","kw","KWD","Middle East"),
     ("Bahrain","bh","BHD","Middle East"),("Oman","om","OMR","Middle East"),("Jordan","jo","JOD","Middle East"),

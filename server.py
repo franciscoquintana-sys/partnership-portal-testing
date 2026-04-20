@@ -5881,6 +5881,70 @@ COUNTRY_DETAIL_RICH = {
             "Payment methods":      [],
         },
     },
+    "Russia": {
+        "overview": {
+            "Population (2024)":                 "143M",
+            "GDP nominal (2024)":                "$2.1T",
+            "Ecommerce market (2026e)":          "$60B (CAGR 14%)",
+            "Online users (2024)":               "126M",
+            "Internet penetration (2024)":       "88%",
+            "Smartphone penetration (2024)":     "82%",
+            "In-Store : Ecommerce ratio (2024)": "78 : 22",
+        },
+        "local_payments": {
+            "scheme":  "Mir",
+            "a2a":     "SBP (System of Fast Payments)",
+            "apms":    [
+                {"name": "SBP",         "type": "A2A (instant)"},
+                {"name": "SberPay",     "type": "Wallet (Sber)"},
+                {"name": "YooMoney",    "type": "Wallet"},
+                {"name": "Tinkoff Pay", "type": "Wallet"},
+                {"name": "Mir Pay",     "type": "Wallet (NSPK)"},
+            ],
+        },
+        "payment_methods_breakdown": [
+            {"name": "Debit Cards", "share": 35, "growth": "+4% YoY",
+                "schemes": [
+                    {"name": "Mir",              "share": 22.0, "type": "local"},
+                    {"name": "Visa Debit",       "share":  6.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share":  4.0, "type": "international"},
+                    {"name": "UnionPay",         "share":  3.0, "type": "international"},
+                ]},
+            {"name": "A2A", "detail": "SBP", "share": 22, "growth": "+35% YoY"},
+            {"name": "Wallets", "detail": "SberPay, YooMoney, Tinkoff Pay", "share": 15, "growth": "+28% YoY"},
+            {"name": "Credit Cards", "share": 15, "growth": "+5% YoY",
+                "schemes": [
+                    {"name": "Mir",        "share": 7.0, "type": "local"},
+                    {"name": "Visa",       "share": 3.0, "type": "international"},
+                    {"name": "Mastercard", "share": 3.0, "type": "international"},
+                    {"name": "UnionPay",   "share": 2.0, "type": "international"},
+                ]},
+            {"name": "Cash", "share": 10, "growth": "-8% YoY"},
+            {"name": "BNPL", "share": 3, "growth": "+30% YoY"},
+        ],
+        "regulation": [
+            "CBR (Central Bank of Russia) regulates banks, PSPs, and payment systems. NSPK operates Mir and SBP.",
+            "Mir is the national card scheme (launched 2015 after Crimea sanctions); mandatory for government salaries, pensions, and state welfare.",
+            "Post-2022 sanctions: Visa and Mastercard suspended operations in Russia — pre-issued domestic cards still work locally but can't be used abroad. New international issuance runs via UnionPay or Mir-UnionPay co-badge.",
+            "SBP (Sistema Bystrykh Platezhey) launched 2019 — free for consumer P2P up to RUB 100K/month; merchant QR acceptance growing fast.",
+            "VAT at 20%; digital services tax for foreign providers complex post-2022 as many left the market.",
+            "Digital ruble (CBDC) pilots live since 2023; consumer rollout targeted for 2026-27. Crypto regulated via Digital Financial Assets Law (2021).",
+        ],
+        "digital_trends": [
+            "Mir now holds >60% of card issuing in Russia. Every state-linked salary is paid to a Mir card by law.",
+            "SBP usage surged post-2022 — with international cards blocked for cross-border, SBP handles most domestic instant transfers.",
+            "Sber ecosystem (Sber, SberPay, SberMarket, Okko) is Russia's closest super-app analogue; 100M+ users.",
+            "Yandex (Yandex Pay, YooMoney) remains dominant tech ecosystem; Yandex Go covers delivery, taxi, grocery.",
+            "Cross-border commerce heavily reshaped — Aliexpress and Wildberries dominate; payments route through UnionPay, Mir-UnionPay co-badge, or stablecoin P2P.",
+            "Stablecoin (USDT) is commonly used as a sanctions/capital-controls workaround; Binance P2P activity remains very high despite exchange exits.",
+        ],
+        "yuno_coverage": {
+            "Merchants processing": "N/A",
+            "Monthly volume":       "N/A",
+            "Live partners":        [],
+            "Payment methods":      [],
+        },
+    },
     "Serbia": {
         "overview": {
             "Population (2024)":                 "6.6M",
@@ -7362,6 +7426,7 @@ COUNTRY_PARTNERS = {
     "Cyprus":              [{"name":"JCC","type":"Acquirer"},{"name":"Stripe","type":"PSP"},{"name":"Pay24-7","type":"PSP"},{"name":"Bank of Cyprus","type":"Acquirer"},{"name":"Hellenic Bank","type":"Acquirer"}],
     "Malta":               [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"APCO Pay","type":"PSP"},{"name":"Truevo","type":"Acquirer"},{"name":"BOV","type":"Acquirer"}],
     "Serbia":              [{"name":"Banca Intesa","type":"Acquirer"},{"name":"Komercijalna Banka","type":"Acquirer"},{"name":"AllSecure","type":"PSP"},{"name":"Monri","type":"PSP"},{"name":"Stripe","type":"PSP"}],
+    "Russia":              [{"name":"Sberbank","type":"Acquirer"},{"name":"Tinkoff","type":"Acquirer"},{"name":"NSPK","type":"Scheme / processor"},{"name":"YooKassa","type":"Gateway"},{"name":"CloudPayments","type":"PSP"}],
     # ---- Middle East ----
     "UAE":                 [{"name":"Network International","type":"Acquirer"},{"name":"PayTabs","type":"PSP"},{"name":"Telr","type":"PSP"},{"name":"Checkout.com","type":"PSP"},{"name":"Stripe","type":"PSP"}],
     "Saudi Arabia":        [{"name":"HyperPay","type":"PSP"},{"name":"PayTabs","type":"PSP"},{"name":"Moyasar","type":"PSP"},{"name":"Geidea","type":"Acquirer"},{"name":"Network International","type":"Acquirer"}],
