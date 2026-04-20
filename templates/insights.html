@@ -15,33 +15,47 @@
     <div style="display:flex;align-items:flex-start;justify-content:space-between">
       <div>
         <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Market Analysis</div>
-        <div style="font-size:13px;color:#94a3b8">Global payment landscape · {{ countries | length }} markets</div>
+        <div style="font-size:13px;color:#94a3b8">Global payment landscape · {{ all_countries | length }} markets · {{ regions | length }} regions</div>
       </div>
       <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
     </div>
   </div>
 
-<div style="display:grid;grid-template-columns:180px 1fr;gap:20px">
-
-  <!-- Country list -->
-  <div class="card" style="padding:12px">
-    <div class="country-sidebar">
-      {% for c in countries %}
-      <a href="/insights?country={{ c }}" class="country-btn {% if c == selected %}active{% endif %}">
-        {{ data.flag if c == selected else '' }}{{ c }}
-      </a>
-      {% endfor %}
+  <!-- Filters -->
+  <form method="get" action="/insights" class="card" style="display:flex;gap:14px;align-items:flex-end;padding:14px 16px;margin-bottom:18px;flex-wrap:wrap">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <label style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3)">Region</label>
+      <select name="region" onchange="this.form.submit()" style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:170px;background:#fff">
+        <option value="all" {% if selected_region == 'all' %}selected{% endif %}>All regions</option>
+        {% for r in regions %}
+        <option value="{{ r }}" {% if r == selected_region %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+      </select>
     </div>
-  </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <label style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3)">Market</label>
+      <select name="country" onchange="this.form.submit()" style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:200px;background:#fff">
+        {% for c in countries %}
+        <option value="{{ c }}" {% if c == selected %}selected{% endif %}>{{ c }} · {{ country_to_region[c] }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <noscript><button type="submit" class="btn">Apply</button></noscript>
+  </form>
 
-  <!-- Country detail -->
-  <div>
+  <!-- Section 1: Country Detail -->
+  <div style="margin-bottom:22px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#0f172a">Country Detail</div>
+      <div style="flex:1;height:1px;background:#e2e8f0"></div>
+    </div>
+
     <div class="card" style="margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
         <span style="font-size:40px">{{ data.flag }}</span>
         <div>
           <div style="font-size:20px;font-weight:800;color:#0f172a">{{ selected }}</div>
-          <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }}</div>
+          <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }} · Region: {{ country_to_region[selected] }}</div>
         </div>
       </div>
 
@@ -81,6 +95,53 @@
     </div>
   </div>
 
-</div>
+  <!-- Section 2: Last News -->
+  <div style="margin-bottom:22px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#0f172a">Last News</div>
+      <div style="flex:1;height:1px;background:#e2e8f0"></div>
+      <div style="font-size:11px;color:var(--text3)">{{ selected }}</div>
+    </div>
+
+    <div class="card" style="padding:0">
+      {% if news %}
+        {% for n in news %}
+        <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;{% if not loop.last %}border-bottom:1px solid #eef2f7;{% endif %}">
+          <div style="font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;min-width:90px">{{ n.date }}</div>
+          <div style="flex:1;font-size:13px;font-weight:600;color:#0f172a">{{ n.title }}</div>
+          <span class="pill pill-blue">{{ n.src }}</span>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="padding:18px;font-size:13px;color:var(--text3)">No recent news for {{ selected }}.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Section 3: Regions Decks -->
+  <div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#0f172a">Regions Decks</div>
+      <div style="flex:1;height:1px;background:#e2e8f0"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
+      {% for r, s in region_stats.items() %}
+      {% set is_active = (selected_region == r) or (selected_region == 'all' and country_to_region[selected] == r) %}
+      <a href="/insights?region={{ r }}" class="card" style="text-decoration:none;color:inherit;border:1px solid {% if is_active %}#2563eb{% else %}#e2e8f0{% endif %};{% if is_active %}box-shadow:0 0 0 3px rgba(37,99,235,0.12);{% endif %}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+          <div style="font-size:14px;font-weight:800;color:#0f172a">{{ r }}</div>
+          <span class="pill pill-blue">{{ s.tier1 }} T1</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
+          <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Total</div><div style="font-weight:700;color:#0f172a">{{ s.total }}</div></div>
+          <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Live</div><div style="font-weight:700;color:#10b981">{{ s.live }}</div></div>
+          <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Strategic</div><div style="font-weight:700;color:#0f172a">{{ s.strategic }}</div></div>
+          <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Rev Share</div><div style="font-weight:700;color:#0f172a">{{ s.revshare }}</div></div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
 
 {% endblock %}

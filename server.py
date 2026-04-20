@@ -6,7 +6,6 @@ from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
-from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 from authlib.integrations.starlette_client import OAuth
 import plotly.graph_objects as go
 
@@ -21,8 +20,8 @@ from data_layer import (
 BASE = os.path.dirname(os.path.abspath(__file__))
 
 app = FastAPI()
-app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 app.add_middleware(SessionMiddleware, secret_key=os.environ.get("SECRET_KEY", "yuno-portal-secret-2026"))
+
 # -- Google OAuth setup --------------------------------------------------------
 
 oauth = OAuth()
@@ -41,7 +40,7 @@ ALLOWED_DOMAIN = "y.uno"
 app.mount("/static", StaticFiles(directory=os.path.join(BASE, "static")), name="static")
 templates = Jinja2Templates(directory=os.path.join(BASE, "templates"))
 
-# ── Auth helpers ──────────────────────────────────────────────────────────────
+# -- Auth helpers --------------------------------------------------------------
 
 def get_role(request: Request):
     return request.session.get("role")
@@ -85,11 +84,11 @@ def ctx(request: Request, page: str, **kwargs):
 def tr(request: Request, name: str, context: dict):
     return templates.TemplateResponse(request=request, name=name, context=context)
 
-# ── Routes ────────────────────────────────────────────────────────────────────
+# -- Routes --------------------------------------------------------------------
 
 @app.get("/health")
 def health():
-    return {"status": "ok", "version": "2026-04-10-v2", "routes": ["partners_detail"]}
+    return {"status": "ok", "version": "2026-04-16-v3", "routes": ["partners_detail"]}
 
 @app.get("/api/refresh-cache")
 def refresh_cache():
@@ -115,15 +114,14 @@ def login_page(request: Request):
 
 @app.get("/auth/google")
 async def auth_google(request: Request):
-    redirect_uri = str(request.url_for("auth_callback"))
-    return await oauth.google.authorize_redirect(request, redirect_uri)
+    redirect_uri = request.url_for("auth_callback")
+    return await oauth.google.authorize_redirect(request, str(redirect_uri))
 
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
     try:
         token = await oauth.google.authorize_access_token(request)
-    except Exception as e:
-        import traceback; traceback.print_exc()
+    except Exception:
         return RedirectResponse("/login?error=Authentication+failed.+Please+try+again.")
     user_info = token.get("userinfo")
     if not user_info:
@@ -137,15 +135,17 @@ async def auth_callback(request: Request):
     request.session["user_name"] = user_info.get("name", email)
     request.session["user_picture"] = user_info.get("picture", "")
     return HTMLResponse("<!DOCTYPE html><html><head></head><body>"
-        "<script>sessionStorage.setItem(\"yuno_auth\",\"1\");window.location=\"/home\";</script>"
+        "<script>sessionStorage.setItem('yuno_auth','1');window.location='/home';</script>"
         "</body></html>")
+
+# ------------------------------------------------------------------------------
 
 @app.get("/logout")
 def logout(request: Request):
     request.session.clear()
-    return HTMLResponse("""<!DOCTYPE html><html><head></head><body>
-<script>sessionStorage.removeItem('yuno_auth');window.location='/login';</script>
-</body></html>""")
+    return HTMLResponse("<!DOCTYPE html><html><head></head><body>"
+        "<script>sessionStorage.removeItem('yuno_auth');window.location='/login';</script>"
+        "</body></html>")
 
 @app.get("/home", response_class=HTMLResponse)
 def home(request: Request):
@@ -212,7 +212,6 @@ def partner_detail(request: Request, name: str, ref: str = ""):
     partner = next((p for p in all_partners if p["name"].lower() == name.lower()), None)
     if not partner:
         return RedirectResponse("/partners")
-    # Get SOT data — safe defaults if anything is missing
     try:
         sot_df = load_sot_data()
     except Exception:
@@ -288,7 +287,6 @@ def mission(request: Request):
     if role != "internal":
         return RedirectResponse("/home")
     all_partners = load_partners_excel()
-    # Build Kanban columns from Deal Stage (stage_raw) + Integration Stage
     board = {
         "Prospect": [],
         "Initial Negotiation": [],
@@ -418,17 +416,51 @@ def benchmarks(request: Request):
         line_chart=line_fig.to_json(),
     ))
 
+COUNTRY_TO_REGION = {
+    "Brazil": "Brazil",
+    "Mexico": "LATAM", "Colombia": "LATAM", "Argentina": "LATAM", "Chile": "LATAM", "Peru": "LATAM",
+    "UAE": "EMEA", "Saudi Arabia": "EMEA",
+    "India": "APAC", "Singapore": "APAC",
+}
+
+LATEST_NEWS = {
+    "Brazil":       [{"date":"2026-04-15","title":"BACEN expands PIX limits for businesses","src":"Reuters"},{"date":"2026-04-08","title":"Pagar.me launches new acquiring API","src":"Valor"}],
+    "Mexico":       [{"date":"2026-04-12","title":"CoDi reform pushed to Q3 2026","src":"El Economista"},{"date":"2026-03-30","title":"Conekta partners with Banorte","src":"Expansión"}],
+    "Colombia":     [{"date":"2026-04-10","title":"Bre-B instant payments rail goes live","src":"La República"}],
+    "Argentina":    [{"date":"2026-04-05","title":"BCRA eases FX for digital exporters","src":"Ámbito"}],
+    "Chile":        [{"date":"2026-04-02","title":"CMF opens fintech licensing window","src":"Diario Financiero"}],
+    "Peru":         [{"date":"2026-03-28","title":"Yape and Plin reach interoperability","src":"Gestión"}],
+    "UAE":          [{"date":"2026-04-14","title":"CBUAE issues stablecoin framework","src":"The National"}],
+    "Saudi Arabia": [{"date":"2026-04-11","title":"SAMA approves three new fintech licenses","src":"Arab News"}],
+    "India":        [{"date":"2026-04-16","title":"RBI raises UPI per-merchant limits","src":"Mint"}],
+    "Singapore":    [{"date":"2026-04-09","title":"MAS finalises e-money ringfencing rules","src":"Straits Times"}],
+}
+
 @app.get("/insights", response_class=HTMLResponse)
-def insights(request: Request, country: str = "Brazil"):
+def insights(request: Request, country: str = "Brazil", region: str = "all"):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
+    all_countries = list(COUNTRIES.keys())
+    if region != "all":
+        visible_countries = [c for c in all_countries if COUNTRY_TO_REGION.get(c) == region]
+        if country not in visible_countries and visible_countries:
+            country = visible_countries[0]
+    else:
+        visible_countries = all_countries
     data = COUNTRIES.get(country, COUNTRIES["Brazil"])
+    regions = sorted(set(COUNTRY_TO_REGION.values()))
     return tr(request, "insights.html", ctx(
         request, "insights",
-        countries=list(COUNTRIES.keys()),
+        countries=visible_countries,
+        all_countries=all_countries,
+        regions=regions,
+        region_stats=REGION_STATS,
+        country_to_region=COUNTRY_TO_REGION,
         selected=country,
+        selected_region=region,
         data=data,
+        news=LATEST_NEWS.get(country, []),
     ))
 
 @app.get("/merch_sim", response_class=HTMLResponse)
@@ -448,7 +480,7 @@ def merch_sim(request: Request):
         verticals=list(_VERTICAL_COLS.keys()),
     ))
 
-# ── AI Search ────────────────────────────────────────────────────────────────
+# -- AI Search ----------------------------------------------------------------
 
 @app.post("/api/ai_search")
 async def ai_search(request: Request):
@@ -494,7 +526,7 @@ Return ONLY a JSON object (no markdown, no explanation outside JSON):
   "manager": [],     // from managers list (lowercase)
   "explanation": ""  // 1 sentence: what you found/applied
 }}
-If a filter has no match, return empty array. Match loosely (e.g. "china" → "China")."""
+If a filter has no match, return empty array. Match loosely (e.g. "china" -> "China")."""
 
     try:
         msg = client.messages.create(
@@ -504,20 +536,18 @@ If a filter has no match, return empty array. Match loosely (e.g. "china" → "C
             messages=[{"role": "user", "content": query}]
         )
         raw = msg.content[0].text.strip()
-        # strip markdown code fences if present
         if raw.startswith("```"):
             raw = raw.split("```")[1]
             if raw.startswith("json"):
                 raw = raw[4:]
         filters = _json.loads(raw.strip())
-        # lowercase manager values for matching
         if filters.get("manager"):
             filters["manager"] = [m.lower() for m in filters["manager"]]
         return JSONResponse({"filters": filters, "explanation": filters.pop("explanation", "")})
     except Exception as e:
         return JSONResponse({"error": str(e)}, status_code=500)
 
-# ── API endpoints ─────────────────────────────────────────────────────────────
+# -- API endpoints -------------------------------------------------------------
 
 @app.get("/api/partners")
 def api_partners(request: Request, q: str = "", cat: str = "all", status: str = "all", region: str = "all"):
