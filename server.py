@@ -1843,7 +1843,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "80 : 20",
         },
         "local_payments": {
-            "scheme":  "Discover",
+            "scheme":  "N/A",
             "a2a":     "ACH / FedNow / RTP",
             "apms":    [
                 {"name": "Apple Pay",  "type": "Wallet"},
