@@ -97,6 +97,7 @@
           <div style="font-size:20px;font-weight:800;color:#0f172a">{{ selected }}</div>
           <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }} · Region: {{ country_to_region.get(selected, '—') }}</div>
         </div>
+        <a href="#" onclick="alert('Market Insight Deck for {{ selected }} — coming soon'); return false;" style="font-family:var(--font);font-size:12px;font-weight:700;color:#fff;background:#5B5FDE;border:1px solid #5B5FDE;border-radius:8px;padding:9px 14px;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:background 0.15s" onmouseover="this.style.background='#4548c4'" onmouseout="this.style.background='#5B5FDE'">⬇ Download Market Insight Deck</a>
       </div>
 
       {% if rich and rich.overview %}
