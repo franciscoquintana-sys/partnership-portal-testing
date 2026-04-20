@@ -423,6 +423,12 @@ COUNTRY_TO_REGION = {
     "India": "APAC", "Singapore": "APAC",
 }
 
+COUNTRY_ISO = {
+    "Brazil": "br", "Mexico": "mx", "Colombia": "co", "Argentina": "ar", "Chile": "cl", "Peru": "pe",
+    "UAE": "ae", "Saudi Arabia": "sa",
+    "India": "in", "Singapore": "sg",
+}
+
 INSIGHTS_HIDDEN_REGIONS = {"Global", "EMEA", "Regional"}
 INSIGHTS_EXTRA_REGION_STATS = {
     "Europe":      {"total":49,"live":1,"strategic":2,"tier1":13,"revshare":"-"},
@@ -550,6 +556,7 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
         regions=regions,
         region_stats=region_stats,
         country_to_region=COUNTRY_TO_REGION,
+        country_iso=COUNTRY_ISO,
         selected=country,
         selected_region=region,
         view=view,

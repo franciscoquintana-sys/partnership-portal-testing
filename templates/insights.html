@@ -75,7 +75,11 @@
   <div style="display:grid;grid-template-columns:{% if rich and rich.local_payments %}1fr 280px{% else %}1fr{% endif %};gap:14px;margin-bottom:14px">
     <div class="card">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+        {% if country_iso.get(selected) %}
+        <img src="https://flagcdn.com/w80/{{ country_iso[selected] }}.png" alt="{{ selected }} flag" width="48" height="36" style="border-radius:4px;object-fit:cover;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+        {% else %}
         <span style="font-size:40px">{{ data.flag }}</span>
+        {% endif %}
         <div style="flex:1">
           <div style="font-size:20px;font-weight:800;color:#0f172a">{{ selected }}</div>
           <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }} · Region: {{ country_to_region.get(selected, '—') }}</div>
