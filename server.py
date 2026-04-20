@@ -1843,7 +1843,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "80 : 20",
         },
         "local_payments": {
-            "scheme":  "N/A",
+            "scheme":  "Discover",
             "a2a":     "ACH / FedNow / RTP",
             "apms":    [
                 {"name": "Apple Pay",  "type": "Wallet"},
@@ -2095,7 +2095,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "83 : 17",
         },
         "local_payments": {
-            "scheme":  "N/A",
+            "scheme":  "Isracard",
             "a2a":     "Zahav / Bit",
             "apms":    [
                 {"name": "Bit",        "type": "Wallet / P2P"},
@@ -2882,7 +2882,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "85 : 15",
         },
         "local_payments": {
-            "scheme":  "N/A",
+            "scheme":  "JCB",
             "a2a":     "Zengin (banking rail)",
             "apms":    [
                 {"name": "PayPay",     "type": "Wallet (QR)"},
@@ -6075,7 +6075,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "88 : 12",
         },
         "local_payments": {
-            "scheme":  "N/A",
+            "scheme":  "Verve",
             "a2a":     "NIBSS Instant Payment (NIP)",
             "apms":    [
                 {"name": "OPay",        "type": "Wallet"},
