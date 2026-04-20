@@ -56,7 +56,7 @@
       <input type="text" name="country" list="country-options" value="{{ selected }}" placeholder="Type to search…" autocomplete="off" {% if not countries %}disabled{% endif %} onchange="this.form.submit()" style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:240px;background:#fff">
       <datalist id="country-options">
         {% for c in countries %}
-        <option value="{{ c }}">{{ country_to_region.get(c, '') }}</option>
+        <option value="{{ c }}"></option>
         {% endfor %}
       </datalist>
     </div>
