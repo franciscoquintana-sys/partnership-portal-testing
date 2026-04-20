@@ -2823,7 +2823,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "72 : 28",
         },
         "local_payments": {
-            "scheme":  "N/A",
+            "scheme":  "UnionPay",
             "a2a":     "IBPS / CIPS",
             "apms":    [
                 {"name": "Alipay",       "type": "Wallet (Ant Group)"},
