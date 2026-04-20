@@ -1,5 +1,6 @@
-import os, json
-from urllib.parse import unquote
+import os, json, re
+from datetime import date, timedelta
+from urllib.parse import unquote, quote_plus
 import pandas as pd
 from fastapi import FastAPI, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
@@ -695,6 +696,23 @@ def default_country_detail():
     }
 
 
+_MONTH_ABBR = {m: i for i, m in enumerate(
+    ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"], start=1)}
+
+def _parse_news_date(s: str):
+    """Parse digest-style dates: 'Mar 2026', 'Apr 1, 2026', '2025'."""
+    s = (s or "").strip()
+    m = re.match(r"^([A-Za-z]{3})\s+(\d{1,2}),\s+(\d{4})$", s)
+    if m:
+        return date(int(m.group(3)), _MONTH_ABBR[m.group(1).title()], int(m.group(2)))
+    m = re.match(r"^([A-Za-z]{3})\s+(\d{4})$", s)
+    if m:
+        return date(int(m.group(2)), _MONTH_ABBR[m.group(1).title()], 1)
+    m = re.match(r"^(\d{4})$", s)
+    if m:
+        return date(int(m.group(1)), 1, 1)
+    return None
+
 REGION_NEWS = {
     "Africa": [
         {"category":"PARTNERSHIP","date":"Jan 2026","title":"Flutterwave acquires Nigerian open banking startup Mono","summary":"All-stock deal valued at $25–40M. Africa's largest fintech consolidating open banking capabilities — push toward full-stack payment infrastructure dominance."},
@@ -838,18 +856,30 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
             })
         new_yuno_coverage = {**(rich_country.get("yuno_coverage") or {}), "Live partners": live_partners_enriched}
         rich_country = {**rich_country, "partners_landscape": enriched, "yuno_coverage": new_yuno_coverage}
-    # Build news sections: only regions currently visible in the filter.
-    if country and has_market_data:
-        target_news_regions = [COUNTRY_TO_REGION.get(country)]
-    elif region != "all":
+    # Build news sections: only regions currently visible in the filter,
+    # limited to items from the last ~3 months, with external search URLs.
+    if region != "all":
         target_news_regions = [region]
     else:
         target_news_regions = regions
-    news_sections = [
-        (r, REGION_NEWS.get(r, []))
-        for r in target_news_regions
-        if r and r in REGION_NEWS
-    ]
+    today = date.today()
+    cutoff_year, cutoff_month = today.year, today.month - 3
+    while cutoff_month <= 0:
+        cutoff_month += 12
+        cutoff_year -= 1
+    news_sections = []
+    for r in target_news_regions:
+        items = []
+        for it in REGION_NEWS.get(r, []):
+            d = _parse_news_date(it["date"])
+            if d is None:
+                continue
+            ym = (d.year, d.month)
+            if ym < (cutoff_year, cutoff_month) or ym > (today.year, today.month):
+                continue
+            items.append({**it, "url": f"https://news.google.com/search?q={quote_plus(it['title'])}"})
+        if items:
+            news_sections.append((r, items))
     return tr(request, "insights.html", ctx(
         request, "insights",
         countries=visible_countries,

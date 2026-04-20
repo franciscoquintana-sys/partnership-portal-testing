@@ -25,7 +25,7 @@
   <div style="display:flex;gap:4px;border-bottom:1px solid #e2e8f0;margin-bottom:18px">
     {% set tabs = [('country','Country Detail'),('news','Last News'),('regions','Regions Decks')] %}
     {% for v, label in tabs %}
-      <a href="/insights?view={{ v }}{% if selected_region != 'all' %}&region={{ selected_region }}{% endif %}{% if v != 'regions' and has_market_data %}&country={{ selected }}{% endif %}" style="
+      <a href="/insights?view={{ v }}{% if selected_region != 'all' %}&region={{ selected_region }}{% endif %}{% if v not in ['regions', 'news'] and has_market_data %}&country={{ selected }}{% endif %}" style="
         padding:10px 16px;
         font-size:13px;
         font-weight:700;
@@ -50,7 +50,7 @@
         {% endfor %}
       </select>
     </div>
-    {% if view != 'regions' %}
+    {% if view not in ['regions', 'news'] %}
     <div style="display:flex;flex-direction:column;gap:6px">
       <label style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3)">Country</label>
       <input type="text" name="country" list="country-options" value="{{ selected }}" placeholder="Type to search…" autocomplete="off" {% if not countries %}disabled{% endif %} onchange="this.form.submit()" style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:240px;background:#fff">
@@ -368,16 +368,16 @@
       {% if items %}
         {% for n in items %}
         {% set style = cat_styles.get(n.category, ('#e2e8f0', '#334155')) %}
-        <div style="padding:14px 18px;display:flex;gap:16px;align-items:flex-start;{% if not loop.last %}border-bottom:1px solid #eef2f7;{% endif %}">
+        <a href="{{ n.url }}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;display:flex;gap:16px;align-items:flex-start;padding:14px 18px;{% if not loop.last %}border-bottom:1px solid #eef2f7;{% endif %};transition:background 0.15s" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
           <div style="min-width:124px;flex-shrink:0">
             <span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.05em;padding:3px 8px;border-radius:6px;background:{{ style[0] }};color:{{ style[1] }}">{{ n.category }}</span>
             <div style="font-size:11px;color:var(--text3);margin-top:6px;font-variant-numeric:tabular-nums">{{ n.date }}</div>
           </div>
           <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px;line-height:1.4">{{ n.title }}</div>
+            <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px;line-height:1.4">{{ n.title }} <span style="font-size:11px;color:#94a3b8;font-weight:600">↗</span></div>
             <div style="font-size:12px;color:var(--text);line-height:1.5">{{ n.summary }}</div>
           </div>
-        </div>
+        </a>
         {% endfor %}
       {% else %}
         <div style="padding:16px 18px;font-size:12px;color:var(--text3)">No items for {{ r }} this cycle.</div>
