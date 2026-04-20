@@ -78,6 +78,10 @@
   </div>
   {% elif has_market_data and data %}
 
+  <div style="margin-bottom:12px">
+    <a href="/insights?view=country{% if selected_region != 'all' %}&region={{ selected_region | urlencode }}{% endif %}" style="display:inline-flex;align-items:center;gap:6px;font-family:var(--font);font-size:12px;font-weight:700;color:#2563eb;text-decoration:none;padding:6px 12px;border:1px solid #dbeafe;border-radius:8px;background:#f0f7ff;transition:background 0.15s" onmouseover="this.style.background='#e0efff'" onmouseout="this.style.background='#f0f7ff'">← Back to {% if selected_region == 'all' %}world{% else %}{{ selected_region }}{% endif %} map</a>
+  </div>
+
   {# Hero card + Local Payments side panel #}
   <div style="display:grid;grid-template-columns:{% if rich and rich.local_payments %}1fr 280px{% else %}1fr{% endif %};gap:14px;margin-bottom:14px">
     <div class="card">
