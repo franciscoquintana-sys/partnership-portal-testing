@@ -498,10 +498,10 @@ COUNTRY_DETAIL_RICH = {
             "Required controls":  "RBI Additional Factor of Authentication (AFA) mandatory; FRM tools required",
         },
         "yuno_coverage": {
-            "Merchants processing": "7",
-            "Monthly volume":       "$2.4M",
-            "Live partners":        ["Razorpay", "PayU"],
-            "Payment methods":      ["UPI", "Credit Cards", "Debit Cards", "Net Banking", "Wallets"],
+            "Merchants processing": "N/A",
+            "Monthly volume":       "N/A",
+            "Live partners":        [],
+            "Payment methods":      [],
         },
         "strategic_notes": [
             "UPI dominance (65%+) makes acquirer choice less critical than rail integration depth.",

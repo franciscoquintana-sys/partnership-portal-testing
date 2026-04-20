@@ -209,6 +209,7 @@
       </div>
       <div style="margin-bottom:14px">
         <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px">Live Partners</div>
+        {% if rich.yuno_coverage['Live partners'] %}
         <div style="display:flex;flex-wrap:wrap;gap:6px">
           {% for p in rich.yuno_coverage['Live partners'] %}
             {% if p.in_portfolio %}
@@ -218,14 +219,21 @@
             {% endif %}
           {% endfor %}
         </div>
+        {% else %}
+        <div style="font-size:14px;font-weight:800;color:var(--text3)">N/A</div>
+        {% endif %}
       </div>
       <div>
         <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px">Payment Methods Available</div>
+        {% if rich.yuno_coverage['Payment methods'] %}
         <div style="display:flex;flex-wrap:wrap;gap:6px">
           {% for m in rich.yuno_coverage['Payment methods'] %}
           <span class="pill pill-blue">{{ m }}</span>
           {% endfor %}
         </div>
+        {% else %}
+        <div style="font-size:14px;font-weight:800;color:var(--text3)">N/A</div>
+        {% endif %}
       </div>
     </div>
     {% endif %}
