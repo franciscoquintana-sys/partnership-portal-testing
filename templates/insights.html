@@ -138,16 +138,38 @@
       </thead>
       <tbody>
         {% for m in rich.payment_methods_breakdown | sort(attribute='share', reverse=True) %}
-        <tr style="border-top:1px solid #eef2f7">
-          <td style="padding:10px 18px;font-weight:700;color:#0f172a;white-space:nowrap">{{ m.name }}</td>
+        {% set has_schemes = m.schemes is defined and m.schemes %}
+        {% set is_muted = m.muted is defined and m.muted %}
+        <tr style="border-top:1px solid #eef2f7;{% if has_schemes %}cursor:pointer{% endif %}" {% if has_schemes %}onclick="(function(r){r.style.display = (r.style.display === 'table-row') ? 'none' : 'table-row'})(document.getElementById('scheme-detail-{{ loop.index }}'))"{% endif %}>
+          <td style="padding:10px 18px;white-space:nowrap;{% if is_muted %}font-size:12px;font-weight:600;color:#94a3b8{% else %}font-weight:700;color:#0f172a{% endif %}">
+            {{ m.name }}{% if has_schemes %} <span style="color:#5B5FDE;font-size:11px;margin-left:4px">▾</span>{% endif %}
+          </td>
           <td style="padding:10px 18px">
-            <div style="position:relative;height:22px;width:75%;max-width:480px;margin:0 auto;background:rgba(91,95,222,0.08);border-radius:11px;overflow:hidden;display:flex;align-items:center;justify-content:center">
-              <div style="width:{{ m.share }}%;height:100%;background:rgba(91,95,222,0.35);border-radius:11px"></div>
-              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums">{{ m.share }}%</div>
+            <div style="position:relative;height:22px;width:75%;max-width:480px;margin:0 auto;background:{% if is_muted %}rgba(148,163,184,0.10){% else %}rgba(91,95,222,0.08){% endif %};border-radius:11px;overflow:hidden;display:flex;align-items:center;justify-content:center">
+              <div style="width:{{ m.share }}%;height:100%;background:{% if is_muted %}rgba(148,163,184,0.30){% else %}rgba(91,95,222,0.35){% endif %};border-radius:11px"></div>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:{% if is_muted %}#64748b{% else %}#0f172a{% endif %};font-variant-numeric:tabular-nums">{{ m.share }}%</div>
             </div>
           </td>
           <td style="padding:10px 18px;text-align:right;font-variant-numeric:tabular-nums;color:{% if m.growth.startswith('+') %}#10b981{% elif m.growth.startswith('-') %}#dc2626{% else %}var(--text3){% endif %}">{{ m.growth }}</td>
         </tr>
+        {% if has_schemes %}
+        <tr id="scheme-detail-{{ loop.index }}" style="display:none;background:#f8fafc">
+          <td colspan="3" style="padding:14px 28px 18px">
+            <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:10px">Scheme breakdown — {{ m.name }}</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+              {% for s in m.schemes | sort(attribute='share_of_category', reverse=True) %}
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:8px">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:700;color:#0f172a">{{ s.name }}</div>
+                  <div style="font-size:10px;font-weight:600;color:{% if s.type == 'local' %}#10b981{% else %}#5B5FDE{% endif %};text-transform:uppercase;letter-spacing:0.05em">{% if s.type == 'local' %}Local scheme{% else %}International{% endif %}</div>
+                </div>
+                <div style="font-size:14px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums">{{ s.share_of_category }}%</div>
+              </div>
+              {% endfor %}
+            </div>
+          </td>
+        </tr>
+        {% endif %}
         {% endfor %}
       </tbody>
     </table>
