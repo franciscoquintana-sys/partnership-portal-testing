@@ -441,26 +441,32 @@ def insights(request: Request, country: str = "Brazil", region: str = "all"):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
+    all_partners = load_partners_excel()
+    regions = sorted(set(p["region"] for p in all_partners if p.get("region")))
     all_countries = list(COUNTRIES.keys())
+    has_market_data = True
     if region != "all":
         visible_countries = [c for c in all_countries if COUNTRY_TO_REGION.get(c) == region]
-        if country not in visible_countries and visible_countries:
+        if not visible_countries:
+            has_market_data = False
+        elif country not in visible_countries:
             country = visible_countries[0]
     else:
         visible_countries = all_countries
-    data = COUNTRIES.get(country, COUNTRIES["Brazil"])
-    regions = sorted(set(COUNTRY_TO_REGION.values()))
+    data = COUNTRIES.get(country, COUNTRIES["Brazil"]) if has_market_data else None
+    region_stats = {r: REGION_STATS.get(r, {"total":0,"live":0,"strategic":0,"tier1":0,"revshare":"-"}) for r in regions}
     return tr(request, "insights.html", ctx(
         request, "insights",
         countries=visible_countries,
         all_countries=all_countries,
         regions=regions,
-        region_stats=REGION_STATS,
+        region_stats=region_stats,
         country_to_region=COUNTRY_TO_REGION,
         selected=country,
         selected_region=region,
         data=data,
-        news=LATEST_NEWS.get(country, []),
+        has_market_data=has_market_data,
+        news=LATEST_NEWS.get(country, []) if has_market_data else [],
     ))
 
 @app.get("/merch_sim", response_class=HTMLResponse)

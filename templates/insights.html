@@ -34,10 +34,14 @@
     </div>
     <div style="display:flex;flex-direction:column;gap:6px">
       <label style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3)">Market</label>
-      <select name="country" onchange="this.form.submit()" style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:200px;background:#fff">
-        {% for c in countries %}
-        <option value="{{ c }}" {% if c == selected %}selected{% endif %}>{{ c }} · {{ country_to_region[c] }}</option>
-        {% endfor %}
+      <select name="country" onchange="this.form.submit()" {% if not countries %}disabled{% endif %} style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:200px;background:#fff">
+        {% if countries %}
+          {% for c in countries %}
+          <option value="{{ c }}" {% if c == selected %}selected{% endif %}>{{ c }} · {{ country_to_region.get(c, '—') }}</option>
+          {% endfor %}
+        {% else %}
+          <option>No markets in this region</option>
+        {% endif %}
       </select>
     </div>
     <noscript><button type="submit" class="btn">Apply</button></noscript>
@@ -50,12 +54,13 @@
       <div style="flex:1;height:1px;background:#e2e8f0"></div>
     </div>
 
+    {% if has_market_data and data %}
     <div class="card" style="margin-bottom:14px">
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
         <span style="font-size:40px">{{ data.flag }}</span>
         <div>
           <div style="font-size:20px;font-weight:800;color:#0f172a">{{ selected }}</div>
-          <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }} · Region: {{ country_to_region[selected] }}</div>
+          <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }} · Region: {{ country_to_region.get(selected, '—') }}</div>
         </div>
       </div>
 
@@ -93,6 +98,9 @@
         <div style="font-size:13px;color:var(--text)">{{ data.regulation }}</div>
       </div>
     </div>
+    {% else %}
+    <div class="card" style="padding:24px;font-size:13px;color:var(--text3)">No detailed market data available for region <strong>{{ selected_region }}</strong>. See the Regions Decks below for portfolio-level stats.</div>
+    {% endif %}
   </div>
 
   <!-- Section 2: Last News -->
@@ -127,7 +135,7 @@
 
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
       {% for r, s in region_stats.items() %}
-      {% set is_active = (selected_region == r) or (selected_region == 'all' and country_to_region[selected] == r) %}
+      {% set is_active = (selected_region == r) or (selected_region == 'all' and has_market_data and country_to_region.get(selected) == r) %}
       <a href="/insights?region={{ r }}" class="card" style="text-decoration:none;color:inherit;border:1px solid {% if is_active %}#2563eb{% else %}#e2e8f0{% endif %};{% if is_active %}box-shadow:0 0 0 3px rgba(37,99,235,0.12);{% endif %}">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div style="font-size:14px;font-weight:800;color:#0f172a">{{ r }}</div>
