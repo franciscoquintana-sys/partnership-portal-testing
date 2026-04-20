@@ -432,12 +432,12 @@ INSIGHTS_EXTRA_REGION_STATS = {
 COUNTRY_DETAIL_RICH = {
     "India": {
         "overview": {
-            "Population":                 "1.43B (2024)",
-            "GDP (nominal)":              "$3.7T (2024)",
-            "Ecommerce market":           "$112B (2026e)",
-            "Online users":               "880M (2024)",
-            "Smartphone penetration":     "76% (2024)",
-            "In-Store : Ecommerce ratio": "92 : 8 (2024)",
+            "Population (2024)":                 "1.43B",
+            "GDP nominal (2024)":                "$3.7T",
+            "Ecommerce market (2026e)":          "$112B",
+            "Online users (2024)":               "880M",
+            "Smartphone penetration (2024)":     "76%",
+            "In-Store : Ecommerce ratio (2024)": "92 : 8",
         },
         "local_payments": {
             "scheme":  "RuPay",
