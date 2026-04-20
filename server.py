@@ -419,7 +419,7 @@ def benchmarks(request: Request):
 
 COUNTRY_TO_REGION = {
     # Anchors with rich data
-    "Brazil": "Brazil",
+    "Brazil": "LATAM",
     "Mexico": "LATAM", "Colombia": "LATAM", "Argentina": "LATAM", "Chile": "LATAM", "Peru": "LATAM",
     "UAE": "Middle East", "Saudi Arabia": "Middle East",
     "India": "APAC", "Singapore": "APAC",
@@ -438,10 +438,34 @@ for _c, _meta in COUNTRIES.items():
     if _c not in COUNTRY_ISO and _meta.get("iso"):
         COUNTRY_ISO[_c] = _meta["iso"]
 
-INSIGHTS_HIDDEN_REGIONS = {"Global", "EMEA", "Regional"}
-INSIGHTS_EXTRA_REGION_STATS = {
-    "Europe":      {"total":49,"live":1,"strategic":2,"tier1":13,"revshare":"-"},
-    "Middle East": {"total":32,"live":1,"strategic":1,"tier1":8,"revshare":"-"},
+INSIGHTS_HIDDEN_REGIONS = {"Global", "EMEA", "Regional", "Brazil"}
+
+# Ecommerce development index (0-100), composite of online penetration,
+# digital-payments adoption, logistics maturity and consumer trust.
+# Used for the world heatmap when "All regions" is selected.
+ECOMMERCE_DEVELOPMENT_INDEX = {
+    "South Korea": 95, "United Kingdom": 94, "China": 93, "United States": 92,
+    "Singapore": 92, "Netherlands": 91, "Denmark": 91, "Switzerland": 90,
+    "Germany": 89, "Hong Kong": 89, "Sweden": 89, "Norway": 88, "Japan": 88,
+    "Finland": 87, "Australia": 87, "Ireland": 86, "Canada": 86, "France": 85,
+    "Austria": 85, "Belgium": 84, "New Zealand": 84, "Estonia": 83, "Luxembourg": 83,
+    "Taiwan": 82, "Spain": 80, "Israel": 80, "Italy": 78, "UAE": 78, "Portugal": 76,
+    "Czech Republic": 74, "Slovenia": 73, "Poland": 72, "Malaysia": 70,
+    "Saudi Arabia": 69, "Lithuania": 69, "Latvia": 68, "Hungary": 67, "Slovakia": 67,
+    "Qatar": 66, "Greece": 65, "Cyprus": 65, "Malta": 64, "Bahrain": 64, "Chile": 63,
+    "Croatia": 62, "Thailand": 60, "Bulgaria": 59, "Romania": 58, "Kuwait": 58,
+    "Turkey": 57, "Russia": 56, "Oman": 55, "Brazil": 55, "Argentina": 53,
+    "Mexico": 52, "Uruguay": 52, "Colombia": 50, "Serbia": 50, "Costa Rica": 49,
+    "Vietnam": 49, "South Africa": 48, "India": 47, "Panama": 47, "Indonesia": 46,
+    "Philippines": 45, "Peru": 44, "Ukraine": 43, "Morocco": 40, "Jordan": 40,
+    "Egypt": 38, "Sri Lanka": 37, "Kenya": 36, "Nigeria": 34, "Ghana": 33,
+    "Bangladesh": 33, "Pakistan": 32, "Algeria": 31, "Tunisia": 31, "Bolivia": 30,
+    "Paraguay": 30, "Ecuador": 32, "Dominican Republic": 35, "Guatemala": 30,
+    "Honduras": 26, "Nicaragua": 25, "Venezuela": 24, "Iraq": 22, "Cambodia": 28,
+    "Myanmar": 22, "Nepal": 26, "Tanzania": 24, "Uganda": 22, "Ethiopia": 20,
+    "Senegal": 25, "Côte d'Ivoire": 26, "Cameroon": 22, "Angola": 22,
+    "Mozambique": 20, "Zimbabwe": 19, "Mauritius": 45, "Rwanda": 28, "Zambia": 22,
+    "Botswana": 32, "Lebanon": 38, "Iceland": 85,
 }
 
 COUNTRY_DETAIL_RICH = {
@@ -684,7 +708,7 @@ LATEST_NEWS = {
 }
 
 @app.get("/insights", response_class=HTMLResponse)
-def insights(request: Request, country: str = "Brazil", region: str = "all", view: str = "country"):
+def insights(request: Request, country: str = "", region: str = "all", view: str = "country"):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
@@ -692,22 +716,43 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
         view = "country"
     all_partners = load_partners_excel()
     raw_regions = set(p["region"] for p in all_partners if p.get("region"))
-    regions = sorted((raw_regions - INSIGHTS_HIDDEN_REGIONS) | set(INSIGHTS_EXTRA_REGION_STATS.keys()))
+    regions = sorted(raw_regions - INSIGHTS_HIDDEN_REGIONS)
     all_countries = sorted(COUNTRIES.keys())
-    has_market_data = True
     if region != "all":
         visible_countries = sorted(c for c in all_countries if COUNTRY_TO_REGION.get(c) == region)
-        if not visible_countries:
-            has_market_data = False
-        elif country not in visible_countries:
-            country = visible_countries[0]
+        if country and country not in visible_countries:
+            country = ""
     else:
         visible_countries = all_countries
-    data = COUNTRIES.get(country, COUNTRIES["Brazil"]) if has_market_data else None
+    has_market_data = bool(country) and country in COUNTRIES
+    show_heatmap       = (view == "country") and (region == "all") and not country
+    show_country_picker = (view == "country") and (region != "all") and not country
+    data = COUNTRIES.get(country) if has_market_data else None
     region_stats = {
-        r: INSIGHTS_EXTRA_REGION_STATS.get(r) or REGION_STATS.get(r, {"total":0,"live":0,"strategic":0,"tier1":0,"revshare":"-"})
+        r: REGION_STATS.get(r, {"total":0,"live":0,"strategic":0,"tier1":0,"revshare":"-"})
         for r in regions
     }
+    heatmap_json = None
+    if show_heatmap:
+        locs, vals = zip(*sorted(ECOMMERCE_DEVELOPMENT_INDEX.items(), key=lambda kv: kv[0]))
+        fig = go.Figure(go.Choropleth(
+            locations=list(locs),
+            z=list(vals),
+            locationmode="country names",
+            colorscale=[[0, "#eef2ff"], [0.5, "#818cf8"], [1, "#1e1b4b"]],
+            zmin=0, zmax=100,
+            marker_line_color="#ffffff", marker_line_width=0.4,
+            colorbar=dict(title="Index", thickness=10, len=0.7),
+            hovertemplate="<b>%{location}</b><br>Ecommerce development: %{z}/100<extra></extra>",
+        ))
+        fig.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            margin=dict(l=0, r=0, t=0, b=0), height=520,
+            geo=dict(showframe=False, showcoastlines=False, projection_type="natural earth",
+                     bgcolor="rgba(0,0,0,0)"),
+            font=dict(family="Titillium Web", size=12, color="#0f172a"),
+        )
+        heatmap_json = fig.to_json()
     if has_market_data:
         override = COUNTRY_DETAIL_RICH.get(country, {})
         rich_country = {**default_country_detail(), **override}
@@ -754,6 +799,9 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
         view=view,
         data=data,
         rich=rich_country,
+        show_heatmap=show_heatmap,
+        show_country_picker=show_country_picker,
+        heatmap_chart=heatmap_json,
         has_market_data=has_market_data,
         news=LATEST_NEWS.get(country, []) if has_market_data else [],
     ))

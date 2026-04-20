@@ -580,7 +580,7 @@ PIPELINE_DEALS = {
     "Prospect":    [
         {"name":"Rapyd","region":"EMEA","type":"PSP","owner":"Alex","days":8},
         {"name":"Flutterwave","region":"Africa","type":"APM","owner":"Sofia","days":15},
-        {"name":"Pagsmile","region":"Brazil","type":"APM","owner":"Johanderson","days":22},
+        {"name":"Pagsmile","region":"LATAM","type":"APM","owner":"Johanderson","days":22},
     ],
     "Qualified":   [
         {"name":"Airwallex","region":"APAC","type":"PSP","owner":"Lily","days":12},
@@ -594,7 +594,7 @@ PIPELINE_DEALS = {
         {"name":"Truevo","region":"EMEA","type":"Acquirer","owner":"Alessandra","days":9},
     ],
     "Negotiation": [
-        {"name":"Ebanx","region":"Brazil","type":"APM","owner":"Johanderson","days":37},
+        {"name":"Ebanx","region":"LATAM","type":"APM","owner":"Johanderson","days":37},
         {"name":"PayU","region":"LATAM","type":"PSP","owner":"Talita","days":52},
     ],
     "Won":         [
@@ -618,15 +618,15 @@ REVSHARE_MONTHLY = [
 MERCHANTS = [
     {"name":"Rappi","country":"Colombia","region":"LATAM","tpv":8.2,"aov":34,"txn_mo":241000,"ar":91.2,"providers":["dLocal","Kushki"],"color":"#f97316"},
     {"name":"MercadoLibre","country":"Argentina","region":"LATAM","tpv":14.7,"aov":62,"txn_mo":237000,"ar":88.6,"providers":["Mercado Pago","Stripe"],"color":"#f59e0b"},
-    {"name":"Uber","country":"Brazil","region":"Brazil","tpv":11.3,"aov":18,"txn_mo":628000,"ar":94.1,"providers":["PagBank","Cielo","Stripe"],"color":"#0f172a"},
+    {"name":"Uber","country":"Brazil","region":"LATAM","tpv":11.3,"aov":18,"txn_mo":628000,"ar":94.1,"providers":["PagBank","Cielo","Stripe"],"color":"#0f172a"},
     {"name":"Netflix","country":"Mexico","region":"LATAM","tpv":3.1,"aov":12,"txn_mo":258000,"ar":96.3,"providers":["Stripe","Conekta"],"color":"#dc2626"},
-    {"name":"Spotify","country":"Brazil","region":"Brazil","tpv":2.4,"aov":8,"txn_mo":300000,"ar":95.7,"providers":["PagBank","Pagar.me"],"color":"#22c55e"},
+    {"name":"Spotify","country":"Brazil","region":"LATAM","tpv":2.4,"aov":8,"txn_mo":300000,"ar":95.7,"providers":["PagBank","Pagar.me"],"color":"#22c55e"},
     {"name":"Despegar","country":"Argentina","region":"LATAM","tpv":6.8,"aov":412,"txn_mo":16500,"ar":82.4,"providers":["Bamboo","dLocal"],"color":"#3b82f6"},
     {"name":"Falabella","country":"Chile","region":"LATAM","tpv":5.2,"aov":88,"txn_mo":59100,"ar":89.9,"providers":["Kushki","dLocal"],"color":"#6d28d9"},
-    {"name":"iFood","country":"Brazil","region":"Brazil","tpv":9.6,"aov":22,"txn_mo":436000,"ar":93.2,"providers":["PagBank","Pagar.me","PicPay"],"color":"#ef4444"},
+    {"name":"iFood","country":"Brazil","region":"LATAM","tpv":9.6,"aov":22,"txn_mo":436000,"ar":93.2,"providers":["PagBank","Pagar.me","PicPay"],"color":"#ef4444"},
     {"name":"Cinépolis","country":"Mexico","region":"LATAM","tpv":1.8,"aov":28,"txn_mo":64300,"ar":87.1,"providers":["Conekta","Stripe"],"color":"#8b5cf6"},
     {"name":"PedidosYa","country":"Uruguay","region":"LATAM","tpv":2.7,"aov":19,"txn_mo":142000,"ar":90.5,"providers":["dLocal","Unlimint"],"color":"#ec4899"},
-    {"name":"Claro","country":"Brazil","region":"Brazil","tpv":4.1,"aov":45,"txn_mo":91100,"ar":85.6,"providers":["Cielo","PagBank"],"color":"#dc2626"},
+    {"name":"Claro","country":"Brazil","region":"LATAM","tpv":4.1,"aov":45,"txn_mo":91100,"ar":85.6,"providers":["Cielo","PagBank"],"color":"#dc2626"},
     {"name":"Linio","country":"Colombia","region":"LATAM","tpv":1.3,"aov":71,"txn_mo":18300,"ar":84.2,"providers":["dLocal","PayU"],"color":"#0ea5e9"},
 ]
 
@@ -640,8 +640,7 @@ CONTACTS = [
 ]
 
 REGION_STATS = {
-    "Brazil":        {"total":73,"live":32,"strategic":9,"tier1":4,"revshare":"$32.9K/mo"},
-    "LATAM":         {"total":105,"live":15,"strategic":2,"tier1":31,"revshare":"$47.6K/mo"},
+    "LATAM":         {"total":178,"live":47,"strategic":11,"tier1":35,"revshare":"$80.5K/mo"},
     "EMEA":          {"total":81,"live":2,"strategic":3,"tier1":21,"revshare":"-"},
     "Global":        {"total":107,"live":18,"strategic":13,"tier1":12,"revshare":"$28.3K/mo"},
     "APAC":          {"total":53,"live":6,"strategic":4,"tier1":10,"revshare":"$32.9K/mo"},

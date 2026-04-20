@@ -66,7 +66,27 @@
 
   {% if view == 'country' %}
   <!-- View 1: Country Detail -->
-  {% if has_market_data and data %}
+  {% if show_heatmap %}
+  <div class="card" style="padding:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-size:14px;font-weight:800;color:#0f172a">🌍 World Ecommerce Development</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">Composite index (0–100) — online penetration, digital payments, logistics, trust. Pick a country above for detail.</div>
+      </div>
+    </div>
+    <div id="ecom-heatmap" style="width:100%"></div>
+  </div>
+  {% elif show_country_picker %}
+  <div class="card" style="padding:32px;text-align:center">
+    <div style="font-size:14px;font-weight:800;color:#0f172a;margin-bottom:6px">Choose a country in <strong>{{ selected_region }}</strong></div>
+    <div style="font-size:13px;color:var(--text3);margin-bottom:18px">Start typing in the Country field above, or pick one below.</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center">
+      {% for c in countries %}
+      <a href="/insights?view=country&region={{ selected_region }}&country={{ c | urlencode }}" class="pill pill-blue" style="text-decoration:none">{{ c }}</a>
+      {% endfor %}
+    </div>
+  </div>
+  {% elif has_market_data and data %}
 
   {# Hero card + Local Payments side panel #}
   <div style="display:grid;grid-template-columns:{% if rich and rich.local_payments %}1fr 280px{% else %}1fr{% endif %};gap:14px;margin-bottom:14px">
@@ -372,4 +392,12 @@
   </div>
   {% endif %}
 
+{% endblock %}
+{% block scripts %}
+{% if show_heatmap and heatmap_chart %}
+<script>
+const heatData = {{ heatmap_chart | safe }};
+Plotly.newPlot('ecom-heatmap', heatData.data, heatData.layout, {responsive: true, displayModeBar: false});
+</script>
+{% endif %}
 {% endblock %}
