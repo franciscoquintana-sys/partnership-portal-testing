@@ -437,16 +437,18 @@ LATEST_NEWS = {
 }
 
 @app.get("/insights", response_class=HTMLResponse)
-def insights(request: Request, country: str = "Brazil", region: str = "all"):
+def insights(request: Request, country: str = "Brazil", region: str = "all", view: str = "country"):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
+    if view not in ("country", "news", "regions"):
+        view = "country"
     all_partners = load_partners_excel()
-    regions = sorted(set(p["region"] for p in all_partners if p.get("region")))
-    all_countries = list(COUNTRIES.keys())
+    regions = sorted(r for r in set(p["region"] for p in all_partners if p.get("region")) if r != "Global")
+    all_countries = sorted(COUNTRIES.keys())
     has_market_data = True
     if region != "all":
-        visible_countries = [c for c in all_countries if COUNTRY_TO_REGION.get(c) == region]
+        visible_countries = sorted(c for c in all_countries if COUNTRY_TO_REGION.get(c) == region)
         if not visible_countries:
             has_market_data = False
         elif country not in visible_countries:
@@ -464,6 +466,7 @@ def insights(request: Request, country: str = "Brazil", region: str = "all"):
         country_to_region=COUNTRY_TO_REGION,
         selected=country,
         selected_region=region,
+        view=view,
         data=data,
         has_market_data=has_market_data,
         news=LATEST_NEWS.get(country, []) if has_market_data else [],
