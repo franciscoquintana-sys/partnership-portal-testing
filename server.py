@@ -438,7 +438,7 @@ for _c, _meta in COUNTRIES.items():
     if _c not in COUNTRY_ISO and _meta.get("iso"):
         COUNTRY_ISO[_c] = _meta["iso"]
 
-INSIGHTS_HIDDEN_REGIONS = {"Global", "EMEA", "Regional", "Brazil"}
+INSIGHTS_HIDDEN_REGIONS = {"global", "emea", "regional", "brazil", "brasil"}
 INSIGHTS_EXTRA_REGIONS  = {"Europe", "Middle East"}
 
 # Ecommerce development index (0-100), composite of online penetration,
@@ -717,7 +717,10 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         view = "country"
     all_partners = load_partners_excel()
     raw_regions = set(p["region"] for p in all_partners if p.get("region"))
-    regions = sorted((raw_regions | INSIGHTS_EXTRA_REGIONS) - INSIGHTS_HIDDEN_REGIONS)
+    regions = sorted(
+        r for r in (raw_regions | INSIGHTS_EXTRA_REGIONS)
+        if r and r.strip().lower() not in INSIGHTS_HIDDEN_REGIONS
+    )
     all_countries = sorted(COUNTRIES.keys())
     if region != "all":
         visible_countries = sorted(c for c in all_countries if COUNTRY_TO_REGION.get(c) == region)
