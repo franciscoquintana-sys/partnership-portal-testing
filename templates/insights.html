@@ -348,20 +348,45 @@
   {% endif %}
 
   {% elif view == 'news' %}
-  <!-- View 2: Last News -->
-  <div class="card" style="padding:0">
-    {% if news %}
-      {% for n in news %}
-      <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;{% if not loop.last %}border-bottom:1px solid #eef2f7;{% endif %}">
-        <div style="font-size:11px;color:var(--text3);font-variant-numeric:tabular-nums;min-width:90px">{{ n.date }}</div>
-        <div style="flex:1;font-size:13px;font-weight:600;color:#0f172a">{{ n.title }}</div>
-        <span class="pill pill-blue">{{ n.src }}</span>
+  <!-- View 2: Industry Digest -->
+  {% set cat_styles = {
+    'PARTNERSHIP': ('#ede9fe', '#5b21b6'),
+    'MARKET':      ('#dcfce7', '#166534'),
+    'REGULATION':  ('#fef3c7', '#92400e'),
+    'PRODUCT':     ('#ccfbf1', '#115e59'),
+    'ENFORCEMENT': ('#fee2e2', '#991b1b'),
+    'FUNDING':     ('#f3e8ff', '#6b21a8'),
+    'SCHEME':      ('#e0e7ff', '#3730a3'),
+  } %}
+  {% if news_sections %}
+    {% for r, items in news_sections %}
+    <div class="card" style="padding:0;margin-bottom:14px">
+      <div style="padding:12px 18px;border-bottom:1px solid #eef2f7;background:#f8fafc;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#0f172a">{{ r }}</div>
+        <div style="font-size:11px;color:var(--text3)">{{ items | length }} item{% if items | length != 1 %}s{% endif %}</div>
       </div>
-      {% endfor %}
-    {% else %}
-      <div style="padding:18px;font-size:13px;color:var(--text3)">{% if has_market_data %}No recent news for {{ selected }}.{% else %}No news available for region <strong>{{ selected_region }}</strong>.{% endif %}</div>
-    {% endif %}
-  </div>
+      {% if items %}
+        {% for n in items %}
+        {% set style = cat_styles.get(n.category, ('#e2e8f0', '#334155')) %}
+        <div style="padding:14px 18px;display:flex;gap:16px;align-items:flex-start;{% if not loop.last %}border-bottom:1px solid #eef2f7;{% endif %}">
+          <div style="min-width:124px;flex-shrink:0">
+            <span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.05em;padding:3px 8px;border-radius:6px;background:{{ style[0] }};color:{{ style[1] }}">{{ n.category }}</span>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px;font-variant-numeric:tabular-nums">{{ n.date }}</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px;line-height:1.4">{{ n.title }}</div>
+            <div style="font-size:12px;color:var(--text);line-height:1.5">{{ n.summary }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div style="padding:16px 18px;font-size:12px;color:var(--text3)">No items for {{ r }} this cycle.</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="card" style="padding:18px;font-size:13px;color:var(--text3)">No news to display for this filter.</div>
+  {% endif %}
 
   {% elif view == 'regions' %}
   <!-- View 3: Regions Decks -->
