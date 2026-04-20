@@ -434,7 +434,7 @@ COUNTRY_DETAIL_RICH = {
         "overview": {
             "Population (2024)":                 "1.43B",
             "GDP nominal (2024)":                "$3.7T",
-            "Ecommerce market (2026e)":          "$112B",
+            "Ecommerce market (2026e)":          "$112B (CAGR 18%)",
             "Online users (2024)":               "880M",
             "Smartphone penetration (2024)":     "76%",
             "In-Store : Ecommerce ratio (2024)": "92 : 8",
