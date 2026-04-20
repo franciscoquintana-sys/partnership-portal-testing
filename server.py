@@ -203,7 +203,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     ))
 
 @app.get("/partners/{name:path}", response_class=HTMLResponse)
-def partner_detail(request: Request, name: str, ref: str = ""):
+def partner_detail(request: Request, name: str, ref: str = "", country: str = ""):
     name = unquote(name)
     role = require_auth(request)
     if not role:
@@ -267,6 +267,7 @@ def partner_detail(request: Request, name: str, ref: str = ""):
         processing_label=cov.get("processing_label", "N/A"),
         characteristics=cov.get("characteristics", []),
         back_ref=ref,
+        back_country=country,
     ))
 
 @app.get("/pipeline", response_class=HTMLResponse)
@@ -557,10 +558,12 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
         for entry in rich_country["partners_landscape"]:
             p = partners_lookup.get(entry["name"].lower())
             enriched.append({
-                "name":   entry["name"],
-                "type":   entry["type"],
-                "signed": bool(p and (p.get("status", "") or "").strip().lower() in signed_statuses),
-                "live":   bool(p and (p.get("integration_stage", "") or "").strip().lower() == "live"),
+                "name":         entry["name"],
+                "portfolio_name": p["name"] if p else None,
+                "type":         entry["type"],
+                "in_portfolio": p is not None,
+                "signed":       bool(p and (p.get("status", "") or "").strip().lower() in signed_statuses),
+                "live":         bool(p and (p.get("integration_stage", "") or "").strip().lower() == "live"),
             })
         rich_country = {**rich_country, "partners_landscape": enriched}
     return tr(request, "insights.html", ctx(

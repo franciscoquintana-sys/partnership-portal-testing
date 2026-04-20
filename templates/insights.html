@@ -173,7 +173,13 @@
         <tbody>
           {% for a in rich.partners_landscape %}
           <tr style="border-top:1px solid #eef2f7">
-            <td style="padding:10px 18px;font-weight:700;color:#0f172a">{{ a.name }}</td>
+            <td style="padding:10px 18px;font-weight:700;color:#0f172a">
+              {% if a.in_portfolio %}
+              <a href="/partners/{{ a.portfolio_name | urlencode }}?ref=insights&country={{ selected | urlencode }}" style="color:#2563eb;text-decoration:none;border-bottom:1px dashed rgba(37,99,235,0.4)" onmouseover="this.style.borderBottomStyle='solid'" onmouseout="this.style.borderBottomStyle='dashed'">{{ a.name }}</a>
+              {% else %}
+              {{ a.name }}
+              {% endif %}
+            </td>
             <td style="padding:10px 18px;color:var(--text3);font-size:12px">{{ a.type }}</td>
             <td style="padding:10px 18px;text-align:center">
               {% if a.signed %}<span style="color:#10b981;font-weight:800;font-size:16px" title="Signed">✓</span>{% else %}<span style="color:#cbd5e1;font-weight:800" title="Not signed">—</span>{% endif %}
