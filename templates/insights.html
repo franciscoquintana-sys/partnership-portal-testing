@@ -39,6 +39,7 @@
   </div>
 
   <!-- Filters (per view) -->
+  {% if view != 'regions' %}
   <form method="get" action="/insights" class="card" style="display:flex;gap:14px;align-items:flex-end;padding:14px 16px;margin-bottom:18px;flex-wrap:wrap">
     <input type="hidden" name="view" value="{{ view }}">
     <div style="display:flex;flex-direction:column;gap:6px">
@@ -63,6 +64,7 @@
     {% endif %}
     <noscript><button type="submit" class="btn">Apply</button></noscript>
   </form>
+  {% endif %}
 
   {% if view == 'country' %}
   <!-- View 1: Country Detail -->
@@ -390,23 +392,33 @@
 
   {% elif view == 'regions' %}
   <!-- View 3: Regions Decks -->
-  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px">
-    {% for r, s in region_stats.items() %}
-    {% if selected_region == 'all' or selected_region == r %}
-    {% set is_active = (selected_region == r) %}
-    <a href="/insights?view=regions&region={{ r }}" class="card" style="text-decoration:none;color:inherit;border:1px solid {% if is_active %}#2563eb{% else %}#e2e8f0{% endif %};{% if is_active %}box-shadow:0 0 0 3px rgba(37,99,235,0.12);{% endif %}">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-        <div style="font-size:14px;font-weight:800;color:#0f172a">{{ r }}</div>
-        <span class="pill pill-blue">{{ s.tier1 }} T1</span>
+  {% set region_colors = {
+    'LATAM':         {'accent': '#10b981', 'tint': '#ecfdf5', 'icon': '🌎'},
+    'APAC':          {'accent': '#ef4444', 'tint': '#fef2f2', 'icon': '🌏'},
+    'Europe':        {'accent': '#3b82f6', 'tint': '#eff6ff', 'icon': '🇪🇺'},
+    'Middle East':   {'accent': '#a855f7', 'tint': '#faf5ff', 'icon': '🕌'},
+    'Africa':        {'accent': '#f97316', 'tint': '#fff7ed', 'icon': '🌍'},
+    'North America': {'accent': '#6366f1', 'tint': '#eef2ff', 'icon': '🗽'},
+    'Global':        {'accent': '#0f172a', 'tint': '#f1f5f9', 'icon': '🌐'},
+  } %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">
+    {% for r, s in deck_stats.items() %}
+    {% set col = region_colors.get(r, {'accent': '#64748b', 'tint': '#f8fafc', 'icon': '📍'}) %}
+    <a href="/insights?view=country{% if r != 'Global' %}&region={{ r | urlencode }}{% endif %}" class="card" style="text-decoration:none;color:inherit;border:1px solid #e2e8f0;border-top:4px solid {{ col.accent }};padding:16px;transition:transform 0.12s, box-shadow 0.12s" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 18px rgba(15,23,42,0.08)'" onmouseout="this.style.transform='none';this.style.boxShadow='none'">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:32px;height:32px;border-radius:8px;background:{{ col.tint }};display:flex;align-items:center;justify-content:center;font-size:18px">{{ col.icon }}</div>
+          <div style="font-size:14px;font-weight:800;color:#0f172a">{{ r }}</div>
+        </div>
+        <span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.04em;padding:3px 8px;border-radius:6px;background:{{ col.tint }};color:{{ col.accent }}">{{ s.tier1 }} T1</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:12px">
-        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Total</div><div style="font-weight:700;color:#0f172a">{{ s.total }}</div></div>
-        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Live</div><div style="font-weight:700;color:#10b981">{{ s.live }}</div></div>
-        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Strategic</div><div style="font-weight:700;color:#0f172a">{{ s.strategic }}</div></div>
-        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Rev Share</div><div style="font-weight:700;color:#0f172a">{{ s.revshare }}</div></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px">
+        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Total</div><div style="font-weight:800;color:#0f172a;font-size:16px">{{ s.total }}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Live</div><div style="font-weight:800;color:#10b981;font-size:16px">{{ s.live }}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Strategic</div><div style="font-weight:800;color:#0f172a;font-size:16px">{{ s.strategic }}</div></div>
+        <div><div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:0.05em">Rev Share</div><div style="font-weight:800;color:#0f172a;font-size:14px">{{ s.revshare }}</div></div>
       </div>
     </a>
-    {% endif %}
     {% endfor %}
   </div>
   {% endif %}
