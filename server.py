@@ -475,37 +475,20 @@ COUNTRY_DETAIL_RICH = {
             "Taxes: 18% GST on payment fees, plus a 1% withholding on certain digital transactions.",
             "Recurring charges above ₹15,000 require the customer to authenticate again every time.",
         ],
-        "fx_capital": {
-            "Regime":              "Managed float — RBI intervenes",
-            "Repatriation":        "Permitted with FIRC documentation; subject to ODI/FDI rules",
-            "Settlement currency": "INR domestic; USD via authorized dealers",
-            "Tax":                 "TDS 1% on certain digital transactions (Sec 194-O); GST 18% on MDR",
-        },
-        "settlement": [
-            {"method": "UPI",          "timing": "Real-time (T+0)"},
-            {"method": "Cards",        "timing": "T+1 to T+2"},
-            {"method": "NetBanking",   "timing": "T+1"},
-            {"method": "Wallets",      "timing": "T+1"},
-            {"method": "International","timing": "T+3 to T+5 via SWIFT"},
+        "digital_trends": [
+            "Mobile-first market — over 70% of ecommerce purchases happen on smartphones, mostly via apps.",
+            "UPI rules online payments — accounts for ~65% of transactions and still growing 18% per year.",
+            "Quick commerce is exploding — apps like Blinkit, Zepto and Instamart deliver in 10–30 min and are growing 50%+ YoY.",
+            "ONDC (Open Network for Digital Commerce) is a government-backed open protocol that lets small sellers reach buyers without depending on Amazon or Flipkart.",
+            "Tier 2 and Tier 3 cities now drive most of the new buyer growth, often shopping in regional languages.",
+            "Conversational commerce on WhatsApp is scaling fast — Meta + JioMart let users browse and pay inside chat.",
         ],
-        "risk": {
-            "Avg approval rate":  "82%",
-            "Chargeback rate":    "0.4%",
-            "Common fraud":       "OTP phishing, UPI mandate fraud, KYC impersonation",
-            "Required controls":  "RBI Additional Factor of Authentication (AFA) mandatory; FRM tools required",
-        },
         "yuno_coverage": {
             "Merchants processing": "N/A",
             "Monthly volume":       "N/A",
             "Live partners":        [],
             "Payment methods":      [],
         },
-        "strategic_notes": [
-            "UPI dominance (65%+) makes acquirer choice less critical than rail integration depth.",
-            "PA-CB license is the unlock for international merchants billing INR.",
-            "Tokenization compliance is a hard gate — partners without it cannot store card-on-file.",
-            "Tier-1 cities are card-friendly; Tier-2/3 require UPI + COD coverage.",
-        ],
     },
 }
 
