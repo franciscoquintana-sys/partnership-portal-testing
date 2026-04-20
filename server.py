@@ -446,12 +446,12 @@ COUNTRY_DETAIL_RICH = {
             "apm":     "Paytm",
         },
         "payment_methods_breakdown": [
-            {"name": "UPI",                 "share": "65%", "growth": "+18% YoY", "note": "NPCI-operated; instant rail"},
-            {"name": "Credit & Debit Cards","share": "12%", "growth": "+4% YoY",  "note": "RuPay leads volume; Visa/MC lead value"},
-            {"name": "Wallets",             "share": "9%",  "growth": "-2% YoY",  "note": "Paytm, PhonePe, MobiKwik"},
-            {"name": "NetBanking",          "share": "7%",  "growth": "flat",     "note": "Bank-direct, declining vs UPI"},
-            {"name": "BNPL",                "share": "4%",  "growth": "+22% YoY", "note": "ZestMoney, LazyPay, Simpl"},
-            {"name": "Cash on Delivery",    "share": "3%",  "growth": "-12% YoY", "note": "Tier-2/3 cities only"},
+            {"name": "A2A (UPI)",        "share": "65%", "growth": "+18% YoY"},
+            {"name": "Credit Cards",     "share": "8%",  "growth": "+5% YoY"},
+            {"name": "Debit Cards",      "share": "4%",  "growth": "flat"},
+            {"name": "Wallets",          "share": "9%",  "growth": "-2% YoY"},
+            {"name": "Net Banking",      "share": "7%",  "growth": "flat"},
+            {"name": "Cash on Delivery", "share": "7%",  "growth": "-12% YoY"},
         ],
         "acquirers": [
             {"name": "Razorpay",  "type": "PA + Payouts",   "yuno": "Live"},
