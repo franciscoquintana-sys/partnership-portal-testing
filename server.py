@@ -498,10 +498,10 @@ COUNTRY_DETAIL_RICH = {
             "Required controls":  "RBI Additional Factor of Authentication (AFA) mandatory; FRM tools required",
         },
         "yuno_coverage": {
-            "Live partners":      ["Razorpay", "PayU"],
-            "In negotiation":     ["Cashfree", "Juspay"],
             "Merchants processing": "7",
-            "Monthly volume":     "$2.4M",
+            "Monthly volume":       "$2.4M",
+            "Live partners":        ["Razorpay", "PayU"],
+            "Payment methods":      ["UPI", "Credit Cards", "Debit Cards", "Net Banking", "Wallets"],
         },
         "strategic_notes": [
             "UPI dominance (65%+) makes acquirer choice less critical than rail integration depth.",
@@ -565,7 +565,17 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
                 "signed":       bool(p and (p.get("status", "") or "").strip().lower() in signed_statuses),
                 "live":         bool(p and (p.get("integration_stage", "") or "").strip().lower() == "live"),
             })
-        rich_country = {**rich_country, "partners_landscape": enriched}
+        live_partners_raw = (rich_country.get("yuno_coverage") or {}).get("Live partners", [])
+        live_partners_enriched = []
+        for name in live_partners_raw:
+            p = partners_lookup.get(name.lower())
+            live_partners_enriched.append({
+                "name":           name,
+                "portfolio_name": p["name"] if p else None,
+                "in_portfolio":   p is not None,
+            })
+        new_yuno_coverage = {**(rich_country.get("yuno_coverage") or {}), "Live partners": live_partners_enriched}
+        rich_country = {**rich_country, "partners_landscape": enriched, "yuno_coverage": new_yuno_coverage}
     return tr(request, "insights.html", ctx(
         request, "insights",
         countries=visible_countries,
