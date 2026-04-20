@@ -515,6 +515,45 @@ COUNTRY_DETAIL_RICH = {
     },
 }
 
+def default_country_detail():
+    """Generic rich-detail template used when a country has no curated entry yet."""
+    return {
+        "overview": {
+            "Population (2024)":                 "N/A",
+            "GDP nominal (2024)":                "N/A",
+            "Ecommerce market (2026e)":          "N/A",
+            "Online users (2024)":               "N/A",
+            "Internet penetration (2024)":       "N/A",
+            "Smartphone penetration (2024)":     "N/A",
+            "In-Store : Ecommerce ratio (2024)": "N/A",
+        },
+        "local_payments": {
+            "scheme": "N/A",
+            "a2a":    "N/A",
+            "apms":   [],
+        },
+        "payment_methods_breakdown": [
+            {"name": "Credit Cards",                "share": 50, "growth": "N/A"},
+            {"name": "Debit Cards / Prepaid Cards", "share": 25, "growth": "N/A"},
+            {"name": "A2A",                         "share": 15, "growth": "N/A"},
+            {"name": "Cash on Delivery",            "share": 10, "growth": "N/A"},
+        ],
+        "partners_landscape": [],
+        "yuno_coverage": {
+            "Merchants processing": "N/A",
+            "Monthly volume":       "N/A",
+            "Live partners":        [],
+            "Payment methods":      [],
+        },
+        "digital_trends": [
+            "Digital trends for this market are not yet available — data coming soon.",
+        ],
+        "regulation": [
+            "Regulation overview for this market is not yet available — data coming soon.",
+        ],
+    }
+
+
 LATEST_NEWS = {
     "Brazil":       [{"date":"2026-04-15","title":"BACEN expands PIX limits for businesses","src":"Reuters"},{"date":"2026-04-08","title":"Pagar.me launches new acquiring API","src":"Valor"}],
     "Mexico":       [{"date":"2026-04-12","title":"CoDi reform pushed to Q3 2026","src":"El Economista"},{"date":"2026-03-30","title":"Conekta partners with Banorte","src":"Expansión"}],
@@ -553,7 +592,10 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
         r: INSIGHTS_EXTRA_REGION_STATS.get(r) or REGION_STATS.get(r, {"total":0,"live":0,"strategic":0,"tier1":0,"revshare":"-"})
         for r in regions
     }
-    rich_country = COUNTRY_DETAIL_RICH.get(country) if has_market_data else None
+    if has_market_data:
+        rich_country = COUNTRY_DETAIL_RICH.get(country) or default_country_detail()
+    else:
+        rich_country = None
     if rich_country and rich_country.get("partners_landscape"):
         partners_lookup = {p.get("name", "").lower(): p for p in all_partners}
         signed_statuses = {"agreement signed", "live partner"}
