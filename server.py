@@ -463,11 +463,8 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Razorpay",  "type": "PSP + Payouts"},
             {"name": "PayU",      "type": "PSP"},
             {"name": "Cashfree",  "type": "PSP + Banking"},
-            {"name": "CCAvenue",  "type": "Gateway"},
-            {"name": "BillDesk",  "type": "Gateway"},
             {"name": "Juspay",    "type": "Orchestrator"},
-            {"name": "Pine Labs", "type": "Acquirer"},
-            {"name": "Worldline", "type": "Acquirer"},
+            {"name": "BillDesk",  "type": "Gateway"},
         ],
         "regulation": {
             "Primary regulator":   "Reserve Bank of India (RBI)",
