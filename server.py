@@ -468,7 +468,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Pine Labs", "type": "Acquirer"},
         ],
         "regulation": [
-            "As an orchestrator you don't need an RBI Payment Aggregator (PA) license yourself — you don't hold funds. But you can only route to PSPs and acquirers that hold a valid PA license, and the funds flow has to stay merchant → licensed PSP → merchant bank.",
+            "Orchestrators and merchants don't need an RBI Payment Aggregator (PA) license.",
             "All payment data has to be stored in India. No copies allowed outside the country.",
             "Merchant of Record is allowed, but you need a special cross-border license (PA-CB) or work through a licensed local partner.",
             "Card numbers can't be stored — only tokens (Visa, Mastercard, RuPay) can be saved for repeat payments.",
