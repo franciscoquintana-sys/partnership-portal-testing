@@ -462,8 +462,8 @@ COUNTRY_DETAIL_RICH = {
         "partners_landscape": [
             {"name": "Razorpay",  "type": "PSP"},
             {"name": "PayU",      "type": "PSP"},
-            {"name": "Cashfree",  "type": "PSP"},
             {"name": "BillDesk",  "type": "Gateway"},
+            {"name": "CCAvenue",  "type": "Gateway"},
             {"name": "Pine Labs", "type": "Acquirer"},
         ],
         "regulation": {
