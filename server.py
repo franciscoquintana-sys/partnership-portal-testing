@@ -453,8 +453,8 @@ COUNTRY_DETAIL_RICH = {
             "apm":     "Paytm",
         },
         "payment_methods_breakdown": [
-            {"name": "A2A (UPI)",        "share": 65, "growth": "+18% YoY", "muted": True},
-            {"name": "Wallets",          "share": 9,  "growth": "-2% YoY",  "muted": True},
+            {"name": "A2A",     "detail": "UPI",                       "share": 65, "growth": "+18% YoY"},
+            {"name": "Wallets", "detail": "Paytm, PhonePe, MobiKwik", "share": 9,  "growth": "-2% YoY"},
             {"name": "Credit Cards",     "share": 8,  "growth": "+5% YoY",
                 "schemes": [
                     {"name": "Visa",          "share_of_category": 50, "type": "international"},
