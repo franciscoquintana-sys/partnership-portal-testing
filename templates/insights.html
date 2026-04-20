@@ -70,15 +70,200 @@
   {% if view == 'country' %}
   <!-- View 1: Country Detail -->
   {% if has_market_data and data %}
+
+  {# Hero card #}
   <div class="card" style="margin-bottom:14px">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:{% if rich %}20px{% else %}20px{% endif %}">
       <span style="font-size:40px">{{ data.flag }}</span>
-      <div>
+      <div style="flex:1">
         <div style="font-size:20px;font-weight:800;color:#0f172a">{{ selected }}</div>
         <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }} · Region: {{ country_to_region.get(selected, '—') }}</div>
       </div>
     </div>
 
+    {% if rich and rich.overview %}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;padding-top:16px;border-top:1px solid #eef2f7">
+      {% for k, v in rich.overview.items() %}
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">{{ k }}</div>
+        <div style="font-size:15px;font-weight:800;color:#0f172a">{{ v }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {% if rich %}
+
+  {# Payment methods breakdown table #}
+  {% if rich.payment_methods_breakdown %}
+  <div class="card" style="margin-bottom:14px;padding:0">
+    <div style="padding:16px 18px 12px;border-bottom:1px solid #eef2f7">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a">Payment Methods Breakdown</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr style="background:#f8fafc;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.05em">
+          <th style="text-align:left;padding:8px 18px;font-weight:700">Method</th>
+          <th style="text-align:right;padding:8px 18px;font-weight:700">Share</th>
+          <th style="text-align:right;padding:8px 18px;font-weight:700">Growth</th>
+          <th style="text-align:left;padding:8px 18px;font-weight:700">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in rich.payment_methods_breakdown %}
+        <tr style="border-top:1px solid #eef2f7">
+          <td style="padding:10px 18px;font-weight:700;color:#0f172a">{{ m.name }}</td>
+          <td style="padding:10px 18px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700">{{ m.share }}</td>
+          <td style="padding:10px 18px;text-align:right;font-variant-numeric:tabular-nums;color:{% if m.growth.startswith('+') %}#10b981{% elif m.growth.startswith('-') %}#dc2626{% else %}var(--text3){% endif %}">{{ m.growth }}</td>
+          <td style="padding:10px 18px;color:var(--text2)">{{ m.note }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {# Acquirers + Yuno coverage row #}
+  <div class="card-grid-2" style="gap:12px;margin-bottom:14px">
+    {% if rich.acquirers %}
+    <div class="card" style="padding:0">
+      <div style="padding:16px 18px 12px;border-bottom:1px solid #eef2f7">
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a">Acquirer Landscape</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <tbody>
+          {% for a in rich.acquirers %}
+          <tr style="{% if not loop.first %}border-top:1px solid #eef2f7;{% endif %}">
+            <td style="padding:10px 18px;font-weight:700;color:#0f172a">{{ a.name }}</td>
+            <td style="padding:10px 18px;color:var(--text3);font-size:12px">{{ a.type }}</td>
+            <td style="padding:10px 18px;text-align:right">
+              <span class="pill {% if a.yuno == 'Live' %}pill-green{% elif a.yuno == 'In negotiation' %}pill-amber{% else %}pill-blue{% endif %}">{{ a.yuno }}</span>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {% if rich.yuno_coverage %}
+    <div class="card">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a;margin-bottom:14px">Yuno Coverage</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Merchants Processing</div>
+          <div style="font-size:22px;font-weight:800;color:#0f172a">{{ rich.yuno_coverage['Merchants processing'] }}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:4px">Monthly Volume</div>
+          <div style="font-size:22px;font-weight:800;color:#10b981">{{ rich.yuno_coverage['Monthly volume'] }}</div>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">Live Partners</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          {% for p in rich.yuno_coverage['Live partners'] %}
+          <span class="pill pill-green">{{ p }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">In Negotiation</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          {% for p in rich.yuno_coverage['In negotiation'] %}
+          <span class="pill pill-amber">{{ p }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  {# Regulation + FX/Capital row #}
+  <div class="card-grid-2" style="gap:12px;margin-bottom:14px">
+    {% if rich.regulation %}
+    <div class="card">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a;margin-bottom:14px">Regulation</div>
+      {% for k, v in rich.regulation.items() %}
+        {% if v is string %}
+        <div style="margin-bottom:12px">
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">{{ k }}</div>
+          <div style="font-size:13px;color:var(--text)">{{ v }}</div>
+        </div>
+        {% else %}
+        <div>
+          <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:6px">{{ k }}</div>
+          <ul style="margin:0;padding-left:18px;font-size:13px;color:var(--text)">
+            {% for item in v %}<li style="margin-bottom:4px">{{ item }}</li>{% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if rich.fx_capital %}
+    <div class="card">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a;margin-bottom:14px">FX & Capital Controls</div>
+      {% for k, v in rich.fx_capital.items() %}
+      <div style="margin-bottom:12px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">{{ k }}</div>
+        <div style="font-size:13px;color:var(--text)">{{ v }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {# Settlement + Risk row #}
+  <div class="card-grid-2" style="gap:12px;margin-bottom:14px">
+    {% if rich.settlement %}
+    <div class="card" style="padding:0">
+      <div style="padding:16px 18px 12px;border-bottom:1px solid #eef2f7">
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a">Settlement Times</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <tbody>
+          {% for s in rich.settlement %}
+          <tr style="{% if not loop.first %}border-top:1px solid #eef2f7;{% endif %}">
+            <td style="padding:10px 18px;font-weight:700;color:#0f172a">{{ s.method }}</td>
+            <td style="padding:10px 18px;text-align:right;color:var(--text2);font-variant-numeric:tabular-nums">{{ s.timing }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {% if rich.risk %}
+    <div class="card">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a;margin-bottom:14px">Risk & Fraud</div>
+      {% for k, v in rich.risk.items() %}
+      <div style="margin-bottom:12px">
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:3px">{{ k }}</div>
+        <div style="font-size:13px;color:var(--text)">{{ v }}</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+
+  {# Strategic notes #}
+  {% if rich.strategic_notes %}
+  <div class="card">
+    <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a;margin-bottom:12px">Strategic Notes</div>
+    <ul style="margin:0;padding-left:20px;font-size:13px;color:var(--text);line-height:1.6">
+      {% for n in rich.strategic_notes %}
+      <li style="margin-bottom:6px">{{ n }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% else %}
+  {# Fallback simple view #}
+  <div class="card" style="margin-bottom:14px">
     <div class="card-grid-2" style="gap:12px">
       <div>
         <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Payment Methods</div>
@@ -113,6 +298,8 @@
       <div style="font-size:13px;color:var(--text)">{{ data.regulation }}</div>
     </div>
   </div>
+  {% endif %}
+
   {% else %}
   <div class="card" style="padding:24px;font-size:13px;color:var(--text3)">No detailed market data available for region <strong>{{ selected_region }}</strong>. Switch to Regions Decks for portfolio-level stats.</div>
   {% endif %}

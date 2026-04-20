@@ -429,6 +429,76 @@ INSIGHTS_EXTRA_REGION_STATS = {
     "Middle East": {"total":32,"live":1,"strategic":1,"tier1":8,"revshare":"-"},
 }
 
+COUNTRY_DETAIL_RICH = {
+    "India": {
+        "overview": {
+            "Population": "1.43B",
+            "GDP (nominal)": "$3.7T",
+            "Ecommerce market": "$112B (2026e)",
+            "Online users": "880M",
+            "Mobile commerce share": "~70%",
+            "Smartphone penetration": "76%",
+        },
+        "payment_methods_breakdown": [
+            {"name": "UPI",                 "share": "65%", "growth": "+18% YoY", "note": "NPCI-operated; instant rail"},
+            {"name": "Credit & Debit Cards","share": "12%", "growth": "+4% YoY",  "note": "RuPay leads volume; Visa/MC lead value"},
+            {"name": "Wallets",             "share": "9%",  "growth": "-2% YoY",  "note": "Paytm, PhonePe, MobiKwik"},
+            {"name": "NetBanking",          "share": "7%",  "growth": "flat",     "note": "Bank-direct, declining vs UPI"},
+            {"name": "BNPL",                "share": "4%",  "growth": "+22% YoY", "note": "ZestMoney, LazyPay, Simpl"},
+            {"name": "Cash on Delivery",    "share": "3%",  "growth": "-12% YoY", "note": "Tier-2/3 cities only"},
+        ],
+        "acquirers": [
+            {"name": "Razorpay",  "type": "PA + Payouts",   "yuno": "Live"},
+            {"name": "PayU",      "type": "PA",             "yuno": "Live"},
+            {"name": "Cashfree",  "type": "PA + Banking",   "yuno": "In negotiation"},
+            {"name": "CCAvenue",  "type": "PG",             "yuno": "Prospect"},
+            {"name": "Juspay",    "type": "Orchestrator",   "yuno": "Prospect"},
+        ],
+        "regulation": {
+            "Primary regulator":   "Reserve Bank of India (RBI)",
+            "License required":    "Payment Aggregator (PA) license — mandatory since Mar 2021",
+            "Data localization":   "Payment data must be stored in India only (RBI 2018 directive)",
+            "KYC":                 "Aadhaar-based eKYC standard; Video KYC permitted for low-risk",
+            "Recent changes": [
+                "RBI raised UPI per-merchant limits (Apr 2026)",
+                "Mandatory tokenization for card-on-file (since 2022)",
+                "PA-CB licenses introduced for cross-border aggregators (2024)",
+            ],
+        },
+        "fx_capital": {
+            "Regime":              "Managed float — RBI intervenes",
+            "Repatriation":        "Permitted with FIRC documentation; subject to ODI/FDI rules",
+            "Settlement currency": "INR domestic; USD via authorized dealers",
+            "Tax":                 "TDS 1% on certain digital transactions (Sec 194-O); GST 18% on MDR",
+        },
+        "settlement": [
+            {"method": "UPI",          "timing": "Real-time (T+0)"},
+            {"method": "Cards",        "timing": "T+1 to T+2"},
+            {"method": "NetBanking",   "timing": "T+1"},
+            {"method": "Wallets",      "timing": "T+1"},
+            {"method": "International","timing": "T+3 to T+5 via SWIFT"},
+        ],
+        "risk": {
+            "Avg approval rate":  "82%",
+            "Chargeback rate":    "0.4%",
+            "Common fraud":       "OTP phishing, UPI mandate fraud, KYC impersonation",
+            "Required controls":  "RBI Additional Factor of Authentication (AFA) mandatory; FRM tools required",
+        },
+        "yuno_coverage": {
+            "Live partners":      ["Razorpay", "PayU"],
+            "In negotiation":     ["Cashfree", "Juspay"],
+            "Merchants processing": "7",
+            "Monthly volume":     "$2.4M",
+        },
+        "strategic_notes": [
+            "UPI dominance (65%+) makes acquirer choice less critical than rail integration depth.",
+            "PA-CB license is the unlock for international merchants billing INR.",
+            "Tokenization compliance is a hard gate — partners without it cannot store card-on-file.",
+            "Tier-1 cities are card-friendly; Tier-2/3 require UPI + COD coverage.",
+        ],
+    },
+}
+
 LATEST_NEWS = {
     "Brazil":       [{"date":"2026-04-15","title":"BACEN expands PIX limits for businesses","src":"Reuters"},{"date":"2026-04-08","title":"Pagar.me launches new acquiring API","src":"Valor"}],
     "Mexico":       [{"date":"2026-04-12","title":"CoDi reform pushed to Q3 2026","src":"El Economista"},{"date":"2026-03-30","title":"Conekta partners with Banorte","src":"Expansión"}],
@@ -478,6 +548,7 @@ def insights(request: Request, country: str = "Brazil", region: str = "all", vie
         selected_region=region,
         view=view,
         data=data,
+        rich=COUNTRY_DETAIL_RICH.get(country) if has_market_data else None,
         has_market_data=has_market_data,
         news=LATEST_NEWS.get(country, []) if has_market_data else [],
     ))
