@@ -468,12 +468,12 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Pine Labs", "type": "Acquirer"},
         ],
         "regulation": [
-            "Orchestration doesn't need an RBI Payment Aggregator (PA) license, given it doesn't hold funds — it can only route to PSPs and acquirers that hold a valid PA license.",
-            "All payment data has to be stored in India. No copies allowed outside the country.",
-            "Merchant of Record is allowed, but you need a special cross-border license (PA-CB) or work through a licensed local partner.",
-            "Card numbers can't be stored — only tokens (Visa, Mastercard, RuPay) can be saved for repeat payments.",
-            "Taxes: 18% GST on payment fees, plus a 1% withholding on certain digital transactions.",
-            "Recurring charges above ₹15,000 require the customer to authenticate again every time.",
+            "The Reserve Bank of India (RBI) is the central bank and regulates all payments. To collect money on behalf of merchants you need a Payment Aggregator (PA) license. Orchestration platforms like Yuno don't hold funds, so they don't need a PA — but they can only route transactions through PSPs and acquirers that DO hold one.",
+            "All payment data (card numbers, transaction details, customer info) must be stored on servers physically located in India. No copies outside the country, even for backup. Your PSP partners need an India region in their cloud.",
+            "Merchant of Record (MoR) — meaning a foreign company sells to Indian customers in its own name and handles tax/refunds — is allowed but needs a special cross-border PA (PA-CB) license, OR a partnership with a licensed Indian PA. Without one of these, you can't legally settle INR to merchants.",
+            "Since 2022, raw card numbers can't be stored anywhere in the payment chain. Instead, the card networks (Visa, Mastercard, RuPay) issue 'tokens' — fake numbers that work only at one merchant. This is RBI's response to large-scale card data leaks.",
+            "Taxes: GST (India's VAT, 18%) applies to all payment service fees. On top of that, ecommerce platforms must withhold 1% TDS (income tax) on payouts to sellers under Section 194-O.",
+            "For recurring charges (subscriptions, EMI), the customer signs an e-mandate. Below ₹15,000 (~$180) it auto-charges; above that, the bank texts the customer to re-authenticate every single time. This kills high-ticket subscriptions if not architected around it.",
         ],
         "digital_trends": [
             "India is mobile-first to an extreme: cheap data (post-Jio in 2016) put smartphones in 800M+ hands, so over 70% of ecommerce happens on phones — and almost always inside apps, not browsers. Web checkout flows underperform here.",
