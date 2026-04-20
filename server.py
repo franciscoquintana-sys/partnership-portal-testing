@@ -450,7 +450,12 @@ COUNTRY_DETAIL_RICH = {
         "local_payments": {
             "scheme":  "RuPay",
             "a2a":     "UPI",
-            "apm":     "Paytm",
+            "apms":    [
+                {"name": "PhonePe",  "type": "Wallet / UPI"},
+                {"name": "Paytm",    "type": "Wallet"},
+                {"name": "Simpl",    "type": "BNPL"},
+                {"name": "LazyPay",  "type": "BNPL"},
+            ],
         },
         "payment_methods_breakdown": [
             {"name": "A2A",     "detail": "UPI",                       "share": 65, "growth": "+18% YoY"},
