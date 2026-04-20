@@ -446,12 +446,12 @@ COUNTRY_DETAIL_RICH = {
             "apm":     "Paytm",
         },
         "payment_methods_breakdown": [
-            {"name": "A2A (UPI)",        "share": "65%", "growth": "+18% YoY"},
-            {"name": "Credit Cards",     "share": "8%",  "growth": "+5% YoY"},
-            {"name": "Debit Cards",      "share": "4%",  "growth": "flat"},
-            {"name": "Wallets",          "share": "9%",  "growth": "-2% YoY"},
-            {"name": "Net Banking",      "share": "7%",  "growth": "flat"},
-            {"name": "Cash on Delivery", "share": "7%",  "growth": "-12% YoY"},
+            {"name": "A2A (UPI)",        "share": 65, "growth": "+18% YoY"},
+            {"name": "Credit Cards",     "share": 8,  "growth": "+5% YoY"},
+            {"name": "Debit Cards",      "share": 4,  "growth": "flat"},
+            {"name": "Wallets",          "share": 9,  "growth": "-2% YoY"},
+            {"name": "Net Banking",      "share": 7,  "growth": "flat"},
+            {"name": "Cash on Delivery", "share": 7,  "growth": "-12% YoY"},
         ],
         "acquirers": [
             {"name": "Razorpay",  "type": "PA + Payouts",   "yuno": "Live"},
