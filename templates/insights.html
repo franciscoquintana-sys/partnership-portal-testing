@@ -104,7 +104,7 @@
         {% for k, v in rich.overview.items() %}
         <div>
           <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px;line-height:1.3">{{ k }}</div>
-          <div style="font-size:16px;font-weight:800;color:#0f172a;white-space:nowrap">{{ v }}</div>
+          <div style="font-size:16px;font-weight:800;color:#0f172a;line-height:1.25;word-break:break-word">{{ v }}</div>
         </div>
         {% endfor %}
       </div>
@@ -117,12 +117,12 @@
 
       <div style="padding:12px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc">
         <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px;line-height:1.3">💳 Local Scheme</div>
-        <div style="font-size:16px;font-weight:800;white-space:nowrap;color:{% if rich.local_payments.scheme and rich.local_payments.scheme != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.scheme or 'N/A' }}</div>
+        <div style="font-size:15px;font-weight:800;line-height:1.35;word-break:break-word;color:{% if rich.local_payments.scheme and rich.local_payments.scheme != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.scheme or 'N/A' }}</div>
       </div>
 
       <div style="padding:12px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc">
         <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px;line-height:1.3">⚡ Local A2A</div>
-        <div style="font-size:16px;font-weight:800;white-space:nowrap;color:{% if rich.local_payments.a2a and rich.local_payments.a2a != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.a2a or 'N/A' }}</div>
+        <div style="font-size:15px;font-weight:800;line-height:1.35;word-break:break-word;color:{% if rich.local_payments.a2a and rich.local_payments.a2a != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.a2a or 'N/A' }}</div>
       </div>
 
       <div style="padding:12px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc">

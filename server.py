@@ -674,7 +674,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "87 : 13",
         },
         "local_payments": {
-            "scheme":  "Credibanco / Redeban",
+            "scheme":  "None — international schemes only",
             "a2a":     "PSE / Bre-B",
             "apms":    [
                 {"name": "PSE",        "type": "A2A"},
@@ -788,7 +788,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "86 : 14",
         },
         "local_payments": {
-            "scheme":  "Transbank (network)",
+            "scheme":  "None — international schemes only",
             "a2a":     "TEF (Transferencia Electrónica de Fondos)",
             "apms":    [
                 {"name": "WebPay Plus","type": "A2A / Card redirect"},
@@ -845,7 +845,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "90 : 10",
         },
         "local_payments": {
-            "scheme":  "Niubiz (network)",
+            "scheme":  "None — international schemes only",
             "a2a":     "Yape / Plin (interop)",
             "apms":    [
                 {"name": "Yape",          "type": "Wallet / QR"},
@@ -902,7 +902,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "89 : 11",
         },
         "local_payments": {
-            "scheme":  "Datafast / Medianet (networks)",
+            "scheme":  "None — international schemes only",
             "a2a":     "Transferencias interbancarias (BCE)",
             "apms":    [
                 {"name": "PayPhone",      "type": "Wallet"},
@@ -959,7 +959,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "93 : 7",
         },
         "local_payments": {
-            "scheme":  "Linkser / ATC (networks)",
+            "scheme":  "None — international schemes only",
             "a2a":     "SIPAV / ACCL",
             "apms":    [
                 {"name": "Tigo Money",   "type": "Mobile wallet"},
@@ -1015,7 +1015,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "90 : 10",
         },
         "local_payments": {
-            "scheme":  "Bancard (network), Cabal",
+            "scheme":  "Cabal",
             "a2a":     "SIPAP",
             "apms":    [
                 {"name": "Pagopar",           "type": "Gateway / wallet"},
@@ -1072,7 +1072,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "80 : 20",
         },
         "local_payments": {
-            "scheme":  "Banesco / Mercantil / BDV (bank networks)",
+            "scheme":  "None — international schemes only",
             "a2a":     "Pago Móvil BCV",
             "apms":    [
                 {"name": "Pago Móvil",  "type": "A2A (phone-based)"},
@@ -1128,7 +1128,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "88 : 12",
         },
         "local_payments": {
-            "scheme":  "BAC Credomatic / BCR / BN (bank networks)",
+            "scheme":  "None — international schemes only",
             "a2a":     "SINPE Móvil",
             "apms":    [
                 {"name": "SINPE Móvil","type": "A2A (phone-based)"},
@@ -1185,7 +1185,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "88 : 12",
         },
         "local_payments": {
-            "scheme":  "AZUL / Cardnet (networks)",
+            "scheme":  "None — international schemes only",
             "a2a":     "LBTR / tPago",
             "apms":    [
                 {"name": "tPago",       "type": "Wallet"},
@@ -1299,7 +1299,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "91 : 9",
         },
         "local_payments": {
-            "scheme":  "Visanet Guatemala / Credomatic (networks)",
+            "scheme":  "None — international schemes only",
             "a2a":     "BI-Transferencias",
             "apms":    [
                 {"name": "Tigo Money",   "type": "Mobile wallet"},
@@ -1355,7 +1355,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "92 : 8",
         },
         "local_payments": {
-            "scheme":  "Visanet El Salvador (network)",
+            "scheme":  "None — international schemes only",
             "a2a":     "Transfer365",
             "apms":    [
                 {"name": "Chivo Wallet","type": "Bitcoin / USD wallet"},
@@ -1412,7 +1412,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "94 : 6",
         },
         "local_payments": {
-            "scheme":  "BAC Credomatic / Ficohsa (networks)",
+            "scheme":  "None — international schemes only",
             "a2a":     "ACH Honduras",
             "apms":    [
                 {"name": "Tigo Money", "type": "Mobile wallet"},
@@ -1468,7 +1468,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "95 : 5",
         },
         "local_payments": {
-            "scheme":  "BAC Nicaragua / Lafise (networks)",
+            "scheme":  "None — international schemes only",
             "a2a":     "SIP (Sistema Interbancario)",
             "apms":    [
                 {"name": "Tica Pay",  "type": "Wallet"},
@@ -1636,7 +1636,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "90 : 10",
         },
         "local_payments": {
-            "scheme":  "NCB / Scotia / JN (bank networks)",
+            "scheme":  "None — international schemes only",
             "a2a":     "JamClear (RTGS)",
             "apms":    [
                 {"name": "Lynk",          "type": "Wallet (JAM-DEX)"},
@@ -1865,7 +1865,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "80 : 20",
         },
         "local_payments": {
-            "scheme":  "UAESwitch (domestic), Visa/MC dominant",
+            "scheme":  "Jaywan",
             "a2a":     "UAE FTS / Aani (instant)",
             "apms":    [
                 {"name": "Apple Pay",  "type": "Wallet"},
@@ -2094,7 +2094,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "82 : 18",
         },
         "local_payments": {
-            "scheme":  "NAPS (QCB domestic switch)",
+            "scheme":  "None — international schemes only",
             "a2a":     "Fawran (instant)",
             "apms":    [
                 {"name": "Apple Pay", "type": "Wallet"},
@@ -2207,7 +2207,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "82 : 18",
         },
         "local_payments": {
-            "scheme":  "BENEFIT (domestic)",
+            "scheme":  "None — BENEFIT is a switch",
             "a2a":     "BenefitPay / Fawri+",
             "apms":    [
                 {"name": "BenefitPay",   "type": "Wallet / QR"},
@@ -2319,7 +2319,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "90 : 10",
         },
         "local_payments": {
-            "scheme":  "JoPACC networks",
+            "scheme":  "None — international schemes only",
             "a2a":     "JoMoPay / CliQ",
             "apms":    [
                 {"name": "CliQ",         "type": "A2A / instant transfer"},
@@ -2375,7 +2375,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "92 : 8",
         },
         "local_payments": {
-            "scheme":  "Areeba (domestic acquirer)",
+            "scheme":  "None — international schemes only",
             "a2a":     "RTGS (BDL), limited retail instant",
             "apms":    [
                 {"name": "OMT",        "type": "Cash / transfer"},
@@ -2431,7 +2431,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "94 : 6",
         },
         "local_payments": {
-            "scheme":  "Qi Card / KI Card / Switch",
+            "scheme":  "None — Qi Card / KI Card are prepaid programs",
             "a2a":     "IIPS (Instant Payment System)",
             "apms":    [
                 {"name": "Qi Card",  "type": "Prepaid / debit"},
@@ -2538,7 +2538,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "88 : 12",
         },
         "local_payments": {
-            "scheme":  "OCA",
+            "scheme":  "None — international schemes only",
             "a2a":     "Transferencias instantáneas (BCU)",
             "apms":    [
                 {"name": "Redpagos",  "type": "Cash voucher"},
@@ -2770,7 +2770,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "70 : 30",
         },
         "local_payments": {
-            "scheme":  "BC Card (network)",
+            "scheme":  "None — international schemes only",
             "a2a":     "Zeniths 24/7",
             "apms":    [
                 {"name": "KakaoPay",   "type": "Wallet"},
@@ -2828,7 +2828,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "78 : 22",
         },
         "local_payments": {
-            "scheme":  "UnionPay + Visa/MC",
+            "scheme":  "None — international schemes dominant",
             "a2a":     "FPS (Faster Payment System)",
             "apms":    [
                 {"name": "Octopus",      "type": "Stored-value card / wallet"},
@@ -2886,7 +2886,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "80 : 20",
         },
         "local_payments": {
-            "scheme":  "JCB + Visa/MC",
+            "scheme":  "None — international schemes dominant",
             "a2a":     "FISC (Financial Information Service)",
             "apms":    [
                 {"name": "LINE Pay",  "type": "Wallet"},
@@ -3002,7 +3002,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "83 : 17",
         },
         "local_payments": {
-            "scheme":  "ITMX (domestic switch)",
+            "scheme":  "None — ITMX is a switch",
             "a2a":     "PromptPay",
             "apms":    [
                 {"name": "TrueMoney",        "type": "Wallet"},
@@ -3459,7 +3459,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "91 : 9",
         },
         "local_payments": {
-            "scheme":  "LankaPay (domestic)",
+            "scheme":  "None — LankaPay is a switch",
             "a2a":     "LankaPay CEFTS / LankaPay Online Payment Platform",
             "apms":    [
                 {"name": "FriMi",    "type": "Wallet"},
@@ -3515,7 +3515,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "94 : 6",
         },
         "local_payments": {
-            "scheme":  "NCHL (domestic switch)",
+            "scheme":  "None — NCHL is a switch",
             "a2a":     "Connect IPS / FonePay",
             "apms":    [
                 {"name": "eSewa",   "type": "Wallet"},
@@ -3571,7 +3571,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "92 : 8",
         },
         "local_payments": {
-            "scheme":  "Bakong (NBC CBDC-hybrid)",
+            "scheme":  "None — Bakong is a CBDC, not a card scheme",
             "a2a":     "Bakong",
             "apms":    [
                 {"name": "Bakong",    "type": "CBDC-hybrid / A2A"},
@@ -4833,7 +4833,7 @@ COUNTRY_DETAIL_RICH = {
             "In-Store : Ecommerce ratio (2024)": "87 : 13",
         },
         "local_payments": {
-            "scheme":  "Borica (domestic)",
+            "scheme":  "None — Borica is a processor / switch",
             "a2a":     "BISERA / RINGS",
             "apms":    [
                 {"name": "ePay",      "type": "PSP"},
