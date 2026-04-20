@@ -164,13 +164,13 @@
           <td colspan="3" style="padding:14px 28px 18px">
             <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:10px">Scheme breakdown — {{ m.name }}</div>
             <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
-              {% for s in m.schemes | sort(attribute='share_of_category', reverse=True) %}
+              {% for s in m.schemes | sort(attribute='share', reverse=True) %}
               <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:8px">
                 <div style="flex:1;min-width:0">
                   <div style="font-size:13px;font-weight:700;color:#0f172a">{{ s.name }}</div>
                   <div style="font-size:10px;font-weight:600;color:{% if s.type == 'local' %}#10b981{% else %}#5B5FDE{% endif %};text-transform:uppercase;letter-spacing:0.05em">{% if s.type == 'local' %}Local scheme{% else %}International{% endif %}</div>
                 </div>
-                <div style="font-size:14px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums">{{ s.share_of_category }}%</div>
+                <div style="font-size:14px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums">{{ s.share }}%</div>
               </div>
               {% endfor %}
             </div>
