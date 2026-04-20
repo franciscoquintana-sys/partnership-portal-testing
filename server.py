@@ -115,8 +115,11 @@ def login_page(request: Request):
 
 @app.get("/auth/google")
 async def auth_google(request: Request):
-    redirect_uri = request.url_for("auth_callback")
-    return await oauth.google.authorize_redirect(request, str(redirect_uri))
+    # Behind Railway's proxy, request.url_for may generate the internal host.
+    # Allow an env-var override so the redirect URI matches what's registered
+    # in Google Cloud Console exactly.
+    redirect_uri = os.environ.get("OAUTH_REDIRECT_URI") or str(request.url_for("auth_callback"))
+    return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @app.get("/auth/callback")
 async def auth_callback(request: Request):
