@@ -239,9 +239,14 @@
              onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
     </div>
     <select id="lead-partner-filter" onchange="applyLeadFilter()"
-            style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:200px">
+            style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:180px">
       <option value="">All partners</option>
       {% for p in board_partners %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
+    </select>
+    <select id="lead-pm-filter" onchange="applyLeadFilter()"
+            style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:180px">
+      <option value="">All partnership managers</option>
+      {% for m in board_pms %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
     </select>
     <span id="lead-filter-hint" style="font-size:12px;color:#94a3b8;flex:1"></span>
     <button class="btn-primary" onclick="openAddLead()" style="margin-left:auto">+ Add Merchant</button>
@@ -257,7 +262,7 @@
       </div>
       <div class="kanban-col-body sortable" data-col="{{ col.key }}">
         {% for card in col.cards %}
-        <div class="kanban-card" data-id="{{ card.id }}" data-partner="{{ card.partner or '' }}" data-merchant="{{ card.merchant or '' }}">
+        <div class="kanban-card" data-id="{{ card.id }}" data-partner="{{ card.partner or '' }}" data-pm="{{ card.pm or '' }}" data-merchant="{{ card.merchant or '' }}">
           <div class="kanban-card-name">{{ card.merchant }}</div>
           {% if card.partner %}<div class="kanban-card-partner">via <span>{{ card.partner }}</span></div>{% endif %}
           {% if card.bdm %}
@@ -390,6 +395,7 @@ function closeLead() {
 function renderLeadCard(card, lead) {
   card.dataset.merchant = lead.merchant || '';
   card.dataset.partner  = lead.partner  || '';
+  card.dataset.pm       = lead.pm       || '';
   card.innerHTML = '';
   const name = document.createElement('div');
   name.className = 'kanban-card-name';
@@ -472,17 +478,27 @@ function refreshLeadPartnerFilter() {
   select.innerHTML = '<option value="">All partners</option>' +
     partners.map(p => `<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
   select.value = partners.includes(currentValue) ? currentValue : '';
+
+  const pmSelect = document.getElementById('lead-pm-filter');
+  const pmCurrent = pmSelect.value;
+  const pms = [...new Set(LEADS.map(l => (l.pm || '').trim()).filter(Boolean))].sort();
+  pmSelect.innerHTML = '<option value="">All partnership managers</option>' +
+    pms.map(p => `<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+  pmSelect.value = pms.includes(pmCurrent) ? pmCurrent : '';
 }
 
 function applyLeadFilter() {
   const partner = document.getElementById('lead-partner-filter').value;
+  const pm = document.getElementById('lead-pm-filter').value;
   const q = (document.getElementById('lead-search').value || '').trim().toLowerCase();
   document.querySelectorAll('.kanban-card').forEach(card => {
     const partnerOk = !partner || card.dataset.partner === partner;
+    const pmOk = !pm || card.dataset.pm === pm;
     const merchantName = (card.dataset.merchant || '').toLowerCase();
     const partnerName  = (card.dataset.partner  || '').toLowerCase();
-    const searchOk = !q || merchantName.includes(q) || partnerName.includes(q);
-    card.style.display = (partnerOk && searchOk) ? '' : 'none';
+    const pmName       = (card.dataset.pm       || '').toLowerCase();
+    const searchOk = !q || merchantName.includes(q) || partnerName.includes(q) || pmName.includes(q);
+    card.style.display = (partnerOk && pmOk && searchOk) ? '' : 'none';
   });
   document.querySelectorAll('.kanban-col').forEach(col => {
     const visible = [...col.querySelectorAll('.kanban-card')].filter(c => c.style.display !== 'none').length;
@@ -491,6 +507,7 @@ function applyLeadFilter() {
   const hint = document.getElementById('lead-filter-hint');
   const parts = [];
   if (partner) parts.push(`partner: ${partner}`);
+  if (pm) parts.push(`PM: ${pm}`);
   if (q) parts.push(`search: "${q}"`);
   hint.textContent = parts.length ? `Filtered by ${parts.join(' · ')}` : '';
 }

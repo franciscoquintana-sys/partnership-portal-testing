@@ -285,6 +285,7 @@ def pipeline(request: Request):
         for k, t, c in LEAD_COLUMNS
     ]
     board_partners = sorted({(l.get("partner") or "").strip() for l in LEADS if (l.get("partner") or "").strip()})
+    board_pms = sorted({(l.get("pm") or "").strip() for l in LEADS if (l.get("pm") or "").strip()})
     try:
         all_partners_rows = load_partners_excel()
         partner_catalog = sorted({p["name"] for p in all_partners_rows if p.get("name")})
@@ -295,6 +296,7 @@ def pipeline(request: Request):
         columns=columns,
         all_leads=LEADS,
         board_partners=board_partners,
+        board_pms=board_pms,
         partner_catalog=partner_catalog,
     ))
 
@@ -461,8 +463,9 @@ def introduction(request: Request):
          "cards": [i for i in INTROS if i.get("column") == k]}
         for k, t, c in INTRO_COLUMNS
     ]
-    # Partners currently on the board (deduped, sorted) for the filter
+    # Partners and PMs currently on the board (deduped, sorted) for the filters
     board_partners = sorted({(i.get("partner") or "").strip() for i in INTROS if (i.get("partner") or "").strip()})
+    board_pms = sorted({(i.get("partnership_manager") or "").strip() for i in INTROS if (i.get("partnership_manager") or "").strip()})
     # Full partner catalog so the modal's dropdown can offer any partner
     try:
         all_partners_rows = load_partners_excel()
@@ -474,6 +477,7 @@ def introduction(request: Request):
         columns=columns,
         all_intros=INTROS,
         board_partners=board_partners,
+        board_pms=board_pms,
         partner_catalog=partner_catalog,
     ))
 
