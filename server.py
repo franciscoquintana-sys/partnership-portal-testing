@@ -449,26 +449,28 @@ async def api_intros_create(request: Request):
     if not get_role(request):
         return JSONResponse({"error": "unauthorized"}, status_code=401)
     body = await request.json()
-    merchant = (body.get("merchant") or "").strip()
+    fields = body.get("fields") or {}
+    # Legacy: allow body.merchant for backward compat
+    merchant = (fields.get("merchant") or body.get("merchant") or "").strip()
+    partner = (fields.get("partner") or "").strip()
     if not merchant:
         return JSONResponse({"error": "merchant required"}, status_code=400)
+    if not partner:
+        return JSONResponse({"error": "partner required"}, status_code=400)
     import uuid
     new_intro = {
         "id": uuid.uuid4().hex[:10],
         "merchant": merchant,
-        "partner": "",
+        "partner": partner,
         "column": "request-pricing",
-        "vertical": "",
-        "legal_entity_countries": "",
-        "operation_countries": "",
-        "requesting_countries": "",
-        "transaction_type": "",
-        "payment_flow": "",
-        "payment_methods": "",
-        "avg_ticket": "",
-        "monthly_tpv": "",
-        "comments": "",
+        "vertical": "", "legal_entity_countries": "", "operation_countries": "",
+        "requesting_countries": "", "transaction_type": "", "payment_flow": "",
+        "payment_methods": "", "avg_ticket": "", "monthly_tpv": "", "comments": "",
     }
+    # Copy any optional fields from request
+    for k, v in fields.items():
+        if k in _INTRO_FIELDS and k not in ("merchant", "partner"):
+            new_intro[k] = (v or "").strip()
     INTROS.append(new_intro)
     _save_intros(INTROS)
     return {"ok": True, "intro": new_intro}

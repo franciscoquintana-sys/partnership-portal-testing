@@ -218,11 +218,9 @@
     </div>
   </div>
 
-  <!-- Add intro -->
-  <div class="add-row">
-    <input id="new-merchant" type="text" placeholder="Add a merchant (e.g. Beyond One)…"
-           onkeydown="if(event.key==='Enter'){event.preventDefault();addIntro()}">
-    <button class="btn-primary" onclick="addIntro()">+ Add Intro</button>
+  <!-- Add merchant -->
+  <div style="margin-bottom:14px">
+    <button class="btn-primary" onclick="openAddMerchant()">+ Add Merchant</button>
   </div>
 
   <!-- Partner filter -->
@@ -262,12 +260,12 @@
     <div class="intro-modal">
       <div class="intro-modal-head">
         <h2 class="intro-modal-title" id="intro-title"></h2>
-        <button class="btn-danger" onclick="deleteIntro()">Delete</button>
+        <button class="btn-danger" id="intro-delete-btn" onclick="deleteIntro()">Delete</button>
       </div>
-      <div class="intro-field"><label>Name of the Merchant</label><input id="f-merchant"></div>
+      <div class="intro-field"><label>Name of the Merchant <span style="color:#dc2626">*</span></label><input id="f-merchant" placeholder="Required"></div>
       <div class="intro-field">
-        <label>Introducing Partner</label>
-        <input id="f-partner" list="partner-catalog" placeholder="Start typing a partner name…" autocomplete="off">
+        <label>Introducing Partner <span style="color:#dc2626">*</span></label>
+        <input id="f-partner" list="partner-catalog" placeholder="Required — start typing a partner name…" autocomplete="off">
         <datalist id="partner-catalog">
           {% for p in partner_catalog %}<option value="{{ p }}"></option>{% endfor %}
         </datalist>
@@ -296,6 +294,7 @@
 <script>
 let INTROS = {{ all_intros | tojson }};
 let currentId = null;
+let modalMode = 'edit'; // 'edit' or 'add'
 
 function bindSortables() {
   document.querySelectorAll('.sortable').forEach(el => {
@@ -333,34 +332,23 @@ function updateCounts() {
   });
 }
 
-function openIntro(id) {
-  const intro = INTROS.find(i => i.id === id);
-  if (!intro) return;
-  currentId = id;
-  document.getElementById('intro-title').textContent = intro.merchant;
-  document.getElementById('f-merchant').value   = intro.merchant || '';
-  document.getElementById('f-partner').value    = intro.partner || '';
-  document.getElementById('f-vertical').value   = intro.vertical || '';
-  document.getElementById('f-legal').value      = intro.legal_entity_countries || '';
-  document.getElementById('f-operation').value  = intro.operation_countries || '';
-  document.getElementById('f-requesting').value = intro.requesting_countries || '';
-  document.getElementById('f-transaction').value= intro.transaction_type || '';
-  document.getElementById('f-flow').value       = intro.payment_flow || '';
-  document.getElementById('f-methods').value    = intro.payment_methods || '';
-  document.getElementById('f-ticket').value     = intro.avg_ticket || '';
-  document.getElementById('f-tpv').value        = intro.monthly_tpv || '';
-  document.getElementById('f-comments').value   = intro.comments || '';
-  document.getElementById('intro-modal').classList.add('open');
+function fillModal(data) {
+  document.getElementById('f-merchant').value   = data.merchant || '';
+  document.getElementById('f-partner').value    = data.partner || '';
+  document.getElementById('f-vertical').value   = data.vertical || '';
+  document.getElementById('f-legal').value      = data.legal_entity_countries || '';
+  document.getElementById('f-operation').value  = data.operation_countries || '';
+  document.getElementById('f-requesting').value = data.requesting_countries || '';
+  document.getElementById('f-transaction').value= data.transaction_type || '';
+  document.getElementById('f-flow').value       = data.payment_flow || '';
+  document.getElementById('f-methods').value    = data.payment_methods || '';
+  document.getElementById('f-ticket').value     = data.avg_ticket || '';
+  document.getElementById('f-tpv').value        = data.monthly_tpv || '';
+  document.getElementById('f-comments').value   = data.comments || '';
 }
 
-function closeIntro() {
-  document.getElementById('intro-modal').classList.remove('open');
-  currentId = null;
-}
-
-async function saveIntro() {
-  if (!currentId) return;
-  const fields = {
+function readModal() {
+  return {
     merchant:                document.getElementById('f-merchant').value.trim(),
     partner:                 document.getElementById('f-partner').value.trim(),
     vertical:                document.getElementById('f-vertical').value.trim(),
@@ -374,7 +362,67 @@ async function saveIntro() {
     monthly_tpv:             document.getElementById('f-tpv').value.trim(),
     comments:                document.getElementById('f-comments').value.trim(),
   };
-  if (!fields.merchant) { alert('Merchant name cannot be empty.'); return; }
+}
+
+function openIntro(id) {
+  const intro = INTROS.find(i => i.id === id);
+  if (!intro) return;
+  modalMode = 'edit';
+  currentId = id;
+  document.getElementById('intro-title').textContent = intro.merchant;
+  document.getElementById('intro-delete-btn').style.display = '';
+  fillModal(intro);
+  document.getElementById('intro-modal').classList.add('open');
+}
+
+function openAddMerchant() {
+  modalMode = 'add';
+  currentId = null;
+  document.getElementById('intro-title').textContent = 'Add Merchant';
+  document.getElementById('intro-delete-btn').style.display = 'none';
+  fillModal({});
+  document.getElementById('intro-modal').classList.add('open');
+  document.getElementById('f-merchant').focus();
+}
+
+function closeIntro() {
+  document.getElementById('intro-modal').classList.remove('open');
+  currentId = null;
+}
+
+async function saveIntro() {
+  const fields = readModal();
+  if (!fields.merchant) { alert('Merchant name is required.'); return; }
+  if (!fields.partner)  { alert('Introducing Partner is required.'); return; }
+
+  if (modalMode === 'add') {
+    const res = await fetch('/api/intros/create', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({fields})
+    });
+    const data = await res.json();
+    if (data.ok) {
+      INTROS.push(data.intro);
+      const body = document.querySelector('.kanban-col[data-col="request-pricing"] .kanban-col-body');
+      const card = document.createElement('div');
+      card.className = 'kanban-card';
+      card.dataset.id = data.intro.id;
+      card.dataset.partner = data.intro.partner || '';
+      renderCard(card, data.intro.merchant, data.intro.partner);
+      card.onclick = () => openIntro(data.intro.id);
+      body.appendChild(card);
+      refreshPartnerFilter();
+      applyPartnerFilter();
+      closeIntro();
+    } else {
+      alert(data.error || 'Failed to create merchant.');
+    }
+    return;
+  }
+
+  // edit mode
+  if (!currentId) return;
   const res = await fetch('/api/intros/update', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
@@ -447,31 +495,6 @@ async function deleteIntro() {
     if (card) card.remove();
     updateCounts();
     closeIntro();
-  }
-}
-
-async function addIntro() {
-  const input = document.getElementById('new-merchant');
-  const merchant = input.value.trim();
-  if (!merchant) return;
-  const res = await fetch('/api/intros/create', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({merchant})
-  });
-  const data = await res.json();
-  if (data.ok) {
-    INTROS.push(data.intro);
-    const body = document.querySelector('.kanban-col[data-col="request-pricing"] .kanban-col-body');
-    const card = document.createElement('div');
-    card.className = 'kanban-card';
-    card.dataset.id = data.intro.id;
-    card.dataset.partner = '';
-    renderCard(card, data.intro.merchant, '');
-    card.onclick = () => openIntro(data.intro.id);
-    body.appendChild(card);
-    applyPartnerFilter();
-    input.value = '';
   }
 }
 
