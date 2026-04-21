@@ -327,7 +327,7 @@
     <div class="search-wrap">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input class="search-input" id="search" type="text"
-        placeholder="Search partners…"
+        placeholder="Search by provider, type, region, country, deal stage, integration status…"
         value="{{ q }}"
         oninput="applyFilters()"
         onkeydown="if(event.key==='Enter'){event.preventDefault();applyFilters()}">
@@ -534,8 +534,12 @@ function applyFilters() {
   let totalDb = 0, totalActive = 0, totalSigned = 0, totalLive = 0;
 
   document.querySelectorAll('#partners-tbody tr').forEach(row => {
+    const haystack = [
+      row.dataset.name, row.dataset.type, row.dataset.region, row.dataset.country,
+      row.dataset.status, row.dataset.integration, row.dataset.tier, row.dataset.manager
+    ].join(' ').toLowerCase();
     const show =
-      (!q || (row.dataset.name || '').includes(q))
+      (!q || haystack.includes(q))
       && (sel.connector.length === 0   || sel.connector.includes(row.dataset.name))
       && (sel.cat.length === 0         || sel.cat.includes(row.dataset.type))
       && (sel.country.length === 0     || sel.country.includes(row.dataset.country))
