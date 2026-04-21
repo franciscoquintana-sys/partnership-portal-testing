@@ -1,5 +1,187 @@
 {% extends "base.html" %}
 {% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+{% block head %}
+<style>
+.kanban-wrapper {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  align-items: flex-start;
+}
+.kanban-col {
+  min-width: 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.kanban-col-header {
+  padding: 10px 10px 8px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.kanban-col-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+}
+.kanban-col-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 10px;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+.kanban-col-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 80px;
+}
+.kanban-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: grab;
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  user-select: none;
+}
+.kanban-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-color: #c7d2fe;
+}
+.kanban-card.sortable-ghost { opacity: 0.4; }
+.kanban-card.sortable-chosen { cursor: grabbing; }
+
+/* Modal */
+.intro-modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.55);
+  z-index: 999;
+  padding: 40px 16px;
+  overflow-y: auto;
+}
+.intro-modal-backdrop.open { display: block; }
+.intro-modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 24px 28px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+}
+.intro-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #eef2f7;
+}
+.intro-modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+.intro-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.intro-field label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.intro-field input,
+.intro-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.intro-field textarea { min-height: 80px; resize: vertical; }
+.intro-field input:focus,
+.intro-field textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+}
+.intro-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #eef2f7;
+}
+.btn-primary {
+  background: #4f46e5; color: #fff; border: none;
+  border-radius: 8px; padding: 9px 18px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.btn-primary:hover { background: #4338ca; }
+.btn-secondary {
+  background: #fff; color: #334155;
+  border: 1px solid #cbd5e1; border-radius: 8px;
+  padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.btn-secondary:hover { background: #f8fafc; }
+.btn-danger {
+  background: #fff; color: #dc2626;
+  border: 1px solid #fca5a5; border-radius: 8px;
+  padding: 9px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.btn-danger:hover { background: #fef2f2; }
+
+.add-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.add-row input {
+  flex: 1;
+  padding: 9px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+}
+.add-row input:focus { border-color: #4f46e5; box-shadow: 0 0 0 3px rgba(79,70,229,0.1); }
+</style>
+{% endblock %}
+
 {% block content %}
 
   <!-- Dark banner -->
@@ -15,10 +197,203 @@
     <div style="display:flex;align-items:flex-start;justify-content:space-between">
       <div>
         <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Partner - Merchant Intros</div>
-        <div style="font-size:13px;color:#94a3b8">Coming soon.</div>
+        <div style="font-size:13px;color:#94a3b8">Drag merchants between stages as the intro progresses.</div>
       </div>
       <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
     </div>
   </div>
 
+  <!-- Add intro -->
+  <div class="add-row">
+    <input id="new-merchant" type="text" placeholder="Add a merchant (e.g. Beyond One)…"
+           onkeydown="if(event.key==='Enter'){event.preventDefault();addIntro()}">
+    <button class="btn-primary" onclick="addIntro()">+ Add Intro</button>
+  </div>
+
+  <!-- Kanban -->
+  <div class="kanban-wrapper">
+    {% for col in columns %}
+    <div class="kanban-col" data-col="{{ col.key }}" style="border-top: 3px solid {{ col.color }}">
+      <div class="kanban-col-header">
+        <div class="kanban-col-title">{{ col.title }}</div>
+        <div class="kanban-col-count" style="background: {{ col.color }}">{{ col.cards|length }}</div>
+      </div>
+      <div class="kanban-col-body sortable" data-col="{{ col.key }}">
+        {% for card in col.cards %}
+        <div class="kanban-card" data-id="{{ card.id }}">{{ card.merchant }}</div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Detail modal -->
+  <div class="intro-modal-backdrop" id="intro-modal"
+       onclick="if(event.target===this)closeIntro()">
+    <div class="intro-modal">
+      <div class="intro-modal-head">
+        <h2 class="intro-modal-title" id="intro-title"></h2>
+        <button class="btn-danger" onclick="deleteIntro()">Delete</button>
+      </div>
+      <div class="intro-field"><label>Name of the Merchant</label><input id="f-merchant"></div>
+      <div class="intro-field"><label>Vertical of the Merchant</label><input id="f-vertical"></div>
+      <div class="intro-field"><label>Countries where the Merchant has a Legal Entity</label><input id="f-legal"></div>
+      <div class="intro-field"><label>Countries where the Merchant has Operation</label><input id="f-operation"></div>
+      <div class="intro-field"><label>Countries and Currencies the Merchant is Requesting</label><input id="f-requesting"></div>
+      <div class="intro-field"><label>Transaction Type</label><input id="f-transaction"></div>
+      <div class="intro-field"><label>Payment Flow Required</label><input id="f-flow"></div>
+      <div class="intro-field"><label>Payment Methods Needed</label><input id="f-methods"></div>
+      <div class="intro-field"><label>Average Ticket Size</label><input id="f-ticket"></div>
+      <div class="intro-field"><label>Monthly TPV</label><input id="f-tpv"></div>
+      <div class="intro-field"><label>Comments</label><textarea id="f-comments"></textarea></div>
+      <div class="intro-modal-actions">
+        <button class="btn-secondary" onclick="closeIntro()">Close</button>
+        <button class="btn-primary" onclick="saveIntro()">Save</button>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+let INTROS = {{ all_intros | tojson }};
+let currentId = null;
+
+function bindSortables() {
+  document.querySelectorAll('.sortable').forEach(el => {
+    new Sortable(el, {
+      group: 'intros',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      onEnd(evt) {
+        const id = evt.item.dataset.id;
+        const newCol = evt.to.dataset.col;
+        fetch('/api/intros/move', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({id, column: newCol})
+        });
+        const intro = INTROS.find(i => i.id === id);
+        if (intro) intro.column = newCol;
+        updateCounts();
+      }
+    });
+  });
+}
+
+function bindCardClicks() {
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    card.onclick = () => openIntro(card.dataset.id);
+  });
+}
+
+function updateCounts() {
+  document.querySelectorAll('.kanban-col').forEach(col => {
+    const count = col.querySelectorAll('.kanban-card').length;
+    col.querySelector('.kanban-col-count').textContent = count;
+  });
+}
+
+function openIntro(id) {
+  const intro = INTROS.find(i => i.id === id);
+  if (!intro) return;
+  currentId = id;
+  document.getElementById('intro-title').textContent = intro.merchant;
+  document.getElementById('f-merchant').value   = intro.merchant || '';
+  document.getElementById('f-vertical').value   = intro.vertical || '';
+  document.getElementById('f-legal').value      = intro.legal_entity_countries || '';
+  document.getElementById('f-operation').value  = intro.operation_countries || '';
+  document.getElementById('f-requesting').value = intro.requesting_countries || '';
+  document.getElementById('f-transaction').value= intro.transaction_type || '';
+  document.getElementById('f-flow').value       = intro.payment_flow || '';
+  document.getElementById('f-methods').value    = intro.payment_methods || '';
+  document.getElementById('f-ticket').value     = intro.avg_ticket || '';
+  document.getElementById('f-tpv').value        = intro.monthly_tpv || '';
+  document.getElementById('f-comments').value   = intro.comments || '';
+  document.getElementById('intro-modal').classList.add('open');
+}
+
+function closeIntro() {
+  document.getElementById('intro-modal').classList.remove('open');
+  currentId = null;
+}
+
+async function saveIntro() {
+  if (!currentId) return;
+  const fields = {
+    merchant:                document.getElementById('f-merchant').value.trim(),
+    vertical:                document.getElementById('f-vertical').value.trim(),
+    legal_entity_countries:  document.getElementById('f-legal').value.trim(),
+    operation_countries:     document.getElementById('f-operation').value.trim(),
+    requesting_countries:    document.getElementById('f-requesting').value.trim(),
+    transaction_type:        document.getElementById('f-transaction').value.trim(),
+    payment_flow:            document.getElementById('f-flow').value.trim(),
+    payment_methods:         document.getElementById('f-methods').value.trim(),
+    avg_ticket:              document.getElementById('f-ticket').value.trim(),
+    monthly_tpv:             document.getElementById('f-tpv').value.trim(),
+    comments:                document.getElementById('f-comments').value.trim(),
+  };
+  if (!fields.merchant) { alert('Merchant name cannot be empty.'); return; }
+  const res = await fetch('/api/intros/update', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({id: currentId, fields})
+  });
+  const data = await res.json();
+  if (data.ok) {
+    Object.assign(INTROS.find(i => i.id === currentId), fields);
+    const card = document.querySelector(`.kanban-card[data-id="${currentId}"]`);
+    if (card) card.textContent = fields.merchant;
+    closeIntro();
+  }
+}
+
+async function deleteIntro() {
+  if (!currentId) return;
+  if (!confirm('Delete this intro? This cannot be undone.')) return;
+  const res = await fetch('/api/intros/delete', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({id: currentId})
+  });
+  const data = await res.json();
+  if (data.ok) {
+    INTROS = INTROS.filter(i => i.id !== currentId);
+    const card = document.querySelector(`.kanban-card[data-id="${currentId}"]`);
+    if (card) card.remove();
+    updateCounts();
+    closeIntro();
+  }
+}
+
+async function addIntro() {
+  const input = document.getElementById('new-merchant');
+  const merchant = input.value.trim();
+  if (!merchant) return;
+  const res = await fetch('/api/intros/create', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({merchant})
+  });
+  const data = await res.json();
+  if (data.ok) {
+    INTROS.push(data.intro);
+    const body = document.querySelector('.kanban-col[data-col="request-pricing"] .kanban-col-body');
+    const card = document.createElement('div');
+    card.className = 'kanban-card';
+    card.dataset.id = data.intro.id;
+    card.textContent = data.intro.merchant;
+    card.onclick = () => openIntro(data.intro.id);
+    body.appendChild(card);
+    updateCounts();
+    input.value = '';
+  }
+}
+
+bindSortables();
+bindCardClicks();
+</script>
 {% endblock %}

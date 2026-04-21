@@ -326,6 +326,58 @@ def mission(request: Request):
         types=types, regions=regions, countries=countries, managers=managers,
     ))
 
+INTRO_COLUMNS = [
+    ("request-pricing",      "Request Pricing",          "#6b7280"),
+    ("in-negotiations",      "In Negotiations",          "#3b82f6"),
+    ("sign-agreement",       "Sign and Agreement",       "#8b5cf6"),
+    ("live",                 "Live",                     "#10b981"),
+    ("merchant-didnt",       "Merchant didn't Continue", "#f59e0b"),
+    ("partner-declined",     "Decline by Partner",       "#ef4444"),
+]
+_VALID_COLUMNS = {c[0] for c in INTRO_COLUMNS}
+_INTRO_FIELDS = {
+    "merchant", "vertical", "legal_entity_countries", "operation_countries",
+    "requesting_countries", "transaction_type", "payment_flow",
+    "payment_methods", "avg_ticket", "monthly_tpv", "comments",
+}
+
+INTROS_STORAGE = os.path.join(BASE, "intros.json")
+
+def _default_intros():
+    return [
+        {
+            "id": "beyond-one",
+            "merchant": "Beyond One",
+            "column": "request-pricing",
+            "vertical": "Telco",
+            "legal_entity_countries": "CO, MX, CL",
+            "operation_countries": "CO, MX, CL",
+            "requesting_countries": "CO, MX, CL + local currencies",
+            "transaction_type": "",
+            "payment_flow": "CIT, MIT, CoF, Network Tokens",
+            "payment_methods": "Cards, Oxxo Pay, Apple Pay, Google Pay, Nequi, Daviplata, PSE, Spei, Klap, Khipu, Mach",
+            "avg_ticket": "10 USD",
+            "monthly_tpv": "$12,731,595,582 COP",
+            "comments": "",
+        }
+    ]
+
+def _load_intros():
+    try:
+        with open(INTROS_STORAGE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return _default_intros()
+
+def _save_intros(data):
+    try:
+        with open(INTROS_STORAGE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception:
+        pass
+
+INTROS = _load_intros()
+
 @app.get("/introduction", response_class=HTMLResponse)
 def introduction(request: Request):
     role = require_auth(request)
@@ -333,7 +385,90 @@ def introduction(request: Request):
         return RedirectResponse("/login")
     if role != "internal":
         return RedirectResponse("/home")
-    return tr(request, "introduction.html", ctx(request, "introduction"))
+    columns = [
+        {"key": k, "title": t, "color": c,
+         "cards": [i for i in INTROS if i.get("column") == k]}
+        for k, t, c in INTRO_COLUMNS
+    ]
+    return tr(request, "introduction.html", ctx(
+        request, "introduction",
+        columns=columns,
+        all_intros=INTROS,
+    ))
+
+@app.post("/api/intros/move")
+async def api_intros_move(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    intro_id = body.get("id")
+    new_column = body.get("column")
+    if new_column not in _VALID_COLUMNS:
+        return JSONResponse({"error": "invalid column"}, status_code=400)
+    for i in INTROS:
+        if i["id"] == intro_id:
+            i["column"] = new_column
+            _save_intros(INTROS)
+            return {"ok": True}
+    return JSONResponse({"error": "not found"}, status_code=404)
+
+@app.post("/api/intros/update")
+async def api_intros_update(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    intro_id = body.get("id")
+    fields = body.get("fields", {})
+    for i in INTROS:
+        if i["id"] == intro_id:
+            for k, v in fields.items():
+                if k in _INTRO_FIELDS:
+                    i[k] = v
+            _save_intros(INTROS)
+            return {"ok": True, "intro": i}
+    return JSONResponse({"error": "not found"}, status_code=404)
+
+@app.post("/api/intros/create")
+async def api_intros_create(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    merchant = (body.get("merchant") or "").strip()
+    if not merchant:
+        return JSONResponse({"error": "merchant required"}, status_code=400)
+    import uuid
+    new_intro = {
+        "id": uuid.uuid4().hex[:10],
+        "merchant": merchant,
+        "column": "request-pricing",
+        "vertical": "",
+        "legal_entity_countries": "",
+        "operation_countries": "",
+        "requesting_countries": "",
+        "transaction_type": "",
+        "payment_flow": "",
+        "payment_methods": "",
+        "avg_ticket": "",
+        "monthly_tpv": "",
+        "comments": "",
+    }
+    INTROS.append(new_intro)
+    _save_intros(INTROS)
+    return {"ok": True, "intro": new_intro}
+
+@app.post("/api/intros/delete")
+async def api_intros_delete(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    intro_id = body.get("id")
+    global INTROS
+    before = len(INTROS)
+    INTROS = [i for i in INTROS if i["id"] != intro_id]
+    if len(INTROS) == before:
+        return JSONResponse({"error": "not found"}, status_code=404)
+    _save_intros(INTROS)
+    return {"ok": True}
 
 @app.get("/intake", response_class=HTMLResponse)
 def intake(request: Request):
