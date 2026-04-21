@@ -579,48 +579,8 @@ _LEAD_FIELDS = {"merchant", "partner", "bdm", "pm", "comments"}
 LEADS_STORAGE = os.path.join(DATA_DIR, "leads.json")
 
 def _seed_leads():
-    import uuid
-    seed_map = {
-        "extra-introductions":   [],
-        "introduced-by-partner": [
-            ("Rappi",        "dLocal",       "Johanderson", "Talita"),
-            ("Cabify",       "Kushki",       "Talita",      "Alessandra"),
-            ("Totalplay",    "Conekta",      "Alex",        "Talita"),
-            ("Linio",        "PayU",         "Johanderson", "Talita"),
-        ],
-        "in-negotiation": [
-            ("Despegar",     "Bamboo",       "Alessandra",  "Talita"),
-            ("Falabella",    "Kushki",       "Talita",      "Alessandra"),
-            ("PedidosYa",    "dLocal",       "Johanderson", "Talita"),
-        ],
-        "signed-merchant": [
-            ("Cinépolis",    "Stripe",       "Alex",        "Alessandra"),
-            ("Claro",        "Cielo",        "Sofia",       "Talita"),
-            ("Spotify",      "Pagar.me",     "Johanderson", "Talita"),
-        ],
-        "live-merchant": [
-            ("iFood",        "PagBank",      "Johanderson", "Talita"),
-            ("Netflix",      "Conekta",      "Alex",        "Alessandra"),
-            ("MercadoLibre", "Mercado Pago", "Sofia",       "Talita"),
-        ],
-        "didnt-qualify": [
-            ("LocalStore MX","Clip",         "Alex",        "Alessandra"),
-            ("MiniMart CO",  "Wompi",        "Johanderson", "Talita"),
-        ],
-        "lost": [
-            ("Uber",         "Cielo",        "Sofia",       "Talita"),
-            ("Avianca",      "PayU",         "Johanderson", "Alessandra"),
-        ],
-    }
-    out = []
-    for col, rows in seed_map.items():
-        for m, p, b, pm in rows:
-            out.append({
-                "id": uuid.uuid4().hex[:10],
-                "column": col,
-                "merchant": m, "partner": p, "bdm": b, "pm": pm, "comments": "",
-            })
-    return out
+    # No auto-seed — users own the Partner Leads board themselves.
+    return []
 
 def _db_init_leads():
     conn = _db_conn()
@@ -635,6 +595,19 @@ def _db_init_leads():
                     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
                 )
             """)
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS leads_migrations (
+                    name TEXT PRIMARY KEY,
+                    applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+            # One-time wipe of the seeded sample data. Idempotent — only runs
+            # once because the marker row prevents re-runs on future deploys.
+            cur.execute("SELECT 1 FROM leads_migrations WHERE name = 'wipe_seed_2026_04_21'")
+            if not cur.fetchone():
+                cur.execute("DELETE FROM leads")
+                cur.execute("INSERT INTO leads_migrations (name) VALUES ('wipe_seed_2026_04_21')")
+                print("[leads] Applied migration: wipe_seed_2026_04_21")
         return True
     except Exception as e:
         print(f"[leads] Postgres init failed: {e}")
