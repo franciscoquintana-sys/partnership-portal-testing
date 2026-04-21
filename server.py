@@ -341,7 +341,12 @@ _INTRO_FIELDS = {
     "payment_methods", "avg_ticket", "monthly_tpv", "comments",
 }
 
-INTROS_STORAGE = os.path.join(BASE, "intros.json")
+# Persist intros to a Railway volume when available so drag-and-drop state
+# survives redeploys. DATA_DIR env var takes precedence; fall back to /data
+# if mounted (Railway convention), otherwise the repo root for local dev.
+DATA_DIR = os.environ.get("DATA_DIR") or ("/data" if os.path.isdir("/data") else BASE)
+os.makedirs(DATA_DIR, exist_ok=True)
+INTROS_STORAGE = os.path.join(DATA_DIR, "intros.json")
 
 def _default_intros():
     return [
