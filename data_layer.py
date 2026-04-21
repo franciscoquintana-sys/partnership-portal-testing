@@ -569,37 +569,43 @@ def find_partners(country_iso=None, verticals=None, live_only=True, processing_t
 # ── Static data ──────────────────────────────────────────────────────────────
 
 PIPELINE_STAGES = {
-    "Prospect":    {"color": "#86868b", "count": 3},
-    "Qualified":   {"color": "#60a5fa", "count": 3},
-    "Evaluation":  {"color": "#c084fc", "count": 4},
-    "Negotiation": {"color": "#fbbf24", "count": 2},
-    "Won":         {"color": "#4ade80", "count": 2},
+    "Introduced by Partner": {"color": "#60a5fa", "count": 4},
+    "In Negotiation":        {"color": "#fbbf24", "count": 3},
+    "Signed Merchant":       {"color": "#c084fc", "count": 3},
+    "Live Merchant":         {"color": "#22c55e", "count": 3},
+    "Didn't Qualify":        {"color": "#86868b", "count": 2},
+    "Lost":                  {"color": "#ef4444", "count": 2},
 }
 
 PIPELINE_DEALS = {
-    "Prospect":    [
-        {"name":"Rapyd","region":"EMEA","type":"PSP","owner":"Alex","days":8},
-        {"name":"Flutterwave","region":"Africa","type":"APM","owner":"Sofia","days":15},
-        {"name":"Pagsmile","region":"LATAM","type":"APM","owner":"Johanderson","days":22},
+    "Introduced by Partner": [
+        {"merchant":"Rappi",        "partner":"dLocal",       "bdm":"Johanderson", "pm":"Talita"},
+        {"merchant":"Cabify",       "partner":"Kushki",       "bdm":"Talita",      "pm":"Alessandra"},
+        {"merchant":"Totalplay",    "partner":"Conekta",      "bdm":"Alex",        "pm":"Talita"},
+        {"merchant":"Linio",        "partner":"PayU",         "bdm":"Johanderson", "pm":"Talita"},
     ],
-    "Qualified":   [
-        {"name":"Airwallex","region":"APAC","type":"PSP","owner":"Lily","days":12},
-        {"name":"Xendit","region":"APAC","type":"Acquirer","owner":"Lily","days":19},
-        {"name":"Conekta","region":"LATAM","type":"Acquirer","owner":"Talita","days":31},
+    "In Negotiation": [
+        {"merchant":"Despegar",     "partner":"Bamboo",       "bdm":"Alessandra",  "pm":"Talita"},
+        {"merchant":"Falabella",    "partner":"Kushki",       "bdm":"Talita",      "pm":"Alessandra"},
+        {"merchant":"PedidosYa",    "partner":"dLocal",       "bdm":"Johanderson", "pm":"Talita"},
     ],
-    "Evaluation":  [
-        {"name":"PayRetailers","region":"LATAM","type":"APM","owner":"Talita","days":14},
-        {"name":"Kushki","region":"LATAM","type":"Acquirer","owner":"Johanderson","days":28},
-        {"name":"Safaricom","region":"Africa","type":"APM","owner":"Alex","days":45},
-        {"name":"Truevo","region":"EMEA","type":"Acquirer","owner":"Alessandra","days":9},
+    "Signed Merchant": [
+        {"merchant":"Cinépolis",    "partner":"Stripe",       "bdm":"Alex",        "pm":"Alessandra"},
+        {"merchant":"Claro",        "partner":"Cielo",        "bdm":"Sofia",       "pm":"Talita"},
+        {"merchant":"Spotify",      "partner":"Pagar.me",     "bdm":"Johanderson", "pm":"Talita"},
     ],
-    "Negotiation": [
-        {"name":"Ebanx","region":"LATAM","type":"APM","owner":"Johanderson","days":37},
-        {"name":"PayU","region":"LATAM","type":"PSP","owner":"Talita","days":52},
+    "Live Merchant": [
+        {"merchant":"iFood",        "partner":"PagBank",      "bdm":"Johanderson", "pm":"Talita"},
+        {"merchant":"Netflix",      "partner":"Conekta",      "bdm":"Alex",        "pm":"Alessandra"},
+        {"merchant":"MercadoLibre", "partner":"Mercado Pago", "bdm":"Sofia",       "pm":"Talita"},
     ],
-    "Won":         [
-        {"name":"Adyen","region":"Global","type":"PSP","owner":"Alex","days":61},
-        {"name":"dLocal","region":"LATAM","type":"PSP","owner":"Johanderson","days":74},
+    "Didn't Qualify": [
+        {"merchant":"LocalStore MX","partner":"Clip",         "bdm":"Alex",        "pm":"Alessandra"},
+        {"merchant":"MiniMart CO",  "partner":"Wompi",        "bdm":"Johanderson", "pm":"Talita"},
+    ],
+    "Lost": [
+        {"merchant":"Uber",         "partner":"Cielo",        "bdm":"Sofia",       "pm":"Talita"},
+        {"merchant":"Avianca",      "partner":"PayU",         "bdm":"Johanderson", "pm":"Alessandra"},
     ],
 }
 
