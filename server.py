@@ -351,7 +351,8 @@ INTRO_COLUMNS = [
 ]
 _VALID_COLUMNS = {c[0] for c in INTRO_COLUMNS}
 _INTRO_FIELDS = {
-    "merchant", "partner", "vertical", "legal_entity_countries", "operation_countries",
+    "merchant", "partner", "partnership_manager", "vertical",
+    "legal_entity_countries", "operation_countries",
     "requesting_countries", "transaction_type", "payment_flow",
     "payment_methods", "avg_ticket", "monthly_tpv", "comments",
 }
@@ -526,6 +527,7 @@ async def api_intros_create(request: Request):
         "id": uuid.uuid4().hex[:10],
         "merchant": merchant,
         "partner": partner,
+        "partnership_manager": "",
         "column": "request-pricing",
         "vertical": "", "legal_entity_countries": "", "operation_countries": "",
         "requesting_countries": "", "transaction_type": "", "payment_flow": "",

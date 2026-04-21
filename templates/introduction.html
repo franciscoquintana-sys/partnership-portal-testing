@@ -78,6 +78,16 @@
 .kanban-card-partner span {
   color: #4f46e5;
 }
+.kanban-card-pm {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.3;
+}
+.kanban-card-pm span {
+  color: #0f172a;
+  font-weight: 700;
+}
 .kanban-card:hover {
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   border-color: #c7d2fe;
@@ -253,6 +263,7 @@
         <div class="kanban-card" data-id="{{ card.id }}" data-partner="{{ card.partner or '' }}" data-merchant="{{ card.merchant or '' }}">
           <div class="kanban-card-name">{{ card.merchant }}</div>
           {% if card.partner %}<div class="kanban-card-partner">via <span>{{ card.partner }}</span></div>{% endif %}
+          {% if card.partnership_manager %}<div class="kanban-card-pm">PM · <span>{{ card.partnership_manager }}</span></div>{% endif %}
         </div>
         {% endfor %}
       </div>
@@ -276,6 +287,7 @@
           {% for p in partner_catalog %}<option value="{{ p }}"></option>{% endfor %}
         </datalist>
       </div>
+      <div class="intro-field"><label>Partnership Manager</label><input id="f-pm"></div>
       <div class="intro-field"><label>Vertical of the Merchant</label><input id="f-vertical"></div>
       <div class="intro-field"><label>Countries where the Merchant has a Legal Entity</label><input id="f-legal"></div>
       <div class="intro-field"><label>Countries where the Merchant has Operation</label><input id="f-operation"></div>
@@ -341,6 +353,7 @@ function updateCounts() {
 function fillModal(data) {
   document.getElementById('f-merchant').value   = data.merchant || '';
   document.getElementById('f-partner').value    = data.partner || '';
+  document.getElementById('f-pm').value         = data.partnership_manager || '';
   document.getElementById('f-vertical').value   = data.vertical || '';
   document.getElementById('f-legal').value      = data.legal_entity_countries || '';
   document.getElementById('f-operation').value  = data.operation_countries || '';
@@ -357,6 +370,7 @@ function readModal() {
   return {
     merchant:                document.getElementById('f-merchant').value.trim(),
     partner:                 document.getElementById('f-partner').value.trim(),
+    partnership_manager:     document.getElementById('f-pm').value.trim(),
     vertical:                document.getElementById('f-vertical').value.trim(),
     legal_entity_countries:  document.getElementById('f-legal').value.trim(),
     operation_countries:     document.getElementById('f-operation').value.trim(),
@@ -415,7 +429,7 @@ async function saveIntro() {
       card.className = 'kanban-card';
       card.dataset.id = data.intro.id;
       card.dataset.partner = data.intro.partner || '';
-      renderCard(card, data.intro.merchant, data.intro.partner);
+      renderCard(card, data.intro.merchant, data.intro.partner, data.intro.partnership_manager);
       card.onclick = () => openIntro(data.intro.id);
       body.appendChild(card);
       refreshPartnerFilter();
@@ -440,7 +454,7 @@ async function saveIntro() {
     const card = document.querySelector(`.kanban-card[data-id="${currentId}"]`);
     if (card) {
       card.dataset.partner = fields.partner || '';
-      renderCard(card, fields.merchant, fields.partner);
+      renderCard(card, fields.merchant, fields.partner, fields.partnership_manager);
     }
     refreshPartnerFilter();
     applyPartnerFilter();
@@ -448,7 +462,7 @@ async function saveIntro() {
   }
 }
 
-function renderCard(card, merchant, partner) {
+function renderCard(card, merchant, partner, pm) {
   card.dataset.merchant = merchant || '';
   card.dataset.partner  = partner  || '';
   card.innerHTML = '';
@@ -462,6 +476,13 @@ function renderCard(card, merchant, partner) {
     p.innerHTML = 'via <span></span>';
     p.querySelector('span').textContent = partner;
     card.appendChild(p);
+  }
+  if (pm) {
+    const m = document.createElement('div');
+    m.className = 'kanban-card-pm';
+    m.innerHTML = 'PM · <span></span>';
+    m.querySelector('span').textContent = pm;
+    card.appendChild(m);
   }
 }
 
