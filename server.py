@@ -349,24 +349,7 @@ os.makedirs(DATA_DIR, exist_ok=True)
 INTROS_STORAGE = os.path.join(DATA_DIR, "intros.json")
 
 def _default_intros():
-    return [
-        {
-            "id": "beyond-one",
-            "merchant": "Beyond One",
-            "partner": "",
-            "column": "request-pricing",
-            "vertical": "Telco",
-            "legal_entity_countries": "CO, MX, CL",
-            "operation_countries": "CO, MX, CL",
-            "requesting_countries": "CO, MX, CL + local currencies",
-            "transaction_type": "",
-            "payment_flow": "CIT, MIT, CoF, Network Tokens",
-            "payment_methods": "Cards, Oxxo Pay, Apple Pay, Google Pay, Nequi, Daviplata, PSE, Spei, Klap, Khipu, Mach",
-            "avg_ticket": "10 USD",
-            "monthly_tpv": "$12,731,595,582 COP",
-            "comments": "",
-        }
-    ]
+    return []
 
 def _load_intros():
     try:
