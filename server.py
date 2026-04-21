@@ -329,7 +329,7 @@ def mission(request: Request):
 INTRO_COLUMNS = [
     ("request-pricing",      "Request Pricing",          "#6b7280"),
     ("in-negotiations",      "In Negotiations",          "#3b82f6"),
-    ("sign-agreement",       "Sign and Agreement",       "#8b5cf6"),
+    ("sign-agreement",       "Signed an Agreement",      "#8b5cf6"),
     ("live",                 "Live",                     "#10b981"),
     ("merchant-didnt",       "Merchant didn't Continue", "#f59e0b"),
     ("partner-declined",     "Decline by Partner",       "#ef4444"),
