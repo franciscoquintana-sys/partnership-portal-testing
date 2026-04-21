@@ -24,6 +24,9 @@
       {% for key, label in items %}
       <a href="/{{ key }}" class="nav-item {% if page == key %}active{% endif %}">
         {{ label }}
+        {% if key != 'partners' and key != 'mission' and key != 'home' and key != 'intake' and key != 'insights' and key != 'introduction' and key != 'pipeline' %}
+          <span class="nav-badge" style="background:rgba(245,158,11,.15);color:#d97706;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:auto">WIP</span>
+        {% endif %}
         {% if key in badges %}
           <span class="nav-badge {% if key == 'mission' %}red{% endif %}">{{ badges[key] }}</span>
         {% endif %}
