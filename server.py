@@ -985,8 +985,9 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Boleto Bancário", "share": 10, "growth": "-15% YoY"},
             {"name": "Debit Cards", "share": 8, "growth": "flat",
                 "schemes": [
-                    {"name": "Visa Electron", "share": 6.0, "type": "international"},
-                    {"name": "Elo Débito",    "share": 2.0, "type": "local"}
+                    {"name": "Visa Debit",       "share": 3.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 2.5, "type": "international"},
+                    {"name": "Elo Débito",       "share": 2.0, "type": "local"}
                 ]},
             {"name": "Wallets", "detail": "Mercado Pago, PicPay", "share": 7, "growth": "+8% YoY"},
             {"name": "BNPL / Installments on card", "share": 4, "growth": "+6% YoY"},
@@ -1044,8 +1045,9 @@ COUNTRY_DETAIL_RICH = {
                 ]},
             {"name": "Debit Cards", "share": 22, "growth": "+3% YoY",
                 "schemes": [
-                    {"name": "Visa Electron", "share": 20, "type": "international"},
-                    {"name": "Carnet Débito", "share":  2.0, "type": "local"}
+                    {"name": "Visa Debit",       "share": 15, "type": "international"},
+                    {"name": "Mastercard Debit", "share":  5, "type": "international"},
+                    {"name": "Carnet Débito",    "share":  2.0, "type": "local"}
                 ]},
             {"name": "Cash", "detail": "OXXO, 7-Eleven", "share": 19, "growth": "-10% YoY"},
             {"name": "A2A", "detail": "SPEI, CoDi", "share": 18, "growth": "+25% YoY"},
