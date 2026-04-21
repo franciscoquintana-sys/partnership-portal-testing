@@ -985,9 +985,8 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Boleto Bancário", "share": 10, "growth": "-15% YoY"},
             {"name": "Debit Cards", "share": 8, "growth": "flat",
                 "schemes": [
-                    {"name": "Visa Electron", "share": 3.5, "type": "international"},
-                    {"name": "Maestro",       "share": 2.5, "type": "international"},
-                    {"name": "Elo Débito",    "share": 2.0, "type": "local"},
+                    {"name": "Visa Electron", "share": 6.0, "type": "international"},
+                    {"name": "Elo Débito",    "share": 2.0, "type": "local"}
                 ]},
             {"name": "Wallets", "detail": "Mercado Pago, PicPay", "share": 7, "growth": "+8% YoY"},
             {"name": "BNPL / Installments on card", "share": 4, "growth": "+6% YoY"},
@@ -1045,9 +1044,8 @@ COUNTRY_DETAIL_RICH = {
                 ]},
             {"name": "Debit Cards", "share": 22, "growth": "+3% YoY",
                 "schemes": [
-                    {"name": "Visa Electron", "share": 12.0, "type": "international"},
-                    {"name": "Maestro",       "share":  8.0, "type": "international"},
-                    {"name": "Carnet Débito", "share":  2.0, "type": "local"},
+                    {"name": "Visa Electron", "share": 20, "type": "international"},
+                    {"name": "Carnet Débito", "share":  2.0, "type": "local"}
                 ]},
             {"name": "Cash", "detail": "OXXO, 7-Eleven", "share": 19, "growth": "-10% YoY"},
             {"name": "A2A", "detail": "SPEI, CoDi", "share": 18, "growth": "+25% YoY"},
@@ -1108,8 +1106,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.1, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Nequi, Daviplata", "share": 17, "growth": "+28% YoY"},
             {"name": "A2A", "detail": "PSE, Bre-B", "share": 15, "growth": "+18% YoY"},
@@ -1232,8 +1229,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "detail": "Redcompra", "share": 30, "growth": "+2% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 16.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "TEF, WebPay", "share": 18, "growth": "+15% YoY"},
             {"name": "Wallets", "detail": "Mach, Fpay, MercadoPago", "share": 10, "growth": "+24% YoY"},
@@ -1295,8 +1291,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 21, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 11.6, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.4, "type": "international"},
-                    {"name": "Maestro", "share": 1.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.4, "type": "international"}
                 ]},
             {"name": "Cash", "detail": "PagoEfectivo, KasNet", "share": 15, "growth": "-6% YoY"},
             {"name": "A2A", "detail": "Transfer BCP, BBVA", "share": 12, "growth": "+22% YoY"},
@@ -1356,8 +1351,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 25, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 13.8, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"}
                 ]},
             {"name": "Cash", "share": 18, "growth": "-8% YoY"},
             {"name": "Wallets", "detail": "PayPhone, De Una", "share": 15, "growth": "+22% YoY"},
@@ -1419,8 +1413,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 18, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 9.9, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 7.2, "type": "international"},
-                    {"name": "Maestro", "share": 0.9, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 7.2, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "SIPAV / QR Simple", "share": 10, "growth": "+22% YoY"},
             {"name": "BNPL / Other", "share": 2, "growth": "+10% YoY"},
@@ -1535,8 +1528,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "detail": "mostly VES", "share": 20, "growth": "flat",
                 "schemes": [
                     {"name": "Visa Debit", "share": 11.0, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "Pago Móvil", "share": 18, "growth": "+18% YoY"},
             {"name": "Wallets", "detail": "Zinli, Reserve", "share": 18, "growth": "+35% YoY"},
@@ -1602,8 +1594,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 28, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 15.4, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 11.2, "type": "international"},
-                    {"name": "Maestro", "share": 1.4, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 11.2, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "SINPE Móvil", "share": 20, "growth": "+30% YoY"},
             {"name": "Wallets", "share": 8, "growth": "+20% YoY"},
@@ -1664,8 +1655,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 24, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 13.2, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 9.6, "type": "international"},
-                    {"name": "Maestro", "share": 1.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 9.6, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "tPago, Mi Dinero", "share": 15, "growth": "+30% YoY"},
             {"name": "Cash", "share": 12, "growth": "-8% YoY"},
@@ -1788,8 +1778,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.1, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Tigo Money, Recargapay", "share": 15, "growth": "+25% YoY"},
             {"name": "A2A", "share": 8, "growth": "+15% YoY"},
@@ -1849,8 +1838,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.1, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"}
                 ]},
             {"name": "Cash", "share": 22, "growth": "-5% YoY"},
             {"name": "Wallets", "detail": "Chivo, N1co", "share": 15, "growth": "+18% YoY"},
@@ -1911,8 +1899,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 18, "growth": "+2% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 9.9, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 7.2, "type": "international"},
-                    {"name": "Maestro", "share": 0.9, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 7.2, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Tigo Money, Tengo", "share": 14, "growth": "+22% YoY"},
             {"name": "A2A", "detail": "ACH", "share": 10, "growth": "+15% YoY"},
@@ -1972,8 +1959,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 15, "growth": "+2% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 8.2, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 6.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.8, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 6.0, "type": "international"}
                 ]},
             {"name": "Wallets", "share": 12, "growth": "+18% YoY"},
             {"name": "A2A", "detail": "SIP / transfer", "share": 10, "growth": "+14% YoY"},
@@ -2154,8 +2140,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.1, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"}
                 ]},
             {"name": "Cash", "share": 22, "growth": "-6% YoY"},
             {"name": "Wallets", "detail": "Lynk, Paymaster", "share": 12, "growth": "+28% YoY"},
@@ -2279,8 +2264,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 25, "growth": "+2% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 13.8, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Apple Pay, Google Pay, PayPal", "share": 15, "growth": "+18% YoY"},
             {"name": "A2A", "detail": "ACH, Zelle, RTP, FedNow", "share": 10, "growth": "+30% YoY"},
@@ -2405,8 +2389,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 25, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 13.8, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Apple Pay, Google Pay, PayBy", "share": 15, "growth": "+28% YoY"},
             {"name": "BNPL", "detail": "Tabby, Cashew, Postpay", "share": 10, "growth": "+35% YoY"},
@@ -2530,8 +2513,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "flat",
                 "schemes": [
                     {"name": "Visa Debit", "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "A2A", "share": 8, "growth": "+18% YoY"},
             {"name": "Cash", "share": 5, "growth": "-15% YoY"},
@@ -2592,8 +2574,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 15, "growth": "flat",
                 "schemes": [
                     {"name": "Visa Debit", "share": 8.2, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 6.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.8, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 6.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Papara, BKM Express", "share": 12, "growth": "+28% YoY"},
             {"name": "BNPL", "share": 5, "growth": "+30% YoY"},
@@ -2652,8 +2633,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 25, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 13.8, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Apple Pay, QPay", "share": 15, "growth": "+26% YoY"},
             {"name": "A2A", "detail": "Fawran", "share": 10, "growth": "+30% YoY"},
@@ -2775,8 +2755,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "detail": "BENEFIT", "share": 30, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 16.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "BenefitPay, Apple Pay", "share": 18, "growth": "+28% YoY"},
             {"name": "A2A", "detail": "Fawri+, EFTS", "share": 10, "growth": "+22% YoY"},
@@ -2836,8 +2815,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "detail": "OmanNet", "share": 30, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 16.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Thawani, Apple Pay", "share": 16, "growth": "+26% YoY"},
             {"name": "A2A", "share": 10, "growth": "+22% YoY"},
@@ -2898,8 +2876,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 18, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 9.9, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 7.2, "type": "international"},
-                    {"name": "Maestro", "share": 0.9, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 7.2, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "CliQ, JoMoPay", "share": 15, "growth": "+35% YoY"},
             {"name": "Wallets", "share": 10, "growth": "+25% YoY"},
@@ -2959,8 +2936,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "-4% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Whish, OMT", "share": 10, "growth": "+22% YoY"},
             {"name": "A2A", "share": 7, "growth": "+18% YoY"},
@@ -3320,8 +3296,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 5, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 2.8, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 2.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 2.0, "type": "international"}
                 ]},
             {"name": "BNPL", "detail": "Paidy, NP Atobarai", "share": 4, "growth": "+18% YoY"},
         ],
@@ -3381,8 +3356,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "flat",
                 "schemes": [
                     {"name": "Visa Debit", "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "A2A", "share": 5, "growth": "+15% YoY"},
             {"name": "BNPL", "share": 2, "growth": "+30% YoY"},
@@ -3444,8 +3418,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 15, "growth": "+2% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 8.2, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 6.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.8, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 6.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "FPS", "share": 12, "growth": "+28% YoY"},
             {"name": "Cash", "share": 6, "growth": "-12% YoY"},
@@ -3506,8 +3479,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 15, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 8.2, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 6.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.8, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 6.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "LINE Pay, JKO Pay, Apple Pay", "share": 15, "growth": "+20% YoY"},
             {"name": "Convenience Store", "detail": "7-Eleven, FamilyMart", "share": 12, "growth": "-3% YoY"},
@@ -3634,8 +3606,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "Cash", "share": 8, "growth": "-8% YoY"},
             {"name": "BNPL", "share": 2, "growth": "+40% YoY"},
@@ -4128,8 +4099,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 13.8, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 7.6, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 5.5, "type": "international"},
-                    {"name": "Maestro", "share": 0.7, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 5.5, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "LankaPay / CEFTS", "share": 18, "growth": "+22% YoY"},
             {"name": "Wallets", "detail": "FriMi, Genie", "share": 12, "growth": "+25% YoY"},
@@ -4253,8 +4223,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 6.6, "growth": "+6% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 3.6, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 2.6, "type": "international"},
-                    {"name": "Maestro", "share": 0.4, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 2.6, "type": "international"}
                 ]},
             {"name": "COD", "share": 10, "growth": "-10% YoY"},
             {"name": "USD / Other", "share": 8, "growth": "-4% YoY"},
@@ -4313,8 +4282,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 30, "growth": "+2% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 16.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Apple Pay, Google Pay, PayPal", "share": 15, "growth": "+20% YoY"},
             {"name": "A2A", "detail": "Faster Payments, Open Banking", "share": 8, "growth": "+35% YoY"},
@@ -4501,8 +4469,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 21.6, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 11.9, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.6, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.6, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "Bizum", "share": 20, "growth": "+32% YoY"},
             {"name": "Wallets", "detail": "PayPal, Apple Pay", "share": 17, "growth": "+20% YoY"},
@@ -4628,8 +4595,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 9.6, "growth": "+2% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 5.3, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 3.8, "type": "international"},
-                    {"name": "Maestro", "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 3.8, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Apple Pay, PayPal", "share": 8, "growth": "+22% YoY"},
             {"name": "BNPL", "detail": "Klarna, Riverty", "share": 7, "growth": "+18% YoY"},
@@ -4816,8 +4782,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 16.8, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 9.2, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 6.7, "type": "international"},
-                    {"name": "Maestro", "share": 0.9, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 6.7, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Apple Pay, Revolut, PayPal", "share": 22, "growth": "+24% YoY"},
             {"name": "A2A", "detail": "SEPA Instant", "share": 12, "growth": "+30% YoY"},
@@ -4890,7 +4855,7 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "FMA (Financial Market Authority) regulates banks and PSPs. OeNB handles monetary and payment rails.",
-            "Bankomat is the domestic debit scheme — every Austrian debit card co-badges Bankomat and Maestro/V Pay.",
+            "Bankomat is the domestic debit scheme — every Austrian debit card co-badges Bankomat and V Pay.",
             "eps Überweisung (owned by Austrian banks) is the online banking A2A rail — similar role to iDEAL / Sofort.",
             "VAT at 20%; reduced 13%/10% for specific. EU OSS for cross-border B2C.",
             "Invoice-based payment (Kauf auf Rechnung) remains culturally common for larger ticket ecommerce.",
@@ -4943,8 +4908,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 20, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 11.0, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "TWINT", "share": 25, "growth": "+30% YoY"},
             {"name": "Wallets", "detail": "Apple Pay, PayPal", "share": 15, "growth": "+22% YoY"},
@@ -5006,8 +4970,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 18, "growth": "+2% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 9.9, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 7.2, "type": "international"},
-                    {"name": "Maestro", "share": 0.9, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 7.2, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "Swish, Trustly", "share": 25, "growth": "+18% YoY"},
             {"name": "BNPL", "detail": "Klarna (native)", "share": 18, "growth": "+12% YoY"},
@@ -5195,8 +5158,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 20.2, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 11.1, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.1, "type": "international"},
-                    {"name": "Maestro", "share": 1.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.1, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "Siirto, SEPA Instant", "share": 20, "growth": "+24% YoY"},
             {"name": "BNPL", "detail": "Klarna", "share": 15, "growth": "+12% YoY"},
@@ -5259,8 +5221,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 12.6, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 6.9, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 5.0, "type": "international"},
-                    {"name": "Maestro", "share": 0.7, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 5.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Apple Pay, PayPal", "share": 10, "growth": "+20% YoY"},
             {"name": "BNPL", "detail": "PayPo, Klarna", "share": 8, "growth": "+30% YoY"},
@@ -5321,8 +5282,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22.5, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.4, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 9.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 9.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "CERTIS, SEPA Instant", "share": 18, "growth": "+22% YoY"},
             {"name": "Wallets", "detail": "Apple Pay, Google Pay", "share": 12, "growth": "+22% YoY"},
@@ -5385,8 +5345,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 20.2, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 11.1, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.1, "type": "international"},
-                    {"name": "Maestro", "share": 1.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.1, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "GIRO Instant", "share": 22, "growth": "+25% YoY"},
             {"name": "Wallets", "detail": "Revolut, Apple Pay", "share": 12, "growth": "+25% YoY"},
@@ -5448,8 +5407,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 17.1, "growth": "+5% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 9.4, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 6.8, "type": "international"},
-                    {"name": "Maestro", "share": 0.9, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 6.8, "type": "international"}
                 ]},
             {"name": "A2A", "share": 20, "growth": "+22% YoY"},
             {"name": "Wallets", "detail": "Revolut, Apple Pay", "share": 15, "growth": "+28% YoY"},
@@ -5512,8 +5470,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.1, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "IRIS", "share": 15, "growth": "+30% YoY"},
             {"name": "Wallets", "detail": "Viva, Apple Pay", "share": 12, "growth": "+22% YoY"},
@@ -5697,8 +5654,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 24.7, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 13.6, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 9.9, "type": "international"},
-                    {"name": "Maestro", "share": 1.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 9.9, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "SEPA Instant", "share": 18, "growth": "+25% YoY"},
             {"name": "Wallets", "share": 10, "growth": "+22% YoY"},
@@ -5760,8 +5716,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 23.4, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.9, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 9.4, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 9.4, "type": "international"}
                 ]},
             {"name": "A2A", "share": 18, "growth": "+22% YoY"},
             {"name": "Cash", "share": 12, "growth": "-8% YoY"},
@@ -5823,8 +5778,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22.5, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.4, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 9.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 9.0, "type": "international"}
                 ]},
             {"name": "A2A", "share": 20, "growth": "+22% YoY"},
             {"name": "Cash", "share": 12, "growth": "-8% YoY"},
@@ -5885,8 +5839,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 25, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 13.8, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "SEPA Instant", "share": 30, "growth": "+22% YoY"},
             {"name": "Wallets", "share": 10, "growth": "+22% YoY"},
@@ -5947,8 +5900,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 25, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 13.8, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"},
-                    {"name": "Maestro", "share": 1.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 10.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "SEPA Instant", "share": 25, "growth": "+22% YoY"},
             {"name": "Wallets", "share": 10, "growth": "+20% YoY"},
@@ -6010,8 +5962,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 21.6, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 11.9, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.6, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.6, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "SEPA Instant", "share": 25, "growth": "+22% YoY"},
             {"name": "Wallets", "detail": "Paysera, Revolut", "share": 12, "growth": "+24% YoY"},
@@ -6072,8 +6023,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.1, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 8.8, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Payconiq, Apple Pay, PayPal", "share": 18, "growth": "+22% YoY"},
             {"name": "A2A", "detail": "SEPA Instant", "share": 15, "growth": "+22% YoY"},
@@ -6134,8 +6084,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 29.2, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 16.1, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 11.7, "type": "international"},
-                    {"name": "Maestro", "share": 1.4, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 11.7, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "Aur, Kass, Apple Pay", "share": 18, "growth": "+22% YoY"},
             {"name": "A2A", "detail": "RB1", "share": 10, "growth": "+20% YoY"},
@@ -6197,8 +6146,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 23.2, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 12.8, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 9.3, "type": "international"},
-                    {"name": "Maestro", "share": 1.1, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 9.3, "type": "international"}
                 ]},
             {"name": "Wallets", "share": 15, "growth": "+22% YoY"},
             {"name": "Cash", "share": 10, "growth": "-10% YoY"},
@@ -6260,8 +6208,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 24, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit", "share": 13.2, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 9.6, "type": "international"},
-                    {"name": "Maestro", "share": 1.2, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 9.6, "type": "international"}
                 ]},
             {"name": "Wallets", "share": 15, "growth": "+22% YoY"},
             {"name": "A2A", "share": 10, "growth": "+22% YoY"},
@@ -6511,8 +6458,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 30, "growth": "+3% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 16.0, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"},
-                    {"name": "Maestro",          "share":  2.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 12.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "PayShap, EFT", "share": 14, "growth": "+35% YoY"},
             {"name": "Cash", "share": 12, "growth": "-8% YoY"},
@@ -6631,8 +6577,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 12, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 7.0, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.5, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.5, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "PesaLink, EFT", "share": 6, "growth": "+22% YoY"},
             {"name": "Credit Cards", "share": 4, "growth": "+5% YoY",
@@ -6753,8 +6698,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 13.0, "type": "international"},
-                    {"name": "Mastercard Debit", "share":  8.0, "type": "international"},
-                    {"name": "Maestro",          "share":  1.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share":  8.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "AmanePay, Barid Pay", "share": 18, "growth": "+28% YoY"},
             {"name": "A2A", "share": 14, "growth": "+22% YoY"},
@@ -6879,8 +6823,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "+8% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 5.0, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.5, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.5, "type": "international"}
                 ]},
             {"name": "Credit Cards", "share": 4, "growth": "+6% YoY",
                 "schemes": [
@@ -6940,8 +6883,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "+5% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "TIPS", "share": 10, "growth": "+28% YoY"},
             {"name": "Credit Cards", "share": 5, "growth": "+5% YoY",
@@ -7003,8 +6945,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "+5% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "BNPL", "share": 5, "growth": "+35% YoY"},
             {"name": "Credit Cards", "share": 5, "growth": "+5% YoY",
@@ -7124,8 +7065,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 22, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 12.0, "type": "international"},
-                    {"name": "Mastercard Debit", "share":  9.0, "type": "international"},
-                    {"name": "Maestro",          "share":  1.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share":  9.0, "type": "international"}
                 ]},
             {"name": "Wallets", "detail": "D17, Flouci", "share": 15, "growth": "+28% YoY"},
             {"name": "A2A", "detail": "SGMT, transfer", "share": 10, "growth": "+22% YoY"},
@@ -7187,8 +7127,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "+5% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "GIM-UEMOA", "share": 6, "growth": "+22% YoY"},
             {"name": "BNPL", "share": 5, "growth": "+30% YoY"},
@@ -7249,8 +7188,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "+5% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "GIM-UEMOA", "share": 8, "growth": "+22% YoY"},
             {"name": "BNPL", "share": 6, "growth": "+28% YoY"},
@@ -7311,8 +7249,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "+5% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "GIMAC", "share": 10, "growth": "+20% YoY"},
             {"name": "BNPL / Other", "share": 5, "growth": "+28% YoY"},
@@ -7433,8 +7370,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "+5% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "SIMO", "share": 8, "growth": "+22% YoY"},
             {"name": "BNPL / Other", "share": 6, "growth": "+25% YoY"},
@@ -7494,8 +7430,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 12, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 6.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 5.0, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 5.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "ZIPIT", "share": 10, "growth": "+22% YoY"},
             {"name": "Credit Cards", "share": 5, "growth": "+5% YoY",
@@ -7553,8 +7488,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 32, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 17.0, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 13.0, "type": "international"},
-                    {"name": "Maestro",          "share":  2.0, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 13.0, "type": "international"}
                 ]},
             {"name": "Cash", "share": 22, "growth": "-8% YoY"},
             {"name": "Wallets", "detail": "Orange Money, Myzaka, FNB eWallet", "share": 18, "growth": "+25% YoY"},
@@ -7620,8 +7554,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 30, "growth": "+4% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 16.0, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 12.5, "type": "international"},
-                    {"name": "Maestro",          "share":  1.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 12.5, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "MIPS", "share": 14, "growth": "+30% YoY"},
             {"name": "Wallets", "detail": "my.t money, Juice", "share": 12, "growth": "+22% YoY"},
@@ -7678,8 +7611,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 10, "growth": "+6% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 5.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 4.0, "type": "international"}
                 ]},
             {"name": "A2A", "share": 8, "growth": "+22% YoY"},
             {"name": "BNPL", "share": 5, "growth": "+35% YoY"},
@@ -7740,8 +7672,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Debit Cards", "share": 12, "growth": "+5% YoY",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 6.5, "type": "international"},
-                    {"name": "Mastercard Debit", "share": 5.0, "type": "international"},
-                    {"name": "Maestro",          "share": 0.5, "type": "international"},
+                    {"name": "Mastercard Debit", "share": 5.0, "type": "international"}
                 ]},
             {"name": "A2A", "detail": "ZIPSS", "share": 10, "growth": "+25% YoY"},
             {"name": "BNPL / Other", "share": 6, "growth": "+28% YoY"},
