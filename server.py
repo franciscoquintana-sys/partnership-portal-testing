@@ -574,7 +574,7 @@ LEAD_COLUMNS = [
     ("lost",                  "Lost",                  "#ef4444"),
 ]
 _VALID_LEAD_COLUMNS = {c[0] for c in LEAD_COLUMNS}
-_LEAD_FIELDS = {"merchant", "partner", "bdm", "pm", "comments"}
+_LEAD_FIELDS = {"merchant", "partner", "client_type", "bdm", "pm", "comments"}
 
 LEADS_STORAGE = os.path.join(DATA_DIR, "leads.json")
 
@@ -715,17 +715,15 @@ async def api_leads_create(request: Request):
     body = await request.json()
     fields = body.get("fields") or {}
     merchant = (fields.get("merchant") or "").strip()
-    partner  = (fields.get("partner")  or "").strip()
     if not merchant:
         return JSONResponse({"error": "merchant required"}, status_code=400)
-    if not partner:
-        return JSONResponse({"error": "partner required"}, status_code=400)
     import uuid
     new_lead = {
         "id": uuid.uuid4().hex[:10],
         "column": "extra-introductions",
         "merchant": merchant,
-        "partner": partner,
+        "partner": (fields.get("partner") or "").strip(),
+        "client_type": (fields.get("client_type") or "").strip(),
         "bdm": (fields.get("bdm") or "").strip(),
         "pm":  (fields.get("pm")  or "").strip(),
         "comments": (fields.get("comments") or "").strip(),

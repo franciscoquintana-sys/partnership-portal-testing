@@ -84,6 +84,19 @@
 .kanban-card-partner span {
   color: #4f46e5;
 }
+.kanban-card-type {
+  display: inline-block;
+  align-self: flex-start;
+  background: #eef2ff;
+  color: #4338ca;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
 .kanban-card-row {
   display: flex;
   justify-content: space-between;
@@ -269,6 +282,7 @@
         {% for card in col.cards %}
         <div class="kanban-card" data-id="{{ card.id }}" data-partner="{{ card.partner or '' }}" data-pm="{{ card.pm or '' }}" data-merchant="{{ card.merchant or '' }}">
           <div class="kanban-card-name">{{ card.merchant }}</div>
+          {% if card.client_type %}<div class="kanban-card-type">{{ card.client_type }}</div>{% endif %}
           {% if card.partner %}<div class="kanban-card-partner">via <span>{{ card.partner }}</span></div>{% endif %}
           {% if card.bdm %}
           <div class="kanban-card-row">
@@ -299,12 +313,13 @@
       </div>
       <div class="lead-field"><label>Client Name <span style="color:#dc2626">*</span></label><input id="lf-merchant" placeholder="Required"></div>
       <div class="lead-field">
-        <label>Introduced by Partner <span style="color:#dc2626">*</span></label>
-        <input id="lf-partner" list="lead-partner-catalog" placeholder="Required — start typing a partner name…" autocomplete="off">
+        <label>Introduced by Partner</label>
+        <input id="lf-partner" list="lead-partner-catalog" placeholder="Optional — start typing a partner name…" autocomplete="off">
         <datalist id="lead-partner-catalog">
           {% for p in partner_catalog %}<option value="{{ p }}"></option>{% endfor %}
         </datalist>
       </div>
+      <div class="lead-field"><label>Type of Client</label><input id="lf-client-type" placeholder="e.g. Marketplace, SaaS, Retail…"></div>
       <div class="lead-field"><label>BDM Assigned</label><input id="lf-bdm"></div>
       <div class="lead-field"><label>Partnership Manager</label><input id="lf-pm"></div>
       <div class="lead-field"><label>Comments</label><textarea id="lf-comments"></textarea></div>
@@ -354,20 +369,22 @@ function bindLeadCardClicks() {
 }
 
 function fillLeadModal(data) {
-  document.getElementById('lf-merchant').value = data.merchant || '';
-  document.getElementById('lf-partner').value  = data.partner || '';
-  document.getElementById('lf-bdm').value      = data.bdm || '';
-  document.getElementById('lf-pm').value       = data.pm || '';
-  document.getElementById('lf-comments').value = data.comments || '';
+  document.getElementById('lf-merchant').value     = data.merchant || '';
+  document.getElementById('lf-partner').value      = data.partner || '';
+  document.getElementById('lf-client-type').value  = data.client_type || '';
+  document.getElementById('lf-bdm').value          = data.bdm || '';
+  document.getElementById('lf-pm').value           = data.pm || '';
+  document.getElementById('lf-comments').value     = data.comments || '';
 }
 
 function readLeadModal() {
   return {
-    merchant: document.getElementById('lf-merchant').value.trim(),
-    partner:  document.getElementById('lf-partner').value.trim(),
-    bdm:      document.getElementById('lf-bdm').value.trim(),
-    pm:       document.getElementById('lf-pm').value.trim(),
-    comments: document.getElementById('lf-comments').value.trim(),
+    merchant:    document.getElementById('lf-merchant').value.trim(),
+    partner:     document.getElementById('lf-partner').value.trim(),
+    client_type: document.getElementById('lf-client-type').value.trim(),
+    bdm:         document.getElementById('lf-bdm').value.trim(),
+    pm:          document.getElementById('lf-pm').value.trim(),
+    comments:    document.getElementById('lf-comments').value.trim(),
   };
 }
 
@@ -406,6 +423,12 @@ function renderLeadCard(card, lead) {
   name.className = 'kanban-card-name';
   name.textContent = lead.merchant;
   card.appendChild(name);
+  if (lead.client_type) {
+    const t = document.createElement('div');
+    t.className = 'kanban-card-type';
+    t.textContent = lead.client_type;
+    card.appendChild(t);
+  }
   if (lead.partner) {
     const p = document.createElement('div');
     p.className = 'kanban-card-partner';
@@ -432,7 +455,6 @@ function renderLeadCard(card, lead) {
 async function saveLead() {
   const fields = readLeadModal();
   if (!fields.merchant) { alert('Client name is required.'); return; }
-  if (!fields.partner)  { alert('Introducing Partner is required.'); return; }
 
   if (leadModalMode === 'add') {
     const res = await fetch('/api/leads/create', {
