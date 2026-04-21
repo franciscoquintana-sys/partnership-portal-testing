@@ -251,6 +251,11 @@
       <option value="">All partnership managers</option>
       {% for m in board_pms %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
     </select>
+    <select id="merchant-filter" onchange="applyPartnerFilter()"
+            style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:180px">
+      <option value="">All merchants</option>
+      {% for m in board_merchants %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+    </select>
     <span id="filter-hint" style="font-size:12px;color:#94a3b8;flex:1"></span>
     <button class="btn-primary" onclick="openAddMerchant()" style="margin-left:auto">+ Add Merchant</button>
   </div>
@@ -506,20 +511,29 @@ function refreshPartnerFilter() {
   pmSelect.innerHTML = '<option value="">All partnership managers</option>' +
     pms.map(p => `<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
   pmSelect.value = pms.includes(pmCurrent) ? pmCurrent : '';
+
+  const mSelect = document.getElementById('merchant-filter');
+  const mCurrent = mSelect.value;
+  const merchants = [...new Set(INTROS.map(i => (i.merchant || '').trim()).filter(Boolean))].sort();
+  mSelect.innerHTML = '<option value="">All merchants</option>' +
+    merchants.map(m => `<option value="${m.replace(/"/g,'&quot;')}">${m}</option>`).join('');
+  mSelect.value = merchants.includes(mCurrent) ? mCurrent : '';
 }
 
 function applyPartnerFilter() {
   const partner = document.getElementById('partner-filter').value;
   const pm = document.getElementById('pm-filter').value;
+  const merchant = document.getElementById('merchant-filter').value;
   const q = (document.getElementById('intro-search').value || '').trim().toLowerCase();
   document.querySelectorAll('.kanban-card').forEach(card => {
     const partnerOk = !partner || card.dataset.partner === partner;
     const pmOk = !pm || card.dataset.pm === pm;
+    const merchantOk = !merchant || card.dataset.merchant === merchant;
     const merchantName = (card.dataset.merchant || '').toLowerCase();
     const partnerName  = (card.dataset.partner  || '').toLowerCase();
     const pmName       = (card.dataset.pm       || '').toLowerCase();
     const searchOk = !q || merchantName.includes(q) || partnerName.includes(q) || pmName.includes(q);
-    card.style.display = (partnerOk && pmOk && searchOk) ? '' : 'none';
+    card.style.display = (partnerOk && pmOk && merchantOk && searchOk) ? '' : 'none';
   });
   document.querySelectorAll('.kanban-col').forEach(col => {
     const visible = [...col.querySelectorAll('.kanban-card')].filter(c => c.style.display !== 'none').length;
@@ -529,6 +543,7 @@ function applyPartnerFilter() {
   const parts = [];
   if (partner) parts.push(`partner: ${partner}`);
   if (pm) parts.push(`PM: ${pm}`);
+  if (merchant) parts.push(`merchant: ${merchant}`);
   if (q) parts.push(`search: "${q}"`);
   hint.textContent = parts.length ? `Filtered by ${parts.join(' · ')}` : '';
 }
