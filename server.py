@@ -332,7 +332,7 @@ INTRO_COLUMNS = [
     ("sign-agreement",       "Signed an Agreement",      "#8b5cf6"),
     ("live",                 "Live",                     "#10b981"),
     ("merchant-didnt",       "Merchant didn't Continue", "#f59e0b"),
-    ("partner-declined",     "Decline by Partner",       "#ef4444"),
+    ("partner-declined",     "Declined by Partner",      "#ef4444"),
 ]
 _VALID_COLUMNS = {c[0] for c in INTRO_COLUMNS}
 _INTRO_FIELDS = {
