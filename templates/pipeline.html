@@ -314,7 +314,7 @@
       <div class="lead-field"><label>Client Name <span style="color:#dc2626">*</span></label><input id="lf-merchant" placeholder="Required"></div>
       <div class="lead-field">
         <label>Introduced by Partner</label>
-        <input id="lf-partner" list="lead-partner-catalog" placeholder="Optional — start typing a partner name…" autocomplete="off">
+        <input id="lf-partner" list="lead-partner-catalog" placeholder="Start typing a partner name…" autocomplete="off">
         <datalist id="lead-partner-catalog">
           {% for p in partner_catalog %}<option value="{{ p }}"></option>{% endfor %}
         </datalist>
