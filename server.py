@@ -331,6 +331,7 @@ INTRO_COLUMNS = [
     ("in-negotiations",      "In Negotiations",          "#3b82f6"),
     ("sign-agreement",       "Signed an Agreement",      "#8b5cf6"),
     ("live",                 "Live",                     "#10b981"),
+    ("on-hold",              "On Hold",                  "#0891b2"),
     ("merchant-didnt",       "Merchant didn't Continue", "#f59e0b"),
     ("partner-declined",     "Declined by Partner",      "#ef4444"),
 ]
