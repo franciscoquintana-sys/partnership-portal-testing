@@ -336,7 +336,7 @@ INTRO_COLUMNS = [
 ]
 _VALID_COLUMNS = {c[0] for c in INTRO_COLUMNS}
 _INTRO_FIELDS = {
-    "merchant", "vertical", "legal_entity_countries", "operation_countries",
+    "merchant", "partner", "vertical", "legal_entity_countries", "operation_countries",
     "requesting_countries", "transaction_type", "payment_flow",
     "payment_methods", "avg_ticket", "monthly_tpv", "comments",
 }
@@ -353,6 +353,7 @@ def _default_intros():
         {
             "id": "beyond-one",
             "merchant": "Beyond One",
+            "partner": "",
             "column": "request-pricing",
             "vertical": "Telco",
             "legal_entity_countries": "CO, MX, CL",
@@ -395,10 +396,20 @@ def introduction(request: Request):
          "cards": [i for i in INTROS if i.get("column") == k]}
         for k, t, c in INTRO_COLUMNS
     ]
+    # Partners currently on the board (deduped, sorted) for the filter
+    board_partners = sorted({(i.get("partner") or "").strip() for i in INTROS if (i.get("partner") or "").strip()})
+    # Full partner catalog so the modal's dropdown can offer any partner
+    try:
+        all_partners_rows = load_partners_excel()
+        partner_catalog = sorted({p["name"] for p in all_partners_rows if p.get("name")})
+    except Exception:
+        partner_catalog = []
     return tr(request, "introduction.html", ctx(
         request, "introduction",
         columns=columns,
         all_intros=INTROS,
+        board_partners=board_partners,
+        partner_catalog=partner_catalog,
     ))
 
 @app.post("/api/intros/move")
@@ -445,6 +456,7 @@ async def api_intros_create(request: Request):
     new_intro = {
         "id": uuid.uuid4().hex[:10],
         "merchant": merchant,
+        "partner": "",
         "column": "request-pricing",
         "vertical": "",
         "legal_entity_countries": "",

@@ -57,11 +57,26 @@
   border-radius: 8px;
   padding: 10px 12px;
   cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  user-select: none;
+}
+.kanban-card-name {
   font-size: 13px;
   font-weight: 700;
   color: #0f172a;
-  transition: box-shadow 0.15s, border-color 0.15s;
-  user-select: none;
+  line-height: 1.3;
+}
+.kanban-card-partner {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.3;
+}
+.kanban-card-partner span {
+  color: #4f46e5;
 }
 .kanban-card:hover {
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -210,6 +225,17 @@
     <button class="btn-primary" onclick="addIntro()">+ Add Intro</button>
   </div>
 
+  <!-- Partner filter -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+    <label for="partner-filter" style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#64748b">Filter by partner</label>
+    <select id="partner-filter" onchange="applyPartnerFilter()"
+            style="font-family:inherit;font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:220px">
+      <option value="">All partners</option>
+      {% for p in board_partners %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
+    </select>
+    <span id="filter-hint" style="font-size:12px;color:#94a3b8"></span>
+  </div>
+
   <!-- Kanban -->
   <div class="kanban-wrapper">
     {% for col in columns %}
@@ -220,7 +246,10 @@
       </div>
       <div class="kanban-col-body sortable" data-col="{{ col.key }}">
         {% for card in col.cards %}
-        <div class="kanban-card" data-id="{{ card.id }}">{{ card.merchant }}</div>
+        <div class="kanban-card" data-id="{{ card.id }}" data-partner="{{ card.partner or '' }}">
+          <div class="kanban-card-name">{{ card.merchant }}</div>
+          {% if card.partner %}<div class="kanban-card-partner">via <span>{{ card.partner }}</span></div>{% endif %}
+        </div>
         {% endfor %}
       </div>
     </div>
@@ -236,6 +265,13 @@
         <button class="btn-danger" onclick="deleteIntro()">Delete</button>
       </div>
       <div class="intro-field"><label>Name of the Merchant</label><input id="f-merchant"></div>
+      <div class="intro-field">
+        <label>Introducing Partner</label>
+        <input id="f-partner" list="partner-catalog" placeholder="Start typing a partner name…" autocomplete="off">
+        <datalist id="partner-catalog">
+          {% for p in partner_catalog %}<option value="{{ p }}"></option>{% endfor %}
+        </datalist>
+      </div>
       <div class="intro-field"><label>Vertical of the Merchant</label><input id="f-vertical"></div>
       <div class="intro-field"><label>Countries where the Merchant has a Legal Entity</label><input id="f-legal"></div>
       <div class="intro-field"><label>Countries where the Merchant has Operation</label><input id="f-operation"></div>
@@ -278,7 +314,7 @@ function bindSortables() {
         });
         const intro = INTROS.find(i => i.id === id);
         if (intro) intro.column = newCol;
-        updateCounts();
+        applyPartnerFilter();
       }
     });
   });
@@ -303,6 +339,7 @@ function openIntro(id) {
   currentId = id;
   document.getElementById('intro-title').textContent = intro.merchant;
   document.getElementById('f-merchant').value   = intro.merchant || '';
+  document.getElementById('f-partner').value    = intro.partner || '';
   document.getElementById('f-vertical').value   = intro.vertical || '';
   document.getElementById('f-legal').value      = intro.legal_entity_countries || '';
   document.getElementById('f-operation').value  = intro.operation_countries || '';
@@ -325,6 +362,7 @@ async function saveIntro() {
   if (!currentId) return;
   const fields = {
     merchant:                document.getElementById('f-merchant').value.trim(),
+    partner:                 document.getElementById('f-partner').value.trim(),
     vertical:                document.getElementById('f-vertical').value.trim(),
     legal_entity_countries:  document.getElementById('f-legal').value.trim(),
     operation_countries:     document.getElementById('f-operation').value.trim(),
@@ -346,9 +384,52 @@ async function saveIntro() {
   if (data.ok) {
     Object.assign(INTROS.find(i => i.id === currentId), fields);
     const card = document.querySelector(`.kanban-card[data-id="${currentId}"]`);
-    if (card) card.textContent = fields.merchant;
+    if (card) {
+      card.dataset.partner = fields.partner || '';
+      renderCard(card, fields.merchant, fields.partner);
+    }
+    refreshPartnerFilter();
+    applyPartnerFilter();
     closeIntro();
   }
+}
+
+function renderCard(card, merchant, partner) {
+  card.innerHTML = '';
+  const name = document.createElement('div');
+  name.className = 'kanban-card-name';
+  name.textContent = merchant;
+  card.appendChild(name);
+  if (partner) {
+    const p = document.createElement('div');
+    p.className = 'kanban-card-partner';
+    p.innerHTML = 'via <span></span>';
+    p.querySelector('span').textContent = partner;
+    card.appendChild(p);
+  }
+}
+
+function refreshPartnerFilter() {
+  const select = document.getElementById('partner-filter');
+  const currentValue = select.value;
+  const partners = [...new Set(INTROS.map(i => (i.partner || '').trim()).filter(Boolean))].sort();
+  select.innerHTML = '<option value="">All partners</option>' +
+    partners.map(p => `<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+  select.value = partners.includes(currentValue) ? currentValue : '';
+}
+
+function applyPartnerFilter() {
+  const val = document.getElementById('partner-filter').value;
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    card.style.display = (!val || card.dataset.partner === val) ? '' : 'none';
+  });
+  // Recount visible cards in each column header
+  document.querySelectorAll('.kanban-col').forEach(col => {
+    const visible = [...col.querySelectorAll('.kanban-card')].filter(c => c.style.display !== 'none').length;
+    col.querySelector('.kanban-col-count').textContent = visible;
+  });
+  const hint = document.getElementById('filter-hint');
+  hint.textContent = val ? `Showing only cards introduced by ${val}` : '';
 }
 
 async function deleteIntro() {
@@ -385,10 +466,11 @@ async function addIntro() {
     const card = document.createElement('div');
     card.className = 'kanban-card';
     card.dataset.id = data.intro.id;
-    card.textContent = data.intro.merchant;
+    card.dataset.partner = '';
+    renderCard(card, data.intro.merchant, '');
     card.onclick = () => openIntro(data.intro.id);
     body.appendChild(card);
-    updateCounts();
+    applyPartnerFilter();
     input.value = '';
   }
 }
