@@ -219,7 +219,7 @@
     <div style="display:flex;align-items:flex-start;justify-content:space-between">
       <div>
         <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Partner Leads</div>
-        <div style="font-size:13px;color:#94a3b8">Drag merchants between stages as partner-sourced deals progress.</div>
+        <div style="font-size:13px;color:#94a3b8">Drag clients between stages as partner-sourced deals progress.</div>
       </div>
       <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
     </div>
@@ -232,7 +232,7 @@
            style="position:absolute;left:11px;top:50%;transform:translateY(-50%)">
         <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
       </svg>
-      <input id="lead-search" type="text" placeholder="Look for merchants or partners…"
+      <input id="lead-search" type="text" placeholder="Look for clients or partners…"
              oninput="applyLeadFilter()"
              style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:8px 12px 8px 32px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;outline:none;transition:border-color 0.15s, box-shadow 0.15s"
              onfocus="this.style.borderColor='#4f46e5';this.style.boxShadow='0 0 0 3px rgba(79,70,229,0.1)'"
@@ -250,11 +250,11 @@
     </select>
     <select id="lead-merchant-filter" onchange="applyLeadFilter()"
             style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:180px">
-      <option value="">All merchants</option>
+      <option value="">All clients</option>
       {% for m in board_merchants %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
     </select>
     <span id="lead-filter-hint" style="font-size:12px;color:#94a3b8;flex:1"></span>
-    <button class="btn-primary" onclick="openAddLead()" style="margin-left:auto">+ Add Merchant</button>
+    <button class="btn-primary" onclick="openAddLead()" style="margin-left:auto">+ Add Client</button>
   </div>
 
   <!-- Kanban -->
@@ -297,7 +297,7 @@
         <h2 class="lead-modal-title" id="lead-title"></h2>
         <button class="btn-danger" id="lead-delete-btn" onclick="deleteLead()">Delete</button>
       </div>
-      <div class="lead-field"><label>Merchant Name <span style="color:#dc2626">*</span></label><input id="lf-merchant" placeholder="Required"></div>
+      <div class="lead-field"><label>Client Name <span style="color:#dc2626">*</span></label><input id="lf-merchant" placeholder="Required"></div>
       <div class="lead-field">
         <label>Introduced by Partner <span style="color:#dc2626">*</span></label>
         <input id="lf-partner" list="lead-partner-catalog" placeholder="Required — start typing a partner name…" autocomplete="off">
@@ -385,7 +385,7 @@ function openLead(id) {
 function openAddLead() {
   leadModalMode = 'add';
   currentLeadId = null;
-  document.getElementById('lead-title').textContent = 'Add Merchant';
+  document.getElementById('lead-title').textContent = 'Add Client';
   document.getElementById('lead-delete-btn').style.display = 'none';
   fillLeadModal({});
   document.getElementById('lead-modal').classList.add('open');
@@ -431,7 +431,7 @@ function renderLeadCard(card, lead) {
 
 async function saveLead() {
   const fields = readLeadModal();
-  if (!fields.merchant) { alert('Merchant name is required.'); return; }
+  if (!fields.merchant) { alert('Client name is required.'); return; }
   if (!fields.partner)  { alert('Introducing Partner is required.'); return; }
 
   if (leadModalMode === 'add') {
@@ -494,7 +494,7 @@ function refreshLeadPartnerFilter() {
   const mSelect = document.getElementById('lead-merchant-filter');
   const mCurrent = mSelect.value;
   const merchants = [...new Set(LEADS.map(l => (l.merchant || '').trim()).filter(Boolean))].sort();
-  mSelect.innerHTML = '<option value="">All merchants</option>' +
+  mSelect.innerHTML = '<option value="">All clients</option>' +
     merchants.map(m => `<option value="${m.replace(/"/g,'&quot;')}">${m}</option>`).join('');
   mSelect.value = merchants.includes(mCurrent) ? mCurrent : '';
 }
@@ -522,7 +522,7 @@ function applyLeadFilter() {
   const parts = [];
   if (partner) parts.push(`partner: ${partner}`);
   if (pm) parts.push(`PM: ${pm}`);
-  if (merchant) parts.push(`merchant: ${merchant}`);
+  if (merchant) parts.push(`client: ${merchant}`);
   if (q) parts.push(`search: "${q}"`);
   hint.textContent = parts.length ? `Filtered by ${parts.join(' · ')}` : '';
 }
