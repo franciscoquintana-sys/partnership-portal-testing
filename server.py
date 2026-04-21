@@ -341,9 +341,9 @@ _INTRO_FIELDS = {
     "payment_methods", "avg_ticket", "monthly_tpv", "comments",
 }
 
-# Persist intros to a Railway volume when available so drag-and-drop state
-# survives redeploys. DATA_DIR env var takes precedence; fall back to /data
-# if mounted (Railway convention), otherwise the repo root for local dev.
+# Persist intros to Postgres when DATABASE_URL is set (Railway auto-injects this
+# when a Postgres service is linked). Otherwise fall back to a JSON file — on the
+# mounted /data volume if available, else repo root (fine for local dev).
 DATA_DIR = os.environ.get("DATA_DIR") or ("/data" if os.path.isdir("/data") else BASE)
 os.makedirs(DATA_DIR, exist_ok=True)
 INTROS_STORAGE = os.path.join(DATA_DIR, "intros.json")
@@ -351,7 +351,50 @@ INTROS_STORAGE = os.path.join(DATA_DIR, "intros.json")
 def _default_intros():
     return []
 
+def _db_conn():
+    url = os.environ.get("DATABASE_URL")
+    if not url:
+        return None
+    try:
+        import psycopg2
+        return psycopg2.connect(url)
+    except Exception as e:
+        print(f"[intros] Postgres connect failed: {e}")
+        return None
+
+def _db_init():
+    conn = _db_conn()
+    if not conn:
+        return False
+    try:
+        with conn, conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS intros (
+                    id TEXT PRIMARY KEY,
+                    data JSONB NOT NULL,
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+        return True
+    except Exception as e:
+        print(f"[intros] Postgres init failed: {e}")
+        return False
+    finally:
+        conn.close()
+
 def _load_intros():
+    conn = _db_conn()
+    if conn:
+        try:
+            with conn, conn.cursor() as cur:
+                cur.execute("SELECT data FROM intros ORDER BY updated_at ASC")
+                rows = cur.fetchall()
+                return [r[0] for r in rows]
+        except Exception as e:
+            print(f"[intros] Postgres load failed: {e}")
+        finally:
+            conn.close()
+    # JSON fallback
     try:
         with open(INTROS_STORAGE, encoding="utf-8") as f:
             return json.load(f)
@@ -359,12 +402,35 @@ def _load_intros():
         return _default_intros()
 
 def _save_intros(data):
+    conn = _db_conn()
+    if conn:
+        try:
+            with conn, conn.cursor() as cur:
+                cur.execute("SELECT id FROM intros")
+                existing = {r[0] for r in cur.fetchall()}
+                current = {i["id"] for i in data}
+                for removed_id in existing - current:
+                    cur.execute("DELETE FROM intros WHERE id = %s", (removed_id,))
+                for intro in data:
+                    cur.execute("""
+                        INSERT INTO intros (id, data, updated_at)
+                        VALUES (%s, %s::jsonb, NOW())
+                        ON CONFLICT (id) DO UPDATE
+                          SET data = EXCLUDED.data, updated_at = NOW()
+                    """, (intro["id"], json.dumps(intro, ensure_ascii=False)))
+            return
+        except Exception as e:
+            print(f"[intros] Postgres save failed: {e}")
+        finally:
+            conn.close()
+    # JSON fallback
     try:
         with open(INTROS_STORAGE, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
-    except Exception:
-        pass
+    except Exception as e:
+        print(f"[intros] JSON save failed: {e}")
 
+_db_init()
 INTROS = _load_intros()
 
 @app.get("/introduction", response_class=HTMLResponse)
