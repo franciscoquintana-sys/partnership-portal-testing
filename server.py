@@ -279,9 +279,23 @@ def pipeline(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
+    columns = [
+        {"key": k, "title": t, "color": c,
+         "cards": [l for l in LEADS if l.get("column") == k]}
+        for k, t, c in LEAD_COLUMNS
+    ]
+    board_partners = sorted({(l.get("partner") or "").strip() for l in LEADS if (l.get("partner") or "").strip()})
+    try:
+        all_partners_rows = load_partners_excel()
+        partner_catalog = sorted({p["name"] for p in all_partners_rows if p.get("name")})
+    except Exception:
+        partner_catalog = []
     return tr(request, "pipeline.html", ctx(
         request, "pipeline",
-        stages=PIPELINE_STAGES, deals=PIPELINE_DEALS
+        columns=columns,
+        all_leads=LEADS,
+        board_partners=board_partners,
+        partner_catalog=partner_catalog,
     ))
 
 @app.get("/mission", response_class=HTMLResponse)
@@ -537,6 +551,218 @@ async def api_intros_delete(request: Request):
     if len(INTROS) == before:
         return JSONResponse({"error": "not found"}, status_code=404)
     _save_intros(INTROS)
+    return {"ok": True}
+
+# ── Partner Leads board ──────────────────────────────────────────────────────
+LEAD_COLUMNS = [
+    ("extra-introductions",   "Extra Introductions",   "#a78bfa"),
+    ("introduced-by-partner", "Introduced by Partner", "#60a5fa"),
+    ("in-negotiation",        "In Negotiation",        "#fbbf24"),
+    ("signed-merchant",       "Signed Merchant",       "#c084fc"),
+    ("live-merchant",         "Live Merchant",         "#22c55e"),
+    ("didnt-qualify",         "Didn't Qualify",        "#86868b"),
+    ("lost",                  "Lost",                  "#ef4444"),
+]
+_VALID_LEAD_COLUMNS = {c[0] for c in LEAD_COLUMNS}
+_LEAD_FIELDS = {"merchant", "partner", "bdm", "pm", "comments"}
+
+LEADS_STORAGE = os.path.join(DATA_DIR, "leads.json")
+
+def _seed_leads():
+    import uuid
+    seed_map = {
+        "extra-introductions":   [],
+        "introduced-by-partner": [
+            ("Rappi",        "dLocal",       "Johanderson", "Talita"),
+            ("Cabify",       "Kushki",       "Talita",      "Alessandra"),
+            ("Totalplay",    "Conekta",      "Alex",        "Talita"),
+            ("Linio",        "PayU",         "Johanderson", "Talita"),
+        ],
+        "in-negotiation": [
+            ("Despegar",     "Bamboo",       "Alessandra",  "Talita"),
+            ("Falabella",    "Kushki",       "Talita",      "Alessandra"),
+            ("PedidosYa",    "dLocal",       "Johanderson", "Talita"),
+        ],
+        "signed-merchant": [
+            ("Cinépolis",    "Stripe",       "Alex",        "Alessandra"),
+            ("Claro",        "Cielo",        "Sofia",       "Talita"),
+            ("Spotify",      "Pagar.me",     "Johanderson", "Talita"),
+        ],
+        "live-merchant": [
+            ("iFood",        "PagBank",      "Johanderson", "Talita"),
+            ("Netflix",      "Conekta",      "Alex",        "Alessandra"),
+            ("MercadoLibre", "Mercado Pago", "Sofia",       "Talita"),
+        ],
+        "didnt-qualify": [
+            ("LocalStore MX","Clip",         "Alex",        "Alessandra"),
+            ("MiniMart CO",  "Wompi",        "Johanderson", "Talita"),
+        ],
+        "lost": [
+            ("Uber",         "Cielo",        "Sofia",       "Talita"),
+            ("Avianca",      "PayU",         "Johanderson", "Alessandra"),
+        ],
+    }
+    out = []
+    for col, rows in seed_map.items():
+        for m, p, b, pm in rows:
+            out.append({
+                "id": uuid.uuid4().hex[:10],
+                "column": col,
+                "merchant": m, "partner": p, "bdm": b, "pm": pm, "comments": "",
+            })
+    return out
+
+def _db_init_leads():
+    conn = _db_conn()
+    if not conn:
+        return False
+    try:
+        with conn, conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS leads (
+                    id TEXT PRIMARY KEY,
+                    data JSONB NOT NULL,
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+        return True
+    except Exception as e:
+        print(f"[leads] Postgres init failed: {e}")
+        return False
+    finally:
+        conn.close()
+
+def _load_leads():
+    conn = _db_conn()
+    if conn:
+        try:
+            with conn, conn.cursor() as cur:
+                cur.execute("SELECT data FROM leads ORDER BY updated_at ASC")
+                rows = cur.fetchall()
+                if rows:
+                    return [r[0] for r in rows]
+                # Empty table — seed it
+                seed = _seed_leads()
+                with conn.cursor() as c2:
+                    for lead in seed:
+                        c2.execute("""
+                            INSERT INTO leads (id, data, updated_at)
+                            VALUES (%s, %s::jsonb, NOW())
+                            ON CONFLICT (id) DO NOTHING
+                        """, (lead["id"], json.dumps(lead, ensure_ascii=False)))
+                return seed
+        except Exception as e:
+            print(f"[leads] Postgres load failed: {e}")
+        finally:
+            conn.close()
+    # JSON fallback
+    try:
+        with open(LEADS_STORAGE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return _seed_leads()
+
+def _save_leads(data):
+    conn = _db_conn()
+    if conn:
+        try:
+            with conn, conn.cursor() as cur:
+                cur.execute("SELECT id FROM leads")
+                existing = {r[0] for r in cur.fetchall()}
+                current = {i["id"] for i in data}
+                for removed_id in existing - current:
+                    cur.execute("DELETE FROM leads WHERE id = %s", (removed_id,))
+                for lead in data:
+                    cur.execute("""
+                        INSERT INTO leads (id, data, updated_at)
+                        VALUES (%s, %s::jsonb, NOW())
+                        ON CONFLICT (id) DO UPDATE
+                          SET data = EXCLUDED.data, updated_at = NOW()
+                    """, (lead["id"], json.dumps(lead, ensure_ascii=False)))
+            return
+        except Exception as e:
+            print(f"[leads] Postgres save failed: {e}")
+        finally:
+            conn.close()
+    try:
+        with open(LEADS_STORAGE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"[leads] JSON save failed: {e}")
+
+_db_init_leads()
+LEADS = _load_leads()
+
+@app.post("/api/leads/move")
+async def api_leads_move(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    lead_id = body.get("id")
+    new_column = body.get("column")
+    if new_column not in _VALID_LEAD_COLUMNS:
+        return JSONResponse({"error": "invalid column"}, status_code=400)
+    for l in LEADS:
+        if l["id"] == lead_id:
+            l["column"] = new_column
+            _save_leads(LEADS)
+            return {"ok": True}
+    return JSONResponse({"error": "not found"}, status_code=404)
+
+@app.post("/api/leads/update")
+async def api_leads_update(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    lead_id = body.get("id")
+    fields = body.get("fields", {})
+    for l in LEADS:
+        if l["id"] == lead_id:
+            for k, v in fields.items():
+                if k in _LEAD_FIELDS:
+                    l[k] = v
+            _save_leads(LEADS)
+            return {"ok": True, "lead": l}
+    return JSONResponse({"error": "not found"}, status_code=404)
+
+@app.post("/api/leads/create")
+async def api_leads_create(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    fields = body.get("fields") or {}
+    merchant = (fields.get("merchant") or "").strip()
+    partner  = (fields.get("partner")  or "").strip()
+    if not merchant:
+        return JSONResponse({"error": "merchant required"}, status_code=400)
+    if not partner:
+        return JSONResponse({"error": "partner required"}, status_code=400)
+    import uuid
+    new_lead = {
+        "id": uuid.uuid4().hex[:10],
+        "column": "extra-introductions",
+        "merchant": merchant,
+        "partner": partner,
+        "bdm": (fields.get("bdm") or "").strip(),
+        "pm":  (fields.get("pm")  or "").strip(),
+        "comments": (fields.get("comments") or "").strip(),
+    }
+    LEADS.append(new_lead)
+    _save_leads(LEADS)
+    return {"ok": True, "lead": new_lead}
+
+@app.post("/api/leads/delete")
+async def api_leads_delete(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    lead_id = body.get("id")
+    global LEADS
+    before = len(LEADS)
+    LEADS = [l for l in LEADS if l["id"] != lead_id]
+    if len(LEADS) == before:
+        return JSONResponse({"error": "not found"}, status_code=404)
+    _save_leads(LEADS)
     return {"ok": True}
 
 @app.get("/intake", response_class=HTMLResponse)
