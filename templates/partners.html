@@ -340,6 +340,9 @@
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
       Clear filters
     </button>
+    <button id="scorecard-btn" onclick="openScorecard()" title="Scorecard" aria-label="Scorecard" style="font-family:var(--font);color:#0f172a;background:#fff;border:1px solid var(--border);border-radius:8px;padding:7px 9px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </button>
     <div style="position:relative">
       <button id="export-btn" onclick="toggleExportMenu(event)" style="font-family:var(--font);font-size:12px;font-weight:600;color:#fff;background:#4F46E5;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.15s" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4F46E5'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -356,14 +359,6 @@
         </div>
       </div>
     </div>
-  </div>
-
-  <!-- Scorecard launcher -->
-  <div style="display:flex;justify-content:flex-end;margin-top:10px">
-    <button id="scorecard-btn" onclick="openScorecard()" style="font-family:var(--font);font-size:12px;font-weight:600;color:#0f172a;background:#fff;border:1px solid var(--border);border-radius:8px;padding:6px 12px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:background 0.15s" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      Scorecard
-    </button>
   </div>
 
   <!-- Filters -->
@@ -551,7 +546,12 @@ let _scorecardChart = null;
 function openScorecard() {
   const modal = document.getElementById('scorecard-modal');
   modal.style.display = 'flex';
-  const ctx = document.getElementById('scorecard-chart').getContext('2d');
+  if (typeof Chart === 'undefined') {
+    console.error('Chart.js not loaded');
+    return;
+  }
+  const canvas = document.getElementById('scorecard-chart');
+  const ctx = canvas.getContext('2d');
   if (_scorecardChart) _scorecardChart.destroy();
   _scorecardChart = new Chart(ctx, {
     type: 'bar',
