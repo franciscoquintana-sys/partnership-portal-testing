@@ -201,7 +201,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     for p in all_partners:
         integ = (p.get("integration_stage") or "").strip().lower()
         st = (p.get("status") or "").strip()
-        if integ == "live" or st == "Live Partner":
+        if integ == "live":
             bucket = "Live"
         elif st == "Prospect":
             bucket = "Prospect"
@@ -354,18 +354,20 @@ def mission(request: Request):
     for p in all_partners:
         status = (p.get("status") or "").strip()
         integ = (p.get("integration_stage") or "").strip().lower()
-        if status == "Prospect":
+        is_live = (integ == "live")
+        is_signed = (status == "Agreement Signed")
+        if is_live and is_signed:
+            board["Agreement Signed and Integrated"].append(p)
+        elif is_live:
+            board["Integrated without Agreement"].append(p)
+        elif is_signed:
+            board["Agreement Signed but Not Integrated"].append(p)
+        elif status == "Prospect":
             board["Prospect"].append(p)
         elif status == "Initial Negotiation":
             board["Initial Negotiation"].append(p)
         elif status == "Agreement Review":
             board["Agreement Review"].append(p)
-        elif status == "Live Partner" or (status == "Agreement Signed" and integ == "live"):
-            board["Agreement Signed and Integrated"].append(p)
-        elif status == "Agreement Signed":
-            board["Agreement Signed but Not Integrated"].append(p)
-        elif integ == "live":
-            board["Integrated without Agreement"].append(p)
     total_in_flight = sum(len(v) for v in board.values())
     all_in_flight = [p for col in board.values() for p in col]
     types = sorted(set(p["type"] for p in all_in_flight if p.get("type")))
