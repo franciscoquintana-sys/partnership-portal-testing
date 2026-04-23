@@ -477,7 +477,8 @@
           <td>
             <span style="font-weight:700;
               {% if (integ_status | lower) == 'live' %}color:#15803d
-              {% elif (integ_status | lower) == 'blocked' or (integ_status | lower) == 'in progress' %}color:#dc2626
+              {% elif (integ_status | lower) == 'blocked' %}color:#dc2626
+              {% elif (integ_status | lower) == 'in progress' %}color:#ca8a04
               {% else %}color:#9ca3af{% endif %}">
               {{ integ_status }}
             </span>
