@@ -292,7 +292,7 @@
           {% endif %}
           {% if card.pm %}
           <div class="kanban-card-row">
-            <span class="kanban-card-label">Partnership Mgr</span>
+            <span class="kanban-card-label">MD</span>
             <span class="kanban-card-value">{{ card.pm }}</span>
           </div>
           {% endif %}
@@ -446,7 +446,7 @@ function renderLeadCard(card, lead) {
   if (lead.pm) {
     const row = document.createElement('div');
     row.className = 'kanban-card-row';
-    row.innerHTML = '<span class="kanban-card-label">Partnership Mgr</span><span class="kanban-card-value"></span>';
+    row.innerHTML = '<span class="kanban-card-label">MD</span><span class="kanban-card-value"></span>';
     row.querySelector('.kanban-card-value').textContent = lead.pm;
     card.appendChild(row);
   }
