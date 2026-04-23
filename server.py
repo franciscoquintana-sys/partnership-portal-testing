@@ -195,13 +195,13 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     tier3_count = sum(1 for p in all_partners if p.get("tier") == "Tier 3")
     countries_count = len(countries)
 
-    # Scorecard: Deal stages per region (Live takes over when integration_stage == Live)
+    # Scorecard: Deal stages per region. Live = Integration Live OR status 'Live Partner'.
     _SCORECARD_STAGES = ["Prospect", "Initial Negotiation", "Agreement Review", "Agreement Signed", "Live"]
     _scorecard_map = {}
     for p in all_partners:
         integ = (p.get("integration_stage") or "").strip().lower()
         st = (p.get("status") or "").strip()
-        if integ == "live":
+        if integ == "live" or st == "Live Partner":
             bucket = "Live"
         elif st == "Prospect":
             bucket = "Prospect"
