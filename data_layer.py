@@ -188,7 +188,7 @@ def _parse_partners_df(df):
             "offering_raw": offering,
             "region": region if region != "nan" else "",
             "country": country if country != "nan" else "",
-            "status": {"Opportunity Identification": "Prospect"}.get(stage_raw, stage_raw) if stage_raw and stage_raw != "nan" else "",
+            "status": {"Opportunity Identification": "Prospect", "Non-qualified Partner": "Non-Qualified Partner"}.get(stage_raw, stage_raw) if stage_raw and stage_raw != "nan" else "",
             "stage_raw": stage_raw,
             "tier": _TIER_MAP.get(tier, tier) if tier and tier != "nan" else "",
             "manager": manager if manager != "nan" else "",
