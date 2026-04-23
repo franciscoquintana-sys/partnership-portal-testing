@@ -168,8 +168,8 @@ def _fetch_sheet_df():
 def _parse_partners_df(df):
     seen, partners = set(), []
     for _, row in df.iterrows():
-        name = str(row.get("Provider", "")).strip()
-        if not name or name in seen or name == "nan":
+        name = str(row.get("Provider", "")).strip().upper()
+        if not name or name in seen or name == "NAN":
             continue
         seen.add(name)
         offering = str(row.get("Type", "Other")).strip()
@@ -558,7 +558,7 @@ def find_partners(country_iso=None, verticals=None, live_only=True, processing_t
             vals = grp[feat].dropna().unique() if feat in grp.columns else []
             supports[feat] = any(v == True or v == 1 or v == 1.0 for v in vals)
         results.append({
-            "name": provider, "categories": cats,
+            "name": str(provider).upper(), "categories": cats,
             "countries_iso": countries, "countries_count": len(countries),
             "payment_methods": pm_types[:8], "processing_types": proc_types,
             "status": status, "supports": supports,
