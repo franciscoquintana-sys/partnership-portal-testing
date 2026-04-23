@@ -360,11 +360,11 @@ def mission(request: Request):
             board["Initial Negotiation"].append(p)
         elif status == "Agreement Review":
             board["Agreement Review"].append(p)
-        elif status == "Agreement Signed" and integ == "live":
+        elif status == "Live Partner" or (status == "Agreement Signed" and integ == "live"):
             board["Agreement Signed and Integrated"].append(p)
         elif status == "Agreement Signed":
             board["Agreement Signed but Not Integrated"].append(p)
-        elif integ == "live" and status not in ("Agreement Signed", "Live Partner"):
+        elif integ == "live":
             board["Integrated without Agreement"].append(p)
     total_in_flight = sum(len(v) for v in board.values())
     all_in_flight = [p for col in board.values() for p in col]
