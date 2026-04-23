@@ -352,19 +352,19 @@ def mission(request: Request):
         "Integrated without Agreement": [],
     }
     for p in all_partners:
-        deal = (p.get("stage_raw") or "").strip()
+        status = (p.get("status") or "").strip()
         integ = (p.get("integration_stage") or "").strip().lower()
-        if deal == "Opportunity Identification":
+        if status == "Prospect":
             board["Prospect"].append(p)
-        elif deal == "Initial Negotiation":
+        elif status == "Initial Negotiation":
             board["Initial Negotiation"].append(p)
-        elif deal == "Agreement Review":
+        elif status == "Agreement Review":
             board["Agreement Review"].append(p)
-        elif deal == "Agreement Signed" and integ == "live":
+        elif status == "Agreement Signed" and integ == "live":
             board["Agreement Signed and Integrated"].append(p)
-        elif deal == "Agreement Signed":
+        elif status == "Agreement Signed":
             board["Agreement Signed but Not Integrated"].append(p)
-        elif integ == "live" and deal != "Agreement Signed" and deal != "Live Partner":
+        elif integ == "live" and status not in ("Agreement Signed", "Live Partner"):
             board["Integrated without Agreement"].append(p)
     total_in_flight = sum(len(v) for v in board.values())
     all_in_flight = [p for col in board.values() for p in col]
