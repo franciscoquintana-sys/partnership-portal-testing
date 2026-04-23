@@ -194,6 +194,38 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     tier2_count = sum(1 for p in all_partners if p.get("tier") == "Tier 2")
     tier3_count = sum(1 for p in all_partners if p.get("tier") == "Tier 3")
     countries_count = len(countries)
+
+    # Scorecard: Deal stages per region (Live takes over when integration_stage == Live)
+    _SCORECARD_STAGES = ["Prospect", "Initial Negotiation", "Agreement Review", "Agreement Signed", "Live"]
+    _scorecard_map = {}
+    for p in all_partners:
+        integ = (p.get("integration_stage") or "").strip().lower()
+        st = (p.get("status") or "").strip()
+        if integ == "live":
+            bucket = "Live"
+        elif st == "Prospect":
+            bucket = "Prospect"
+        elif st == "Initial Negotiation":
+            bucket = "Initial Negotiation"
+        elif st == "Agreement Review":
+            bucket = "Agreement Review"
+        elif st == "Agreement Signed":
+            bucket = "Agreement Signed"
+        else:
+            continue
+        reg = p.get("region") or "Unknown"
+        _scorecard_map.setdefault(reg, {s: 0 for s in _SCORECARD_STAGES})
+        _scorecard_map[reg][bucket] += 1
+    scorecard_regions = sorted(_scorecard_map.keys())
+    scorecard_data = {
+        "regions": scorecard_regions,
+        "stages": _SCORECARD_STAGES,
+        "series": [
+            {"stage": s, "counts": [_scorecard_map[r][s] for r in scorecard_regions]}
+            for s in _SCORECARD_STAGES
+        ],
+    }
+
     return tr(request, "partners.html", ctx(
         request, "partners",
         partners=filtered, total=total,
@@ -203,6 +235,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         tier2_count=tier2_count, tier3_count=tier3_count,
         cats=cats, statuses=statuses, regions=regions, tiers=tiers,
         countries=countries, managers=managers, integration_stages=integration_stages,
+        scorecard_data=scorecard_data,
         q=q, cat=cat, status=status, region=region, tier=tier
     ))
 
