@@ -340,9 +340,6 @@
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
       Clear filters
     </button>
-    <button id="scorecard-btn" onclick="openScorecard()" title="Scorecard" aria-label="Scorecard" style="font-family:var(--font);color:#0f172a;background:#fff;border:1px solid var(--border);border-radius:8px;padding:7px 9px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-    </button>
     <div style="position:relative">
       <button id="export-btn" onclick="toggleExportMenu(event)" style="font-family:var(--font);font-size:12px;font-weight:600;color:#fff;background:#4F46E5;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.15s" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4F46E5'">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -359,6 +356,9 @@
         </div>
       </div>
     </div>
+    <button id="scorecard-btn" onclick="openScorecard()" title="Scorecard" aria-label="Scorecard" style="font-family:var(--font);color:#0f172a;background:#fff;border:1px solid var(--border);border-radius:8px;padding:7px 9px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </button>
   </div>
 
   <!-- Filters -->
@@ -532,6 +532,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script>
 const SCORECARD_DATA = {{ scorecard_data | tojson }};
 const SCORECARD_COLORS = {
@@ -570,13 +571,21 @@ function openScorecard() {
       maintainAspectRatio: false,
       plugins: {
         legend: { position: 'bottom', labels: { font: { weight: '600' } } },
-        tooltip: { callbacks: { title: items => items[0].label } }
+        tooltip: { callbacks: { title: items => items[0].label } },
+        datalabels: {
+          color: '#fff',
+          font: { weight: '700', size: 11 },
+          formatter: (v) => v > 0 ? v : '',
+          textStrokeColor: 'rgba(0,0,0,0.35)',
+          textStrokeWidth: 2
+        }
       },
       scales: {
-        x: { grid: { display: false }, ticks: { font: { weight: '600' } } },
-        y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#eef2f7' } }
+        x: { stacked: true, grid: { display: false }, ticks: { font: { weight: '600' } } },
+        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#eef2f7' } }
       }
-    }
+    },
+    plugins: (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : []
   });
 }
 
