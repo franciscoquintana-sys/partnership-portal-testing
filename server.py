@@ -235,6 +235,11 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     cov_method_to_countries = {k: sorted(v) for k, v in cov_method_to_countries.items()}
     coverage_countries_list = sorted(cov_country_to_methods.keys())
     coverage_methods_list = sorted(cov_method_to_countries.keys())
+    print(f"[cov-debug] sot_rows={len(sot_df_for_cov) if sot_df_for_cov is not None else 'None'} "
+          f"countries={len(coverage_countries_list)} methods={len(coverage_methods_list)} "
+          f"sample_country='Angola' methods={cov_country_to_methods.get('Angola', [])} "
+          f"first_5_countries={coverage_countries_list[:5]} "
+          f"first_5_methods={coverage_methods_list[:5]}", flush=True)
 
     # Scorecard: Deal stages per region. Live = Integration Live OR status 'Live Partner'.
     _SCORECARD_STAGES = ["Prospect", "Initial Negotiation", "Agreement Review", "Agreement Signed", "Live"]
