@@ -750,6 +750,12 @@ def sync_form_responses():
         if pname and pname in partner_to_manager:
             fields["partnership_manager"] = partner_to_manager[pname]
 
+    def _is_valid_merchant(name):
+        n = (name or "").strip().lower()
+        if not n:
+            return False
+        return n not in {"n/a", "na", "n.a.", "n/a.", "-", "--", "none", "null", "tbd", "tba"}
+
     new_intros = []
     seen_in_run = set()
     skipped_no_merchant = 0
@@ -758,8 +764,6 @@ def sync_form_responses():
 
     # Tab 1: Contact a Partner — column depends on partnership flow
     rows1 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Contact a Partner")
-    print(f"[form-sync] Contact a Partner rows={len(rows1)} headers={list(rows1[0].keys()) if rows1 else []}", flush=True)
-    print(f"[form-sync] partner_to_manager_size={len(partner_to_manager)}", flush=True)
     for idx, row in enumerate(rows1):
         key = _row_form_key("contact_a_partner", row, idx)
         if key in existing_keys or key in seen_in_run:
@@ -772,7 +776,7 @@ def sync_form_responses():
             skipped_unknown_flow += 1
             continue
         fields = _row_to_intro_fields(row)
-        if not fields.get("merchant"):
+        if not _is_valid_merchant(fields.get("merchant")):
             skipped_no_merchant += 1
             continue
         _fill_pm(fields)
@@ -780,7 +784,6 @@ def sync_form_responses():
 
     # Tab 2: Client - Partner Direct → in-negotiations
     rows2 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Client - Partner Direct")
-    print(f"[form-sync] Client - Partner Direct rows={len(rows2)} headers={list(rows2[0].keys()) if rows2 else []}", flush=True)
     for idx, row in enumerate(rows2):
         key = _row_form_key("client_partner_direct", row, idx)
         if key in existing_keys or key in seen_in_run:
@@ -788,7 +791,7 @@ def sync_form_responses():
             continue
         seen_in_run.add(key)
         fields = _row_to_intro_fields(row)
-        if not fields.get("merchant"):
+        if not _is_valid_merchant(fields.get("merchant")):
             skipped_no_merchant += 1
             continue
         _fill_pm(fields)
@@ -813,10 +816,10 @@ async def _form_sync_loop():
     while True:
         try:
             stats = sync_form_responses()
-            print(f"[form-sync] {stats}", flush=True)
+            if stats.get("created"):
+                print(f"[form-sync] {stats}", flush=True)
         except Exception as e:
-            import traceback
-            print(f"[form-sync] loop error: {e}\n{traceback.format_exc()}", flush=True)
+            print(f"[form-sync] loop error: {e}", flush=True)
         await asyncio.sleep(FORM_SYNC_INTERVAL_SECONDS)
 
 
