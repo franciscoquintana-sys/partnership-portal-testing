@@ -739,7 +739,61 @@ function applyFilters() {
   document.getElementById('stat-total-live').textContent    = totalLive;
 
   refreshCoverageDropdowns();
+  saveFilterState();
 }
+
+const FILTER_STATE_KEY = 'partnersPortalFilters_v1';
+
+function saveFilterState() {
+  try {
+    const filters = {};
+    FILTERS.forEach(k => { filters[k] = getSelected(k); });
+    const state = {
+      search: document.getElementById('search')?.value || '',
+      filters,
+      coverageOpen: !!document.querySelector('.coverage-filter') &&
+                    document.querySelector('.coverage-filter').style.display !== 'none',
+      covCountrySearch: document.querySelector('#drop-cov_country .col-filter-search')?.value || '',
+      covMethodSearch: document.querySelector('#drop-cov_method .col-filter-search')?.value || '',
+    };
+    sessionStorage.setItem(FILTER_STATE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+function restoreFilterState() {
+  let state = null;
+  try { state = JSON.parse(sessionStorage.getItem(FILTER_STATE_KEY) || 'null'); } catch (e) {}
+  if (!state) return false;
+  const searchEl = document.getElementById('search');
+  if (searchEl) searchEl.value = state.search || '';
+  if (state.coverageOpen) {
+    document.querySelectorAll('.coverage-filter').forEach(it => it.style.display = '');
+    const btn = document.getElementById('add-filter-btn');
+    if (btn) {
+      btn.classList.add('active');
+      btn.textContent = '−';
+      btn.title = 'Hide coverage filters';
+      btn.style.background = 'var(--indigo)';
+      btn.style.color = '#fff';
+    }
+  }
+  Object.keys(state.filters || {}).forEach(k => {
+    const vals = new Set(state.filters[k] || []);
+    document.querySelectorAll(`#drop-${k} input[type=checkbox]`).forEach(cb => {
+      cb.checked = vals.has(cb.value);
+    });
+  });
+  const sC = document.querySelector('#drop-cov_country .col-filter-search');
+  if (sC) sC.value = state.covCountrySearch || '';
+  const sM = document.querySelector('#drop-cov_method .col-filter-search');
+  if (sM) sM.value = state.covMethodSearch || '';
+  return true;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const restored = restoreFilterState();
+  if (restored) applyFilters();
+});
 
 function refreshCoverageDropdowns() {
   const selCountries = getSelected('cov_country').map(_norm);
