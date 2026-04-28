@@ -35,6 +35,9 @@ oauth.register(
 )
 
 ALLOWED_DOMAIN = "y.uno"
+PARTNERSHIPS_PASSWORD = os.environ.get("PARTNERSHIPS_PASSWORD", "Partnerships2026")
+FULL_ACCESS_ROLES = {"partnerships", "internal"}
+ANY_LOGGED_IN_ROLES = {"partnerships", "internal", "all_teams"}
 
 # ------------------------------------------------------------------------------
 
@@ -52,11 +55,18 @@ def require_auth(request: Request):
         return None
     return role
 
+_FULL_NAV = [
+    ("", [("home","Home")]),
+    ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight")]),
+    ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("pipeline","Partner Leads"),("introduction","Partner - Merchant Intros")]),
+    ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
+]
 NAV = {
-    "internal": [
+    "partnerships": _FULL_NAV,
+    "internal": _FULL_NAV,
+    "all_teams": [
         ("", [("home","Home")]),
         ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight")]),
-        ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("pipeline","Partner Leads"),("introduction","Partner - Merchant Intros")]),
         ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
     ],
     "partner": [
@@ -113,6 +123,16 @@ def login_page(request: Request):
 
 # -- Google OAuth routes -------------------------------------------------------
 
+@app.post("/auth/select-role")
+async def select_role(request: Request, role: str = Form(...), password: str = Form("")):
+    if role == "partnerships":
+        if password != PARTNERSHIPS_PASSWORD:
+            return RedirectResponse("/login?error=Incorrect+Partnerships+Team+password.", status_code=303)
+        request.session["pending_role"] = "partnerships"
+    else:
+        request.session["pending_role"] = "all_teams"
+    return RedirectResponse("/auth/google", status_code=303)
+
 @app.get("/auth/google")
 async def auth_google(request: Request):
     # Behind Railway's proxy, request.url_for may generate the internal host.
@@ -134,7 +154,10 @@ async def auth_callback(request: Request):
     domain = email.split("@")[-1].lower() if "@" in email else ""
     if domain != ALLOWED_DOMAIN:
         return tr(request, "access_denied.html", {"request": request, "email": email})
-    request.session["role"] = "internal"
+    pending = request.session.pop("pending_role", "all_teams")
+    if pending not in ("partnerships", "all_teams"):
+        pending = "all_teams"
+    request.session["role"] = pending
     request.session["user_email"] = email
     request.session["user_name"] = user_info.get("name", email)
     request.session["user_picture"] = user_info.get("picture", "")
@@ -365,6 +388,8 @@ def pipeline(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
+    if role not in FULL_ACCESS_ROLES:
+        return RedirectResponse("/home")
     columns = [
         {"key": k, "title": t, "color": c,
          "cards": [l for l in LEADS if l.get("column") == k]}
@@ -393,7 +418,7 @@ def mission(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
-    if role != "internal":
+    if role not in ANY_LOGGED_IN_ROLES:
         return RedirectResponse("/home")
     all_partners = load_partners_excel()
     board = {
@@ -546,7 +571,7 @@ def introduction(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
-    if role != "internal":
+    if role not in FULL_ACCESS_ROLES:
         return RedirectResponse("/home")
     columns = [
         {"key": k, "title": t, "color": c,
@@ -839,7 +864,7 @@ def intake(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
-    if role != "internal":
+    if role not in ANY_LOGGED_IN_ROLES:
         return RedirectResponse("/home")
     return tr(request, "intake.html", ctx(request, "intake"))
 
@@ -848,6 +873,8 @@ def performance(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
+    if role not in FULL_ACCESS_ROLES:
+        return RedirectResponse("/home")
     merchants = MERCHANTS
     avg_ar = sum(m["ar"] for m in merchants) / len(merchants)
     total_tpv = sum(m["tpv"] for m in merchants)
@@ -879,6 +906,8 @@ def benchmarks(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
+    if role not in FULL_ACCESS_ROLES:
+        return RedirectResponse("/home")
     total = sum(REVSHARE_BY_PARTNER.values())
 
     pie_fig = go.Figure(go.Pie(
@@ -8171,7 +8200,7 @@ def merch_sim(request: Request):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
-    if role != "internal":
+    if role not in ANY_LOGGED_IN_ROLES:
         return RedirectResponse("/home")
     sot_countries = get_sot_countries()
     sot_providers = get_sot_providers()
