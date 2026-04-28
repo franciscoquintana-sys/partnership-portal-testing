@@ -158,6 +158,50 @@ def home(request: Request):
         return RedirectResponse("/login")
     return tr(request, "home.html", ctx(request, "home"))
 
+@app.get("/_debug/cov")
+def _debug_cov(country: str = "ANGOLA"):
+    """TEMP: dump coverage map for one country, for debugging the cross-filter."""
+    try:
+        df = _load_partners_sot()
+    except Exception:
+        df = pd.DataFrame()
+    cmap, mmap, ptoc, ptom = {}, {}, {}, {}
+    if df is not None and len(df) > 0:
+        for _, r in df.iterrows():
+            pn = str(r.get("PROVIDER_NAME", "")).strip()
+            if not pn:
+                continue
+            k = pn.lower()
+            c = str(r.get("COUNTRY", "")).strip()
+            if c.lower() in ("", "nan"):
+                c = ""
+            pmt = str(r.get("PAYMENT_METHOD_TYPE", "")).strip()
+            br = str(r.get("CARD_BRAND", "")).strip()
+            if pmt.upper() == "CARD" and br and br.lower() not in ("nan", "false"):
+                m = br
+            elif pmt and pmt.lower() != "nan":
+                m = pmt.replace("_", " ")
+            else:
+                m = ""
+            if c:
+                ptoc.setdefault(k, set()).add(c)
+            if m:
+                ptom.setdefault(k, set()).add(m)
+            if c and m:
+                cmap.setdefault(c, set()).add(m)
+                mmap.setdefault(m, set()).add(c)
+    cu = country.upper()
+    return {
+        "rows": int(len(df)) if df is not None else 0,
+        "country_query": cu,
+        "country_in_map": cu in cmap,
+        "methods_for_country": sorted(cmap.get(cu, [])),
+        "methods_count": len(cmap.get(cu, [])),
+        "all_countries_count": len(cmap),
+        "partners_covering_country": sorted([k for k, v in ptoc.items() if cu in v]),
+    }
+
+
 @app.get("/partners", response_class=HTMLResponse)
 def partners(request: Request, q: str = "", cat: str = "all", status: str = "all", region: str = "all", tier: str = "all"):
     role = require_auth(request)
