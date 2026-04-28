@@ -104,7 +104,7 @@ def health():
 @app.get("/favicon.ico")
 def favicon():
     return FileResponse(
-        os.path.join(BASE, "static", "img", "yuno_isologo.png"),
+        os.path.join(BASE, "static", "img", "favicon_y.png"),
         media_type="image/png",
     )
 
