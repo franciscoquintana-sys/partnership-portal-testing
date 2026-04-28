@@ -806,6 +806,7 @@ def sync_form_responses():
     for idx, row in enumerate(rows2):
         rows_by_key[_row_form_key("client_partner_direct", row, idx)] = row
     fixed_partners = 0
+    fixed_comments = 0
     for intro in INTROS:
         key = intro.get("form_row_key")
         if not key:
@@ -813,20 +814,28 @@ def sync_form_responses():
         row = rows_by_key.get(key)
         if not row:
             continue
+        new_fields = _row_to_intro_fields(row)
+
         cur_partner = (intro.get("partner") or "").strip()
         looks_like_flow = cur_partner.lower().startswith("contact a partner -")
-        if not (looks_like_flow or not cur_partner):
-            continue
-        new_fields = _row_to_intro_fields(row)
-        new_partner = new_fields.get("partner", "")
-        if new_partner and new_partner != cur_partner:
-            intro["partner"] = new_partner
-            if not (intro.get("partnership_manager") or "").strip():
-                pn = new_partner.strip().lower()
-                if pn in partner_to_manager:
-                    intro["partnership_manager"] = partner_to_manager[pn]
-            fixed_partners += 1
-    if fixed_partners:
+        if looks_like_flow or not cur_partner:
+            new_partner = new_fields.get("partner", "")
+            if new_partner and new_partner != cur_partner:
+                intro["partner"] = new_partner
+                if not (intro.get("partnership_manager") or "").strip():
+                    pn = new_partner.strip().lower()
+                    if pn in partner_to_manager:
+                        intro["partnership_manager"] = partner_to_manager[pn]
+                fixed_partners += 1
+
+        # Comments: re-derive using the new rule (Other Information only).
+        new_comments = new_fields.get("comments", "")
+        cur_comments = intro.get("comments") or ""
+        if cur_comments != new_comments:
+            intro["comments"] = new_comments
+            fixed_comments += 1
+
+    if fixed_partners or fixed_comments:
         _save_intros(INTROS)
 
     return {
@@ -835,6 +844,7 @@ def sync_form_responses():
         "skipped_no_merchant": skipped_no_merchant,
         "skipped_unknown_flow": skipped_unknown_flow,
         "fixed_partners": fixed_partners,
+        "fixed_comments": fixed_comments,
     }
 
 
@@ -845,7 +855,7 @@ async def _form_sync_loop():
     while True:
         try:
             stats = sync_form_responses()
-            if stats.get("created") or stats.get("fixed_partners"):
+            if stats.get("created") or stats.get("fixed_partners") or stats.get("fixed_comments"):
                 print(f"[form-sync] {stats}", flush=True)
         except Exception as e:
             print(f"[form-sync] loop error: {e}", flush=True)
