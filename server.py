@@ -758,6 +758,8 @@ def sync_form_responses():
 
     # Tab 1: Contact a Partner — column depends on partnership flow
     rows1 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Contact a Partner")
+    print(f"[form-sync] Contact a Partner rows={len(rows1)} headers={list(rows1[0].keys()) if rows1 else []}", flush=True)
+    print(f"[form-sync] partner_to_manager_size={len(partner_to_manager)}", flush=True)
     for idx, row in enumerate(rows1):
         key = _row_form_key("contact_a_partner", row, idx)
         if key in existing_keys or key in seen_in_run:
@@ -778,6 +780,7 @@ def sync_form_responses():
 
     # Tab 2: Client - Partner Direct → in-negotiations
     rows2 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Client - Partner Direct")
+    print(f"[form-sync] Client - Partner Direct rows={len(rows2)} headers={list(rows2[0].keys()) if rows2 else []}", flush=True)
     for idx, row in enumerate(rows2):
         key = _row_form_key("client_partner_direct", row, idx)
         if key in existing_keys or key in seen_in_run:
@@ -810,10 +813,10 @@ async def _form_sync_loop():
     while True:
         try:
             stats = sync_form_responses()
-            if stats.get("created"):
-                print(f"[form-sync] {stats}", flush=True)
+            print(f"[form-sync] {stats}", flush=True)
         except Exception as e:
-            print(f"[form-sync] loop error: {e}", flush=True)
+            import traceback
+            print(f"[form-sync] loop error: {e}\n{traceback.format_exc()}", flush=True)
         await asyncio.sleep(FORM_SYNC_INTERVAL_SECONDS)
 
 
