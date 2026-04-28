@@ -434,24 +434,30 @@
   const COUNTRY_METHODS = {{ country_methods | tojson }};
   const METHOD_COUNTRIES = {{ method_countries | tojson }};
 
-  let selectedCountry = null;
-  let selectedMethod = null;
+  const selectedCountries = new Set();
+  const selectedMethods = new Set();
 
   function crossFilter() {
     const regionSel = document.getElementById('region-filter') ? document.getElementById('region-filter').value : 'all';
     const catSel = document.getElementById('method-cat-filter') ? document.getElementById('method-cat-filter').value : 'all';
 
-    // When a method is selected, show only countries for that method
-    // When a country is selected, show only methods for that country
+    // Union of countries supported by any selected method
+    const allowedCountriesByMethod = new Set();
+    selectedMethods.forEach(m => (METHOD_COUNTRIES[m] || []).forEach(c => allowedCountriesByMethod.add(c)));
+
+    // Union of methods supported by any selected country
+    const allowedMethodsByCountry = new Set();
+    selectedCountries.forEach(c => (COUNTRY_METHODS[c] || []).forEach(m => allowedMethodsByCountry.add(m)));
+
     let countryCount = 0;
     document.querySelectorAll('.country-tag').forEach(tag => {
       const country = tag.textContent.trim();
-      const isSelected = country === selectedCountry;
+      const isSelected = selectedCountries.has(country);
       const inRegion = regionSel === 'all' || (REGION_COUNTRIES[regionSel] || []).includes(country);
       const inCat = catSel === 'all' || (CAT_COUNTRIES[catSel] || []).includes(country);
-      const inMethod = !selectedMethod || (METHOD_COUNTRIES[selectedMethod] || []).includes(country);
-      const inCountrySel = !selectedCountry || country === selectedCountry;
-      if (inRegion && inCat && inMethod && inCountrySel) {
+      // Selected countries always remain visible so they can be deselected
+      const inMethod = selectedMethods.size === 0 || allowedCountriesByMethod.has(country) || isSelected;
+      if (inRegion && inCat && inMethod) {
         tag.style.display = '';
         countryCount++;
       } else {
@@ -465,12 +471,11 @@
     let methodCount = 0;
     document.querySelectorAll('.method-tag-item').forEach(tag => {
       const method = tag.textContent.trim();
-      const isSelected = method === selectedMethod;
+      const isSelected = selectedMethods.has(method);
       const inCat = catSel === 'all' || (CAT_METHODS[catSel] || []).includes(method);
       const inRegion = regionSel === 'all' || (REGION_METHODS[regionSel] || []).includes(method);
-      const inCountry = !selectedCountry || (COUNTRY_METHODS[selectedCountry] || []).includes(method);
-      const inMethodSel = !selectedMethod || method === selectedMethod;
-      if (inCat && inRegion && inCountry && inMethodSel) {
+      const inCountry = selectedCountries.size === 0 || allowedMethodsByCountry.has(method) || isSelected;
+      if (inCat && inRegion && inCountry) {
         tag.style.display = '';
         methodCount++;
       } else {
@@ -484,30 +489,26 @@
 
   function clickCountry(el) {
     const country = el.textContent.trim();
-    if (selectedCountry === country) {
-      selectedCountry = null;
+    if (selectedCountries.has(country)) {
+      selectedCountries.delete(country);
     } else {
-      selectedCountry = country;
-      selectedMethod = null;
-      if (document.getElementById('method-cat-filter')) document.getElementById('method-cat-filter').value = 'all';
+      selectedCountries.add(country);
     }
     crossFilter();
   }
 
   function clickMethod(el) {
     const method = el.textContent.trim();
-    if (selectedMethod === method) {
-      selectedMethod = null;
+    if (selectedMethods.has(method)) {
+      selectedMethods.delete(method);
     } else {
-      selectedMethod = method;
-      selectedCountry = null;
-      if (document.getElementById('region-filter')) document.getElementById('region-filter').value = 'all';
+      selectedMethods.add(method);
     }
     crossFilter();
   }
 
-  function filterByRegion() { selectedCountry = null; selectedMethod = null; crossFilter(); }
-  function filterByCategory() { selectedCountry = null; selectedMethod = null; crossFilter(); }
+  function filterByRegion() { selectedCountries.clear(); selectedMethods.clear(); crossFilter(); }
+  function filterByCategory() { selectedCountries.clear(); selectedMethods.clear(); crossFilter(); }
   </script>
   </div>
 
