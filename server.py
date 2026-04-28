@@ -621,17 +621,6 @@ def _row_to_intro_fields(row):
                     fields[field] = str(value).strip()
                 used_headers.add(header)
                 break
-    leftover = []
-    for header, value in row.items():
-        if header in used_headers:
-            continue
-        v = str(value or "").strip()
-        if v and (header or "").strip():
-            leftover.append(f"{header.strip()}: {v}")
-    if leftover:
-        existing = fields.get("comments", "").strip()
-        joined = " | ".join(leftover)
-        fields["comments"] = (existing + " | " + joined).strip(" |") if existing else joined
     return fields
 
 
