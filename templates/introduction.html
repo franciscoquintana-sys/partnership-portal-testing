@@ -269,7 +269,7 @@
     {% for col in columns %}
     <div class="kanban-col" data-col="{{ col.key }}" style="border-top: 3px solid {{ col.color }}">
       <div class="kanban-col-header">
-        <div class="kanban-col-title">{{ col.title }}</div>
+        <div class="kanban-col-title">{{ col.title | safe }}</div>
         <div class="kanban-col-count" style="background: {{ col.color }}">{{ col.cards|length }}</div>
       </div>
       <div class="kanban-col-body sortable" data-col="{{ col.key }}">
