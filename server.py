@@ -576,6 +576,8 @@ INTROS = _load_intros()
 
 # ── Form-response sync (Google Sheet → kanban) ───────────────────────────────
 FORM_RESPONSES_SHEET_ID = "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
+PARTNER_PM_SHEET_ID = "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
+PARTNER_PM_SHEET_GID = "1597186279"
 FORM_SYNC_INTERVAL_SECONDS = 3600
 
 _FLOW_TO_COLUMN = {
@@ -583,21 +585,19 @@ _FLOW_TO_COLUMN = {
     "contact a partner - price quotation for an opportunity": "request-pricing",
 }
 
-# Header → intro field. First substring match wins per field; case-insensitive.
+# Form header (case-insensitive substring) → intro field. transaction_type
+# is intentionally absent: the user dropped it from the form-derived cards.
 _FORM_FIELD_ALIASES = [
-    ("merchant",              ["merchant name", "merchant", "client name", "client", "company name", "company"]),
+    ("merchant",              ["merchant name", "name of the merchant", "merchant", "client name", "client", "company name", "company"]),
     ("partner",               ["partner name", "partner", "provider"]),
-    ("partnership_manager",   ["partnership manager", "manager", "owner"]),
     ("vertical",              ["vertical", "industry"]),
-    ("legal_entity_countries",["legal entity countr", "legal countries"]),
-    ("operation_countries",   ["operation countr", "operating countr"]),
-    ("requesting_countries",  ["requesting countr", "request countr", "country of request"]),
-    ("transaction_type",      ["transaction type"]),
+    ("legal_entity_countries",["legal entity", "legal countries", "where the client has a legal entity", "client has a legal entity"]),
+    ("operation_countries",   ["where the client has operation", "client has operation", "operating countr", "operation countr", "operations countr"]),
     ("payment_flow",          ["payment flow"]),
-    ("payment_methods",       ["payment method"]),
-    ("avg_ticket",            ["average ticket", "avg ticket", "ticket size"]),
+    ("payment_methods",       ["payment methods needed", "payment methods", "payment method"]),
+    ("avg_ticket",            ["average ticket size", "average ticket", "avg ticket", "ticket size"]),
     ("monthly_tpv",           ["monthly tpv", "tpv", "monthly volume"]),
-    ("comments",              ["comments", "notes", "observations", "additional info"]),
+    ("comments",              ["other information", "comments", "notes", "observations", "additional info"]),
 ]
 
 
@@ -655,6 +655,66 @@ def _make_intro_from_row(fields, column, form_key):
     }
 
 
+_PARTNER_PM_CACHE = {"data": None, "ts": 0}
+_PARTNER_PM_TTL = 600  # 10 min
+
+
+def _build_partner_pm_map():
+    """Read the partner→PM mapping from the dedicated Google sheet.
+
+    Returns a dict keyed by partner name (lowercased + stripped).
+    """
+    import time as _time
+    now = _time.time()
+    if _PARTNER_PM_CACHE["data"] is not None and (now - _PARTNER_PM_CACHE["ts"]) < _PARTNER_PM_TTL:
+        return _PARTNER_PM_CACHE["data"]
+
+    from data_layer import _get_access_token  # reuse OAuth helpers
+    import requests as _requests
+    token = _get_access_token()
+    if not token:
+        return {}
+    tab_name = None
+    try:
+        meta = _requests.get(
+            f"https://sheets.googleapis.com/v4/spreadsheets/{PARTNER_PM_SHEET_ID}?fields=sheets.properties",
+            headers={"Authorization": f"Bearer {token}"},
+        ).json()
+        for s in meta.get("sheets", []):
+            if str(s["properties"].get("sheetId")) == PARTNER_PM_SHEET_GID:
+                tab_name = s["properties"]["title"]
+                break
+        if not tab_name and meta.get("sheets"):
+            tab_name = meta["sheets"][0]["properties"]["title"]
+    except Exception as e:
+        print(f"[form-sync] partner-PM meta fetch failed: {e}", flush=True)
+        return {}
+
+    rows = load_sheet_tab_rows(PARTNER_PM_SHEET_ID, tab_name) if tab_name else []
+    if not rows:
+        return {}
+    headers = list(rows[0].keys())
+    partner_col = None
+    pm_col = None
+    for h in headers:
+        hl = (h or "").strip().lower()
+        if not partner_col and "partner" in hl and "manager" not in hl and "pm" not in hl.split():
+            partner_col = h
+        if not pm_col and ("manager" in hl or hl == "pm" or hl.endswith(" pm") or "owner" in hl):
+            pm_col = h
+    if not partner_col or not pm_col:
+        return {}
+    out = {}
+    for r in rows:
+        pname = (r.get(partner_col) or "").strip().lower()
+        mgr = (r.get(pm_col) or "").strip()
+        if pname and mgr:
+            out[pname] = mgr
+    _PARTNER_PM_CACHE["data"] = out
+    _PARTNER_PM_CACHE["ts"] = now
+    return out
+
+
 def _flow_value(row):
     for h, v in row.items():
         hl = (h or "").strip().lower()
@@ -675,16 +735,13 @@ def sync_form_responses():
     """
     existing_keys = {i.get("form_row_key") for i in INTROS if i.get("form_row_key")}
 
-    # Build partner-name → manager lookup so cards inherit the PM of their partner.
-    partner_to_manager = {}
+    # Build partner-name → manager lookup from the dedicated PM sheet so cards
+    # inherit the right PM for each partner.
     try:
-        for p in load_partners_excel():
-            name = (p.get("name") or "").strip().lower()
-            mgr = (p.get("manager") or "").strip()
-            if name and mgr:
-                partner_to_manager[name] = mgr
+        partner_to_manager = _build_partner_pm_map()
     except Exception as e:
-        print(f"[form-sync] partners lookup failed: {e}", flush=True)
+        print(f"[form-sync] partner-PM lookup failed: {e}", flush=True)
+        partner_to_manager = {}
 
     def _fill_pm(fields):
         if fields.get("partnership_manager"):
