@@ -698,7 +698,12 @@ def _build_partner_pm_map():
     pm_col = None
     for h in headers:
         hl = (h or "").strip().lower()
-        if not partner_col and "partner" in hl and "manager" not in hl and "pm" not in hl.split():
+        if not partner_col and (
+            ("partner" in hl and "manager" not in hl and "pm" not in hl.split())
+            or hl == "provider"
+            or hl == "provider name"
+            or hl == "partner name"
+        ):
             partner_col = h
         if not pm_col and ("manager" in hl or hl == "pm" or hl.endswith(" pm") or "owner" in hl):
             pm_col = h
