@@ -779,11 +779,11 @@ async function doExportPDF() {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
   doc.setTextColor(15, 23, 42);
-  doc.text('Yuno Partner Portfolio', 92, 44);
+  doc.text('Yuno Partner Portfolio', 92, 52);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(100, 116, 139);
-  doc.text(now, 92, 62);
+  doc.text(now, pageW - 32, 52, { align: 'right' });
 
   doc.setDrawColor(226, 232, 240);
   doc.setLineWidth(0.5);
