@@ -584,18 +584,14 @@ async function syncFromForms(btn) {
     const r = await fetch('/api/intros/sync-forms', { method: 'POST' });
     const data = await r.json();
     if (r.ok && data.ok) {
-      const created = data.created || 0;
-      btn.title = data.first_run
-        ? 'Baseline set'
-        : (created ? `+${created} new card${created === 1 ? '' : 's'}` : 'No new submissions');
-      if (created > 0) {
-        setTimeout(() => location.reload(), 600);
-        return;
-      }
-    } else {
-      btn.title = 'Sync failed';
-      console.error(data);
+      // Spinner stays on while we transition to a full reload so the user
+      // sees an unbroken loading state until the new content is on screen.
+      btn.title = 'Updating…';
+      location.reload();
+      return;
     }
+    btn.title = 'Sync failed';
+    console.error(data);
   } catch (e) {
     btn.title = 'Sync failed';
   }
