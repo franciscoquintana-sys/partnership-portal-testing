@@ -748,7 +748,18 @@ function doExportCSV() {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'yuno_partners.csv'; a.click();
 }
 
-function doExportPDF() {
+async function loadImageAsDataURL(url) {
+  const resp = await fetch(url);
+  const blob = await resp.blob();
+  return await new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(blob);
+  });
+}
+
+async function doExportPDF() {
   const cols = getSelectedExportCols();
   if (!cols.length) return;
   const { jsPDF } = window.jspdf;
@@ -757,30 +768,32 @@ function doExportPDF() {
   const now = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   const pageW = doc.internal.pageSize.getWidth();
 
-  doc.setFillColor(10, 22, 40);
-  doc.rect(0, 0, pageW, 56, 'F');
-  doc.setFillColor(79, 70, 229);
-  doc.setGState(new doc.GState({ opacity: 0.18 }));
-  doc.ellipse(pageW - 60, 28, 120, 60, 'F');
-  doc.setGState(new doc.GState({ opacity: 1 }));
+  let logoData = null;
+  try {
+    logoData = await loadImageAsDataURL('https://cdn.prod.website-files.com/65e210a414fae2cb8054a9b4/6848341e705863943015c5af_YUNO_ISOLOGO_BLUE.png');
+  } catch (e) {}
+
+  if (logoData) {
+    doc.addImage(logoData, 'PNG', 32, 22, 44, 44);
+  }
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.setTextColor(255, 255, 255);
-  doc.text('Partners Portal', 32, 28);
+  doc.setFontSize(20);
+  doc.setTextColor(15, 23, 42);
+  doc.text('Yuno Partner Portfolio', 92, 44);
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(11);
-  doc.setTextColor(148, 163, 184);
-  doc.text('Partner Portfolio Export', 32, 44);
-  doc.setFontSize(9);
-  doc.text(now, pageW - 32, 36, { align: 'right' });
+  doc.setFontSize(10);
   doc.setTextColor(100, 116, 139);
-  doc.text(`${rows.length} connector${rows.length !== 1 ? 's' : ''} · Filtered export`, 32, 72);
+  doc.text(now, 92, 62);
+
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.5);
+  doc.line(32, 80, pageW - 32, 80);
 
   const headers = cols.map(c => c.label);
   const body = rows.map(r => cols.map(c => r.dataset[c.key] || ''));
 
   doc.autoTable({
-    startY: 84,
+    startY: 96,
     head: [headers],
     body: body,
     styles: { font: 'helvetica', fontSize: 9, cellPadding: 7, textColor: [51, 65, 85] },
