@@ -748,14 +748,30 @@ function doExportCSV() {
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'yuno_partners.csv'; a.click();
 }
 
-async function loadImageAsDataURL(url) {
-  const resp = await fetch(url);
-  const blob = await resp.blob();
+async function loadImageRasterized(url) {
   return await new Promise((resolve, reject) => {
-    const r = new FileReader();
-    r.onload = () => resolve(r.result);
-    r.onerror = reject;
-    r.readAsDataURL(blob);
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      let w = img.naturalWidth || 800;
+      let h = img.naturalHeight || 200;
+      // Upscale for crisp rendering, especially for small SVG intrinsic sizes
+      const target = 1200;
+      if (w < target) {
+        const s = target / w;
+        w = Math.round(w * s);
+        h = Math.round(h * s);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      try { resolve({ dataURL: canvas.toDataURL('image/png'), width: w, height: h }); }
+      catch (e) { reject(e); }
+    };
+    img.onerror = reject;
+    img.src = url;
   });
 }
 
@@ -768,32 +784,40 @@ async function doExportPDF() {
   const now = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
   const pageW = doc.internal.pageSize.getWidth();
 
-  let logoData = null;
+  // Dark navy header band with subtle indigo glow
+  const headerH = 80;
+  doc.setFillColor(10, 22, 40);
+  doc.rect(0, 0, pageW, headerH, 'F');
+  doc.setFillColor(79, 70, 229);
+  doc.setGState(new doc.GState({ opacity: 0.18 }));
+  doc.ellipse(pageW - 60, 40, 140, 70, 'F');
+  doc.setGState(new doc.GState({ opacity: 1 }));
+
+  let logo = null;
   try {
-    logoData = await loadImageAsDataURL('https://cdn.prod.website-files.com/65e210a414fae2cb8054a9b4/6848341e705863943015c5af_YUNO_ISOLOGO_BLUE.png');
+    logo = await loadImageRasterized('https://cdn.prod.website-files.com/65e210a414fae2cb8054a995/684b70d717a5356f5a6f8793_yuno_wordmark_dark.svg');
   } catch (e) {}
 
-  if (logoData) {
-    doc.addImage(logoData, 'PNG', 32, 22, 44, 44);
+  if (logo) {
+    const logoH = 44;
+    const logoW = logoH * (logo.width / logo.height);
+    doc.addImage(logo.dataURL, 'PNG', 32, (headerH - logoH) / 2, logoW, logoH);
   }
+
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
-  doc.setTextColor(15, 23, 42);
-  doc.text('Yuno Partner Portfolio', 92, 52);
+  doc.setTextColor(255, 255, 255);
+  doc.text('Yuno Partner Portfolio', pageW / 2, headerH / 2 + 6, { align: 'center' });
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
-  doc.setTextColor(100, 116, 139);
-  doc.text(now, pageW - 32, 52, { align: 'right' });
-
-  doc.setDrawColor(226, 232, 240);
-  doc.setLineWidth(0.5);
-  doc.line(32, 80, pageW - 32, 80);
+  doc.setTextColor(203, 213, 225);
+  doc.text(now, pageW - 32, headerH / 2 + 4, { align: 'right' });
 
   const headers = cols.map(c => c.label);
   const body = rows.map(r => cols.map(c => r.dataset[c.key] || ''));
 
   doc.autoTable({
-    startY: 96,
+    startY: headerH + 16,
     head: [headers],
     body: body,
     styles: { font: 'helvetica', fontSize: 9, cellPadding: 7, textColor: [51, 65, 85] },
