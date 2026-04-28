@@ -158,6 +158,16 @@
 .method-tag:hover { background: rgba(79,70,229,.12); color: #4F46E5; }
 .method-tag.tag-selected { background: #4F46E5; color: #fff; }
 
+/* Methods grouped by country */
+.method-country-group { margin-bottom: 14px; }
+.method-country-group:last-child { margin-bottom: 0; }
+.method-country-header {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--text2);
+  margin-bottom: 6px;
+}
+.method-country-count { color: var(--text3); font-weight: 500; }
+
 /* Skeleton */
 @keyframes shimmer {
   0%   { background-position: -400px 0; }
@@ -418,9 +428,20 @@
       {% endif %}
     </div>
     <div class="section-body">
-      {% if partner_methods %}
+      {% if country_methods %}
+      <div id="methods-wrap">
+        {% for country, methods in country_methods.items() | sort %}
+        <div class="method-country-group" data-country="{{ country }}">
+          <div class="method-country-header">{{ country }} <span class="method-country-count">({{ methods | length }})</span></div>
+          <div class="methods-wrap">
+            {% for m in methods %}<span class="method-tag method-tag-item" data-method="{{ m }}" data-country="{{ country }}" style="cursor:pointer" onclick="clickMethod(this)">{{ m }}</span>{% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% elif partner_methods %}
       <div class="methods-wrap" id="methods-wrap">
-        {% for m in partner_methods %}<span class="method-tag method-tag-item" style="cursor:pointer" onclick="clickMethod(this)">{{ m }}</span>{% endfor %}
+        {% for m in partner_methods %}<span class="method-tag method-tag-item" data-method="{{ m }}" style="cursor:pointer" onclick="clickMethod(this)">{{ m }}</span>{% endfor %}
       </div>
       {% else %}
       <div class="field-value muted">N/A</div>
@@ -468,23 +489,31 @@
     document.getElementById('country-count').textContent = countryCount;
     document.getElementById('stat-countries').textContent = countryCount;
 
-    let methodCount = 0;
+    const visibleMethods = new Set();
     document.querySelectorAll('.method-tag-item').forEach(tag => {
-      const method = tag.textContent.trim();
+      const method = tag.dataset.method || tag.textContent.trim();
+      const groupCountry = tag.dataset.country;
       const isSelected = selectedMethods.has(method);
       const inCat = catSel === 'all' || (CAT_METHODS[catSel] || []).includes(method);
       const inRegion = regionSel === 'all' || (REGION_METHODS[regionSel] || []).includes(method);
-      const inCountry = selectedCountries.size === 0 || allowedMethodsByCountry.has(method) || isSelected;
+      // Country selection filters BOTH by which group the chip is in AND by union match
+      const inCountry = selectedCountries.size === 0
+        || (groupCountry ? selectedCountries.has(groupCountry) : (allowedMethodsByCountry.has(method) || isSelected));
       if (inCat && inRegion && inCountry) {
         tag.style.display = '';
-        methodCount++;
+        visibleMethods.add(method);
       } else {
         tag.style.display = 'none';
       }
       tag.classList.toggle('tag-selected', isSelected);
     });
-    document.getElementById('method-count').textContent = methodCount;
-    document.getElementById('stat-methods').textContent = methodCount;
+    // Hide country groups that have no visible methods
+    document.querySelectorAll('.method-country-group').forEach(group => {
+      const anyVisible = group.querySelector('.method-tag-item:not([style*="display: none"])');
+      group.style.display = anyVisible ? '' : 'none';
+    });
+    document.getElementById('method-count').textContent = visibleMethods.size;
+    document.getElementById('stat-methods').textContent = visibleMethods.size;
   }
 
   function clickCountry(el) {
@@ -498,7 +527,7 @@
   }
 
   function clickMethod(el) {
-    const method = el.textContent.trim();
+    const method = el.dataset.method || el.textContent.trim();
     if (selectedMethods.has(method)) {
       selectedMethods.delete(method);
     } else {
