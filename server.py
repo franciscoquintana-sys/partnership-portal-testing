@@ -3,7 +3,7 @@ from datetime import date, timedelta
 from urllib.parse import unquote
 import pandas as pd
 from fastapi import FastAPI, Request, Form, Depends
-from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
@@ -100,6 +100,13 @@ def tr(request: Request, name: str, context: dict):
 @app.get("/health")
 def health():
     return {"status": "ok", "version": "2026-04-16-v3", "routes": ["partners_detail"]}
+
+@app.get("/favicon.ico")
+def favicon():
+    return FileResponse(
+        os.path.join(BASE, "static", "img", "yuno_isologo.png"),
+        media_type="image/png",
+    )
 
 @app.get("/api/refresh-cache")
 def refresh_cache():
