@@ -803,7 +803,11 @@ async function doExportPDF() {
     const logoH = 16;
     const logoW = logoH * (logo.width / logo.height);
     doc.addImage(logo.dataURL, 'PNG', 20, (headerH - logoH) / 2, logoW, logoH);
-    titleX = 20 + logoW + 12;
+    const dividerX = 20 + logoW + 10;
+    doc.setDrawColor(148, 163, 184);
+    doc.setLineWidth(0.6);
+    doc.line(dividerX, headerH / 2 - 10, dividerX, headerH / 2 + 10);
+    titleX = dividerX + 10;
   }
 
   doc.setFont('helvetica', 'bold');
