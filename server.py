@@ -36,8 +36,8 @@ oauth.register(
 
 ALLOWED_DOMAIN = "y.uno"
 PARTNERSHIPS_PASSWORD = os.environ.get("PARTNERSHIPS_PASSWORD", "Partnerships2026")
-FULL_ACCESS_ROLES = {"partnerships", "internal"}
-ANY_LOGGED_IN_ROLES = {"partnerships", "internal", "all_teams"}
+FULL_ACCESS_ROLES = {"partnerships"}
+ANY_LOGGED_IN_ROLES = {"partnerships", "internal"}
 
 # ------------------------------------------------------------------------------
 
@@ -63,8 +63,7 @@ _FULL_NAV = [
 ]
 NAV = {
     "partnerships": _FULL_NAV,
-    "internal": _FULL_NAV,
-    "all_teams": [
+    "internal": [
         ("", [("home","Home")]),
         ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight")]),
         ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
@@ -137,7 +136,7 @@ async def select_role(request: Request, role: str = Form(...), password: str = F
             return RedirectResponse("/login?error=Incorrect+Partnerships+Team+password.", status_code=303)
         request.session["pending_role"] = "partnerships"
     else:
-        request.session["pending_role"] = "all_teams"
+        request.session["pending_role"] = "internal"
     return RedirectResponse("/auth/google", status_code=303)
 
 @app.get("/auth/google")
@@ -161,9 +160,9 @@ async def auth_callback(request: Request):
     domain = email.split("@")[-1].lower() if "@" in email else ""
     if domain != ALLOWED_DOMAIN:
         return tr(request, "access_denied.html", {"request": request, "email": email})
-    pending = request.session.pop("pending_role", "all_teams")
-    if pending not in ("partnerships", "all_teams"):
-        pending = "all_teams"
+    pending = request.session.pop("pending_role", "internal")
+    if pending not in ("partnerships", "internal"):
+        pending = "internal"
     request.session["role"] = pending
     request.session["user_email"] = email
     request.session["user_name"] = user_info.get("name", email)
