@@ -465,6 +465,7 @@ def mission(request: Request):
 
 INTRO_COLUMNS = [
     ("request-pricing",      "Request Pricing",          "#6b7280"),
+    ("assessing-opportunity","Assessing Opportunity",    "#a855f7"),
     ("in-negotiations",      "In Negotiations",          "#3b82f6"),
     ("sign-agreement",       "Signed an Agreement",      "#8b5cf6"),
     ("live",                 "Live",                     "#10b981"),
