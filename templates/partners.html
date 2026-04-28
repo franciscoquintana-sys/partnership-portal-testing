@@ -219,6 +219,18 @@
 .col-filter-option input[type=checkbox] { accent-color: var(--indigo); width: 13px; height: 13px; cursor: pointer; }
 .col-filter-clear { padding: 5px 12px; font-size: 11px; color: #dc2626; cursor: pointer; border-top: 1px solid var(--border); margin-top: 2px; }
 .col-filter-clear:hover { background: #fff5f5; }
+.col-filter-search {
+  width: calc(100% - 16px);
+  margin: 0 8px 6px;
+  padding: 6px 9px;
+  font-size: 12px;
+  font-family: var(--font);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+}
+.col-filter-search:focus { border-color: var(--indigo); }
 
 .connector-name {
   font-weight: 600;
@@ -364,7 +376,7 @@
   <!-- Filters -->
   <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
     <span>Filters</span>
-    <button type="button" id="add-filter-btn" title="Add" aria-label="Add" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--indigo);background:#fff;color:var(--indigo);font-size:14px;font-weight:700;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;transition:background 0.15s,color 0.15s" onmouseover="this.style.background='var(--indigo)';this.style.color='#fff'" onmouseout="this.style.background='#fff';this.style.color='var(--indigo)'">+</button>
+    <button type="button" id="add-filter-btn" title="Add coverage filters" aria-label="Add" onclick="toggleCoverageFilters(event)" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--indigo);background:#fff;color:var(--indigo);font-size:14px;font-weight:700;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;transition:background 0.15s,color 0.15s" onmouseover="this.style.background='var(--indigo)';this.style.color='#fff'" onmouseout="if(!this.classList.contains('active')){this.style.background='#fff';this.style.color='var(--indigo)'}">+</button>
   </div>
   <div class="filter-bar">
     <div class="filter-item">
@@ -424,6 +436,28 @@
         <div class="col-filter-dropdown" id="drop-integration">
           {% for s in integration_stages %}<label class="col-filter-option"><input type="checkbox" value="{{ s | title }}" onchange="applyFilters()"> {{ s | title }}</label>{% endfor %}
           <div class="col-filter-clear" onclick="clearDrop('integration')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item coverage-filter" style="display:none">
+      <span class="filter-item-label">Country Coverage</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cov_country" onclick="toggleDrop('cov_country',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cov_country">
+          <input type="text" class="col-filter-search" placeholder="Search country..." oninput="refreshCoverageDropdowns()" onclick="event.stopPropagation()">
+          {% for c in coverage_countries %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cov_country')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item coverage-filter" style="display:none">
+      <span class="filter-item-label">Payment Method</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cov_method" onclick="toggleDrop('cov_method',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cov_method">
+          <input type="text" class="col-filter-search" placeholder="Search method..." oninput="refreshCoverageDropdowns()" onclick="event.stopPropagation()">
+          {% for m in coverage_methods %}<label class="col-filter-option"><input type="checkbox" value="{{ m }}" onchange="applyFilters()"> {{ m }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cov_method')">Clear</div>
         </div>
       </div>
     </div>
@@ -604,7 +638,11 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeScorecard();
 });
 
-const FILTERS = ['connector','cat','country','region','status','integration'];
+const FILTERS = ['connector','cat','country','region','status','integration','cov_country','cov_method'];
+const PARTNER_COV_COUNTRIES = {{ partner_cov_countries | tojson }};
+const PARTNER_COV_METHODS = {{ partner_cov_methods | tojson }};
+const COUNTRY_TO_METHODS = {{ cov_country_to_methods | tojson }};
+const METHOD_TO_COUNTRIES = {{ cov_method_to_countries | tojson }};
 
 function getSelected(key) {
   return [...document.querySelectorAll(`#drop-${key} input[type=checkbox]:checked`)].map(c => c.value);
@@ -636,6 +674,8 @@ function applyFilters() {
       row.dataset.name, row.dataset.type, row.dataset.region, row.dataset.country,
       row.dataset.status, row.dataset.integration, row.dataset.tier, row.dataset.manager
     ].join(' ').toLowerCase();
+    const partnerCovC = PARTNER_COV_COUNTRIES[row.dataset.name] || [];
+    const partnerCovM = PARTNER_COV_METHODS[row.dataset.name] || [];
     const show =
       (!q || haystack.includes(q))
       && (sel.connector.length === 0   || sel.connector.includes(row.dataset.name))
@@ -643,7 +683,9 @@ function applyFilters() {
       && (sel.country.length === 0     || sel.country.includes(row.dataset.country))
       && (sel.region.length === 0      || sel.region.includes(row.dataset.region))
       && (sel.status.length === 0      || sel.status.includes(row.dataset.status))
-      && (sel.integration.length === 0 || sel.integration.includes(row.dataset.integration));
+      && (sel.integration.length === 0 || sel.integration.includes(row.dataset.integration))
+      && (sel.cov_country.length === 0 || sel.cov_country.some(c => partnerCovC.includes(c)))
+      && (sel.cov_method.length === 0  || sel.cov_method.some(m => partnerCovM.includes(m)));
     row.style.display = show ? '' : 'none';
     if (show) {
       totalDb++;
@@ -657,6 +699,65 @@ function applyFilters() {
   document.getElementById('stat-total-active').textContent  = totalActive;
   document.getElementById('stat-total-signed').textContent  = totalSigned;
   document.getElementById('stat-total-live').textContent    = totalLive;
+
+  refreshCoverageDropdowns();
+}
+
+function refreshCoverageDropdowns() {
+  const selCountries = getSelected('cov_country');
+  const selMethods = getSelected('cov_method');
+
+  let allowedMethods = null;
+  if (selCountries.length) {
+    allowedMethods = new Set();
+    selCountries.forEach(c => (COUNTRY_TO_METHODS[c] || []).forEach(m => allowedMethods.add(m)));
+  }
+  let allowedCountries = null;
+  if (selMethods.length) {
+    allowedCountries = new Set();
+    selMethods.forEach(m => (METHOD_TO_COUNTRIES[m] || []).forEach(c => allowedCountries.add(c)));
+  }
+
+  const qC = (document.querySelector('#drop-cov_country .col-filter-search')?.value || '').toLowerCase();
+  const qM = (document.querySelector('#drop-cov_method .col-filter-search')?.value || '').toLowerCase();
+
+  document.querySelectorAll('#drop-cov_country .col-filter-option').forEach(opt => {
+    const cb = opt.querySelector('input');
+    const v = cb.value;
+    const txt = (cb.parentElement.textContent || '').trim().toLowerCase();
+    const passSearch = !qC || txt.includes(qC);
+    const passAllowed = !allowedCountries || allowedCountries.has(v) || cb.checked;
+    opt.style.display = (passSearch && passAllowed) ? '' : 'none';
+  });
+  document.querySelectorAll('#drop-cov_method .col-filter-option').forEach(opt => {
+    const cb = opt.querySelector('input');
+    const v = cb.value;
+    const txt = (cb.parentElement.textContent || '').trim().toLowerCase();
+    const passSearch = !qM || txt.includes(qM);
+    const passAllowed = !allowedMethods || allowedMethods.has(v) || cb.checked;
+    opt.style.display = (passSearch && passAllowed) ? '' : 'none';
+  });
+}
+
+function toggleCoverageFilters(e) {
+  if (e) e.stopPropagation();
+  const items = document.querySelectorAll('.coverage-filter');
+  const willShow = items.length && items[0].style.display === 'none';
+  items.forEach(it => it.style.display = willShow ? '' : 'none');
+  const btn = document.getElementById('add-filter-btn');
+  if (btn) {
+    btn.classList.toggle('active', willShow);
+    btn.textContent = willShow ? '−' : '+';
+    btn.title = willShow ? 'Hide coverage filters' : 'Add coverage filters';
+    if (willShow) { btn.style.background = 'var(--indigo)'; btn.style.color = '#fff'; }
+    else { btn.style.background = '#fff'; btn.style.color = 'var(--indigo)'; }
+  }
+  if (!willShow) {
+    document.querySelectorAll('#drop-cov_country input[type=checkbox], #drop-cov_method input[type=checkbox]').forEach(c => c.checked = false);
+    const sC = document.querySelector('#drop-cov_country .col-filter-search'); if (sC) sC.value = '';
+    const sM = document.querySelector('#drop-cov_method .col-filter-search'); if (sM) sM.value = '';
+    applyFilters();
+  }
 }
 
 function toggleDrop(key, e) {

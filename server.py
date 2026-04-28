@@ -195,6 +195,40 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     tier3_count = sum(1 for p in all_partners if p.get("tier") == "Tier 3")
     countries_count = len(countries)
 
+    # Coverage maps from SOT (per-partner countries/methods + cross-filter lookups)
+    try:
+        sot_df_for_cov = load_sot_data()
+    except Exception:
+        sot_df_for_cov = pd.DataFrame()
+    partner_cov_countries: dict = {}
+    partner_cov_methods: dict = {}
+    cov_country_to_methods: dict = {}
+    cov_method_to_countries: dict = {}
+    if len(sot_df_for_cov) > 0:
+        for _, _row in sot_df_for_cov.iterrows():
+            _pname = str(_row.get("PROVIDER_NAME", "")).strip()
+            if not _pname:
+                continue
+            _key = _pname.lower()
+            _iso = str(_row.get("COUNTRY_ISO", "")).strip()
+            _country = _ISO_TO_COUNTRY.get(_iso, _iso) if _iso else ""
+            _method = str(_row.get("PAYMENT_METHOD_TYPE", "")).strip()
+            if _method.lower() in ("", "nan"):
+                _method = ""
+            if _country:
+                partner_cov_countries.setdefault(_key, set()).add(_country)
+            if _method:
+                partner_cov_methods.setdefault(_key, set()).add(_method)
+            if _country and _method:
+                cov_country_to_methods.setdefault(_country, set()).add(_method)
+                cov_method_to_countries.setdefault(_method, set()).add(_country)
+    partner_cov_countries = {k: sorted(v) for k, v in partner_cov_countries.items()}
+    partner_cov_methods = {k: sorted(v) for k, v in partner_cov_methods.items()}
+    cov_country_to_methods = {k: sorted(v) for k, v in cov_country_to_methods.items()}
+    cov_method_to_countries = {k: sorted(v) for k, v in cov_method_to_countries.items()}
+    coverage_countries_list = sorted(cov_country_to_methods.keys())
+    coverage_methods_list = sorted(cov_method_to_countries.keys())
+
     # Scorecard: Deal stages per region. Live = Integration Live OR status 'Live Partner'.
     _SCORECARD_STAGES = ["Prospect", "Initial Negotiation", "Agreement Review", "Agreement Signed", "Live"]
     _scorecard_map = {}
@@ -236,6 +270,12 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         cats=cats, statuses=statuses, regions=regions, tiers=tiers,
         countries=countries, managers=managers, integration_stages=integration_stages,
         scorecard_data=scorecard_data,
+        coverage_countries=coverage_countries_list,
+        coverage_methods=coverage_methods_list,
+        partner_cov_countries=partner_cov_countries,
+        partner_cov_methods=partner_cov_methods,
+        cov_country_to_methods=cov_country_to_methods,
+        cov_method_to_countries=cov_method_to_countries,
         q=q, cat=cat, status=status, region=region, tier=tier
     ))
 
