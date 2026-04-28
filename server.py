@@ -15,7 +15,8 @@ from data_layer import (
     REVSHARE_BY_PARTNER, REVSHARE_MONTHLY, MERCHANTS, CONTACTS,
     REGION_STATS, COUNTRIES, find_partners, get_sot_countries, get_sot_providers,
     _ISO_TO_COUNTRY, _VERTICAL_COLS, load_sales_contacts, load_technical_contact,
-    load_partner_countries, load_partner_coverage, _load_partners_sot
+    load_partner_countries, load_partner_coverage, _load_partners_sot,
+    load_sheet_tab_rows,
 )
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -573,6 +574,200 @@ def _save_intros(data):
 _db_init()
 INTROS = _load_intros()
 
+# ── Form-response sync (Google Sheet → kanban) ───────────────────────────────
+FORM_RESPONSES_SHEET_ID = "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
+FORM_SEEN_STORAGE = os.path.join(DATA_DIR, "form_seen.json")
+FORM_SYNC_INTERVAL_SECONDS = 3600
+
+_FLOW_TO_COLUMN = {
+    "contact a partner - lead assesment and introduction": "assessing-opportunity",
+    "contact a partner - price quotation for an opportunity": "request-pricing",
+}
+
+# Header → intro field. First substring match wins per field; case-insensitive.
+_FORM_FIELD_ALIASES = [
+    ("merchant",              ["merchant name", "merchant", "client name", "client", "company name", "company"]),
+    ("partner",               ["partner name", "partner", "provider"]),
+    ("partnership_manager",   ["partnership manager", "manager", "owner"]),
+    ("vertical",              ["vertical", "industry"]),
+    ("legal_entity_countries",["legal entity countr", "legal countries"]),
+    ("operation_countries",   ["operation countr", "operating countr"]),
+    ("requesting_countries",  ["requesting countr", "request countr", "country of request"]),
+    ("transaction_type",      ["transaction type"]),
+    ("payment_flow",          ["payment flow"]),
+    ("payment_methods",       ["payment method"]),
+    ("avg_ticket",            ["average ticket", "avg ticket", "ticket size"]),
+    ("monthly_tpv",           ["monthly tpv", "tpv", "monthly volume"]),
+    ("comments",              ["comments", "notes", "observations", "additional info"]),
+]
+
+
+def _load_form_seen():
+    try:
+        with open(FORM_SEEN_STORAGE, encoding="utf-8") as f:
+            return set(json.load(f))
+    except FileNotFoundError:
+        return None  # signals "first run"
+    except Exception:
+        return set()
+
+
+def _save_form_seen(seen):
+    try:
+        with open(FORM_SEEN_STORAGE, "w", encoding="utf-8") as f:
+            json.dump(sorted(seen), f)
+    except Exception as e:
+        print(f"[form-sync] save seen failed: {e}", flush=True)
+
+
+def _row_to_intro_fields(row):
+    fields = {}
+    used_headers = set()
+    for field, aliases in _FORM_FIELD_ALIASES:
+        for header, value in row.items():
+            if header in used_headers:
+                continue
+            hl = (header or "").strip().lower()
+            if any(alias in hl for alias in aliases):
+                if (value or "").strip():
+                    fields[field] = str(value).strip()
+                used_headers.add(header)
+                break
+    leftover = []
+    for header, value in row.items():
+        if header in used_headers:
+            continue
+        v = str(value or "").strip()
+        if v and (header or "").strip():
+            leftover.append(f"{header.strip()}: {v}")
+    if leftover:
+        existing = fields.get("comments", "").strip()
+        joined = " | ".join(leftover)
+        fields["comments"] = (existing + " | " + joined).strip(" |") if existing else joined
+    return fields
+
+
+def _row_form_key(tab_slug, row, idx):
+    ts = (row.get("Timestamp") or row.get("Marca temporal") or row.get("timestamp") or "").strip()
+    return f"{tab_slug}|{ts or '#' + str(idx)}"
+
+
+def _make_intro_from_row(fields, column, form_key):
+    import uuid
+    return {
+        "id": uuid.uuid4().hex[:10],
+        "merchant": fields.get("merchant", ""),
+        "partner": fields.get("partner", ""),
+        "partnership_manager": fields.get("partnership_manager", ""),
+        "column": column,
+        "vertical": fields.get("vertical", ""),
+        "legal_entity_countries": fields.get("legal_entity_countries", ""),
+        "operation_countries": fields.get("operation_countries", ""),
+        "requesting_countries": fields.get("requesting_countries", ""),
+        "transaction_type": fields.get("transaction_type", ""),
+        "payment_flow": fields.get("payment_flow", ""),
+        "payment_methods": fields.get("payment_methods", ""),
+        "avg_ticket": fields.get("avg_ticket", ""),
+        "monthly_tpv": fields.get("monthly_tpv", ""),
+        "comments": fields.get("comments", ""),
+        "form_row_key": form_key,
+    }
+
+
+def _flow_value(row):
+    for h, v in row.items():
+        hl = (h or "").strip().lower()
+        if "flow" in hl and "partnership" in hl:
+            return (v or "").strip()
+    for h, v in row.items():
+        if "flow" in (h or "").strip().lower():
+            return (v or "").strip()
+    return ""
+
+
+def sync_form_responses():
+    """Pull new rows from the Google Form-responses sheet and create intro cards.
+
+    First run (no seen file) just builds the baseline so historical rows aren't
+    bulk-imported as new cards.
+    """
+    seen = _load_form_seen()
+    first_run = seen is None
+    if seen is None:
+        seen = set()
+
+    new_seen = set(seen)
+    new_intros = []
+    skipped_no_merchant = 0
+    skipped_unknown_flow = 0
+
+    # Tab 1: Contact a Partner — column depends on partnership flow
+    rows1 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Contact a Partner")
+    for idx, row in enumerate(rows1):
+        key = _row_form_key("contact_a_partner", row, idx)
+        if key in seen:
+            continue
+        new_seen.add(key)
+        if first_run:
+            continue
+        flow_val = _flow_value(row).strip().lower()
+        column = _FLOW_TO_COLUMN.get(flow_val)
+        if not column:
+            skipped_unknown_flow += 1
+            continue
+        fields = _row_to_intro_fields(row)
+        if not fields.get("merchant"):
+            skipped_no_merchant += 1
+            continue
+        new_intros.append(_make_intro_from_row(fields, column, key))
+
+    # Tab 2: Client - Partner Direct → in-negotiations
+    rows2 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Client - Partner Direct")
+    for idx, row in enumerate(rows2):
+        key = _row_form_key("client_partner_direct", row, idx)
+        if key in seen:
+            continue
+        new_seen.add(key)
+        if first_run:
+            continue
+        fields = _row_to_intro_fields(row)
+        if not fields.get("merchant"):
+            skipped_no_merchant += 1
+            continue
+        new_intros.append(_make_intro_from_row(fields, "in-negotiations", key))
+
+    if new_intros:
+        INTROS.extend(new_intros)
+        _save_intros(INTROS)
+    _save_form_seen(new_seen)
+
+    return {
+        "created": len(new_intros),
+        "first_run": first_run,
+        "total_seen": len(new_seen),
+        "skipped_no_merchant": skipped_no_merchant,
+        "skipped_unknown_flow": skipped_unknown_flow,
+    }
+
+
+import asyncio
+
+
+async def _form_sync_loop():
+    while True:
+        try:
+            stats = sync_form_responses()
+            if stats.get("created") or stats.get("first_run"):
+                print(f"[form-sync] {stats}", flush=True)
+        except Exception as e:
+            print(f"[form-sync] loop error: {e}", flush=True)
+        await asyncio.sleep(FORM_SYNC_INTERVAL_SECONDS)
+
+
+@app.on_event("startup")
+async def _start_form_sync():
+    asyncio.create_task(_form_sync_loop())
+
 @app.get("/introduction", response_class=HTMLResponse)
 def introduction(request: Request):
     role = require_auth(request)
@@ -668,6 +863,17 @@ async def api_intros_create(request: Request):
     INTROS.append(new_intro)
     _save_intros(INTROS)
     return {"ok": True, "intro": new_intro}
+
+@app.post("/api/intros/sync-forms")
+async def api_intros_sync_forms(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    try:
+        stats = sync_form_responses()
+        return {"ok": True, **stats}
+    except Exception as e:
+        return JSONResponse({"error": str(e)}, status_code=500)
+
 
 @app.post("/api/intros/delete")
 async def api_intros_delete(request: Request):

@@ -485,6 +485,37 @@ def load_sales_contacts(provider_name: str) -> list:
         })
     return contacts
 
+def load_sheet_tab_rows(spreadsheet_id, tab_name):
+    """Generic Sheets API loader: returns list[dict] keyed by header row.
+
+    Returns [] on auth failure, missing tab, or empty/header-only sheet.
+    """
+    token = _get_access_token()
+    if not token:
+        return []
+    try:
+        url = (
+            "https://sheets.googleapis.com/v4/spreadsheets/"
+            f"{spreadsheet_id}/values/{requests.utils.quote(tab_name)}"
+        )
+        resp = requests.get(url, headers={"Authorization": f"Bearer {token}"})
+        resp.raise_for_status()
+        values = resp.json().get("values", [])
+        if len(values) < 2:
+            return []
+        hdr = values[0]
+        out = []
+        for row in values[1:]:
+            d = {}
+            for i, h in enumerate(hdr):
+                d[h] = row[i] if i < len(row) else ""
+            out.append(d)
+        return out
+    except Exception as e:
+        print(f"[sheet] load_sheet_tab_rows failed for tab='{tab_name}': {e}")
+        return []
+
+
 _SOT_CACHE = {"data": None, "ts": 0}
 
 def load_sot_data():

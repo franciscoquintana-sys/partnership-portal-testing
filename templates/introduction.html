@@ -257,7 +257,11 @@
       {% for m in board_merchants %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
     </select>
     <span id="filter-hint" style="font-size:12px;color:#94a3b8;flex:1"></span>
-    <button class="btn-primary" onclick="openAddMerchant()" style="margin-left:auto">+ Add Merchant</button>
+    <button id="sync-forms-btn" type="button" onclick="syncFromForms(this)" style="margin-left:auto;font-family:inherit;font-size:12.5px;font-weight:600;color:#4F46E5;background:#fff;border:1px solid #c7d2fe;border-radius:8px;padding:7px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:background 0.15s,color 0.15s" onmouseover="this.style.background='#eef2ff'" onmouseout="this.style.background='#fff'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+      Sync from forms
+    </button>
+    <button class="btn-primary" onclick="openAddMerchant()">+ Add Merchant</button>
   </div>
 
   <!-- Kanban -->
@@ -568,5 +572,35 @@ async function deleteIntro() {
 
 bindSortables();
 bindCardClicks();
+
+async function syncFromForms(btn) {
+  const orig = btn.innerHTML;
+  btn.disabled = true;
+  btn.style.opacity = '0.7';
+  btn.innerHTML = 'Syncing…';
+  try {
+    const r = await fetch('/api/intros/sync-forms', { method: 'POST' });
+    const data = await r.json();
+    if (r.ok && data.ok) {
+      const created = data.created || 0;
+      const note = data.first_run
+        ? 'Baseline set'
+        : (created ? `+${created} new` : 'No new submissions');
+      btn.innerHTML = note;
+      if (created > 0) {
+        setTimeout(() => location.reload(), 700);
+      } else {
+        setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; btn.style.opacity = '1'; }, 1400);
+      }
+    } else {
+      btn.innerHTML = 'Sync failed';
+      console.error(data);
+      setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; btn.style.opacity = '1'; }, 1800);
+    }
+  } catch (e) {
+    btn.innerHTML = 'Sync failed';
+    setTimeout(() => { btn.innerHTML = orig; btn.disabled = false; btn.style.opacity = '1'; }, 1800);
+  }
+}
 </script>
 {% endblock %}
