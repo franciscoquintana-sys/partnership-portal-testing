@@ -641,6 +641,7 @@ document.addEventListener('keydown', (e) => {
 const FILTERS = ['connector','cat','country','region','status','integration','cov_country','cov_method'];
 const PARTNER_COV_COUNTRIES = {{ partner_cov_countries | tojson }};
 const PARTNER_COV_METHODS = {{ partner_cov_methods | tojson }};
+const PARTNER_COUNTRY_METHODS = {{ partner_country_methods | tojson }};
 const COUNTRY_TO_METHODS = {{ cov_country_to_methods | tojson }};
 const METHOD_TO_COUNTRIES = {{ cov_method_to_countries | tojson }};
 
@@ -654,7 +655,17 @@ const COUNTRY_TO_METHODS_LC = _lcMap(COUNTRY_TO_METHODS);
 const METHOD_TO_COUNTRIES_LC = _lcMap(METHOD_TO_COUNTRIES);
 const PARTNER_COV_COUNTRIES_LC = _lcMap(PARTNER_COV_COUNTRIES);
 const PARTNER_COV_METHODS_LC = _lcMap(PARTNER_COV_METHODS);
-window.__cov = { COUNTRY_TO_METHODS, METHOD_TO_COUNTRIES, PARTNER_COV_COUNTRIES, PARTNER_COV_METHODS };
+const PARTNER_COUNTRY_METHODS_LC = (() => {
+  const out = {};
+  Object.keys(PARTNER_COUNTRY_METHODS || {}).forEach(p => {
+    const inner = PARTNER_COUNTRY_METHODS[p] || {};
+    const innerLc = {};
+    Object.keys(inner).forEach(c => { innerLc[_norm(c)] = (inner[c] || []).map(_norm); });
+    out[_norm(p)] = innerLc;
+  });
+  return out;
+})();
+window.__cov = { COUNTRY_TO_METHODS, METHOD_TO_COUNTRIES, PARTNER_COV_COUNTRIES, PARTNER_COV_METHODS, PARTNER_COUNTRY_METHODS };
 
 function getSelected(key) {
   return [...document.querySelectorAll(`#drop-${key} input[type=checkbox]:checked`)].map(c => c.value);
@@ -689,6 +700,21 @@ function applyFilters() {
     const partnerKey = _norm(row.dataset.name);
     const partnerCovC = PARTNER_COV_COUNTRIES_LC[partnerKey] || [];
     const partnerCovM = PARTNER_COV_METHODS_LC[partnerKey] || [];
+    const selCC = sel.cov_country.map(_norm);
+    const selCM = sel.cov_method.map(_norm);
+    let coverageOk = true;
+    if (selCC.length && selCM.length) {
+      // Both filters active — partner must offer one of the selected methods IN one of the selected countries
+      const pcm = PARTNER_COUNTRY_METHODS_LC[partnerKey] || {};
+      coverageOk = selCC.some(c => {
+        const ms = pcm[c] || [];
+        return selCM.some(m => ms.includes(m));
+      });
+    } else if (selCC.length) {
+      coverageOk = selCC.some(c => partnerCovC.includes(c));
+    } else if (selCM.length) {
+      coverageOk = selCM.some(m => partnerCovM.includes(m));
+    }
     const show =
       (!q || haystack.includes(q))
       && (sel.connector.length === 0   || sel.connector.includes(row.dataset.name))
@@ -697,8 +723,7 @@ function applyFilters() {
       && (sel.region.length === 0      || sel.region.includes(row.dataset.region))
       && (sel.status.length === 0      || sel.status.includes(row.dataset.status))
       && (sel.integration.length === 0 || sel.integration.includes(row.dataset.integration))
-      && (sel.cov_country.length === 0 || sel.cov_country.some(c => partnerCovC.includes(_norm(c))))
-      && (sel.cov_method.length === 0  || sel.cov_method.some(m => partnerCovM.includes(_norm(m))));
+      && coverageOk;
     row.style.display = show ? '' : 'none';
     if (show) {
       totalDb++;

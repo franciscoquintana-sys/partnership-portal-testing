@@ -158,50 +158,6 @@ def home(request: Request):
         return RedirectResponse("/login")
     return tr(request, "home.html", ctx(request, "home"))
 
-@app.get("/_debug/cov")
-def _debug_cov(country: str = "ANGOLA"):
-    """TEMP: dump coverage map for one country, for debugging the cross-filter."""
-    try:
-        df = _load_partners_sot()
-    except Exception:
-        df = pd.DataFrame()
-    cmap, mmap, ptoc, ptom = {}, {}, {}, {}
-    if df is not None and len(df) > 0:
-        for _, r in df.iterrows():
-            pn = str(r.get("PROVIDER_NAME", "")).strip()
-            if not pn:
-                continue
-            k = pn.lower()
-            c = str(r.get("COUNTRY", "")).strip()
-            if c.lower() in ("", "nan"):
-                c = ""
-            pmt = str(r.get("PAYMENT_METHOD_TYPE", "")).strip()
-            br = str(r.get("CARD_BRAND", "")).strip()
-            if pmt.upper() == "CARD" and br and br.lower() not in ("nan", "false"):
-                m = br
-            elif pmt and pmt.lower() != "nan":
-                m = pmt.replace("_", " ")
-            else:
-                m = ""
-            if c:
-                ptoc.setdefault(k, set()).add(c)
-            if m:
-                ptom.setdefault(k, set()).add(m)
-            if c and m:
-                cmap.setdefault(c, set()).add(m)
-                mmap.setdefault(m, set()).add(c)
-    cu = country.upper()
-    return {
-        "rows": int(len(df)) if df is not None else 0,
-        "country_query": cu,
-        "country_in_map": cu in cmap,
-        "methods_for_country": sorted(cmap.get(cu, [])),
-        "methods_count": len(cmap.get(cu, [])),
-        "all_countries_count": len(cmap),
-        "partners_covering_country": sorted([k for k, v in ptoc.items() if cu in v]),
-    }
-
-
 @app.get("/partners", response_class=HTMLResponse)
 def partners(request: Request, q: str = "", cat: str = "all", status: str = "all", region: str = "all", tier: str = "all"):
     role = require_auth(request)
@@ -247,6 +203,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         sot_df_for_cov = pd.DataFrame()
     partner_cov_countries: dict = {}
     partner_cov_methods: dict = {}
+    partner_country_methods: dict = {}  # {partner_lower: {country: set(methods)}}
     cov_country_to_methods: dict = {}
     cov_method_to_countries: dict = {}
     if sot_df_for_cov is not None and len(sot_df_for_cov) > 0:
@@ -273,20 +230,16 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
             if _country and _method:
                 cov_country_to_methods.setdefault(_country, set()).add(_method)
                 cov_method_to_countries.setdefault(_method, set()).add(_country)
+                partner_country_methods.setdefault(_key, {}).setdefault(_country, set()).add(_method)
     partner_cov_countries = {k: sorted(v) for k, v in partner_cov_countries.items()}
     partner_cov_methods = {k: sorted(v) for k, v in partner_cov_methods.items()}
     cov_country_to_methods = {k: sorted(v) for k, v in cov_country_to_methods.items()}
     cov_method_to_countries = {k: sorted(v) for k, v in cov_method_to_countries.items()}
+    partner_country_methods = {
+        k: {c: sorted(ms) for c, ms in v.items()} for k, v in partner_country_methods.items()
+    }
     coverage_countries_list = sorted(cov_country_to_methods.keys())
     coverage_methods_list = sorted(cov_method_to_countries.keys())
-    _angola_methods = cov_country_to_methods.get('ANGOLA', [])
-    _angola_partners = [k for k, v in partner_cov_countries.items() if 'ANGOLA' in v]
-    print(f"[cov-debug] sot_rows={len(sot_df_for_cov) if sot_df_for_cov is not None else 'None'} "
-          f"countries={len(coverage_countries_list)} methods={len(coverage_methods_list)} "
-          f"ANGOLA_methods_count={len(_angola_methods)} "
-          f"ANGOLA_methods_sample={_angola_methods[:8]} "
-          f"ANGOLA_partners_count={len(_angola_partners)} "
-          f"ANGOLA_partners_sample={_angola_partners[:5]}", flush=True)
 
     # Scorecard: Deal stages per region. Live = Integration Live OR status 'Live Partner'.
     _SCORECARD_STAGES = ["Prospect", "Initial Negotiation", "Agreement Review", "Agreement Signed", "Live"]
@@ -333,6 +286,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         coverage_methods=coverage_methods_list,
         partner_cov_countries=partner_cov_countries,
         partner_cov_methods=partner_cov_methods,
+        partner_country_methods=partner_country_methods,
         cov_country_to_methods=cov_country_to_methods,
         cov_method_to_countries=cov_method_to_countries,
         q=q, cat=cat, status=status, region=region, tier=tier
