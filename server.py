@@ -859,13 +859,15 @@ import asyncio
 
 
 async def _form_sync_loop():
+    first = True
     while True:
         try:
             stats = sync_form_responses()
-            if stats.get("created") or stats.get("fixed_partners") or stats.get("fixed_comments") or stats.get("fixed_pms"):
+            if first or any(stats.get(k) for k in ("created", "fixed_partners", "fixed_comments", "fixed_pms")):
                 print(f"[form-sync] {stats}", flush=True)
         except Exception as e:
             print(f"[form-sync] loop error: {e}", flush=True)
+        first = False
         await asyncio.sleep(FORM_SYNC_INTERVAL_SECONDS)
 
 
