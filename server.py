@@ -807,6 +807,7 @@ def sync_form_responses():
         rows_by_key[_row_form_key("client_partner_direct", row, idx)] = row
     fixed_partners = 0
     fixed_comments = 0
+    fixed_pms = 0
     for intro in INTROS:
         key = intro.get("form_row_key")
         if not key:
@@ -822,11 +823,16 @@ def sync_form_responses():
             new_partner = new_fields.get("partner", "")
             if new_partner and new_partner != cur_partner:
                 intro["partner"] = new_partner
-                if not (intro.get("partnership_manager") or "").strip():
-                    pn = new_partner.strip().lower()
-                    if pn in partner_to_manager:
-                        intro["partnership_manager"] = partner_to_manager[pn]
+                cur_partner = new_partner
                 fixed_partners += 1
+
+        # PM: look up by partner name in the dedicated PM sheet whenever the
+        # card doesn't have one yet (or its partner just got rewritten).
+        if cur_partner and not (intro.get("partnership_manager") or "").strip():
+            mgr = partner_to_manager.get(cur_partner.strip().lower())
+            if mgr:
+                intro["partnership_manager"] = mgr
+                fixed_pms += 1
 
         # Comments: re-derive using the new rule (Other Information only).
         new_comments = new_fields.get("comments", "")
@@ -835,7 +841,7 @@ def sync_form_responses():
             intro["comments"] = new_comments
             fixed_comments += 1
 
-    if fixed_partners or fixed_comments:
+    if fixed_partners or fixed_comments or fixed_pms:
         _save_intros(INTROS)
 
     return {
@@ -844,6 +850,7 @@ def sync_form_responses():
         "skipped_no_merchant": skipped_no_merchant,
         "skipped_unknown_flow": skipped_unknown_flow,
         "fixed_partners": fixed_partners,
+        "fixed_pms": fixed_pms,
         "fixed_comments": fixed_comments,
     }
 
@@ -855,7 +862,7 @@ async def _form_sync_loop():
     while True:
         try:
             stats = sync_form_responses()
-            if stats.get("created") or stats.get("fixed_partners") or stats.get("fixed_comments"):
+            if stats.get("created") or stats.get("fixed_partners") or stats.get("fixed_comments") or stats.get("fixed_pms"):
                 print(f"[form-sync] {stats}", flush=True)
         except Exception as e:
             print(f"[form-sync] loop error: {e}", flush=True)
