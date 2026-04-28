@@ -635,9 +635,6 @@ async function downloadPartnerDetail() {
   doc.text(now, pageW - 32, headerH / 2 + 4, { align: 'right' });
 
   // Collect filtered (visible) data from the page
-  const visibleCountries = [...document.querySelectorAll('.country-tag')]
-    .filter(t => t.style.display !== 'none')
-    .map(t => t.textContent.trim());
   const groups = [...document.querySelectorAll('.method-country-group')]
     .filter(g => g.style.display !== 'none')
     .map(g => ({
@@ -666,27 +663,7 @@ async function downloadPartnerDetail() {
     }
   }
 
-  // Countries section
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(15, 23, 42);
-  doc.text(`Countries (${visibleCountries.length})`, leftMargin, y);
-  y += 14;
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.setTextColor(51, 65, 85);
-  if (visibleCountries.length) {
-    const wrapped = doc.splitTextToSize(visibleCountries.join(', '), contentW);
-    ensureSpace(wrapped.length * 12);
-    doc.text(wrapped, leftMargin, y);
-    y += wrapped.length * 12 + 14;
-  } else {
-    doc.text('—', leftMargin, y);
-    y += 24;
-  }
-
-  // Payment methods section
-  ensureSpace(40);
+  // Payment methods section (countries appear as group headers within)
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.setTextColor(15, 23, 42);
