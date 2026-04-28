@@ -218,9 +218,16 @@
       {% set back_url = '/partners' %}
       {% set back_label = 'Portfolio' %}
     {% endif %}
-    <a href="{{ back_url }}" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">← Back to {{ back_label }}</a>
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;position:relative;z-index:1">
+      <a href="{{ back_url }}" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">← Back to {{ back_label }}</a>
+      <button type="button" onclick="downloadPartnerDetail()" style="font-family:var(--font);font-size:12px;font-weight:600;color:#fff;background:#4F46E5;border:1px solid rgba(255,255,255,0.18);border-radius:7px;padding:6px 14px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:background 0.15s" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4F46E5'">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+    </div>
   </div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 <!-- Partner header -->
 <div class="partner-header">
@@ -564,5 +571,177 @@
   </div>
 
 </div>
+
+<script>
+const PARTNER_NAME_FOR_PDF = {{ partner.name | tojson }};
+
+async function _loadImageRasterizedDetail(url) {
+  return await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      let w = img.naturalWidth || 800;
+      let h = img.naturalHeight || 200;
+      const target = 1200;
+      if (w < target) { const s = target / w; w = Math.round(w * s); h = Math.round(h * s); }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      try { resolve({ dataURL: canvas.toDataURL('image/png'), width: w, height: h }); }
+      catch (e) { reject(e); }
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+async function downloadPartnerDetail() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const now = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+  // Header — same style as portfolio export
+  const headerH = 80;
+  doc.setFillColor(10, 22, 40);
+  doc.rect(0, 0, pageW, headerH, 'F');
+  doc.setFillColor(79, 70, 229);
+  doc.setGState(new doc.GState({ opacity: 0.18 }));
+  doc.ellipse(pageW - 60, 40, 140, 70, 'F');
+  doc.setGState(new doc.GState({ opacity: 1 }));
+
+  let logo = null;
+  try { logo = await _loadImageRasterizedDetail('/static/img/yuno_fulllogo_light.svg'); } catch (e) {}
+  let titleX = 20;
+  if (logo) {
+    const logoH = 16;
+    const logoW = logoH * (logo.width / logo.height);
+    doc.addImage(logo.dataURL, 'PNG', 20, (headerH - logoH) / 2, logoW, logoH);
+    const dividerX = 20 + logoW + 10;
+    doc.setDrawColor(148, 163, 184);
+    doc.setLineWidth(0.6);
+    doc.line(dividerX, headerH/2 - 10, dividerX, headerH/2 + 10);
+    titleX = dividerX + 10;
+  }
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.setTextColor(255, 255, 255);
+  const titleText = PARTNER_NAME_FOR_PDF + ' — Detail';
+  doc.text(titleText, titleX, headerH / 2 + 6);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(203, 213, 225);
+  doc.text(now, pageW - 32, headerH / 2 + 4, { align: 'right' });
+
+  // Collect filtered (visible) data from the page
+  const visibleCountries = [...document.querySelectorAll('.country-tag')]
+    .filter(t => t.style.display !== 'none')
+    .map(t => t.textContent.trim());
+  const groups = [...document.querySelectorAll('.method-country-group')]
+    .filter(g => g.style.display !== 'none')
+    .map(g => ({
+      country: g.dataset.country,
+      methods: [...g.querySelectorAll('.method-tag-item')]
+        .filter(t => t.style.display !== 'none')
+        .map(t => t.dataset.method || t.textContent.trim()),
+    }))
+    .filter(g => g.methods.length > 0);
+  // Fallback for partners without grouped methods
+  let flatMethods = [];
+  if (groups.length === 0) {
+    flatMethods = [...document.querySelectorAll('.method-tag-item')]
+      .filter(t => t.style.display !== 'none')
+      .map(t => t.dataset.method || t.textContent.trim());
+  }
+
+  const leftMargin = 32, rightMargin = 32;
+  const contentW = pageW - leftMargin - rightMargin;
+  let y = headerH + 28;
+
+  function ensureSpace(needed) {
+    if (y + needed > pageH - 32) {
+      doc.addPage();
+      y = 32;
+    }
+  }
+
+  // Countries section
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(15, 23, 42);
+  doc.text(`Countries (${visibleCountries.length})`, leftMargin, y);
+  y += 14;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(51, 65, 85);
+  if (visibleCountries.length) {
+    const wrapped = doc.splitTextToSize(visibleCountries.join(', '), contentW);
+    ensureSpace(wrapped.length * 12);
+    doc.text(wrapped, leftMargin, y);
+    y += wrapped.length * 12 + 14;
+  } else {
+    doc.text('—', leftMargin, y);
+    y += 24;
+  }
+
+  // Payment methods section
+  ensureSpace(40);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(15, 23, 42);
+  const uniqueMethods = new Set();
+  if (groups.length) groups.forEach(g => g.methods.forEach(m => uniqueMethods.add(m)));
+  else flatMethods.forEach(m => uniqueMethods.add(m));
+  doc.text(`Payment Methods (${uniqueMethods.size})`, leftMargin, y);
+  y += 14;
+
+  if (groups.length) {
+    for (const g of groups) {
+      ensureSpace(28);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(79, 70, 229);
+      doc.text(`${g.country.toUpperCase()} (${g.methods.length})`, leftMargin, y);
+      y += 12;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9.5);
+      doc.setTextColor(51, 65, 85);
+      const wrapped = doc.splitTextToSize(g.methods.join(', '), contentW);
+      ensureSpace(wrapped.length * 11);
+      doc.text(wrapped, leftMargin, y);
+      y += wrapped.length * 11 + 12;
+    }
+  } else if (flatMethods.length) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(51, 65, 85);
+    const wrapped = doc.splitTextToSize(flatMethods.join(', '), contentW);
+    ensureSpace(wrapped.length * 12);
+    doc.text(wrapped, leftMargin, y);
+    y += wrapped.length * 12 + 12;
+  } else {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(100, 116, 139);
+    doc.text('—', leftMargin, y);
+    y += 16;
+  }
+
+  // Footer
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.5);
+  const footerY = pageH - 28;
+  doc.line(leftMargin, footerY - 14, pageW - rightMargin, footerY - 14);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(148, 163, 184);
+  doc.text('Yuno Partnerships Portal · Confidential', leftMargin, footerY);
+  doc.text(`Generated ${now}`, pageW - rightMargin, footerY, { align: 'right' });
+
+  const safeName = PARTNER_NAME_FOR_PDF.replace(/[^a-z0-9]+/gi, '_').toLowerCase().replace(/^_|_$/g, '');
+  doc.save(`yuno_${safeName}_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+</script>
 
 {% endblock %}
