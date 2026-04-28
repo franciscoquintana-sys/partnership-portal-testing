@@ -696,6 +696,24 @@ def sync_form_responses():
     if seen is None:
         seen = set()
 
+    # Build partner-name → manager lookup so cards inherit the PM of their partner.
+    partner_to_manager = {}
+    try:
+        for p in load_partners_excel():
+            name = (p.get("name") or "").strip().lower()
+            mgr = (p.get("manager") or "").strip()
+            if name and mgr:
+                partner_to_manager[name] = mgr
+    except Exception as e:
+        print(f"[form-sync] partners lookup failed: {e}", flush=True)
+
+    def _fill_pm(fields):
+        if fields.get("partnership_manager"):
+            return
+        pname = (fields.get("partner") or "").strip().lower()
+        if pname and pname in partner_to_manager:
+            fields["partnership_manager"] = partner_to_manager[pname]
+
     new_seen = set(seen)
     new_intros = []
     skipped_no_merchant = 0
@@ -719,6 +737,7 @@ def sync_form_responses():
         if not fields.get("merchant"):
             skipped_no_merchant += 1
             continue
+        _fill_pm(fields)
         new_intros.append(_make_intro_from_row(fields, column, key))
 
     # Tab 2: Client - Partner Direct → in-negotiations
@@ -734,6 +753,7 @@ def sync_form_responses():
         if not fields.get("merchant"):
             skipped_no_merchant += 1
             continue
+        _fill_pm(fields)
         new_intros.append(_make_intro_from_row(fields, "in-negotiations", key))
 
     if new_intros:
