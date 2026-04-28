@@ -669,6 +669,7 @@ def _build_partner_pm_map():
     import requests as _requests
     token = _get_access_token()
     if not token:
+        print("[partner-pm] no access token", flush=True)
         return {}
     tab_name = None
     try:
@@ -683,13 +684,16 @@ def _build_partner_pm_map():
         if not tab_name and meta.get("sheets"):
             tab_name = meta["sheets"][0]["properties"]["title"]
     except Exception as e:
-        print(f"[form-sync] partner-PM meta fetch failed: {e}", flush=True)
+        print(f"[partner-pm] meta fetch failed: {e}", flush=True)
         return {}
 
+    print(f"[partner-pm] reading tab='{tab_name}'", flush=True)
     rows = load_sheet_tab_rows(PARTNER_PM_SHEET_ID, tab_name) if tab_name else []
     if not rows:
+        print("[partner-pm] no rows", flush=True)
         return {}
     headers = list(rows[0].keys())
+    print(f"[partner-pm] headers={headers}", flush=True)
     partner_col = None
     pm_col = None
     for h in headers:
@@ -698,6 +702,7 @@ def _build_partner_pm_map():
             partner_col = h
         if not pm_col and ("manager" in hl or hl == "pm" or hl.endswith(" pm") or "owner" in hl):
             pm_col = h
+    print(f"[partner-pm] partner_col={partner_col!r} pm_col={pm_col!r}", flush=True)
     if not partner_col or not pm_col:
         return {}
     out = {}
@@ -738,6 +743,7 @@ def sync_form_responses():
     except Exception as e:
         print(f"[form-sync] partner-PM lookup failed: {e}", flush=True)
         partner_to_manager = {}
+    print(f"[form-sync] partner_to_manager_size={len(partner_to_manager)} sample={list(partner_to_manager.items())[:3]}", flush=True)
 
     def _fill_pm(fields):
         if fields.get("partnership_manager"):
