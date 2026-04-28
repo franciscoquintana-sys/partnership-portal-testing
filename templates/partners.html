@@ -798,16 +798,18 @@ async function doExportPDF() {
     logo = await loadImageRasterized('/static/img/yuno_fulllogo_light.svg');
   } catch (e) {}
 
+  let titleX = 32;
   if (logo) {
-    const logoH = 28;
+    const logoH = 20;
     const logoW = logoH * (logo.width / logo.height);
     doc.addImage(logo.dataURL, 'PNG', 32, (headerH - logoH) / 2, logoW, logoH);
+    titleX = 32 + logoW + 18;
   }
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(20);
   doc.setTextColor(255, 255, 255);
-  doc.text('Yuno Partner Portfolio', pageW / 2, headerH / 2 + 6, { align: 'center' });
+  doc.text('Yuno Partner Portfolio', titleX, headerH / 2 + 6);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(203, 213, 225);
