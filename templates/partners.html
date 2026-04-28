@@ -795,11 +795,11 @@ async function doExportPDF() {
 
   let logo = null;
   try {
-    logo = await loadImageRasterized('https://cdn.prod.website-files.com/65e210a414fae2cb8054a995/684b70d717a5356f5a6f8793_yuno_wordmark_dark.svg');
+    logo = await loadImageRasterized('/static/img/yuno_fulllogo_light.svg');
   } catch (e) {}
 
   if (logo) {
-    const logoH = 44;
+    const logoH = 28;
     const logoW = logoH * (logo.width / logo.height);
     doc.addImage(logo.dataURL, 'PNG', 32, (headerH - logoH) / 2, logoW, logoH);
   }
