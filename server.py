@@ -15,7 +15,7 @@ from data_layer import (
     REVSHARE_BY_PARTNER, REVSHARE_MONTHLY, MERCHANTS, CONTACTS,
     REGION_STATS, COUNTRIES, find_partners, get_sot_countries, get_sot_providers,
     _ISO_TO_COUNTRY, _VERTICAL_COLS, load_sales_contacts, load_technical_contact,
-    load_partner_countries, load_partner_coverage
+    load_partner_countries, load_partner_coverage, _load_partners_sot
 )
 
 BASE = os.path.dirname(os.path.abspath(__file__))
@@ -195,25 +195,32 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     tier3_count = sum(1 for p in all_partners if p.get("tier") == "Tier 3")
     countries_count = len(countries)
 
-    # Coverage maps from SOT (per-partner countries/methods + cross-filter lookups)
+    # Coverage maps — uses the same Partners SOT sheet as the partner detail page,
+    # with identical country/method derivation so filter values match the detail view.
     try:
-        sot_df_for_cov = load_sot_data()
+        sot_df_for_cov = _load_partners_sot()
     except Exception:
         sot_df_for_cov = pd.DataFrame()
     partner_cov_countries: dict = {}
     partner_cov_methods: dict = {}
     cov_country_to_methods: dict = {}
     cov_method_to_countries: dict = {}
-    if len(sot_df_for_cov) > 0:
+    if sot_df_for_cov is not None and len(sot_df_for_cov) > 0:
         for _, _row in sot_df_for_cov.iterrows():
             _pname = str(_row.get("PROVIDER_NAME", "")).strip()
             if not _pname:
                 continue
             _key = _pname.lower()
-            _iso = str(_row.get("COUNTRY_ISO", "")).strip()
-            _country = _ISO_TO_COUNTRY.get(_iso, _iso) if _iso else ""
-            _method = str(_row.get("PAYMENT_METHOD_TYPE", "")).strip()
-            if _method.lower() in ("", "nan"):
+            _country = str(_row.get("COUNTRY", "")).strip()
+            if _country.lower() in ("", "nan"):
+                _country = ""
+            _pmt = str(_row.get("PAYMENT_METHOD_TYPE", "")).strip()
+            _brand = str(_row.get("CARD_BRAND", "")).strip()
+            if _pmt.upper() == "CARD" and _brand and _brand.lower() not in ("nan", "false"):
+                _method = _brand
+            elif _pmt and _pmt.lower() != "nan":
+                _method = _pmt.replace("_", " ")
+            else:
                 _method = ""
             if _country:
                 partner_cov_countries.setdefault(_key, set()).add(_country)
