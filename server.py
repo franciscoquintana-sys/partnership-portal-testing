@@ -588,7 +588,7 @@ _FLOW_TO_COLUMN = {
 # Form header (case-insensitive substring) → intro field. transaction_type
 # is intentionally absent: the user dropped it from the form-derived cards.
 _FORM_FIELD_ALIASES = [
-    ("merchant",              ["merchant name", "name of the merchant", "merchant", "client name", "client", "company name", "company"]),
+    ("merchant",              ["name of the client", "name of the merchant", "merchant name", "merchant", "client name", "company name", "company"]),
     ("partner",               ["partner name", "partner", "provider"]),
     ("vertical",              ["vertical", "industry"]),
     ("legal_entity_countries",["legal entity", "legal countries", "where the client has a legal entity", "client has a legal entity"]),
