@@ -634,7 +634,7 @@ def _make_intro_from_row(fields, column, form_key):
     return {
         "id": uuid.uuid4().hex[:10],
         "merchant": fields.get("merchant", ""),
-        "partner": fields.get("partner", ""),
+        "partner": (fields.get("partner") or "").upper(),
         "partnership_manager": fields.get("partnership_manager", ""),
         "column": column,
         "vertical": fields.get("vertical", ""),
@@ -819,6 +819,12 @@ def sync_form_responses():
     fixed_partners = 0
     fixed_comments = 0
     fixed_pms = 0
+    fixed_case = 0
+    for intro in INTROS:
+        cur = intro.get("partner") or ""
+        if cur and cur != cur.upper():
+            intro["partner"] = cur.upper()
+            fixed_case += 1
     for intro in INTROS:
         key = intro.get("form_row_key")
         if not key:
@@ -831,7 +837,7 @@ def sync_form_responses():
         cur_partner = (intro.get("partner") or "").strip()
         looks_like_flow = cur_partner.lower().startswith("contact a partner -")
         if looks_like_flow or not cur_partner:
-            new_partner = new_fields.get("partner", "")
+            new_partner = (new_fields.get("partner") or "").upper()
             if new_partner and new_partner != cur_partner:
                 intro["partner"] = new_partner
                 cur_partner = new_partner
@@ -852,7 +858,7 @@ def sync_form_responses():
             intro["comments"] = new_comments
             fixed_comments += 1
 
-    if fixed_partners or fixed_comments or fixed_pms:
+    if fixed_partners or fixed_comments or fixed_pms or fixed_case:
         _save_intros(INTROS)
 
     return {
@@ -863,6 +869,7 @@ def sync_form_responses():
         "fixed_partners": fixed_partners,
         "fixed_pms": fixed_pms,
         "fixed_comments": fixed_comments,
+        "fixed_case": fixed_case,
     }
 
 
@@ -967,7 +974,7 @@ async def api_intros_create(request: Request):
     new_intro = {
         "id": uuid.uuid4().hex[:10],
         "merchant": merchant,
-        "partner": partner,
+        "partner": partner.upper(),
         "partnership_manager": "",
         "column": "request-pricing",
         "vertical": "", "legal_entity_countries": "", "operation_countries": "",
