@@ -576,7 +576,6 @@ INTROS = _load_intros()
 
 # ── Form-response sync (Google Sheet → kanban) ───────────────────────────────
 FORM_RESPONSES_SHEET_ID = "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
-FORM_SEEN_STORAGE = os.path.join(DATA_DIR, "form_seen.json")
 FORM_SYNC_INTERVAL_SECONDS = 3600
 
 _FLOW_TO_COLUMN = {
@@ -600,24 +599,6 @@ _FORM_FIELD_ALIASES = [
     ("monthly_tpv",           ["monthly tpv", "tpv", "monthly volume"]),
     ("comments",              ["comments", "notes", "observations", "additional info"]),
 ]
-
-
-def _load_form_seen():
-    try:
-        with open(FORM_SEEN_STORAGE, encoding="utf-8") as f:
-            return set(json.load(f))
-    except FileNotFoundError:
-        return None  # signals "first run"
-    except Exception:
-        return set()
-
-
-def _save_form_seen(seen):
-    try:
-        with open(FORM_SEEN_STORAGE, "w", encoding="utf-8") as f:
-            json.dump(sorted(seen), f)
-    except Exception as e:
-        print(f"[form-sync] save seen failed: {e}", flush=True)
 
 
 def _row_to_intro_fields(row):
@@ -686,15 +667,13 @@ def _flow_value(row):
 
 
 def sync_form_responses():
-    """Pull new rows from the Google Form-responses sheet and create intro cards.
+    """Pull form-sheet rows that aren't already on the board and create intro cards.
 
-    First run (no seen file) just builds the baseline so historical rows aren't
-    bulk-imported as new cards.
+    Dedup is done against form_row_key values stored on existing intros — so any
+    row that isn't represented by a card on the board (regardless of how old it
+    is) gets imported on the next sync.
     """
-    seen = _load_form_seen()
-    first_run = seen is None
-    if seen is None:
-        seen = set()
+    existing_keys = {i.get("form_row_key") for i in INTROS if i.get("form_row_key")}
 
     # Build partner-name → manager lookup so cards inherit the PM of their partner.
     partner_to_manager = {}
@@ -714,20 +693,20 @@ def sync_form_responses():
         if pname and pname in partner_to_manager:
             fields["partnership_manager"] = partner_to_manager[pname]
 
-    new_seen = set(seen)
     new_intros = []
+    seen_in_run = set()
     skipped_no_merchant = 0
     skipped_unknown_flow = 0
+    skipped_already = 0
 
     # Tab 1: Contact a Partner — column depends on partnership flow
     rows1 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Contact a Partner")
     for idx, row in enumerate(rows1):
         key = _row_form_key("contact_a_partner", row, idx)
-        if key in seen:
+        if key in existing_keys or key in seen_in_run:
+            skipped_already += 1
             continue
-        new_seen.add(key)
-        if first_run:
-            continue
+        seen_in_run.add(key)
         flow_val = _flow_value(row).strip().lower()
         column = _FLOW_TO_COLUMN.get(flow_val)
         if not column:
@@ -744,11 +723,10 @@ def sync_form_responses():
     rows2 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Client - Partner Direct")
     for idx, row in enumerate(rows2):
         key = _row_form_key("client_partner_direct", row, idx)
-        if key in seen:
+        if key in existing_keys or key in seen_in_run:
+            skipped_already += 1
             continue
-        new_seen.add(key)
-        if first_run:
-            continue
+        seen_in_run.add(key)
         fields = _row_to_intro_fields(row)
         if not fields.get("merchant"):
             skipped_no_merchant += 1
@@ -759,12 +737,10 @@ def sync_form_responses():
     if new_intros:
         INTROS.extend(new_intros)
         _save_intros(INTROS)
-    _save_form_seen(new_seen)
 
     return {
         "created": len(new_intros),
-        "first_run": first_run,
-        "total_seen": len(new_seen),
+        "skipped_already": skipped_already,
         "skipped_no_merchant": skipped_no_merchant,
         "skipped_unknown_flow": skipped_unknown_flow,
     }
@@ -777,7 +753,7 @@ async def _form_sync_loop():
     while True:
         try:
             stats = sync_form_responses()
-            if stats.get("created") or stats.get("first_run"):
+            if stats.get("created"):
                 print(f"[form-sync] {stats}", flush=True)
         except Exception as e:
             print(f"[form-sync] loop error: {e}", flush=True)
