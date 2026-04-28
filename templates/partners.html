@@ -644,6 +644,18 @@ const PARTNER_COV_METHODS = {{ partner_cov_methods | tojson }};
 const COUNTRY_TO_METHODS = {{ cov_country_to_methods | tojson }};
 const METHOD_TO_COUNTRIES = {{ cov_method_to_countries | tojson }};
 
+const _norm = s => (s || '').toString().trim().toLowerCase();
+function _lcMap(obj) {
+  const out = {};
+  Object.keys(obj || {}).forEach(k => { out[_norm(k)] = (obj[k] || []).map(_norm); });
+  return out;
+}
+const COUNTRY_TO_METHODS_LC = _lcMap(COUNTRY_TO_METHODS);
+const METHOD_TO_COUNTRIES_LC = _lcMap(METHOD_TO_COUNTRIES);
+const PARTNER_COV_COUNTRIES_LC = _lcMap(PARTNER_COV_COUNTRIES);
+const PARTNER_COV_METHODS_LC = _lcMap(PARTNER_COV_METHODS);
+window.__cov = { COUNTRY_TO_METHODS, METHOD_TO_COUNTRIES, PARTNER_COV_COUNTRIES, PARTNER_COV_METHODS };
+
 function getSelected(key) {
   return [...document.querySelectorAll(`#drop-${key} input[type=checkbox]:checked`)].map(c => c.value);
 }
@@ -674,8 +686,9 @@ function applyFilters() {
       row.dataset.name, row.dataset.type, row.dataset.region, row.dataset.country,
       row.dataset.status, row.dataset.integration, row.dataset.tier, row.dataset.manager
     ].join(' ').toLowerCase();
-    const partnerCovC = PARTNER_COV_COUNTRIES[row.dataset.name] || [];
-    const partnerCovM = PARTNER_COV_METHODS[row.dataset.name] || [];
+    const partnerKey = _norm(row.dataset.name);
+    const partnerCovC = PARTNER_COV_COUNTRIES_LC[partnerKey] || [];
+    const partnerCovM = PARTNER_COV_METHODS_LC[partnerKey] || [];
     const show =
       (!q || haystack.includes(q))
       && (sel.connector.length === 0   || sel.connector.includes(row.dataset.name))
@@ -684,8 +697,8 @@ function applyFilters() {
       && (sel.region.length === 0      || sel.region.includes(row.dataset.region))
       && (sel.status.length === 0      || sel.status.includes(row.dataset.status))
       && (sel.integration.length === 0 || sel.integration.includes(row.dataset.integration))
-      && (sel.cov_country.length === 0 || sel.cov_country.some(c => partnerCovC.includes(c)))
-      && (sel.cov_method.length === 0  || sel.cov_method.some(m => partnerCovM.includes(m)));
+      && (sel.cov_country.length === 0 || sel.cov_country.some(c => partnerCovC.includes(_norm(c))))
+      && (sel.cov_method.length === 0  || sel.cov_method.some(m => partnerCovM.includes(_norm(m))));
     row.style.display = show ? '' : 'none';
     if (show) {
       totalDb++;
@@ -704,18 +717,18 @@ function applyFilters() {
 }
 
 function refreshCoverageDropdowns() {
-  const selCountries = getSelected('cov_country');
-  const selMethods = getSelected('cov_method');
+  const selCountries = getSelected('cov_country').map(_norm);
+  const selMethods = getSelected('cov_method').map(_norm);
 
   let allowedMethods = null;
   if (selCountries.length) {
     allowedMethods = new Set();
-    selCountries.forEach(c => (COUNTRY_TO_METHODS[c] || []).forEach(m => allowedMethods.add(m)));
+    selCountries.forEach(c => (COUNTRY_TO_METHODS_LC[c] || []).forEach(m => allowedMethods.add(m)));
   }
   let allowedCountries = null;
   if (selMethods.length) {
     allowedCountries = new Set();
-    selMethods.forEach(m => (METHOD_TO_COUNTRIES[m] || []).forEach(c => allowedCountries.add(c)));
+    selMethods.forEach(m => (METHOD_TO_COUNTRIES_LC[m] || []).forEach(c => allowedCountries.add(c)));
   }
 
   const qC = (document.querySelector('#drop-cov_country .col-filter-search')?.value || '').toLowerCase();
@@ -723,7 +736,7 @@ function refreshCoverageDropdowns() {
 
   document.querySelectorAll('#drop-cov_country .col-filter-option').forEach(opt => {
     const cb = opt.querySelector('input');
-    const v = cb.value;
+    const v = _norm(cb.value);
     const txt = (cb.parentElement.textContent || '').trim().toLowerCase();
     const passSearch = !qC || txt.includes(qC);
     const passAllowed = !allowedCountries || allowedCountries.has(v) || cb.checked;
@@ -731,7 +744,7 @@ function refreshCoverageDropdowns() {
   });
   document.querySelectorAll('#drop-cov_method .col-filter-option').forEach(opt => {
     const cb = opt.querySelector('input');
-    const v = cb.value;
+    const v = _norm(cb.value);
     const txt = (cb.parentElement.textContent || '').trim().toLowerCase();
     const passSearch = !qM || txt.includes(qM);
     const passAllowed = !allowedMethods || allowedMethods.has(v) || cb.checked;
