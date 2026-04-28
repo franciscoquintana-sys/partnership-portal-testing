@@ -601,15 +601,22 @@ _FORM_FIELD_ALIASES = [
 ]
 
 
+import re as _re_form
+_FORM_FIELD_PATTERNS = [
+    (field, [_re_form.compile(r'\b' + _re_form.escape(a) + r'\b', _re_form.IGNORECASE) for a in aliases])
+    for field, aliases in _FORM_FIELD_ALIASES
+]
+
+
 def _row_to_intro_fields(row):
     fields = {}
     used_headers = set()
-    for field, aliases in _FORM_FIELD_ALIASES:
+    for field, patterns in _FORM_FIELD_PATTERNS:
         for header, value in row.items():
             if header in used_headers:
                 continue
-            hl = (header or "").strip().lower()
-            if any(alias in hl for alias in aliases):
+            hl = (header or "").strip()
+            if any(p.search(hl) for p in patterns):
                 if (value or "").strip():
                     fields[field] = str(value).strip()
                 used_headers.add(header)
@@ -801,11 +808,44 @@ def sync_form_responses():
         INTROS.extend(new_intros)
         _save_intros(INTROS)
 
+    # Retro-fix imported cards whose 'partner' got polluted with the flow value
+    # (caused by the old substring-match bug). Only touches cards where the
+    # current partner clearly looks like a flow string.
+    rows_by_key = {}
+    for idx, row in enumerate(rows1):
+        rows_by_key[_row_form_key("contact_a_partner", row, idx)] = row
+    for idx, row in enumerate(rows2):
+        rows_by_key[_row_form_key("client_partner_direct", row, idx)] = row
+    fixed_partners = 0
+    for intro in INTROS:
+        key = intro.get("form_row_key")
+        if not key:
+            continue
+        row = rows_by_key.get(key)
+        if not row:
+            continue
+        cur_partner = (intro.get("partner") or "").strip()
+        looks_like_flow = cur_partner.lower().startswith("contact a partner -")
+        if not (looks_like_flow or not cur_partner):
+            continue
+        new_fields = _row_to_intro_fields(row)
+        new_partner = new_fields.get("partner", "")
+        if new_partner and new_partner != cur_partner:
+            intro["partner"] = new_partner
+            if not (intro.get("partnership_manager") or "").strip():
+                pn = new_partner.strip().lower()
+                if pn in partner_to_manager:
+                    intro["partnership_manager"] = partner_to_manager[pn]
+            fixed_partners += 1
+    if fixed_partners:
+        _save_intros(INTROS)
+
     return {
         "created": len(new_intros),
         "skipped_already": skipped_already,
         "skipped_no_merchant": skipped_no_merchant,
         "skipped_unknown_flow": skipped_unknown_flow,
+        "fixed_partners": fixed_partners,
     }
 
 
@@ -816,7 +856,7 @@ async def _form_sync_loop():
     while True:
         try:
             stats = sync_form_responses()
-            if stats.get("created"):
+            if stats.get("created") or stats.get("fixed_partners"):
                 print(f"[form-sync] {stats}", flush=True)
         except Exception as e:
             print(f"[form-sync] loop error: {e}", flush=True)
