@@ -418,7 +418,7 @@
       <div class="col-filter-wrap">
         <div class="col-filter-btn" id="btn-cat" onclick="toggleDrop('cat',event)">All <span>▾</span></div>
         <div class="col-filter-dropdown" id="drop-cat">
-          {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {% if c == 'PSP/Aggregator' %}PSP/Aggreg{% else %}{{ c }}{% endif %}</label>{% endfor %}
           <div class="col-filter-clear" onclick="clearDrop('cat')">Clear</div>
         </div>
       </div>
@@ -543,7 +543,7 @@
               {% if p.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 6px;border-radius:4px;font-weight:700;flex-shrink:0">STRATEGIC</span>{% endif %}
             </div>
           </td>
-          <td><span class="type-pill type-{{ p.type | replace('/', '-') | replace(' ', '-') }}">{{ p.type }}</span></td>
+          <td><span class="type-pill type-{{ p.type | replace('/', '-') | replace(' ', '-') }}">{% if p.type == 'PSP/Aggregator' %}PSP/Aggreg{% else %}{{ p.type }}{% endif %}</span></td>
           {% if role == 'partnerships' %}
           <td>
             {% if p.tier %}
