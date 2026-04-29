@@ -249,9 +249,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
             _pmt = str(_row.get("PAYMENT_METHOD_TYPE", "")).strip()
             _brand = str(_row.get("CARD_BRAND", "")).strip()
             _methods_for_row: list = []
-            _BAD_BRANDS = {"nan", "false", "card_brand", "card brand", ""}
-            _brand_valid = _brand and _brand.lower() not in _BAD_BRANDS
-            if _pmt.upper() == "CARD" and _brand_valid:
+            if _pmt.upper() == "CARD" and _brand and _brand.lower() not in ("nan", "false"):
                 _methods_for_row.append(_brand)
                 _methods_for_row.append("Card")
                 _card_brands_seen.add(_brand)
