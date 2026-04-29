@@ -201,7 +201,7 @@ def _build_coverage_data() -> dict:
 # Types of partners that actually onboard merchants directly. Used to surface
 # our reliable partners in the Market Analysis landscape per country.
 _RELIABLE_PARTNER_TYPES = {"PSP/Aggregator", "Acquirer", "BaaS"}
-_RELIABLE_PARTNER_TIERS = {"Strategic Partner", "Tier 1"}
+_RELIABLE_PARTNER_TIERS = {"Strategic Partner", "Tier 1", "Tier 2"}
 
 def _pretty_partner_name(name: str) -> str:
     """Convert ALL-CAPS partner names to title case while preserving names
