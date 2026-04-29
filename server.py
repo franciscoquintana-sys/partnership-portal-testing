@@ -236,6 +236,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     partner_country_methods: dict = {}  # {partner_lower: {country: set(methods)}}
     cov_country_to_methods: dict = {}
     cov_method_to_countries: dict = {}
+    _card_brands_seen: set = set()
     if sot_df_for_cov is not None and len(sot_df_for_cov) > 0:
         for _, _row in sot_df_for_cov.iterrows():
             _pname = str(_row.get("PROVIDER_NAME", "")).strip()
@@ -251,6 +252,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
             if _pmt.upper() == "CARD" and _brand and _brand.lower() not in ("nan", "false"):
                 _methods_for_row.append(_brand)
                 _methods_for_row.append("Card")
+                _card_brands_seen.add(_brand)
             elif _pmt.upper() == "CARD":
                 _methods_for_row.append("Card")
             elif _pmt and _pmt.lower() != "nan":
@@ -272,6 +274,11 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     }
     coverage_countries_list = sorted(cov_country_to_methods.keys())
     coverage_methods_list = sorted(cov_method_to_countries.keys())
+    card_brands_list = sorted(b for b in _card_brands_seen if b in cov_method_to_countries)
+    coverage_methods_other = [
+        m for m in coverage_methods_list
+        if m != "Card" and m not in _card_brands_seen
+    ]
 
     # Scorecard: Deal stages per region. Live = Integration Live OR status 'Live Partner'.
     _SCORECARD_STAGES = ["Prospect", "Initial Negotiation", "Agreement Review", "Agreement Signed", "Live"]
@@ -316,6 +323,8 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         scorecard_data=scorecard_data,
         coverage_countries=coverage_countries_list,
         coverage_methods=coverage_methods_list,
+        card_brands=card_brands_list,
+        coverage_methods_other=coverage_methods_other,
         partner_cov_countries=partner_cov_countries,
         partner_cov_methods=partner_cov_methods,
         partner_country_methods=partner_country_methods,
