@@ -322,15 +322,6 @@
 .tier-tier-3    { background: rgba(107,114,128,.12); color: #4b5563; }
 .tier-default   { background: rgba(107,114,128,.08); color: #6b7280; }
 
-/* Partnerships view (7 cols: Provider, Type, Tier, Region, Country, Deal Stage, Integration) */
-.partners-table.cols-7 col:nth-child(1) { width: 22%; }
-.partners-table.cols-7 col:nth-child(2) { width: 11%; }
-.partners-table.cols-7 col:nth-child(3) { width: 11%; }
-.partners-table.cols-7 col:nth-child(4) { width: 10%; }
-.partners-table.cols-7 col:nth-child(5) { width: 13%; }
-.partners-table.cols-7 col:nth-child(6) { width: 18%; }
-.partners-table.cols-7 col:nth-child(7) { width: 15%; }
-
 .status-live           { color: #15803d; font-weight: 700; }
 .status-agreement-sign { color: #15803d; font-weight: 700; }
 .status-agreement-rev  { color: #4ade80; font-weight: 700; }
@@ -436,16 +427,6 @@
         </div>
       </div>
     </div>
-    <div class="filter-item">
-      <span class="filter-item-label">Type</span>
-      <div class="col-filter-wrap">
-        <div class="col-filter-btn" id="btn-cat" onclick="toggleDrop('cat',event)">All <span>▾</span></div>
-        <div class="col-filter-dropdown" id="drop-cat">
-          {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {% if c == 'PSP/Aggregator' %}PSP/Aggreg{% else %}{{ c }}{% endif %}</label>{% endfor %}
-          <div class="col-filter-clear" onclick="clearDrop('cat')">Clear</div>
-        </div>
-      </div>
-    </div>
     {% if role == 'partnerships' %}
     <div class="filter-item">
       <span class="filter-item-label">Tier</span>
@@ -458,6 +439,16 @@
       </div>
     </div>
     {% endif %}
+    <div class="filter-item">
+      <span class="filter-item-label">Type</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cat" onclick="toggleDrop('cat',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cat">
+          {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {% if c == 'PSP/Aggregator' %}PSP/Aggreg{% else %}{{ c }}{% endif %}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cat')">Clear</div>
+        </div>
+      </div>
+    </div>
     <div class="filter-item">
       <span class="filter-item-label">Region</span>
       <div class="col-filter-wrap">
@@ -537,13 +528,12 @@
   <!-- Table -->
   <div class="section-title">Partner Portfolio</div>
   <div class="partners-table-wrap">
-    <table class="partners-table {% if role == 'partnerships' %}cols-7{% endif %}" id="partners-table">
-      <colgroup><col><col>{% if role == 'partnerships' %}<col>{% endif %}<col><col><col><col></colgroup>
+    <table class="partners-table" id="partners-table">
+      <colgroup><col><col><col><col><col><col></colgroup>
       <thead>
         <tr>
           <th>Provider</th>
           <th>Type</th>
-          {% if role == 'partnerships' %}<th>Tier</th>{% endif %}
           <th>Region</th>
           <th>Country</th>
           <th>Deal Stage</th>
@@ -575,17 +565,14 @@
                 <span>{{ p.logo }}</span>
               </div>
               <span class="connector-name-text">{{ p.name }}</span>
-              {% if p.strategic %}<span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 6px;border-radius:4px;font-weight:700;flex-shrink:0">STRATEGIC</span>{% endif %}
+              {% if role == 'partnerships' and p.tier %}
+              <span class="tier-pill {% if p.tier == 'Strategic Partner' %}tier-strategic{% elif p.tier == 'Tier 1' %}tier-tier-1{% elif p.tier == 'Tier 2' %}tier-tier-2{% elif p.tier == 'Tier 3' %}tier-tier-3{% else %}tier-default{% endif %}" style="font-size:9px;padding:2px 6px;flex-shrink:0">{% if p.tier == 'Strategic Partner' %}Strategic{% else %}{{ p.tier }}{% endif %}</span>
+              {% elif p.strategic %}
+              <span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 6px;border-radius:4px;font-weight:700;flex-shrink:0">STRATEGIC</span>
+              {% endif %}
             </div>
           </td>
           <td><span class="type-pill type-{{ p.type | replace('/', '-') | replace(' ', '-') }}">{% if p.type == 'PSP/Aggregator' %}PSP/Aggreg{% else %}{{ p.type }}{% endif %}</span></td>
-          {% if role == 'partnerships' %}
-          <td>
-            {% if p.tier %}
-            <span class="tier-pill {% if p.tier == 'Strategic Partner' %}tier-strategic{% elif p.tier == 'Tier 1' %}tier-tier-1{% elif p.tier == 'Tier 2' %}tier-tier-2{% elif p.tier == 'Tier 3' %}tier-tier-3{% else %}tier-default{% endif %}">{% if p.tier == 'Strategic Partner' %}Strategic{% else %}{{ p.tier }}{% endif %}</span>
-            {% else %}—{% endif %}
-          </td>
-          {% endif %}
           <td>{{ p.region or '—' }}</td>
           <td>{{ p.country or '—' }}</td>
           <td>
