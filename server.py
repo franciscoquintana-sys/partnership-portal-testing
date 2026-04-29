@@ -251,10 +251,10 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
             _methods_for_row: list = []
             if _pmt.upper() == "CARD" and _brand and _brand.lower() not in ("nan", "false"):
                 _methods_for_row.append(_brand)
-                _methods_for_row.append("Card")
+                _methods_for_row.append("CARD")
                 _card_brands_seen.add(_brand)
             elif _pmt.upper() == "CARD":
-                _methods_for_row.append("Card")
+                _methods_for_row.append("CARD")
             elif _pmt and _pmt.lower() != "nan":
                 _methods_for_row.append(_pmt.replace("_", " "))
             if _country:
@@ -277,7 +277,7 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     card_brands_list = sorted(b for b in _card_brands_seen if b in cov_method_to_countries)
     coverage_methods_other = [
         m for m in coverage_methods_list
-        if m != "Card" and m not in _card_brands_seen
+        if m != "CARD" and m not in _card_brands_seen
     ]
 
     # Scorecard: Deal stages per region. Live = Integration Live OR status 'Live Partner'.
