@@ -95,6 +95,16 @@ def ctx(request: Request, page: str, **kwargs):
 def tr(request: Request, name: str, context: dict):
     return templates.TemplateResponse(request=request, name=name, context=context)
 
+def _canon_name(s: str) -> str:
+    """Canonical partner key: strip non-alphanumerics and lowercase.
+
+    Bridges naming differences between sources:
+      'Pagar.me', 'PAGAR_ME', 'PAGARME'   -> 'pagarme'
+      'Mercado Pago', 'MERCADO_PAGO'      -> 'mercadopago'
+      'MercadoPago BR'                    -> 'mercadopagobr'  (kept distinct)
+    """
+    return ''.join(c.lower() for c in (s or '') if c.isalnum())
+
 def _build_coverage_data() -> dict:
     """Build payment-method / country coverage maps from the Partners SOT sheet.
 
@@ -120,7 +130,7 @@ def _build_coverage_data() -> dict:
             _pname = str(_row.get("PROVIDER_NAME", "")).strip()
             if not _pname:
                 continue
-            _key = _pname.lower()
+            _key = _canon_name(_pname)
             _country = str(_row.get("COUNTRY", "")).strip()
             if _country.lower() in ("", "nan"):
                 _country = ""
@@ -218,10 +228,10 @@ def _our_partners_for_country(country: str, all_partners: list, partner_cov_coun
         name = (p.get("name") or "").strip()
         if not name:
             continue
-        cov = partner_cov_countries.get(name.lower(), [])
+        cov = partner_cov_countries.get(_canon_name(name), [])
         if country not in cov:
             continue
-        key = name.lower()
+        key = _canon_name(name)
         if key in seen:
             continue
         seen.add(key)
@@ -8598,11 +8608,11 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
     else:
         rich_country = None
     if rich_country and rich_country.get("partners_landscape"):
-        partners_lookup = {p.get("name", "").lower(): p for p in all_partners}
+        partners_lookup = {_canon_name(p.get("name", "")): p for p in all_partners}
         signed_statuses = {"agreement signed", "live partner"}
         enriched = []
         for entry in rich_country["partners_landscape"]:
-            p = partners_lookup.get(entry["name"].lower())
+            p = partners_lookup.get(_canon_name(entry["name"]))
             enriched.append({
                 "name":         entry["name"],
                 "portfolio_name": p["name"] if p else None,
@@ -8614,7 +8624,7 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         live_partners_raw = (rich_country.get("yuno_coverage") or {}).get("Live partners", [])
         live_partners_enriched = []
         for name in live_partners_raw:
-            p = partners_lookup.get(name.lower())
+            p = partners_lookup.get(_canon_name(name))
             live_partners_enriched.append({
                 "name":           name,
                 "portfolio_name": p["name"] if p else None,

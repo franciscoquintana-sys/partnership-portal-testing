@@ -443,6 +443,7 @@ const REGION_TO_COUNTRIES = {{ cov_region_to_countries | tojson }};
 const REGION_TO_METHODS  = {{ cov_region_to_methods  | tojson }};
 
 const _norm = s => (s || '').toString().trim().toLowerCase();
+const _canon = s => (s || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
 function _lcMap(obj) {
   const out = {};
   Object.keys(obj || {}).forEach(k => { out[_norm(k)] = (obj[k] || []).map(_norm); });
@@ -461,7 +462,7 @@ const PARTNER_COUNTRY_METHODS_LC = (() => {
     const inner = PARTNER_COUNTRY_METHODS[p] || {};
     const innerLc = {};
     Object.keys(inner).forEach(c => { innerLc[_norm(c)] = (inner[c] || []).map(_norm); });
-    out[_norm(p)] = innerLc;
+    out[_canon(p)] = innerLc;
   });
   return out;
 })();
@@ -494,7 +495,7 @@ function applyFilters() {
     const cards = col.querySelectorAll('.kanban-card');
     let visible = 0;
     cards.forEach(card => {
-      const partnerKey = _norm(card.dataset.name);
+      const partnerKey = _canon(card.dataset.name);
       const partnerCovC = PARTNER_COV_COUNTRIES_LC[partnerKey] || [];
       const partnerCovM = PARTNER_COV_METHODS_LC[partnerKey] || [];
       const partnerCovR = PARTNER_COV_REGIONS_LC[partnerKey] || [];
