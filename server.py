@@ -8589,21 +8589,32 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
     if has_market_data:
         override = COUNTRY_DETAIL_RICH.get(country, {})
         rich_country = {**default_country_detail(), **override}
-        # Pull market players from COUNTRY_PARTNERS unless the country's override already provides them
-        if "partners_landscape" not in override and country in COUNTRY_PARTNERS:
-            rich_country["partners_landscape"] = list(COUNTRY_PARTNERS[country])
-        # Always surface our reliable, big-merchant-capable partners covering this country
-        # (Strategic + Tier 1, types that actually onboard merchants), regardless of whether
-        # the curated landscape exists. Skip names already in the landscape.
+        # Curated market players from override or hardcoded COUNTRY_PARTNERS list.
+        if "partners_landscape" in override:
+            curated = list(rich_country.get("partners_landscape") or [])
+        elif country in COUNTRY_PARTNERS:
+            curated = list(COUNTRY_PARTNERS[country])
+        else:
+            curated = []
+        # Our reliable partners covering this country come first; curated entries
+        # follow only when they don't duplicate a partner we already have.
+        # Dedup uses _canon_name so 'Mercado Pago' and 'MercadoPago' collapse, etc.
         cov_data = _build_coverage_data()
         partner_cov_countries = cov_data["partner_cov_countries"]
-        landscape = list(rich_country.get("partners_landscape") or [])
-        existing = {(e.get("name") or "").lower() for e in landscape}
+        landscape = []
+        existing = set()
         for our in _our_partners_for_country(country, all_partners, partner_cov_countries):
-            if our["name"].lower() in existing:
+            key = _canon_name(our.get("name", ""))
+            if not key or key in existing:
                 continue
             landscape.append(our)
-            existing.add(our["name"].lower())
+            existing.add(key)
+        for entry in curated:
+            key = _canon_name(entry.get("name", ""))
+            if not key or key in existing:
+                continue
+            landscape.append(entry)
+            existing.add(key)
         rich_country["partners_landscape"] = landscape
     else:
         rich_country = None
