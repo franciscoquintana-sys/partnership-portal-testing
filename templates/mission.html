@@ -353,6 +353,16 @@
       </div>
     </div>
     <div class="filter-item coverage-filter" style="display:none">
+      <span class="filter-item-label">Region Coverage</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cov_region" onclick="toggleDrop('cov_region',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cov_region">
+          {% for r in coverage_regions %}<label class="col-filter-option"><input type="checkbox" value="{{ r }}" onchange="applyFilters()"> {{ r }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cov_region')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item coverage-filter" style="display:none">
       <span class="filter-item-label">Country Coverage</span>
       <div class="col-filter-wrap">
         <div class="col-filter-btn" id="btn-cov_country" onclick="toggleDrop('cov_country',event)">All <span>▾</span></div>
@@ -421,13 +431,16 @@
 
 {% block scripts %}
 <script>
-const FILTERS = ['type','region','country','manager','cov_country','cov_method'];
+const FILTERS = ['type','region','country','manager','cov_region','cov_country','cov_method'];
 
 const PARTNER_COV_COUNTRIES = {{ partner_cov_countries | tojson }};
 const PARTNER_COV_METHODS   = {{ partner_cov_methods   | tojson }};
+const PARTNER_COV_REGIONS   = {{ partner_cov_regions   | tojson }};
 const PARTNER_COUNTRY_METHODS = {{ partner_country_methods | tojson }};
 const COUNTRY_TO_METHODS = {{ cov_country_to_methods | tojson }};
 const METHOD_TO_COUNTRIES = {{ cov_method_to_countries | tojson }};
+const REGION_TO_COUNTRIES = {{ cov_region_to_countries | tojson }};
+const REGION_TO_METHODS  = {{ cov_region_to_methods  | tojson }};
 
 const _norm = s => (s || '').toString().trim().toLowerCase();
 function _lcMap(obj) {
@@ -437,8 +450,11 @@ function _lcMap(obj) {
 }
 const COUNTRY_TO_METHODS_LC = _lcMap(COUNTRY_TO_METHODS);
 const METHOD_TO_COUNTRIES_LC = _lcMap(METHOD_TO_COUNTRIES);
+const REGION_TO_COUNTRIES_LC = _lcMap(REGION_TO_COUNTRIES);
+const REGION_TO_METHODS_LC  = _lcMap(REGION_TO_METHODS);
 const PARTNER_COV_COUNTRIES_LC = _lcMap(PARTNER_COV_COUNTRIES);
 const PARTNER_COV_METHODS_LC = _lcMap(PARTNER_COV_METHODS);
+const PARTNER_COV_REGIONS_LC  = _lcMap(PARTNER_COV_REGIONS);
 const PARTNER_COUNTRY_METHODS_LC = (() => {
   const out = {};
   Object.keys(PARTNER_COUNTRY_METHODS || {}).forEach(p => {
@@ -472,6 +488,7 @@ function applyFilters() {
   FILTERS.forEach(k => { sel[k] = getSelected(k); updateBtn(k); });
   const selCC = sel.cov_country.map(_norm);
   const selCM = sel.cov_method.map(_norm);
+  const selCR = sel.cov_region.map(_norm);
 
   document.querySelectorAll('.kanban-col').forEach(col => {
     const cards = col.querySelectorAll('.kanban-card');
@@ -480,6 +497,7 @@ function applyFilters() {
       const partnerKey = _norm(card.dataset.name);
       const partnerCovC = PARTNER_COV_COUNTRIES_LC[partnerKey] || [];
       const partnerCovM = PARTNER_COV_METHODS_LC[partnerKey] || [];
+      const partnerCovR = PARTNER_COV_REGIONS_LC[partnerKey] || [];
       let coverageOk = true;
       if (selCC.length && selCM.length) {
         const pcm = PARTNER_COUNTRY_METHODS_LC[partnerKey] || {};
@@ -491,6 +509,9 @@ function applyFilters() {
         coverageOk = selCC.some(c => partnerCovC.includes(c));
       } else if (selCM.length) {
         coverageOk = selCM.some(m => partnerCovM.includes(m));
+      }
+      if (coverageOk && selCR.length) {
+        coverageOk = selCR.some(r => partnerCovR.includes(r));
       }
       const show =
         (!q || (card.dataset.name || '').includes(q))
@@ -544,6 +565,7 @@ function saveCoverageState() {
     state.filters = state.filters || {};
     state.filters.cov_country = getSelected('cov_country');
     state.filters.cov_method  = getSelected('cov_method');
+    state.filters.cov_region  = getSelected('cov_region');
     state.coverageOpen = !!document.querySelector('.coverage-filter') &&
                         document.querySelector('.coverage-filter').style.display !== 'none';
     state.covCountrySearch = document.querySelector('#drop-cov_country .col-filter-search')?.value || '';
@@ -567,7 +589,7 @@ function restoreCoverageState() {
       btn.style.color = '#fff';
     }
   }
-  ['cov_country','cov_method'].forEach(k => {
+  ['cov_country','cov_method','cov_region'].forEach(k => {
     const vals = new Set((state.filters && state.filters[k]) || []);
     document.querySelectorAll(`#drop-${k} input[type=checkbox]`).forEach(cb => {
       cb.checked = vals.has(cb.value);
@@ -587,15 +609,26 @@ document.addEventListener('DOMContentLoaded', () => {
 function refreshCoverageDropdowns() {
   const selCountries = getSelected('cov_country').map(_norm);
   const selMethods   = getSelected('cov_method').map(_norm);
+  const selRegions   = getSelected('cov_region').map(_norm);
   let allowedMethods = null;
   if (selCountries.length) {
     allowedMethods = new Set();
     selCountries.forEach(c => (COUNTRY_TO_METHODS_LC[c] || []).forEach(m => allowedMethods.add(m)));
   }
+  if (selRegions.length) {
+    const fromRegions = new Set();
+    selRegions.forEach(r => (REGION_TO_METHODS_LC[r] || []).forEach(m => fromRegions.add(m)));
+    allowedMethods = allowedMethods ? new Set([...allowedMethods].filter(m => fromRegions.has(m))) : fromRegions;
+  }
   let allowedCountries = null;
   if (selMethods.length) {
     allowedCountries = new Set();
     selMethods.forEach(m => (METHOD_TO_COUNTRIES_LC[m] || []).forEach(c => allowedCountries.add(c)));
+  }
+  if (selRegions.length) {
+    const fromRegions = new Set();
+    selRegions.forEach(r => (REGION_TO_COUNTRIES_LC[r] || []).forEach(c => fromRegions.add(c)));
+    allowedCountries = allowedCountries ? new Set([...allowedCountries].filter(c => fromRegions.has(c))) : fromRegions;
   }
   const qC = (document.querySelector('#drop-cov_country .col-filter-search')?.value || '').toLowerCase();
   const qM = (document.querySelector('#drop-cov_method .col-filter-search')?.value || '').toLowerCase();
@@ -631,7 +664,7 @@ function toggleCoverageFilters(e) {
     else { btn.style.background = '#fff'; btn.style.color = 'var(--indigo)'; }
   }
   if (!willShow) {
-    document.querySelectorAll('#drop-cov_country input[type=checkbox], #drop-cov_method input[type=checkbox]').forEach(c => c.checked = false);
+    document.querySelectorAll('#drop-cov_country input[type=checkbox], #drop-cov_method input[type=checkbox], #drop-cov_region input[type=checkbox]').forEach(c => c.checked = false);
     const sC = document.querySelector('#drop-cov_country .col-filter-search'); if (sC) sC.value = '';
     const sM = document.querySelector('#drop-cov_method .col-filter-search'); if (sM) sM.value = '';
     applyFilters();

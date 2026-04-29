@@ -108,9 +108,12 @@ def _build_coverage_data() -> dict:
         sot_df_for_cov = pd.DataFrame()
     partner_cov_countries: dict = {}
     partner_cov_methods: dict = {}
+    partner_cov_regions: dict = {}
     partner_country_methods: dict = {}
     cov_country_to_methods: dict = {}
     cov_method_to_countries: dict = {}
+    cov_region_to_countries: dict = {}
+    cov_region_to_methods: dict = {}
     _card_brands_seen: set = set()
     if sot_df_for_cov is not None and len(sot_df_for_cov) > 0:
         for _, _row in sot_df_for_cov.iterrows():
@@ -121,6 +124,11 @@ def _build_coverage_data() -> dict:
             _country = str(_row.get("COUNTRY", "")).strip()
             if _country.lower() in ("", "nan"):
                 _country = ""
+            _region_raw = str(_row.get("REGION", "")).strip()
+            if _region_raw and _region_raw.lower() != "nan":
+                _region = _region_raw.replace("_", " ").title()
+            else:
+                _region = ""
             _pmt = str(_row.get("PAYMENT_METHOD_TYPE", "")).strip()
             _brand = str(_row.get("CARD_BRAND", "")).strip().replace("_", " ")
             _methods_for_row: list = []
@@ -134,21 +142,31 @@ def _build_coverage_data() -> dict:
                 _methods_for_row.append(_pmt.replace("_", " "))
             if _country:
                 partner_cov_countries.setdefault(_key, set()).add(_country)
+            if _region:
+                partner_cov_regions.setdefault(_key, set()).add(_region)
+                if _country:
+                    cov_region_to_countries.setdefault(_region, set()).add(_country)
             for _method in _methods_for_row:
                 partner_cov_methods.setdefault(_key, set()).add(_method)
                 if _country:
                     cov_country_to_methods.setdefault(_country, set()).add(_method)
                     cov_method_to_countries.setdefault(_method, set()).add(_country)
                     partner_country_methods.setdefault(_key, {}).setdefault(_country, set()).add(_method)
+                if _region:
+                    cov_region_to_methods.setdefault(_region, set()).add(_method)
     partner_cov_countries = {k: sorted(v) for k, v in partner_cov_countries.items()}
     partner_cov_methods = {k: sorted(v) for k, v in partner_cov_methods.items()}
+    partner_cov_regions = {k: sorted(v) for k, v in partner_cov_regions.items()}
     cov_country_to_methods = {k: sorted(v) for k, v in cov_country_to_methods.items()}
     cov_method_to_countries = {k: sorted(v) for k, v in cov_method_to_countries.items()}
+    cov_region_to_countries = {k: sorted(v) for k, v in cov_region_to_countries.items()}
+    cov_region_to_methods = {k: sorted(v) for k, v in cov_region_to_methods.items()}
     partner_country_methods = {
         k: {c: sorted(ms) for c, ms in v.items()} for k, v in partner_country_methods.items()
     }
     coverage_countries_list = sorted(cov_country_to_methods.keys())
     coverage_methods_list = sorted(cov_method_to_countries.keys())
+    coverage_regions_list = sorted(set(cov_region_to_countries.keys()) | set(cov_region_to_methods.keys()))
     card_brands_list = sorted(b for b in _card_brands_seen if b in cov_method_to_countries)
     coverage_methods_other = [
         m for m in coverage_methods_list
@@ -157,11 +175,15 @@ def _build_coverage_data() -> dict:
     return {
         "partner_cov_countries": partner_cov_countries,
         "partner_cov_methods": partner_cov_methods,
+        "partner_cov_regions": partner_cov_regions,
         "partner_country_methods": partner_country_methods,
         "cov_country_to_methods": cov_country_to_methods,
         "cov_method_to_countries": cov_method_to_countries,
+        "cov_region_to_countries": cov_region_to_countries,
+        "cov_region_to_methods": cov_region_to_methods,
         "coverage_countries": coverage_countries_list,
         "coverage_methods": coverage_methods_list,
+        "coverage_regions": coverage_regions_list,
         "card_brands": card_brands_list,
         "coverage_methods_other": coverage_methods_other,
     }
@@ -339,11 +361,15 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     cov = _build_coverage_data()
     partner_cov_countries = cov["partner_cov_countries"]
     partner_cov_methods = cov["partner_cov_methods"]
+    partner_cov_regions = cov["partner_cov_regions"]
     partner_country_methods = cov["partner_country_methods"]
     cov_country_to_methods = cov["cov_country_to_methods"]
     cov_method_to_countries = cov["cov_method_to_countries"]
+    cov_region_to_countries = cov["cov_region_to_countries"]
+    cov_region_to_methods = cov["cov_region_to_methods"]
     coverage_countries_list = cov["coverage_countries"]
     coverage_methods_list = cov["coverage_methods"]
+    coverage_regions_list = cov["coverage_regions"]
     card_brands_list = cov["card_brands"]
     coverage_methods_other = cov["coverage_methods_other"]
 
@@ -390,13 +416,17 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
         scorecard_data=scorecard_data,
         coverage_countries=coverage_countries_list,
         coverage_methods=coverage_methods_list,
+        coverage_regions=coverage_regions_list,
         card_brands=card_brands_list,
         coverage_methods_other=coverage_methods_other,
         partner_cov_countries=partner_cov_countries,
         partner_cov_methods=partner_cov_methods,
+        partner_cov_regions=partner_cov_regions,
         partner_country_methods=partner_country_methods,
         cov_country_to_methods=cov_country_to_methods,
         cov_method_to_countries=cov_method_to_countries,
+        cov_region_to_countries=cov_region_to_countries,
+        cov_region_to_methods=cov_region_to_methods,
         q=q, cat=cat, status=status, region=region, tier=tier
     ))
 
@@ -543,11 +573,15 @@ def mission(request: Request):
         types=types, regions=regions, countries=countries, managers=managers,
         coverage_countries=cov["coverage_countries"],
         coverage_methods=cov["coverage_methods"],
+        coverage_regions=cov["coverage_regions"],
         partner_cov_countries=cov["partner_cov_countries"],
         partner_cov_methods=cov["partner_cov_methods"],
+        partner_cov_regions=cov["partner_cov_regions"],
         partner_country_methods=cov["partner_country_methods"],
         cov_country_to_methods=cov["cov_country_to_methods"],
         cov_method_to_countries=cov["cov_method_to_countries"],
+        cov_region_to_countries=cov["cov_region_to_countries"],
+        cov_region_to_methods=cov["cov_region_to_methods"],
     ))
 
 INTRO_COLUMNS = [
