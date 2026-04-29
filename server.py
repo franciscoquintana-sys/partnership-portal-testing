@@ -95,6 +95,77 @@ def ctx(request: Request, page: str, **kwargs):
 def tr(request: Request, name: str, context: dict):
     return templates.TemplateResponse(request=request, name=name, context=context)
 
+def _build_coverage_data() -> dict:
+    """Build payment-method / country coverage maps from the Partners SOT sheet.
+
+    Used by /partners and /mission to drive the Country Coverage and Payment
+    Method coverage filters. Same derivation as the partner detail page so
+    filter values stay consistent across views.
+    """
+    try:
+        sot_df_for_cov = _load_partners_sot()
+    except Exception:
+        sot_df_for_cov = pd.DataFrame()
+    partner_cov_countries: dict = {}
+    partner_cov_methods: dict = {}
+    partner_country_methods: dict = {}
+    cov_country_to_methods: dict = {}
+    cov_method_to_countries: dict = {}
+    _card_brands_seen: set = set()
+    if sot_df_for_cov is not None and len(sot_df_for_cov) > 0:
+        for _, _row in sot_df_for_cov.iterrows():
+            _pname = str(_row.get("PROVIDER_NAME", "")).strip()
+            if not _pname:
+                continue
+            _key = _pname.lower()
+            _country = str(_row.get("COUNTRY", "")).strip()
+            if _country.lower() in ("", "nan"):
+                _country = ""
+            _pmt = str(_row.get("PAYMENT_METHOD_TYPE", "")).strip()
+            _brand = str(_row.get("CARD_BRAND", "")).strip().replace("_", " ")
+            _methods_for_row: list = []
+            if _pmt.upper() == "CARD" and _brand and _brand.lower() not in ("nan", "false"):
+                _methods_for_row.append(_brand)
+                _methods_for_row.append("CARD")
+                _card_brands_seen.add(_brand)
+            elif _pmt.upper() == "CARD":
+                _methods_for_row.append("CARD")
+            elif _pmt and _pmt.lower() != "nan":
+                _methods_for_row.append(_pmt.replace("_", " "))
+            if _country:
+                partner_cov_countries.setdefault(_key, set()).add(_country)
+            for _method in _methods_for_row:
+                partner_cov_methods.setdefault(_key, set()).add(_method)
+                if _country:
+                    cov_country_to_methods.setdefault(_country, set()).add(_method)
+                    cov_method_to_countries.setdefault(_method, set()).add(_country)
+                    partner_country_methods.setdefault(_key, {}).setdefault(_country, set()).add(_method)
+    partner_cov_countries = {k: sorted(v) for k, v in partner_cov_countries.items()}
+    partner_cov_methods = {k: sorted(v) for k, v in partner_cov_methods.items()}
+    cov_country_to_methods = {k: sorted(v) for k, v in cov_country_to_methods.items()}
+    cov_method_to_countries = {k: sorted(v) for k, v in cov_method_to_countries.items()}
+    partner_country_methods = {
+        k: {c: sorted(ms) for c, ms in v.items()} for k, v in partner_country_methods.items()
+    }
+    coverage_countries_list = sorted(cov_country_to_methods.keys())
+    coverage_methods_list = sorted(cov_method_to_countries.keys())
+    card_brands_list = sorted(b for b in _card_brands_seen if b in cov_method_to_countries)
+    coverage_methods_other = [
+        m for m in coverage_methods_list
+        if m != "CARD" and m not in _card_brands_seen
+    ]
+    return {
+        "partner_cov_countries": partner_cov_countries,
+        "partner_cov_methods": partner_cov_methods,
+        "partner_country_methods": partner_country_methods,
+        "cov_country_to_methods": cov_country_to_methods,
+        "cov_method_to_countries": cov_method_to_countries,
+        "coverage_countries": coverage_countries_list,
+        "coverage_methods": coverage_methods_list,
+        "card_brands": card_brands_list,
+        "coverage_methods_other": coverage_methods_other,
+    }
+
 # -- Routes --------------------------------------------------------------------
 
 @app.get("/health")
@@ -225,60 +296,16 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
     tier3_count = sum(1 for p in all_partners if p.get("tier") == "Tier 3")
     countries_count = len(countries)
 
-    # Coverage maps — uses the same Partners SOT sheet as the partner detail page,
-    # with identical country/method derivation so filter values match the detail view.
-    try:
-        sot_df_for_cov = _load_partners_sot()
-    except Exception:
-        sot_df_for_cov = pd.DataFrame()
-    partner_cov_countries: dict = {}
-    partner_cov_methods: dict = {}
-    partner_country_methods: dict = {}  # {partner_lower: {country: set(methods)}}
-    cov_country_to_methods: dict = {}
-    cov_method_to_countries: dict = {}
-    _card_brands_seen: set = set()
-    if sot_df_for_cov is not None and len(sot_df_for_cov) > 0:
-        for _, _row in sot_df_for_cov.iterrows():
-            _pname = str(_row.get("PROVIDER_NAME", "")).strip()
-            if not _pname:
-                continue
-            _key = _pname.lower()
-            _country = str(_row.get("COUNTRY", "")).strip()
-            if _country.lower() in ("", "nan"):
-                _country = ""
-            _pmt = str(_row.get("PAYMENT_METHOD_TYPE", "")).strip()
-            _brand = str(_row.get("CARD_BRAND", "")).strip().replace("_", " ")
-            _methods_for_row: list = []
-            if _pmt.upper() == "CARD" and _brand and _brand.lower() not in ("nan", "false"):
-                _methods_for_row.append(_brand)
-                _methods_for_row.append("CARD")
-                _card_brands_seen.add(_brand)
-            elif _pmt.upper() == "CARD":
-                _methods_for_row.append("CARD")
-            elif _pmt and _pmt.lower() != "nan":
-                _methods_for_row.append(_pmt.replace("_", " "))
-            if _country:
-                partner_cov_countries.setdefault(_key, set()).add(_country)
-            for _method in _methods_for_row:
-                partner_cov_methods.setdefault(_key, set()).add(_method)
-                if _country:
-                    cov_country_to_methods.setdefault(_country, set()).add(_method)
-                    cov_method_to_countries.setdefault(_method, set()).add(_country)
-                    partner_country_methods.setdefault(_key, {}).setdefault(_country, set()).add(_method)
-    partner_cov_countries = {k: sorted(v) for k, v in partner_cov_countries.items()}
-    partner_cov_methods = {k: sorted(v) for k, v in partner_cov_methods.items()}
-    cov_country_to_methods = {k: sorted(v) for k, v in cov_country_to_methods.items()}
-    cov_method_to_countries = {k: sorted(v) for k, v in cov_method_to_countries.items()}
-    partner_country_methods = {
-        k: {c: sorted(ms) for c, ms in v.items()} for k, v in partner_country_methods.items()
-    }
-    coverage_countries_list = sorted(cov_country_to_methods.keys())
-    coverage_methods_list = sorted(cov_method_to_countries.keys())
-    card_brands_list = sorted(b for b in _card_brands_seen if b in cov_method_to_countries)
-    coverage_methods_other = [
-        m for m in coverage_methods_list
-        if m != "CARD" and m not in _card_brands_seen
-    ]
+    cov = _build_coverage_data()
+    partner_cov_countries = cov["partner_cov_countries"]
+    partner_cov_methods = cov["partner_cov_methods"]
+    partner_country_methods = cov["partner_country_methods"]
+    cov_country_to_methods = cov["cov_country_to_methods"]
+    cov_method_to_countries = cov["cov_method_to_countries"]
+    coverage_countries_list = cov["coverage_countries"]
+    coverage_methods_list = cov["coverage_methods"]
+    card_brands_list = cov["card_brands"]
+    coverage_methods_other = cov["coverage_methods_other"]
 
     # Scorecard: Deal stages per region. Live = Integration Live OR status 'Live Partner'.
     _SCORECARD_STAGES = ["Prospect", "Initial Negotiation", "Agreement Review", "Agreement Signed", "Live"]
@@ -470,9 +497,17 @@ def mission(request: Request):
     regions = sorted(set(p["region"] for p in all_in_flight if p.get("region")))
     countries = sorted(set(p["country"] for p in all_in_flight if p.get("country")))
     managers = sorted(set(p["manager"] for p in all_in_flight if p.get("manager")))
+    cov = _build_coverage_data()
     return tr(request, "mission.html", ctx(
         request, "mission", board=board, total_in_flight=total_in_flight,
         types=types, regions=regions, countries=countries, managers=managers,
+        coverage_countries=cov["coverage_countries"],
+        coverage_methods=cov["coverage_methods"],
+        partner_cov_countries=cov["partner_cov_countries"],
+        partner_cov_methods=cov["partner_cov_methods"],
+        partner_country_methods=cov["partner_country_methods"],
+        cov_country_to_methods=cov["cov_country_to_methods"],
+        cov_method_to_countries=cov["cov_method_to_countries"],
     ))
 
 INTRO_COLUMNS = [
