@@ -429,7 +429,7 @@
       <div class="col-filter-wrap">
         <div class="col-filter-btn" id="btn-tier" onclick="toggleDrop('tier',event)">All <span>▾</span></div>
         <div class="col-filter-dropdown" id="drop-tier">
-          {% for t in tiers %}<label class="col-filter-option"><input type="checkbox" value="{{ t }}" onchange="applyFilters()"> {{ t }}</label>{% endfor %}
+          {% for t in tiers %}<label class="col-filter-option"><input type="checkbox" value="{{ t }}" onchange="applyFilters()"> {% if t == 'Strategic Partner' %}Strategic{% else %}{{ t }}{% endif %}</label>{% endfor %}
           <div class="col-filter-clear" onclick="clearDrop('tier')">Clear</div>
         </div>
       </div>
@@ -547,7 +547,7 @@
           {% if role == 'partnerships' %}
           <td>
             {% if p.tier %}
-            <span class="tier-pill {% if p.tier == 'Strategic Partner' %}tier-strategic{% elif p.tier == 'Tier 1' %}tier-tier-1{% elif p.tier == 'Tier 2' %}tier-tier-2{% elif p.tier == 'Tier 3' %}tier-tier-3{% else %}tier-default{% endif %}">{{ p.tier }}</span>
+            <span class="tier-pill {% if p.tier == 'Strategic Partner' %}tier-strategic{% elif p.tier == 'Tier 1' %}tier-tier-1{% elif p.tier == 'Tier 2' %}tier-tier-2{% elif p.tier == 'Tier 3' %}tier-tier-3{% else %}tier-default{% endif %}">{% if p.tier == 'Strategic Partner' %}Strategic{% else %}{{ p.tier }}{% endif %}</span>
             {% else %}—{% endif %}
           </td>
           {% endif %}
