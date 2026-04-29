@@ -166,6 +166,46 @@ def _build_coverage_data() -> dict:
         "coverage_methods_other": coverage_methods_other,
     }
 
+# Types of partners that actually onboard merchants directly. Used to surface
+# our reliable partners in the Market Analysis landscape per country.
+_RELIABLE_PARTNER_TYPES = {"PSP/Aggregator", "Acquirer", "BaaS"}
+_RELIABLE_PARTNER_TIERS = {"Strategic Partner", "Tier 1"}
+
+def _pretty_partner_name(name: str) -> str:
+    """Convert ALL-CAPS partner names to title case while preserving names
+    that are already mixed-case. Best-effort for the Market Analysis listing."""
+    if not name:
+        return name
+    if name == name.upper() and any(c.isalpha() for c in name):
+        return name.title()
+    return name
+
+def _our_partners_for_country(country: str, all_partners: list, partner_cov_countries: dict) -> list:
+    """Return our Strategic + Tier 1 partners (PSP/Aggregator, Acquirer, BaaS)
+    that cover the given country. Used to always surface reliable, big-
+    merchant-ready partners on the Market Analysis country detail."""
+    if not country:
+        return []
+    out = []
+    seen = set()
+    for p in all_partners:
+        tier = (p.get("tier") or "").strip()
+        ptype = (p.get("type") or "").strip()
+        if tier not in _RELIABLE_PARTNER_TIERS or ptype not in _RELIABLE_PARTNER_TYPES:
+            continue
+        name = (p.get("name") or "").strip()
+        if not name:
+            continue
+        cov = partner_cov_countries.get(name.lower(), [])
+        if country not in cov:
+            continue
+        key = name.lower()
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append({"name": _pretty_partner_name(name), "type": ptype})
+    return out
+
 # -- Routes --------------------------------------------------------------------
 
 @app.get("/health")
@@ -8507,7 +8547,20 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         rich_country = {**default_country_detail(), **override}
         # Pull market players from COUNTRY_PARTNERS unless the country's override already provides them
         if "partners_landscape" not in override and country in COUNTRY_PARTNERS:
-            rich_country["partners_landscape"] = COUNTRY_PARTNERS[country]
+            rich_country["partners_landscape"] = list(COUNTRY_PARTNERS[country])
+        # Always surface our reliable, big-merchant-capable partners covering this country
+        # (Strategic + Tier 1, types that actually onboard merchants), regardless of whether
+        # the curated landscape exists. Skip names already in the landscape.
+        cov_data = _build_coverage_data()
+        partner_cov_countries = cov_data["partner_cov_countries"]
+        landscape = list(rich_country.get("partners_landscape") or [])
+        existing = {(e.get("name") or "").lower() for e in landscape}
+        for our in _our_partners_for_country(country, all_partners, partner_cov_countries):
+            if our["name"].lower() in existing:
+                continue
+            landscape.append(our)
+            existing.add(our["name"].lower())
+        rich_country["partners_landscape"] = landscape
     else:
         rich_country = None
     if rich_country and rich_country.get("partners_landscape"):
