@@ -247,20 +247,22 @@ def partners(request: Request, q: str = "", cat: str = "all", status: str = "all
                 _country = ""
             _pmt = str(_row.get("PAYMENT_METHOD_TYPE", "")).strip()
             _brand = str(_row.get("CARD_BRAND", "")).strip()
+            _methods_for_row: list = []
             if _pmt.upper() == "CARD" and _brand and _brand.lower() not in ("nan", "false"):
-                _method = _brand
+                _methods_for_row.append(_brand)
+                _methods_for_row.append("Card")
+            elif _pmt.upper() == "CARD":
+                _methods_for_row.append("Card")
             elif _pmt and _pmt.lower() != "nan":
-                _method = _pmt.replace("_", " ")
-            else:
-                _method = ""
+                _methods_for_row.append(_pmt.replace("_", " "))
             if _country:
                 partner_cov_countries.setdefault(_key, set()).add(_country)
-            if _method:
+            for _method in _methods_for_row:
                 partner_cov_methods.setdefault(_key, set()).add(_method)
-            if _country and _method:
-                cov_country_to_methods.setdefault(_country, set()).add(_method)
-                cov_method_to_countries.setdefault(_method, set()).add(_country)
-                partner_country_methods.setdefault(_key, {}).setdefault(_country, set()).add(_method)
+                if _country:
+                    cov_country_to_methods.setdefault(_country, set()).add(_method)
+                    cov_method_to_countries.setdefault(_method, set()).add(_country)
+                    partner_country_methods.setdefault(_key, {}).setdefault(_country, set()).add(_method)
     partner_cov_countries = {k: sorted(v) for k, v in partner_cov_countries.items()}
     partner_cov_methods = {k: sorted(v) for k, v in partner_cov_methods.items()}
     cov_country_to_methods = {k: sorted(v) for k, v in cov_country_to_methods.items()}
