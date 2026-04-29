@@ -345,11 +345,11 @@ def load_partner_coverage(provider_name: str) -> dict:
         country = str(row.get("COUNTRY", "")).strip()
         region = str(row.get("REGION", "")).strip().replace("_", " ")
         pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
-        brand = str(row.get("CARD_BRAND", "")).strip()
+        brand = str(row.get("CARD_BRAND", "")).strip().replace("_", " ")
         cat = str(row.get("PAYMENT_METHOD_CATEGORY", "")).strip().replace("_", " ")
         proc = str(row.get("PROCESSING_TYPE", "")).strip().upper()
 
-        if pmt.upper() == "CARD" and brand and brand != "nan" and brand != "FALSE":
+        if pmt.upper() == "CARD" and brand and brand.lower() != "nan" and brand.upper() != "FALSE":
             method = brand
         elif pmt and pmt != "nan":
             method = pmt.replace("_", " ")
@@ -380,8 +380,8 @@ def load_partner_coverage(provider_name: str) -> dict:
     for _, row in matches.iterrows():
         country = str(row.get("COUNTRY", "")).strip()
         pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
-        brand = str(row.get("CARD_BRAND", "")).strip()
-        if pmt.upper() == "CARD" and brand and brand != "nan" and brand != "FALSE":
+        brand = str(row.get("CARD_BRAND", "")).strip().replace("_", " ")
+        if pmt.upper() == "CARD" and brand and brand.lower() != "nan" and brand.upper() != "FALSE":
             method = brand
         elif pmt and pmt != "nan":
             method = pmt.replace("_", " ")
