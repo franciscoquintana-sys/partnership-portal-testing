@@ -564,6 +564,30 @@
 
   function filterByRegion() { selectedCountries.clear(); selectedMethods.clear(); crossFilter(); }
   function filterByCategory() { selectedCountries.clear(); selectedMethods.clear(); crossFilter(); }
+
+  // Pre-apply Country Coverage / Payment Method selections carried over from
+  // the partners list (same sessionStorage key used by saveFilterState there).
+  document.addEventListener('DOMContentLoaded', () => {
+    let state = null;
+    try { state = JSON.parse(sessionStorage.getItem('partnersPortalFilters_v1') || 'null'); } catch (e) {}
+    if (!state || !state.filters) return;
+    const ccs = state.filters.cov_country || [];
+    const cms = state.filters.cov_method  || [];
+    if (!ccs.length && !cms.length) return;
+    const norm = s => (s || '').toString().trim().toLowerCase();
+    const wantedC = new Set(ccs.map(norm));
+    const wantedM = new Set(cms.map(norm));
+    let changed = false;
+    document.querySelectorAll('.country-tag').forEach(tag => {
+      const label = tag.textContent.trim();
+      if (wantedC.has(norm(label))) { selectedCountries.add(label); changed = true; }
+    });
+    document.querySelectorAll('.method-tag-item').forEach(tag => {
+      const label = tag.dataset.method || tag.textContent.trim();
+      if (wantedM.has(norm(label))) { selectedMethods.add(label); changed = true; }
+    });
+    if (changed) crossFilter();
+  });
   </script>
   </div>
 
