@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yuno Partnerships Portal</title>
+  <link rel="icon" type="image/svg+xml" href="/static/img/favicon.svg?v=5">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/img/favicon_y.png?v=5">
+  <link rel="shortcut icon" type="image/png" href="/static/img/favicon_y.png?v=5">
+  <link rel="apple-touch-icon" href="/static/img/favicon_y.png?v=5">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <img src="https://cdn.prod.website-files.com/65e210a414fae2cb8054a9b4/6848341e705863943015c5af_YUNO_ISOLOGO_BLUE.png" alt="Yuno" style="width:80px;height:auto;object-fit:contain;flex-shrink:0">
+      <span class="sidebar-badge" style="margin-left:auto">{{ role | upper }}</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      {% for section, items in nav %}
+      {% if section %}<div class="nav-section-title">{{ section }}</div>{% endif %}
+      {% for key, label in items %}
+      <a href="/{{ key }}" class="nav-item {% if page == key %}active{% endif %}">
+        {{ label }}
+        {% if key != 'partners' and key != 'mission' and key != 'home' and key != 'intake' and key != 'insights' and key != 'introduction' and key != 'pipeline' %}
+          <span class="nav-badge" style="background:rgba(245,158,11,.15);color:#d97706;font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;margin-left:auto">WIP</span>
+        {% endif %}
+        {% if key in badges %}
+          <span class="nav-badge {% if key == 'mission' %}red{% endif %}">{{ badges[key] }}</span>
+        {% endif %}
+      </a>
+      {% endfor %}
+      {% endfor %}
+    </nav>
+
+    <div class="sidebar-footer">
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <div class="topbar">
+      <a href="/logout" class="btn-signout">Sign out</a>
+    </div>
+    {% block hero %}{% endblock %}
+    <div class="main-body">
+      {% block content %}{% endblock %}
+    </div>
+  </main>
+
+</div>
+<script src="/static/js/app.js"></script>
+{% block scripts %}{% endblock %}
+<script>
+// Re-auth on browser close: sessionStorage is wiped when the browser closes.
+// If the server session still exists but sessionStorage is gone, force logout.
+{% if role %}
+(function() {
+  if (!sessionStorage.getItem('yuno_auth')) {
+    window.location = '/logout';
+  }
+})();
+{% endif %}
+</script>
+</body>
+</html>

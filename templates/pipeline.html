@@ -1,0 +1,575 @@
+{% extends "base.html" %}
+{% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+{% block head %}
+<style>
+.kanban-wrapper {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  align-items: flex-start;
+}
+.kanban-col {
+  min-width: 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.kanban-col-header {
+  padding: 10px 10px 8px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.kanban-col-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+}
+.kanban-col-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 10px;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+.kanban-col-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 80px;
+}
+.kanban-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  user-select: none;
+}
+.kanban-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-color: #c7d2fe;
+}
+.kanban-card.sortable-ghost { opacity: 0.4; }
+.kanban-card.sortable-chosen { cursor: grabbing; }
+.kanban-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.3;
+}
+.kanban-card-partner {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.3;
+}
+.kanban-card-partner span {
+  color: #4f46e5;
+}
+.kanban-card-type {
+  display: inline-block;
+  align-self: flex-start;
+  background: #eef2ff;
+  color: #4338ca;
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+.kanban-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  font-size: 10.5px;
+  line-height: 1.3;
+}
+.kanban-card-label {
+  color: #94a3b8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 9.5px;
+  flex-shrink: 0;
+}
+.kanban-card-value {
+  color: #0f172a;
+  font-weight: 600;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Modal */
+.lead-modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.55);
+  z-index: 999;
+  padding: 40px 16px;
+  overflow-y: auto;
+}
+.lead-modal-backdrop.open { display: block; }
+.lead-modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 28px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+}
+.lead-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #eef2f7;
+}
+.lead-modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+.lead-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.lead-field label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.lead-field input,
+.lead-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.lead-field textarea { min-height: 80px; resize: vertical; }
+.lead-field input:focus,
+.lead-field textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+}
+.lead-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #eef2f7;
+}
+.btn-primary {
+  background: #4f46e5; color: #fff; border: none;
+  border-radius: 8px; padding: 9px 18px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.btn-primary:hover { background: #4338ca; }
+.btn-secondary {
+  background: #fff; color: #334155;
+  border: 1px solid #cbd5e1; border-radius: 8px;
+  padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.btn-secondary:hover { background: #f8fafc; }
+.btn-danger {
+  background: #fff; color: #dc2626;
+  border: 1px solid #fca5a5; border-radius: 8px;
+  padding: 9px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.btn-danger:hover { background: #fef2f2; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <!-- Dark banner -->
+  <div style="
+    background: linear-gradient(120deg, #0a1628 70%, #0f2044 100%);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  ">
+    <div style="position:absolute;right:-40px;top:-40px;width:300px;height:200px;background:radial-gradient(ellipse,rgba(79,70,229,0.25) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Partner Leads</div>
+        <div style="font-size:13px;color:#94a3b8">Drag clients between stages as partner-sourced deals progress.</div>
+      </div>
+      <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
+    </div>
+  </div>
+
+  <!-- Toolbar: search + filter + add -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+    <div style="position:relative;flex:1;min-width:220px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"
+           style="position:absolute;left:11px;top:50%;transform:translateY(-50%)">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input id="lead-search" type="text" placeholder="Look for clients or partners…"
+             oninput="applyLeadFilter()"
+             style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:8px 12px 8px 32px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;outline:none;transition:border-color 0.15s, box-shadow 0.15s"
+             onfocus="this.style.borderColor='#4f46e5';this.style.boxShadow='0 0 0 3px rgba(79,70,229,0.1)'"
+             onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
+    </div>
+    <select id="lead-partner-filter" onchange="applyLeadFilter()"
+            style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:180px">
+      <option value="">All partners</option>
+      {% for p in board_partners %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
+    </select>
+    <select id="lead-pm-filter" onchange="applyLeadFilter()"
+            style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:180px">
+      <option value="">All partnership managers</option>
+      {% for m in board_pms %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+    </select>
+    <select id="lead-merchant-filter" onchange="applyLeadFilter()"
+            style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:180px">
+      <option value="">All clients</option>
+      {% for m in board_merchants %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+    </select>
+    <span id="lead-filter-hint" style="font-size:12px;color:#94a3b8;flex:1"></span>
+    <button class="btn-primary" onclick="openAddLead()" style="margin-left:auto">+ Add Client</button>
+  </div>
+
+  <!-- Kanban -->
+  <div class="kanban-wrapper">
+    {% for col in columns %}
+    <div class="kanban-col" data-col="{{ col.key }}" style="border-top: 3px solid {{ col.color }}">
+      <div class="kanban-col-header">
+        <div class="kanban-col-title">{{ col.title }}</div>
+        <div class="kanban-col-count" style="background: {{ col.color }}">{{ col.cards|length }}</div>
+      </div>
+      <div class="kanban-col-body sortable" data-col="{{ col.key }}">
+        {% for card in col.cards %}
+        <div class="kanban-card" data-id="{{ card.id }}" data-partner="{{ card.partner or '' }}" data-pm="{{ card.pm or '' }}" data-merchant="{{ card.merchant or '' }}">
+          <div class="kanban-card-name">{{ card.merchant }}</div>
+          {% if card.client_type %}<div class="kanban-card-type">{{ card.client_type }}</div>{% endif %}
+          {% if card.partner %}<div class="kanban-card-partner">via <span>{{ card.partner }}</span></div>{% endif %}
+          {% if card.bdm %}
+          <div class="kanban-card-row">
+            <span class="kanban-card-label">BDM</span>
+            <span class="kanban-card-value">{{ card.bdm }}</span>
+          </div>
+          {% endif %}
+          {% if card.pm %}
+          <div class="kanban-card-row">
+            <span class="kanban-card-label">MD</span>
+            <span class="kanban-card-value">{{ card.pm }}</span>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Detail modal -->
+  <div class="lead-modal-backdrop" id="lead-modal"
+       onclick="if(event.target===this)closeLead()">
+    <div class="lead-modal">
+      <div class="lead-modal-head">
+        <h2 class="lead-modal-title" id="lead-title"></h2>
+        <button class="btn-danger" id="lead-delete-btn" onclick="deleteLead()">Delete</button>
+      </div>
+      <div class="lead-field"><label>Client Name <span style="color:#dc2626">*</span></label><input id="lf-merchant" placeholder="Required"></div>
+      <div class="lead-field">
+        <label>Introduced by Partner</label>
+        <input id="lf-partner" list="lead-partner-catalog" placeholder="Start typing a partner name…" autocomplete="off">
+        <datalist id="lead-partner-catalog">
+          {% for p in partner_catalog %}<option value="{{ p }}"></option>{% endfor %}
+        </datalist>
+      </div>
+      <div class="lead-field"><label>Type of Client</label><input id="lf-client-type" placeholder="e.g. Marketplace, SaaS, Retail…"></div>
+      <div class="lead-field"><label>BDM Assigned</label><input id="lf-bdm"></div>
+      <div class="lead-field"><label>Partnership Manager</label><input id="lf-pm"></div>
+      <div class="lead-field"><label>Comments</label><textarea id="lf-comments"></textarea></div>
+      <div class="lead-modal-actions">
+        <button class="btn-secondary" onclick="closeLead()">Close</button>
+        <button class="btn-primary" onclick="saveLead()">Save</button>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+let LEADS = {{ all_leads | tojson }};
+let currentLeadId = null;
+let leadModalMode = 'edit';
+
+function bindLeadSortables() {
+  document.querySelectorAll('.kanban-col-body.sortable').forEach(el => {
+    new Sortable(el, {
+      group: 'leads',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      onEnd(evt) {
+        const id = evt.item.dataset.id;
+        const newCol = evt.to.dataset.col;
+        fetch('/api/leads/move', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({id, column: newCol})
+        });
+        const lead = LEADS.find(l => l.id === id);
+        if (lead) lead.column = newCol;
+        applyLeadFilter();
+      }
+    });
+  });
+}
+
+function bindLeadCardClicks() {
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    card.onclick = () => openLead(card.dataset.id);
+  });
+}
+
+function fillLeadModal(data) {
+  document.getElementById('lf-merchant').value     = data.merchant || '';
+  document.getElementById('lf-partner').value      = data.partner || '';
+  document.getElementById('lf-client-type').value  = data.client_type || '';
+  document.getElementById('lf-bdm').value          = data.bdm || '';
+  document.getElementById('lf-pm').value           = data.pm || '';
+  document.getElementById('lf-comments').value     = data.comments || '';
+}
+
+function readLeadModal() {
+  return {
+    merchant:    document.getElementById('lf-merchant').value.trim(),
+    partner:     document.getElementById('lf-partner').value.trim(),
+    client_type: document.getElementById('lf-client-type').value.trim(),
+    bdm:         document.getElementById('lf-bdm').value.trim(),
+    pm:          document.getElementById('lf-pm').value.trim(),
+    comments:    document.getElementById('lf-comments').value.trim(),
+  };
+}
+
+function openLead(id) {
+  const lead = LEADS.find(l => l.id === id);
+  if (!lead) return;
+  leadModalMode = 'edit';
+  currentLeadId = id;
+  document.getElementById('lead-title').textContent = lead.merchant;
+  document.getElementById('lead-delete-btn').style.display = '';
+  fillLeadModal(lead);
+  document.getElementById('lead-modal').classList.add('open');
+}
+
+function openAddLead() {
+  leadModalMode = 'add';
+  currentLeadId = null;
+  document.getElementById('lead-title').textContent = 'Add Client';
+  document.getElementById('lead-delete-btn').style.display = 'none';
+  fillLeadModal({});
+  document.getElementById('lead-modal').classList.add('open');
+  document.getElementById('lf-merchant').focus();
+}
+
+function closeLead() {
+  document.getElementById('lead-modal').classList.remove('open');
+  currentLeadId = null;
+}
+
+function renderLeadCard(card, lead) {
+  card.dataset.merchant = lead.merchant || '';
+  card.dataset.partner  = lead.partner  || '';
+  card.dataset.pm       = lead.pm       || '';
+  card.innerHTML = '';
+  const name = document.createElement('div');
+  name.className = 'kanban-card-name';
+  name.textContent = lead.merchant;
+  card.appendChild(name);
+  if (lead.client_type) {
+    const t = document.createElement('div');
+    t.className = 'kanban-card-type';
+    t.textContent = lead.client_type;
+    card.appendChild(t);
+  }
+  if (lead.partner) {
+    const p = document.createElement('div');
+    p.className = 'kanban-card-partner';
+    p.innerHTML = 'via <span></span>';
+    p.querySelector('span').textContent = lead.partner;
+    card.appendChild(p);
+  }
+  if (lead.bdm) {
+    const row = document.createElement('div');
+    row.className = 'kanban-card-row';
+    row.innerHTML = '<span class="kanban-card-label">BDM</span><span class="kanban-card-value"></span>';
+    row.querySelector('.kanban-card-value').textContent = lead.bdm;
+    card.appendChild(row);
+  }
+  if (lead.pm) {
+    const row = document.createElement('div');
+    row.className = 'kanban-card-row';
+    row.innerHTML = '<span class="kanban-card-label">MD</span><span class="kanban-card-value"></span>';
+    row.querySelector('.kanban-card-value').textContent = lead.pm;
+    card.appendChild(row);
+  }
+}
+
+async function saveLead() {
+  const fields = readLeadModal();
+  if (!fields.merchant) { alert('Client name is required.'); return; }
+
+  if (leadModalMode === 'add') {
+    const res = await fetch('/api/leads/create', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({fields})
+    });
+    const data = await res.json();
+    if (data.ok) {
+      LEADS.push(data.lead);
+      const body = document.querySelector('.kanban-col[data-col="extra-introductions"] .kanban-col-body');
+      const card = document.createElement('div');
+      card.className = 'kanban-card';
+      card.dataset.id = data.lead.id;
+      renderLeadCard(card, data.lead);
+      card.onclick = () => openLead(data.lead.id);
+      body.appendChild(card);
+      refreshLeadPartnerFilter();
+      applyLeadFilter();
+      closeLead();
+    } else {
+      alert(data.error || 'Failed to create lead.');
+    }
+    return;
+  }
+
+  if (!currentLeadId) return;
+  const res = await fetch('/api/leads/update', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({id: currentLeadId, fields})
+  });
+  const data = await res.json();
+  if (data.ok) {
+    Object.assign(LEADS.find(l => l.id === currentLeadId), fields);
+    const card = document.querySelector(`.kanban-card[data-id="${currentLeadId}"]`);
+    if (card) renderLeadCard(card, LEADS.find(l => l.id === currentLeadId));
+    refreshLeadPartnerFilter();
+    applyLeadFilter();
+    closeLead();
+  }
+}
+
+function refreshLeadPartnerFilter() {
+  const select = document.getElementById('lead-partner-filter');
+  const currentValue = select.value;
+  const partners = [...new Set(LEADS.map(l => (l.partner || '').trim()).filter(Boolean))].sort();
+  select.innerHTML = '<option value="">All partners</option>' +
+    partners.map(p => `<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+  select.value = partners.includes(currentValue) ? currentValue : '';
+
+  const pmSelect = document.getElementById('lead-pm-filter');
+  const pmCurrent = pmSelect.value;
+  const pms = [...new Set(LEADS.map(l => (l.pm || '').trim()).filter(Boolean))].sort();
+  pmSelect.innerHTML = '<option value="">All partnership managers</option>' +
+    pms.map(p => `<option value="${p.replace(/"/g,'&quot;')}">${p}</option>`).join('');
+  pmSelect.value = pms.includes(pmCurrent) ? pmCurrent : '';
+
+  const mSelect = document.getElementById('lead-merchant-filter');
+  const mCurrent = mSelect.value;
+  const merchants = [...new Set(LEADS.map(l => (l.merchant || '').trim()).filter(Boolean))].sort();
+  mSelect.innerHTML = '<option value="">All clients</option>' +
+    merchants.map(m => `<option value="${m.replace(/"/g,'&quot;')}">${m}</option>`).join('');
+  mSelect.value = merchants.includes(mCurrent) ? mCurrent : '';
+}
+
+function applyLeadFilter() {
+  const partner = document.getElementById('lead-partner-filter').value;
+  const pm = document.getElementById('lead-pm-filter').value;
+  const merchant = document.getElementById('lead-merchant-filter').value;
+  const q = (document.getElementById('lead-search').value || '').trim().toLowerCase();
+  document.querySelectorAll('.kanban-card').forEach(card => {
+    const partnerOk = !partner || card.dataset.partner === partner;
+    const pmOk = !pm || card.dataset.pm === pm;
+    const merchantOk = !merchant || card.dataset.merchant === merchant;
+    const merchantName = (card.dataset.merchant || '').toLowerCase();
+    const partnerName  = (card.dataset.partner  || '').toLowerCase();
+    const pmName       = (card.dataset.pm       || '').toLowerCase();
+    const searchOk = !q || merchantName.includes(q) || partnerName.includes(q) || pmName.includes(q);
+    card.style.display = (partnerOk && pmOk && merchantOk && searchOk) ? '' : 'none';
+  });
+  document.querySelectorAll('.kanban-col').forEach(col => {
+    const visible = [...col.querySelectorAll('.kanban-card')].filter(c => c.style.display !== 'none').length;
+    col.querySelector('.kanban-col-count').textContent = visible;
+  });
+  const hint = document.getElementById('lead-filter-hint');
+  const parts = [];
+  if (partner) parts.push(`partner: ${partner}`);
+  if (pm) parts.push(`PM: ${pm}`);
+  if (merchant) parts.push(`client: ${merchant}`);
+  if (q) parts.push(`search: "${q}"`);
+  hint.textContent = parts.length ? `Filtered by ${parts.join(' · ')}` : '';
+}
+
+async function deleteLead() {
+  if (!currentLeadId) return;
+  if (!confirm('Delete this lead? This cannot be undone.')) return;
+  const res = await fetch('/api/leads/delete', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({id: currentLeadId})
+  });
+  const data = await res.json();
+  if (data.ok) {
+    LEADS = LEADS.filter(l => l.id !== currentLeadId);
+    const card = document.querySelector(`.kanban-card[data-id="${currentLeadId}"]`);
+    if (card) card.remove();
+    document.querySelectorAll('.kanban-col').forEach(col => {
+      col.querySelector('.kanban-col-count').textContent = col.querySelectorAll('.kanban-card').length;
+    });
+    closeLead();
+  }
+}
+
+bindLeadSortables();
+bindLeadCardClicks();
+</script>
+{% endblock %}
