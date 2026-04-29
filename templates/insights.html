@@ -1,0 +1,450 @@
+{% extends "base.html" %}
+{% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+{% block content %}
+
+  <!-- Dark banner -->
+  <div style="
+    background: linear-gradient(120deg, #0a1628 70%, #0f2044 100%);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  ">
+    <div style="position:absolute;right:-40px;top:-40px;width:300px;height:200px;background:radial-gradient(ellipse,rgba(79,70,229,0.25) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Market Analysis</div>
+        <div style="font-size:13px;color:#94a3b8">Global payment landscape · {{ all_countries | length }} markets · {{ regions | length }} regions</div>
+      </div>
+      <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
+    </div>
+  </div>
+
+  <!-- View tabs -->
+  <div style="display:flex;gap:4px;border-bottom:1px solid #e2e8f0;margin-bottom:18px">
+    {% set tabs = [('country','Country Detail'),('news','Last News'),('regions','Regions Decks')] %}
+    {% for v, label in tabs %}
+      <a href="/insights?view={{ v }}{% if selected_region != 'all' %}&region={{ selected_region }}{% endif %}{% if v not in ['regions', 'news'] and has_market_data %}&country={{ selected }}{% endif %}" style="
+        padding:10px 16px;
+        font-size:13px;
+        font-weight:700;
+        text-decoration:none;
+        border-bottom:2px solid {% if view == v %}#2563eb{% else %}transparent{% endif %};
+        color:{% if view == v %}#2563eb{% else %}var(--text3){% endif %};
+        margin-bottom:-1px;
+        transition:color 0.15s;
+      ">{{ label }}</a>
+    {% endfor %}
+  </div>
+
+  <!-- Filters (per view) -->
+  {% if view != 'regions' %}
+  <form method="get" action="/insights" class="card" style="display:flex;gap:14px;align-items:flex-end;padding:14px 16px;margin-bottom:18px;flex-wrap:wrap">
+    <input type="hidden" name="view" value="{{ view }}">
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <label style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3)">Region</label>
+      <select name="region" onchange="this.form.submit()" style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:170px;background:#fff">
+        <option value="all" {% if selected_region == 'all' %}selected{% endif %}>All regions</option>
+        {% for r in regions %}
+        <option value="{{ r }}" {% if r == selected_region %}selected{% endif %}>{{ r }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    {% if view not in ['regions', 'news'] %}
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <label style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3)">Country</label>
+      <input type="text" name="country" list="country-options" value="{{ selected }}" placeholder="Type to search…" autocomplete="off" {% if not countries %}disabled{% endif %} onchange="this.form.submit()" style="font-family:var(--font);font-size:13px;padding:7px 10px;border:1px solid #e2e8f0;border-radius:8px;min-width:240px;background:#fff">
+      <datalist id="country-options">
+        {% for c in countries %}
+        <option value="{{ c }}"></option>
+        {% endfor %}
+      </datalist>
+    </div>
+    {% endif %}
+    <noscript><button type="submit" class="btn">Apply</button></noscript>
+  </form>
+  {% endif %}
+
+  {% if view == 'country' %}
+  <!-- View 1: Country Detail -->
+  {% if show_heatmap %}
+  <div class="card" style="padding:18px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div>
+        <div style="font-size:14px;font-weight:800;color:#0f172a">🌍 {% if selected_region == 'all' %}World{% else %}{{ selected_region }}{% endif %} Ecommerce Development</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:2px">Composite index (0–100) — online penetration, digital payments, logistics, trust. Click any country to open its market detail.</div>
+      </div>
+    </div>
+    <div id="ecom-heatmap" style="width:100%"></div>
+  </div>
+  {% elif has_market_data and data %}
+
+  <div style="margin-bottom:12px">
+    <a href="/insights?view=country{% if selected_region != 'all' %}&region={{ selected_region | urlencode }}{% endif %}" style="display:inline-flex;align-items:center;gap:6px;font-family:var(--font);font-size:12px;font-weight:700;color:#2563eb;text-decoration:none;padding:6px 12px;border:1px solid #dbeafe;border-radius:8px;background:#f0f7ff;transition:background 0.15s" onmouseover="this.style.background='#e0efff'" onmouseout="this.style.background='#f0f7ff'">← Back to {% if selected_region == 'all' %}world{% else %}{{ selected_region }}{% endif %} map</a>
+  </div>
+
+  {# Hero card + Local Payments side panel #}
+  <div style="display:grid;grid-template-columns:{% if rich and rich.local_payments %}1fr 280px{% else %}1fr{% endif %};gap:14px;margin-bottom:14px">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px">
+        {% if country_iso.get(selected) %}
+        <img src="https://flagcdn.com/w80/{{ country_iso[selected] }}.png" alt="{{ selected }} flag" width="48" height="36" style="border-radius:4px;object-fit:cover;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+        {% else %}
+        <span style="font-size:40px">{{ data.flag }}</span>
+        {% endif %}
+        <div style="flex:1">
+          <div style="font-size:20px;font-weight:800;color:#0f172a">{{ selected }}</div>
+          <div style="font-size:13px;color:var(--text3)">Currency: {{ data.currency }} · Region: {{ country_to_region.get(selected, '—') }}</div>
+        </div>
+      </div>
+
+      {% if rich and rich.overview %}
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px 20px;padding-top:16px;border-top:1px solid #eef2f7">
+        {% for k, v in rich.overview.items() %}
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px;line-height:1.3">{{ k }}</div>
+          <div style="font-size:16px;font-weight:800;color:#0f172a;line-height:1.25;word-break:break-word">{{ v }}</div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    {% if rich and rich.local_payments %}
+    <div class="card" style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a">🪙 Local Payments</div>
+
+      <div style="padding:12px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc">
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px;line-height:1.3">💳 Local Scheme</div>
+        <div style="font-size:14px;font-weight:800;line-height:1.35;overflow-wrap:anywhere;word-break:break-word;color:{% if rich.local_payments.scheme and rich.local_payments.scheme != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.scheme or 'N/A' }}</div>
+      </div>
+
+      <div style="padding:12px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc">
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px;line-height:1.3">⚡ Local A2A</div>
+        <div style="font-size:14px;font-weight:800;line-height:1.35;overflow-wrap:anywhere;word-break:break-word;color:{% if rich.local_payments.a2a and rich.local_payments.a2a != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.a2a or 'N/A' }}</div>
+      </div>
+
+      <div style="padding:12px;border:1px solid #eef2f7;border-radius:10px;background:#f8fafc">
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px;line-height:1.3">📱 Most Relevant APMs</div>
+        {% if rich.local_payments.apms %}
+        <div style="font-size:14px;font-weight:800;color:#0f172a;line-height:1.45;overflow-wrap:anywhere;word-break:break-word">
+          {% for a in rich.local_payments.apms %}{{ a.name }} <span style="font-size:11px;font-weight:600;color:#94a3b8">({{ a.type }})</span>{% if not loop.last %}<span style="color:#cbd5e1;font-weight:600">, </span>{% endif %}{% endfor %}
+        </div>
+        {% elif rich.local_payments.apm %}
+        <div style="font-size:15px;font-weight:800;line-height:1.35;word-break:break-word;color:{% if rich.local_payments.apm != 'N/A' %}#0f172a{% else %}var(--text3){% endif %}">{{ rich.local_payments.apm }}</div>
+        {% else %}
+        <div style="font-size:15px;font-weight:800;line-height:1.35;color:var(--text3)">N/A</div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  {% if rich %}
+
+  {# Payment methods breakdown table #}
+  {% if rich.payment_methods_breakdown %}
+  <div class="card" style="margin-bottom:14px;padding:0">
+    <div style="padding:16px 18px 12px;border-bottom:1px solid #eef2f7">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a">💳 Payment Methods Breakdown — Ecommerce</div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr style="background:#f8fafc;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.05em">
+          <th style="text-align:left;padding:8px 18px;font-weight:700">Method</th>
+          <th style="text-align:center;padding:8px 18px;font-weight:700;width:55%">Share</th>
+          <th style="text-align:right;padding:8px 18px;font-weight:700">Growth</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for m in rich.payment_methods_breakdown | sort(attribute='share', reverse=True) %}
+        {% set has_schemes = m.schemes is defined and m.schemes %}
+        <tr style="border-top:1px solid #eef2f7;{% if has_schemes %}cursor:pointer{% endif %}" {% if has_schemes %}onclick="(function(r){r.style.display = (r.style.display === 'table-row') ? 'none' : 'table-row'})(document.getElementById('scheme-detail-{{ loop.index }}'))"{% endif %}>
+          <td style="padding:10px 18px;white-space:nowrap;font-weight:700;color:#0f172a">
+            {{ m.name }}{% if m.detail %} <span style="font-size:11px;font-weight:600;color:#94a3b8">({{ m.detail }})</span>{% endif %}{% if has_schemes %} <span style="color:#5B5FDE;font-size:11px;margin-left:4px">▾</span>{% endif %}
+          </td>
+          <td style="padding:10px 18px">
+            <div style="position:relative;height:22px;width:75%;max-width:480px;margin:0 auto;background:rgba(91,95,222,0.08);border-radius:11px;overflow:hidden;display:flex;align-items:center;justify-content:center">
+              <div style="width:{{ m.share }}%;height:100%;background:rgba(91,95,222,0.35);border-radius:11px"></div>
+              <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums">{{ m.share }}%</div>
+            </div>
+          </td>
+          <td style="padding:10px 18px;text-align:right;font-variant-numeric:tabular-nums;color:{% if m.growth.startswith('+') %}#10b981{% elif m.growth.startswith('-') %}#dc2626{% else %}var(--text3){% endif %}">{{ m.growth }}</td>
+        </tr>
+        {% if has_schemes %}
+        <tr id="scheme-detail-{{ loop.index }}" style="display:none;background:#f8fafc">
+          <td colspan="3" style="padding:14px 28px 18px">
+            <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:10px">Scheme breakdown — {{ m.name }}</div>
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+              {% for s in m.schemes | sort(attribute='share', reverse=True) %}
+              <div style="display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fff;border:1px solid #e2e8f0;border-radius:8px">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:13px;font-weight:700;color:#0f172a">{{ s.name }}</div>
+                  <div style="font-size:10px;font-weight:600;color:{% if s.type == 'local' %}#10b981{% else %}#5B5FDE{% endif %};text-transform:uppercase;letter-spacing:0.05em">{% if s.type == 'local' %}Local scheme{% else %}International{% endif %}</div>
+                </div>
+                <div style="font-size:14px;font-weight:800;color:#0f172a;font-variant-numeric:tabular-nums">{{ s.share }}%</div>
+              </div>
+              {% endfor %}
+            </div>
+          </td>
+        </tr>
+        {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  {# Partners Landscape + Yuno coverage row #}
+  <div class="card-grid-2" style="gap:12px;margin-bottom:14px">
+    {% if rich.partners_landscape %}
+    <div class="card" style="padding:0">
+      <div style="padding:16px 18px 12px;border-bottom:1px solid #eef2f7">
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a">🤝 Partners Landscape</div>
+      </div>
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="background:#f8fafc;color:var(--text3);font-size:10px;text-transform:uppercase;letter-spacing:0.05em">
+            <th style="text-align:left;padding:8px 18px;font-weight:700">Name</th>
+            <th style="text-align:left;padding:8px 18px;font-weight:700">Type</th>
+            <th style="text-align:center;padding:8px 18px;font-weight:700">Signed</th>
+            <th style="text-align:center;padding:8px 18px;font-weight:700">Live</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for a in rich.partners_landscape %}
+          <tr style="border-top:1px solid #eef2f7">
+            <td style="padding:10px 18px;font-weight:700;color:#0f172a">
+              {% if a.in_portfolio %}
+              <a href="/partners/{{ a.portfolio_name | urlencode }}?ref=insights&country={{ selected | urlencode }}" style="color:#2563eb;text-decoration:none;border-bottom:1px dashed rgba(37,99,235,0.4)" onmouseover="this.style.borderBottomStyle='solid'" onmouseout="this.style.borderBottomStyle='dashed'">{{ a.name }}</a>
+              {% else %}
+              {{ a.name }}
+              {% endif %}
+            </td>
+            <td style="padding:10px 18px;color:var(--text3);font-size:12px">{{ a.type }}</td>
+            <td style="padding:10px 18px;text-align:center">
+              {% if a.signed %}<span style="color:#10b981;font-weight:800;font-size:16px" title="Signed">✓</span>{% else %}<span style="color:#cbd5e1;font-weight:800" title="Not signed">—</span>{% endif %}
+            </td>
+            <td style="padding:10px 18px;text-align:center">
+              {% if a.live %}<span style="color:#10b981;font-weight:800;font-size:16px" title="Live">✓</span>{% else %}<span style="color:#cbd5e1;font-weight:800" title="Not live">—</span>{% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+
+    {% if rich.yuno_coverage %}
+    <div class="card">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a;margin-bottom:14px">🎯 Yuno Coverage</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:4px">Merchants Processing</div>
+          <div style="font-size:22px;font-weight:800;color:#0f172a">{{ rich.yuno_coverage['Merchants processing'] }}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:4px">Monthly Volume</div>
+          <div style="font-size:22px;font-weight:800;color:#10b981">{{ rich.yuno_coverage['Monthly volume'] }}</div>
+        </div>
+      </div>
+      <div style="margin-bottom:14px">
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px">Live Partners</div>
+        {% if rich.yuno_coverage['Live partners'] %}
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          {% for p in rich.yuno_coverage['Live partners'] %}
+            {% if p.in_portfolio %}
+            <a href="/partners/{{ p.portfolio_name | urlencode }}?ref=insights&country={{ selected | urlencode }}" class="pill pill-green" style="text-decoration:none;cursor:pointer">{{ p.name }}</a>
+            {% else %}
+            <span class="pill pill-green">{{ p.name }}</span>
+            {% endif %}
+          {% endfor %}
+        </div>
+        {% else %}
+        <div style="font-size:14px;font-weight:800;color:var(--text3)">N/A</div>
+        {% endif %}
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;color:#5B5FDE;margin-bottom:6px">Payment Methods Available</div>
+        {% if rich.yuno_coverage['Payment methods'] %}
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          {% for m in rich.yuno_coverage['Payment methods'] %}
+          <span class="pill pill-blue">{{ m }}</span>
+          {% endfor %}
+        </div>
+        {% else %}
+        <div style="font-size:14px;font-weight:800;color:var(--text3)">N/A</div>
+        {% endif %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  {# Digital Trends + Regulation Key Points row #}
+  <div class="card-grid-2" style="gap:12px;margin-bottom:14px">
+    {% if rich.digital_trends %}
+    <div class="card">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a;margin-bottom:14px">🚀 Digital Trends</div>
+      <ul style="margin:0;padding-left:20px;font-size:13px;color:var(--text);line-height:1.6">
+        {% for item in rich.digital_trends %}
+        <li style="margin-bottom:8px">{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+
+    {% if rich.regulation %}
+    <div class="card">
+      <div style="font-size:11px;font-weight:800;letter-spacing:0.06em;text-transform:uppercase;color:#0f172a;margin-bottom:14px">⚖️ Regulation Key Points</div>
+      <ul style="margin:0;padding-left:20px;font-size:13px;color:var(--text);line-height:1.6">
+        {% for item in rich.regulation %}
+        <li style="margin-bottom:8px">{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+
+  {% else %}
+  {# Fallback simple view #}
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-grid-2" style="gap:12px">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Payment Methods</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          {% for m in data.methods %}
+          <span class="pill pill-blue">{{ m }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Top Providers</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          {% for p in data.top_providers %}
+          <span class="pill pill-purple">{{ p }}</span>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid-3" style="gap:12px">
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Settlement</div>
+      <div style="font-size:13px;color:var(--text)">{{ data.settlement }}</div>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">FX & Capital</div>
+      <div style="font-size:13px;color:var(--text)">{{ data.fx }}</div>
+    </div>
+    <div class="card">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:var(--text3);margin-bottom:8px">Regulation</div>
+      <div style="font-size:13px;color:var(--text)">{{ data.regulation }}</div>
+    </div>
+  </div>
+  {% endif %}
+
+  {% else %}
+  <div class="card" style="padding:24px;font-size:13px;color:var(--text3)">No detailed market data available for region <strong>{{ selected_region }}</strong>. Switch to Regions Decks for portfolio-level stats.</div>
+  {% endif %}
+
+  {% elif view == 'news' %}
+  <!-- View 2: Industry Digest -->
+  {% set cat_styles = {
+    'PARTNERSHIP': ('#ede9fe', '#5b21b6'),
+    'MARKET':      ('#dcfce7', '#166534'),
+    'REGULATION':  ('#fef3c7', '#92400e'),
+    'PRODUCT':     ('#ccfbf1', '#115e59'),
+    'ENFORCEMENT': ('#fee2e2', '#991b1b'),
+    'FUNDING':     ('#f3e8ff', '#6b21a8'),
+    'SCHEME':      ('#e0e7ff', '#3730a3'),
+  } %}
+  {% if news_sections %}
+    {% for r, items in news_sections %}
+    <div class="card" style="padding:0;margin-bottom:14px">
+      <div style="padding:12px 18px;border-bottom:1px solid #eef2f7;background:#f8fafc;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:11px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;color:#0f172a">{{ r }}</div>
+        <div style="font-size:11px;color:var(--text3)">{{ items | length }} item{% if items | length != 1 %}s{% endif %}</div>
+      </div>
+      {% if items %}
+        {% for n in items %}
+        {% set style = cat_styles.get(n.category, ('#e2e8f0', '#334155')) %}
+        <a href="{{ n.url }}" target="_blank" rel="noopener noreferrer" style="text-decoration:none;color:inherit;display:flex;gap:16px;align-items:flex-start;padding:14px 18px;{% if not loop.last %}border-bottom:1px solid #eef2f7;{% endif %};transition:background 0.15s" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='transparent'">
+          <div style="min-width:124px;flex-shrink:0">
+            <span style="display:inline-block;font-size:10px;font-weight:800;letter-spacing:0.05em;padding:3px 8px;border-radius:6px;background:{{ style[0] }};color:{{ style[1] }}">{{ n.category }}</span>
+            <div style="font-size:11px;color:var(--text3);margin-top:6px;font-variant-numeric:tabular-nums">{{ n.date }}</div>
+          </div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:13px;font-weight:700;color:#0f172a;margin-bottom:4px;line-height:1.4">{{ n.title }} <span style="font-size:11px;color:#94a3b8;font-weight:600">↗</span></div>
+            <div style="font-size:12px;color:var(--text);line-height:1.5">{{ n.summary }}</div>
+          </div>
+        </a>
+        {% endfor %}
+      {% else %}
+        <div style="padding:16px 18px;font-size:12px;color:var(--text3)">No items for {{ r }} this cycle.</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  {% else %}
+    <div class="card" style="padding:18px;font-size:13px;color:var(--text3)">No news to display for this filter.</div>
+  {% endif %}
+
+  {% elif view == 'regions' %}
+  <!-- View 3: Regions Decks -->
+  {% set region_colors = {
+    'LATAM':         '#10b981',
+    'APAC':          '#ef4444',
+    'Europe':        '#3b82f6',
+    'Middle East':   '#a855f7',
+    'Africa':        '#f97316',
+    'North America': '#6366f1',
+    'Global':        '#0f172a',
+  } %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">
+    {% for r in deck_stats.keys() %}
+    {% set color = region_colors.get(r, '#64748b') %}
+    <div style="background:#fff;border:2px solid {{ color }};border-radius:12px;padding:18px;display:flex;flex-direction:column;gap:14px;align-items:center">
+      <a href="/insights?view=country{% if r != 'Global' %}&region={{ r | urlencode }}{% endif %}" style="text-decoration:none;color:{{ color }};font-family:var(--font);font-size:20px;font-weight:800;letter-spacing:0.02em;text-align:center">{{ r }}</a>
+      {% if r == 'Middle East' %}
+      <a href="https://docs.google.com/presentation/d/1bDc7DiYcyuHAFHEv5CD4ayRfsqWru64f/edit" target="_blank" rel="noopener" style="font-family:var(--font);font-size:11px;font-weight:700;color:#fff;background:{{ color }};border-radius:8px;padding:8px 12px;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">⬇ Download Market Insight Deck</a>
+      {% else %}
+      <a href="#" onclick="(function(){var m=document.getElementById('deck-soon-modal');document.getElementById('deck-soon-region').textContent='{{ r }}';m.style.display='flex';})(); return false;" style="font-family:var(--font);font-size:11px;font-weight:700;color:#fff;background:{{ color }};border-radius:8px;padding:8px 12px;text-decoration:none;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:opacity 0.15s" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">⬇ Download Market Insight Deck</a>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div id="deck-soon-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.55);z-index:1000;align-items:center;justify-content:center" onclick="if(event.target===this) this.style.display='none'">
+    <div style="background:#fff;border-radius:14px;padding:32px 36px;max-width:440px;width:90%;position:relative;box-shadow:0 12px 40px rgba(0,0,0,0.25)">
+      <button onclick="document.getElementById('deck-soon-modal').style.display='none'" style="position:absolute;top:12px;right:14px;background:none;border:none;font-size:20px;font-weight:700;color:#94a3b8;cursor:pointer;padding:4px 8px;line-height:1" onmouseover="this.style.color='#0f172a'" onmouseout="this.style.color='#94a3b8'">×</button>
+      <div style="font-size:32px;margin-bottom:10px">🚧</div>
+      <div style="font-size:18px;font-weight:800;color:#0f172a;margin-bottom:8px">We're working on this</div>
+      <div style="font-size:13px;color:var(--text3);line-height:1.5">The Market Insight Deck for <strong id="deck-soon-region">this region</strong> is being put together. We'll let you know as soon as it's ready.</div>
+      <button onclick="document.getElementById('deck-soon-modal').style.display='none'" style="margin-top:18px;font-family:var(--font);font-size:12px;font-weight:700;color:#fff;background:#5B5FDE;border:none;border-radius:8px;padding:9px 18px;cursor:pointer">Got it</button>
+    </div>
+  </div>
+  {% endif %}
+
+{% endblock %}
+{% block scripts %}
+{% if show_heatmap and heatmap_chart %}
+<script>
+const heatData = {{ heatmap_chart | safe }};
+const heatEl = document.getElementById('ecom-heatmap');
+Plotly.newPlot(heatEl, heatData.data, heatData.layout, {responsive: true, displayModeBar: false})
+  .then(function() {
+    heatEl.on('plotly_click', function(evt) {
+      if (!evt || !evt.points || !evt.points.length) return;
+      const country = evt.points[0].location;
+      if (!country) return;
+      const region = {{ selected_region | tojson }};
+      const params = new URLSearchParams({view: 'country', country: country});
+      if (region && region !== 'all') params.set('region', region);
+      window.location.href = '/insights?' + params.toString();
+    });
+    heatEl.style.cursor = 'pointer';
+  });
+</script>
+{% endif %}
+{% endblock %}

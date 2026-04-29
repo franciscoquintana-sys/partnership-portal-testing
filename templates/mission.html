@@ -1,0 +1,699 @@
+{% extends "base.html" %}
+{% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+{% block head %}
+<style>
+.kanban-wrapper {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  min-height: 500px;
+  align-items: flex-start;
+}
+.kanban-col {
+  min-width: 0;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.kanban-col-header {
+  padding: 10px 10px 8px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+.kanban-col-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+}
+.kanban-col-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  background: #94a3b8;
+  border-radius: 10px;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+.kanban-col-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 600px;
+  overflow-y: auto;
+}
+.kanban-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px;
+  cursor: pointer;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.kanban-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  border-color: #c7d2fe;
+}
+.kanban-card-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kanban-avatar {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.kanban-card-meta {
+  font-size: 10px;
+  color: #64748b;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.kanban-tag {
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* Column accent colors */
+.kanban-col[data-col="prospect"] .kanban-col-count { background: #6b7280; }
+.kanban-col[data-col="negotiation"] .kanban-col-count { background: #3b82f6; }
+.kanban-col[data-col="review"] .kanban-col-count { background: #8b5cf6; }
+.kanban-col[data-col="signed-not-integrated"] .kanban-col-count { background: #f59e0b; }
+.kanban-col[data-col="signed-integrated"] .kanban-col-count { background: #10b981; }
+.kanban-col[data-col="integrated-no-agreement"] .kanban-col-count { background: #ef4444; }
+
+.kanban-col[data-col="prospect"] { border-top: 3px solid #6b7280; }
+.kanban-col[data-col="negotiation"] { border-top: 3px solid #3b82f6; }
+.kanban-col[data-col="review"] { border-top: 3px solid #8b5cf6; }
+.kanban-col[data-col="signed-not-integrated"] { border-top: 3px solid #f59e0b; }
+.kanban-col[data-col="signed-integrated"] { border-top: 3px solid #10b981; }
+.kanban-col[data-col="integrated-no-agreement"] { border-top: 3px solid #ef4444; }
+
+/* Search & Filters */
+.search-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.search-wrap {
+  position: relative;
+  flex: 1;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+}
+.search-input {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 12.5px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 7px 12px 7px 32px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-input:focus {
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.08);
+}
+.filter-bar {
+  display: flex;
+  align-items: flex-end;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+.filter-item .col-filter-btn {
+  width: 100%;
+  justify-content: space-between;
+}
+.filter-item-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text3);
+  white-space: nowrap;
+}
+.col-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text2);
+  background: #fff;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 5px 9px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+.col-filter-btn.active { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-light); }
+.col-filter-btn .badge { background: var(--indigo); color: #fff; border-radius: 3px; padding: 0 4px; font-size: 9px; font-weight: 700; }
+.col-filter-wrap { position: relative; display: inline-block; }
+.col-filter-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 180px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 999;
+  padding: 6px 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.col-filter-dropdown.open { display: block; }
+.col-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.col-filter-option:hover { background: #f5f5ff; }
+.col-filter-option input[type=checkbox] { accent-color: var(--indigo); width: 13px; height: 13px; cursor: pointer; }
+.col-filter-clear { padding: 5px 12px; font-size: 11px; color: #dc2626; cursor: pointer; border-top: 1px solid var(--border); margin-top: 2px; }
+.col-filter-clear:hover { background: #fff5f5; }
+.col-filter-search {
+  width: calc(100% - 16px);
+  margin: 0 8px 6px;
+  padding: 6px 9px;
+  font-size: 12px;
+  font-family: var(--font);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+}
+.col-filter-search:focus { border-color: var(--indigo); }
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+  <!-- Dark banner -->
+  <div style="
+    background: linear-gradient(120deg, #0a1628 70%, #0f2044 100%);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  ">
+    <div style="position:absolute;right:-40px;top:-40px;width:300px;height:200px;background:radial-gradient(ellipse,rgba(79,70,229,0.25) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> In Flight</div>
+        <div style="font-size:13px;color:#94a3b8">End-to-end strategic partner lifecycle — from prospect to live processing.</div>
+      </div>
+      <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:20px">
+    {% set cols = [
+      ("Prospect", board["Prospect"]|length, "prospect", "#6b7280"),
+      ("Initial Negotiation", board["Initial Negotiation"]|length, "negotiation", "#3b82f6"),
+      ("Agreement Review", board["Agreement Review"]|length, "review", "#8b5cf6"),
+      ("Signed Not Integrated", board["Agreement Signed but Not Integrated"]|length, "signed-not-integrated", "#f59e0b"),
+      ("Signed & Integrated", board["Agreement Signed and Integrated"]|length, "signed-integrated", "#10b981"),
+      ("Integrated No Agreement", board["Integrated without Agreement"]|length, "integrated-no-agreement", "#ef4444"),
+    ] %}
+    {% for label, count, key, color in cols %}
+    <div style="background:#fff;padding:16px 18px;display:flex;flex-direction:column;gap:3px;align-items:flex-start">
+      <div class="stat-count" data-col="{{ key }}" style="font-size:28px;font-weight:800;color:{{ color }};letter-spacing:-1px;line-height:1">{{ count }}</div>
+      <div style="font-size:9.5px;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text3)">{{ label }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar-row">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="search" type="text"
+        placeholder="Search partners…"
+        oninput="applyFilters()"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();applyFilters()}">
+    </div>
+    <button onclick="clearAllFilters()" style="font-family:var(--font);font-size:12px;font-weight:600;color:#dc2626;background:#fff;border:1px solid #fca5a5;border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.15s" onmouseover="this.style.background='#fff5f5'" onmouseout="this.style.background='#fff'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      Clear filters
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
+    <span>Filters</span>
+    <button type="button" id="add-filter-btn" title="Add coverage filters" aria-label="Add" onclick="toggleCoverageFilters(event)" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--indigo);background:#fff;color:var(--indigo);font-size:14px;font-weight:700;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;transition:background 0.15s,color 0.15s" onmouseover="this.style.background='var(--indigo)';this.style.color='#fff'" onmouseout="if(!this.classList.contains('active')){this.style.background='#fff';this.style.color='var(--indigo)'}">+</button>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-item">
+      <span class="filter-item-label">Type</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-type" onclick="toggleDrop('type',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-type">
+          {% for t in types %}<label class="col-filter-option"><input type="checkbox" value="{{ t }}" onchange="applyFilters()"> {{ t }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('type')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Region</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-region" onclick="toggleDrop('region',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-region">
+          {% for r in regions %}<label class="col-filter-option"><input type="checkbox" value="{{ r }}" onchange="applyFilters()"> {{ r }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('region')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Country</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-country" onclick="toggleDrop('country',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-country">
+          {% for c in countries %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('country')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Partner Manager</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-manager" onclick="toggleDrop('manager',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-manager">
+          {% for m in managers %}<label class="col-filter-option"><input type="checkbox" value="{{ m }}" onchange="applyFilters()"> {{ m }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('manager')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item coverage-filter" style="display:none">
+      <span class="filter-item-label">Region Coverage</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cov_region" onclick="toggleDrop('cov_region',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cov_region">
+          {% for r in coverage_regions %}<label class="col-filter-option"><input type="checkbox" value="{{ r }}" onchange="applyFilters()"> {{ r }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cov_region')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item coverage-filter" style="display:none">
+      <span class="filter-item-label">Country Coverage</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cov_country" onclick="toggleDrop('cov_country',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cov_country">
+          <input type="text" class="col-filter-search" placeholder="Search country..." oninput="refreshCoverageDropdowns()" onclick="event.stopPropagation()">
+          {% for c in coverage_countries %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cov_country')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item coverage-filter" style="display:none">
+      <span class="filter-item-label">Payment Method</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cov_method" onclick="toggleDrop('cov_method',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cov_method">
+          <input type="text" class="col-filter-search" placeholder="Search method..." oninput="refreshCoverageDropdowns()" onclick="event.stopPropagation()">
+          {% for m in coverage_methods %}<label class="col-filter-option"><input type="checkbox" value="{{ m }}" onchange="applyFilters()"> {{ m }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cov_method')">Clear</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kanban Board -->
+  <div class="kanban-wrapper">
+    {% set columns = [
+      ("Prospect", "prospect", board["Prospect"]),
+      ("Initial Negotiation", "negotiation", board["Initial Negotiation"]),
+      ("Agreement Review", "review", board["Agreement Review"]),
+      ("Signed Not Integrated", "signed-not-integrated", board["Agreement Signed but Not Integrated"]),
+      ("Signed & Integrated", "signed-integrated", board["Agreement Signed and Integrated"]),
+      ("Integrated No Agreement", "integrated-no-agreement", board["Integrated without Agreement"]),
+    ] %}
+
+    {% for title, col_key, partners in columns %}
+    <div class="kanban-col" data-col="{{ col_key }}">
+      <div class="kanban-col-header">
+        <div class="kanban-col-title">{{ title }}</div>
+        <div class="kanban-col-count">{{ partners|length }}</div>
+      </div>
+      <div class="kanban-col-body">
+        {% for p in partners %}
+        <div class="kanban-card"
+           data-partner="{{ p.name }}"
+           data-name="{{ p.name | lower }}"
+           data-type="{{ p.type }}"
+           data-region="{{ p.region }}"
+           data-country="{{ p.country }}"
+           data-manager="{{ p.manager }}"
+           onclick="window.location='/partners/'+encodeURIComponent(this.dataset.partner)+'?ref=mission'"
+           style="border-left:3px solid {{ p.color }};display:flex;flex-direction:column;gap:8px">
+          <div class="kanban-card-name">{{ p.name }}</div>
+          <div><span class="kanban-tag" style="background:{{ p.color }}18;color:{{ p.color }}">{{ p.type }}</span></div>
+          <div class="kanban-card-meta">{% if p.region %}{{ p.region }}{% endif %}{% if p.region and p.manager %} · {% endif %}{% if p.manager %}{{ p.manager }}{% endif %}</div>
+        </div>
+        {% endfor %}
+        {% if partners|length == 0 %}
+        <div class="kanban-empty" style="text-align:center;padding:20px 10px;color:#94a3b8;font-size:12px">No partners</div>
+        {% endif %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const FILTERS = ['type','region','country','manager','cov_region','cov_country','cov_method'];
+
+const PARTNER_COV_COUNTRIES = {{ partner_cov_countries | tojson }};
+const PARTNER_COV_METHODS   = {{ partner_cov_methods   | tojson }};
+const PARTNER_COV_REGIONS   = {{ partner_cov_regions   | tojson }};
+const PARTNER_COUNTRY_METHODS = {{ partner_country_methods | tojson }};
+const COUNTRY_TO_METHODS = {{ cov_country_to_methods | tojson }};
+const METHOD_TO_COUNTRIES = {{ cov_method_to_countries | tojson }};
+const REGION_TO_COUNTRIES = {{ cov_region_to_countries | tojson }};
+const REGION_TO_METHODS  = {{ cov_region_to_methods  | tojson }};
+
+const _norm = s => (s || '').toString().trim().toLowerCase();
+const _canon = s => (s || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+function _lcMap(obj) {
+  const out = {};
+  Object.keys(obj || {}).forEach(k => { out[_norm(k)] = (obj[k] || []).map(_norm); });
+  return out;
+}
+const COUNTRY_TO_METHODS_LC = _lcMap(COUNTRY_TO_METHODS);
+const METHOD_TO_COUNTRIES_LC = _lcMap(METHOD_TO_COUNTRIES);
+const REGION_TO_COUNTRIES_LC = _lcMap(REGION_TO_COUNTRIES);
+const REGION_TO_METHODS_LC  = _lcMap(REGION_TO_METHODS);
+const PARTNER_COV_COUNTRIES_LC = _lcMap(PARTNER_COV_COUNTRIES);
+const PARTNER_COV_METHODS_LC = _lcMap(PARTNER_COV_METHODS);
+const PARTNER_COV_REGIONS_LC  = _lcMap(PARTNER_COV_REGIONS);
+const PARTNER_COUNTRY_METHODS_LC = (() => {
+  const out = {};
+  Object.keys(PARTNER_COUNTRY_METHODS || {}).forEach(p => {
+    const inner = PARTNER_COUNTRY_METHODS[p] || {};
+    const innerLc = {};
+    Object.keys(inner).forEach(c => { innerLc[_norm(c)] = (inner[c] || []).map(_norm); });
+    out[_canon(p)] = innerLc;
+  });
+  return out;
+})();
+
+function getSelected(key) {
+  return [...document.querySelectorAll(`#drop-${key} input[type=checkbox]:checked`)].map(c => c.value);
+}
+
+function updateBtn(key) {
+  const sel = getSelected(key);
+  const btn = document.getElementById(`btn-${key}`);
+  if (sel.length === 0) {
+    btn.innerHTML = `All <span>▾</span>`;
+    btn.classList.remove('active');
+  } else {
+    btn.innerHTML = `${sel.length} selected <span class="badge">${sel.length}</span> <span>▾</span>`;
+    btn.classList.add('active');
+  }
+}
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const sel = {};
+  FILTERS.forEach(k => { sel[k] = getSelected(k); updateBtn(k); });
+  const selCC = sel.cov_country.map(_norm);
+  const selCM = sel.cov_method.map(_norm);
+  const selCR = sel.cov_region.map(_norm);
+
+  document.querySelectorAll('.kanban-col').forEach(col => {
+    const cards = col.querySelectorAll('.kanban-card');
+    let visible = 0;
+    cards.forEach(card => {
+      const partnerKey = _canon(card.dataset.name);
+      const partnerCovC = PARTNER_COV_COUNTRIES_LC[partnerKey] || [];
+      const partnerCovM = PARTNER_COV_METHODS_LC[partnerKey] || [];
+      const partnerCovR = PARTNER_COV_REGIONS_LC[partnerKey] || [];
+      let coverageOk = true;
+      if (selCC.length && selCM.length) {
+        const pcm = PARTNER_COUNTRY_METHODS_LC[partnerKey] || {};
+        coverageOk = selCC.some(c => {
+          const ms = pcm[c] || [];
+          return selCM.some(m => ms.includes(m));
+        });
+      } else if (selCC.length) {
+        coverageOk = selCC.some(c => partnerCovC.includes(c));
+      } else if (selCM.length) {
+        coverageOk = selCM.some(m => partnerCovM.includes(m));
+      }
+      if (coverageOk && selCR.length) {
+        coverageOk = selCR.some(r => partnerCovR.includes(r));
+      }
+      const show =
+        (!q || (card.dataset.name || '').includes(q))
+        && (sel.type.length === 0     || sel.type.includes(card.dataset.type))
+        && (sel.region.length === 0   || sel.region.includes(card.dataset.region))
+        && (sel.country.length === 0  || sel.country.includes(card.dataset.country))
+        && (sel.manager.length === 0  || sel.manager.includes(card.dataset.manager))
+        && coverageOk;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    // Update column count
+    const countEl = col.querySelector('.kanban-col-count');
+    if (countEl) countEl.textContent = visible;
+    // Show/hide empty message
+    let emptyEl = col.querySelector('.kanban-empty');
+    if (visible === 0 && !emptyEl) {
+      emptyEl = document.createElement('div');
+      emptyEl.className = 'kanban-empty';
+      emptyEl.style.cssText = 'text-align:center;padding:20px 10px;color:#94a3b8;font-size:12px';
+      emptyEl.textContent = 'No partners';
+      col.querySelector('.kanban-col-body').appendChild(emptyEl);
+    } else if (emptyEl) {
+      emptyEl.style.display = visible === 0 ? '' : 'none';
+    }
+  });
+
+  // Update stats bar counts
+  const statEls = document.querySelectorAll('.stat-count');
+  statEls.forEach(el => {
+    const colKey = el.dataset.col;
+    const col = document.querySelector(`.kanban-col[data-col="${colKey}"]`);
+    if (col) {
+      el.textContent = col.querySelector('.kanban-col-count').textContent;
+    }
+  });
+
+  refreshCoverageDropdowns();
+  saveCoverageState();
+}
+
+const FILTER_STATE_KEY = 'partnersPortalFilters_v1';
+
+function saveCoverageState() {
+  // Share the same key the partner detail page reads, but only touch the
+  // coverage subset so we don't clobber filters owned by the Portfolio page.
+  try {
+    let state = null;
+    try { state = JSON.parse(sessionStorage.getItem(FILTER_STATE_KEY) || 'null'); } catch (e) {}
+    state = state || { search: '', filters: {}, coverageOpen: false, covCountrySearch: '', covMethodSearch: '' };
+    state.filters = state.filters || {};
+    state.filters.cov_country = getSelected('cov_country');
+    state.filters.cov_method  = getSelected('cov_method');
+    state.filters.cov_region  = getSelected('cov_region');
+    state.coverageOpen = !!document.querySelector('.coverage-filter') &&
+                        document.querySelector('.coverage-filter').style.display !== 'none';
+    state.covCountrySearch = document.querySelector('#drop-cov_country .col-filter-search')?.value || '';
+    state.covMethodSearch  = document.querySelector('#drop-cov_method .col-filter-search')?.value  || '';
+    sessionStorage.setItem(FILTER_STATE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+function restoreCoverageState() {
+  let state = null;
+  try { state = JSON.parse(sessionStorage.getItem(FILTER_STATE_KEY) || 'null'); } catch (e) {}
+  if (!state) return false;
+  if (state.coverageOpen) {
+    document.querySelectorAll('.coverage-filter').forEach(it => it.style.display = '');
+    const btn = document.getElementById('add-filter-btn');
+    if (btn) {
+      btn.classList.add('active');
+      btn.textContent = '−';
+      btn.title = 'Hide coverage filters';
+      btn.style.background = 'var(--indigo)';
+      btn.style.color = '#fff';
+    }
+  }
+  ['cov_country','cov_method','cov_region'].forEach(k => {
+    const vals = new Set((state.filters && state.filters[k]) || []);
+    document.querySelectorAll(`#drop-${k} input[type=checkbox]`).forEach(cb => {
+      cb.checked = vals.has(cb.value);
+    });
+  });
+  const sC = document.querySelector('#drop-cov_country .col-filter-search');
+  if (sC) sC.value = state.covCountrySearch || '';
+  const sM = document.querySelector('#drop-cov_method .col-filter-search');
+  if (sM) sM.value = state.covMethodSearch || '';
+  return true;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (restoreCoverageState()) applyFilters();
+});
+
+function refreshCoverageDropdowns() {
+  const selCountries = getSelected('cov_country').map(_norm);
+  const selMethods   = getSelected('cov_method').map(_norm);
+  const selRegions   = getSelected('cov_region').map(_norm);
+  let allowedMethods = null;
+  if (selCountries.length) {
+    allowedMethods = new Set();
+    selCountries.forEach(c => (COUNTRY_TO_METHODS_LC[c] || []).forEach(m => allowedMethods.add(m)));
+  }
+  if (selRegions.length) {
+    const fromRegions = new Set();
+    selRegions.forEach(r => (REGION_TO_METHODS_LC[r] || []).forEach(m => fromRegions.add(m)));
+    allowedMethods = allowedMethods ? new Set([...allowedMethods].filter(m => fromRegions.has(m))) : fromRegions;
+  }
+  let allowedCountries = null;
+  if (selMethods.length) {
+    allowedCountries = new Set();
+    selMethods.forEach(m => (METHOD_TO_COUNTRIES_LC[m] || []).forEach(c => allowedCountries.add(c)));
+  }
+  if (selRegions.length) {
+    const fromRegions = new Set();
+    selRegions.forEach(r => (REGION_TO_COUNTRIES_LC[r] || []).forEach(c => fromRegions.add(c)));
+    allowedCountries = allowedCountries ? new Set([...allowedCountries].filter(c => fromRegions.has(c))) : fromRegions;
+  }
+  const qC = (document.querySelector('#drop-cov_country .col-filter-search')?.value || '').toLowerCase();
+  const qM = (document.querySelector('#drop-cov_method .col-filter-search')?.value || '').toLowerCase();
+  document.querySelectorAll('#drop-cov_country .col-filter-option').forEach(opt => {
+    const cb = opt.querySelector('input');
+    const v = _norm(cb.value);
+    const txt = (cb.parentElement.textContent || '').trim().toLowerCase();
+    const passSearch = !qC || txt.includes(qC);
+    const passAllowed = !allowedCountries || allowedCountries.has(v) || cb.checked;
+    opt.style.display = (passSearch && passAllowed) ? '' : 'none';
+  });
+  document.querySelectorAll('#drop-cov_method .col-filter-option').forEach(opt => {
+    const cb = opt.querySelector('input');
+    const v = _norm(cb.value);
+    const txt = (cb.parentElement.textContent || '').trim().toLowerCase();
+    const passSearch = !qM || txt.includes(qM);
+    const passAllowed = !allowedMethods || allowedMethods.has(v) || cb.checked;
+    opt.style.display = (passSearch && passAllowed) ? '' : 'none';
+  });
+}
+
+function toggleCoverageFilters(e) {
+  if (e) e.stopPropagation();
+  const items = document.querySelectorAll('.coverage-filter');
+  const willShow = items.length && items[0].style.display === 'none';
+  items.forEach(it => it.style.display = willShow ? '' : 'none');
+  const btn = document.getElementById('add-filter-btn');
+  if (btn) {
+    btn.classList.toggle('active', willShow);
+    btn.textContent = willShow ? '−' : '+';
+    btn.title = willShow ? 'Hide coverage filters' : 'Add coverage filters';
+    if (willShow) { btn.style.background = 'var(--indigo)'; btn.style.color = '#fff'; }
+    else { btn.style.background = '#fff'; btn.style.color = 'var(--indigo)'; }
+  }
+  if (!willShow) {
+    document.querySelectorAll('#drop-cov_country input[type=checkbox], #drop-cov_method input[type=checkbox], #drop-cov_region input[type=checkbox]').forEach(c => c.checked = false);
+    const sC = document.querySelector('#drop-cov_country .col-filter-search'); if (sC) sC.value = '';
+    const sM = document.querySelector('#drop-cov_method .col-filter-search'); if (sM) sM.value = '';
+    applyFilters();
+  }
+}
+
+function toggleDrop(key, e) {
+  e.stopPropagation();
+  const drop = document.getElementById(`drop-${key}`);
+  const isOpen = drop.classList.contains('open');
+  document.querySelectorAll('.col-filter-dropdown').forEach(d => d.classList.remove('open'));
+  if (!isOpen) drop.classList.add('open');
+}
+
+function clearDrop(key) {
+  event.stopPropagation();
+  document.querySelectorAll(`#drop-${key} input[type=checkbox]`).forEach(c => c.checked = false);
+  applyFilters();
+}
+
+document.addEventListener('click', () => {
+  document.querySelectorAll('.col-filter-dropdown').forEach(d => d.classList.remove('open'));
+});
+
+function clearAllFilters() {
+  document.getElementById('search').value = '';
+  document.querySelectorAll('.col-filter-dropdown input[type=checkbox]').forEach(c => c.checked = false);
+  applyFilters();
+}
+</script>
+{% endblock %}

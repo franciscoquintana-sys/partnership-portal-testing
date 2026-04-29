@@ -1,0 +1,767 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.stat-box { background: #fff; padding: 18px 24px; display: flex; flex-direction: column; justify-content: flex-end; }
+.stat-box-value { font-size: 30px; font-weight: 800; color: #0f172a; letter-spacing: -1px; line-height: 1; flex: 1; display: flex; align-items: flex-end; }
+.stat-box-value.green { color: #16a34a; }
+.stat-box-value.blue  { color: #2563eb; }
+.stat-box-value.amber { color: #d97706; }
+.stat-box-label { font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text3); margin-top: 4px; }
+
+/* Partner header */
+.partner-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+.partner-header-avatar {
+  width: 56px; height: 56px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 800; color: #fff; flex-shrink: 0;
+  overflow: hidden;
+}
+.partner-header-avatar img {
+  display: none; width: 100%; height: 100%; object-fit: contain; padding: 6px;
+}
+.partner-header-name { font-size: 24px; font-weight: 800; color: #0f172a; letter-spacing: -0.5px; }
+.partner-header-meta { font-size: 13px; color: var(--text3); margin-top: 3px; display: flex; align-items: center; gap: 8px; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12.5px; font-weight: 600; color: var(--text3);
+  text-decoration: none; margin-bottom: 16px;
+  transition: color 0.15s;
+}
+.back-link:hover { color: var(--indigo); }
+
+/* Tags row */
+.tags-row {
+  display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.tag {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 11.5px; font-weight: 600; padding: 5px 12px;
+  border-radius: 20px; white-space: nowrap;
+}
+.tag-on  { background: rgba(22,163,74,.1);   color: #15803d; border: 1px solid rgba(22,163,74,.2); }
+.tag-off { background: rgba(107,114,128,.07); color: #9ca3af; border: 1px solid rgba(107,114,128,.15); }
+.tag-blue { background: rgba(37,99,235,.1); color: #1d4ed8; border: 1px solid rgba(37,99,235,.2); }
+.tag-purple { background: rgba(124,58,237,.1); color: #6d28d9; border: 1px solid rgba(124,58,237,.2); }
+
+/* Content grid */
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.section-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid #4F46E5;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.section-card.full { grid-column: 1 / -1; }
+
+.section-head {
+  padding: 12px 16px;
+  background: #fafafa;
+  border-bottom: 1px solid var(--border);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text3);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-head .icon { font-size: 14px; }
+
+.section-body { padding: 16px; }
+
+/* Contact row with avatar */
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.contact-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0;
+}
+.contact-info { flex: 1; }
+.contact-name { font-size: 13px; font-weight: 600; color: #0f172a; }
+.contact-sub { font-size: 11px; color: var(--text3); }
+
+.field-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.field-label { font-size: 10px; color: var(--text3); margin-bottom: 3px; }
+.field-value { font-size: 13.5px; font-weight: 600; color: #0f172a; }
+.field-value.muted { color: var(--text2); font-weight: 400; }
+
+/* Type pill */
+.type-pill {
+  display: inline-flex; align-items: center;
+  font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 5px;
+}
+.type-Acquirer        { background: rgba(59,130,246,.12); color: #1d4ed8; }
+.type-PSP, .type-PSP-Aggregator { background: rgba(139,92,246,.12); color: #6d28d9; }
+.type-APM             { background: rgba(20,184,166,.12); color: #0f766e; }
+.type-Fraud, .type-Fraud-Provider { background: rgba(239,68,68,.12); color: #b91c1c; }
+.type-BaaS            { background: rgba(245,158,11,.12); color: #b45309; }
+.type-Other           { background: rgba(107,114,128,.12);color: #4b5563; }
+.type-Plug-In         { background: rgba(6,182,212,.12);  color: #0e7490; }
+
+/* Coverage table */
+.coverage-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.coverage-table th {
+  padding: 9px 14px; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text3); text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.coverage-table td {
+  padding: 10px 14px; border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.coverage-table tr:last-child td { border-bottom: none; }
+.coverage-table tbody tr:hover td { background: #f8f8fb; }
+
+/* Methods / processing pills */
+.methods-wrap { display: flex; flex-wrap: wrap; gap: 6px; }
+.method-tag {
+  font-size: 11px; font-weight: 500; padding: 3px 9px;
+  border-radius: 5px; background: var(--bg3); color: var(--text2);
+  transition: background 0.15s, color 0.15s;
+}
+.method-tag:hover { background: rgba(79,70,229,.12); color: #4F46E5; }
+.method-tag.tag-selected { background: #4F46E5; color: #fff; }
+
+/* Methods grouped by country */
+.method-country-group { margin-bottom: 14px; }
+.method-country-group:last-child { margin-bottom: 0; }
+.method-country-header {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+  text-transform: uppercase; color: var(--text2);
+  margin-bottom: 6px;
+}
+.method-country-count { color: var(--text3); font-weight: 500; }
+
+/* Skeleton */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skel {
+  display: inline-block;
+  border-radius: 5px;
+  background: linear-gradient(90deg, #f0f0f4 25%, #e4e4ec 50%, #f0f0f4 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s infinite;
+}
+.skel-text  { height: 13px; width: 90px; }
+.skel-text-sm { height: 11px; width: 60px; }
+.skel-text-lg { height: 13px; width: 130px; }
+.skel-tag   { height: 22px; width: 70px; border-radius: 5px; }
+.skel-line  { height: 10px; border-radius: 4px; margin-bottom: 8px; }
+.skel-block { display: flex; flex-direction: column; gap: 8px; padding: 4px 0; }
+
+.tier-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.tier-strategic { background: rgba(79,70,229,.12); color: #4F46E5; }
+.tier-tier-1    { background: rgba(37,99,235,.12); color: #1d4ed8; }
+.tier-tier-2    { background: rgba(217,119,6,.12); color: #b45309; }
+.tier-tier-3    { background: rgba(107,114,128,.12); color: #4b5563; }
+.tier-default   { background: rgba(107,114,128,.08); color: #6b7280; }
+</style>
+{% endblock %}
+
+{% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+
+{% block content %}
+
+<!-- Dark banner -->
+<div style="
+  background: linear-gradient(120deg, #0a1628 70%, #0f2044 100%);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+">
+  <div style="position:absolute;right:-40px;top:-40px;width:300px;height:200px;background:radial-gradient(ellipse,rgba(79,70,229,0.25) 0%,transparent 70%);pointer-events:none"></div>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between">
+    <div>
+      <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Partner Detail</div>
+      <div style="font-size:13px;color:#94a3b8">Detailed view of partner information, contacts and capabilities.</div>
+    </div>
+    {% if back_ref == 'insights' %}
+      {% set back_url = '/insights?view=country' ~ ('&country=' ~ (back_country | urlencode) if back_country) %}
+      {% set back_label = 'Market Analysis' %}
+    {% elif back_ref == 'mission' %}
+      {% set back_url = '/mission' %}
+      {% set back_label = 'In Flight' %}
+    {% else %}
+      {% set back_url = '/partners' %}
+      {% set back_label = 'Portfolio' %}
+    {% endif %}
+    <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;position:relative;z-index:1">
+      <a href="{{ back_url }}" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">← Back to {{ back_label }}</a>
+      <button type="button" onclick="downloadPartnerDetail()" style="font-family:var(--font);font-size:12px;font-weight:600;color:#fff;background:#4F46E5;border:1px solid rgba(255,255,255,0.18);border-radius:7px;padding:6px 14px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px;transition:background 0.15s" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4F46E5'">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+    </div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<!-- Partner header -->
+<div class="partner-header">
+  <div class="partner-header-avatar" style="background:{{ partner.color }}">
+    <img src="https://logo.clearbit.com/{{ partner.name | lower | replace(' ','') | replace('/','') | replace('(','') | replace(')','') | replace('.','') | replace('-','') }}.com"
+         loading="lazy"
+         onload="this.style.display='block';this.parentElement.style.background='#f8fafc';this.parentElement.querySelector('span').style.display='none'"
+         onerror="this.remove()">
+    <span>{{ partner.logo }}</span>
+  </div>
+  <div>
+    <div class="partner-header-name">{{ partner.name }}</div>
+    <div class="partner-header-meta">
+      <span class="type-pill type-{{ partner.type | replace('/', '-') | replace(' ', '-') }}">{{ partner.type }}</span>
+      <span>{{ partner.region or partner.country }}</span>
+      {% if role == 'partnerships' and partner.tier %}
+      <span class="tier-pill {% if partner.tier == 'Strategic Partner' %}tier-strategic{% elif partner.tier == 'Tier 1' %}tier-tier-1{% elif partner.tier == 'Tier 2' %}tier-tier-2{% elif partner.tier == 'Tier 3' %}tier-tier-3{% else %}tier-default{% endif %}">{% if partner.tier == 'Strategic Partner' %}Strategic{% else %}{{ partner.tier }}{% endif %}</span>
+      {% elif partner.strategic %}
+      <span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 7px;border-radius:4px;font-weight:700">STRATEGIC</span>
+      {% endif %}
+    </div>
+  </div>
+  <div style="margin-left:auto;text-align:right">
+    <span style="font-size:14px;font-weight:700;
+      {% if 'Lost' in partner.status or 'Non-qualified' in partner.status or 'Non qualified' in partner.status %}color:#dc2626
+      {% elif 'Agreement Signed' in partner.status %}color:#15803d
+      {% elif 'Agreement Review' in partner.status %}color:#4ade80
+      {% elif 'Initial Negotiation' in partner.status %}color:#ca8a04
+      {% elif 'Prospect' in partner.status or 'Opportunity' in partner.status %}color:#2563eb
+      {% elif 'Live' in partner.status %}color:#15803d
+      {% else %}color:var(--text2){% endif %}">
+      ● {{ partner.status or 'N/A' }}
+    </span>
+    <div style="font-size:12px;color:var(--text3);margin-top:4px">
+      Integration: <strong style="font-weight:700;{% if (partner.integration_stage or '') | lower == 'live' %}color:#15803d{% elif (partner.integration_stage or '') | lower == 'blocked' %}color:#dc2626{% elif (partner.integration_stage or '') | lower == 'in progress' %}color:#ca8a04{% else %}color:#9ca3af{% endif %}">{{ (partner.integration_stage or 'N/A') | title }}</strong>
+    </div>
+  </div>
+</div>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat-box">
+    <div class="stat-box-value" id="stat-countries">{{ partner_countries | length }}</div>
+    <div class="stat-box-label">Countries</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-box-value blue" id="stat-methods">{{ partner_methods | length }}</div>
+    <div class="stat-box-label">Payment Methods</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-box-value" style="font-size:18px;text-transform:uppercase">{{ processing_label }}</div>
+    <div class="stat-box-label">Processing Type</div>
+  </div>
+</div>
+
+<!-- Content grid -->
+<div class="detail-grid">
+
+  <!-- Partner details -->
+  <div class="section-card">
+    <div class="section-head"><span class="icon">📋</span> Partnership Details</div>
+    <div class="section-body">
+      <div class="field-grid">
+        <div>
+          <div class="field-label">Manager</div>
+          <div class="field-value">{{ partner.manager if partner.manager else "N/A" }}</div>
+        </div>
+        <div>
+          <div class="field-label">Management Type</div>
+          <div class="field-value">{{ partner.mgmt_type if partner.mgmt_type else "N/A" }}</div>
+        </div>
+        <div>
+          <div class="field-label">Deal Stage</div>
+          <div class="field-value" style="font-weight:700;
+            {% if 'Lost' in partner.status or 'Non-qualified' in partner.status or 'Non qualified' in partner.status %}color:#dc2626
+            {% elif 'Agreement Signed' in partner.status %}color:#15803d
+            {% elif 'Agreement Review' in partner.status %}color:#4ade80
+            {% elif 'Initial Negotiation' in partner.status %}color:#ca8a04
+            {% elif 'Prospect' in partner.status or 'Opportunity' in partner.status %}color:#2563eb
+            {% elif 'Live' in partner.status %}color:#15803d
+            {% endif %}">{{ partner.status if partner.status else "N/A" }}</div>
+        </div>
+        <div>
+          <div class="field-label">Integration Stage</div>
+          <div class="field-value" style="font-weight:700;{% if (partner.integration_stage or '') | lower == 'live' %}color:#15803d{% elif (partner.integration_stage or '') | lower == 'blocked' %}color:#dc2626{% elif (partner.integration_stage or '') | lower == 'in progress' %}color:#ca8a04{% else %}color:#9ca3af{% endif %}">{{ (partner.integration_stage if partner.integration_stage else "N/A") | title }}</div>
+        </div>
+        <div>
+          <div class="field-label">NDA</div>
+          <div class="field-value muted">N/A</div>
+        </div>
+        <div>
+          <div class="field-label">KYP</div>
+          <div class="field-value muted">N/A</div>
+        </div>
+        <div>
+          <div class="field-label">Commercial Terms</div>
+          <div class="field-value muted">N/A</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contacts -->
+  <div class="section-card">
+    <div class="section-head"><span class="icon">👥</span> Sales Contacts</div>
+    <div class="section-body">
+      {% if sales_contacts %}
+        {% for c in sales_contacts %}
+        <div {% if not loop.first %}style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)"{% endif %}>
+          <div class="contact-row">
+            <div class="contact-avatar" style="background:{% if loop.index % 3 == 1 %}#3b82f6{% elif loop.index % 3 == 2 %}#10b981{% else %}#8b5cf6{% endif %}">{{ c.am_name[:1] if c.am_name != 'N/A' else '?' }}</div>
+            <div class="contact-info">
+              <div class="contact-name">{{ c.am_name }}</div>
+              <div class="contact-sub">{{ c.am_email }}</div>
+            </div>
+          </div>
+          <div class="field-grid" style="margin-top:8px">
+            <div>
+              <div class="field-label">Role</div>
+              <div class="field-value">{{ c.am_role }}</div>
+            </div>
+            <div>
+              <div class="field-label">Territory Scope</div>
+              <div class="field-value">{{ c.territory }}</div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="contact-row">
+          <div class="contact-avatar" style="background:#94a3b8">?</div>
+          <div class="contact-info">
+            <div class="contact-name muted">N/A</div>
+            <div class="contact-sub">N/A</div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Technical Contact -->
+  <div class="section-card full">
+    <div class="section-head"><span class="icon">🔧</span> Technical Contacts</div>
+    <div class="section-body">
+      <div style="display:flex;gap:48px;flex-wrap:wrap">
+        <div>
+          <div class="field-label">Technical Contact</div>
+          <div class="field-value">{{ technical_contact.contact }}</div>
+        </div>
+        <div>
+          <div class="field-label">Technical Contact P1</div>
+          <div class="field-value">{{ technical_contact.contact_p1 }}</div>
+        </div>
+        <div>
+          <div class="field-label">SLA</div>
+          <div class="field-value">{{ technical_contact.sla }}</div>
+        </div>
+        <div>
+          <div class="field-label">Escalation Path</div>
+          <div class="field-value">{{ technical_contact.escalation }}</div>
+        </div>
+        <div>
+          <div class="field-label">Slack Channel</div>
+          <div class="field-value">{{ technical_contact.slack }}</div>
+        </div>
+        <div>
+          <div class="field-label">Status Page</div>
+          <div class="field-value">{{ technical_contact.status_page }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Countries -->
+  <div class="section-card">
+    <div class="section-head" style="display:flex;justify-content:space-between;align-items:center">
+      <span><span class="icon">🌍</span> Countries (<span id="country-count">{{ partner_countries | length }}</span>)</span>
+      {% if partner_regions %}
+      <select id="region-filter" onchange="filterByRegion()" style="font-family:var(--font);font-size:11px;font-weight:600;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);cursor:pointer">
+        <option value="all">All Regions</option>
+        {% for region in partner_regions %}
+        <option value="{{ region }}">{{ region }}</option>
+        {% endfor %}
+      </select>
+      {% endif %}
+    </div>
+    <div class="section-body">
+      {% if partner_countries %}
+      <div class="methods-wrap" id="countries-wrap">
+        {% for c in partner_countries %}<span class="method-tag country-tag" style="cursor:pointer" onclick="clickCountry(this)">{{ c }}</span>{% endfor %}
+      </div>
+      {% else %}
+      <div class="field-value muted">N/A</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Payment Methods -->
+  <div class="section-card">
+    <div class="section-head" style="display:flex;justify-content:space-between;align-items:center">
+      <span><span class="icon">💳</span> Payment Methods (<span id="method-count">{{ partner_methods | length }}</span>)</span>
+      {% if method_categories %}
+      <select id="method-cat-filter" onchange="filterByCategory()" style="font-family:var(--font);font-size:11px;font-weight:600;padding:4px 8px;border:1px solid var(--border);border-radius:6px;background:#fff;color:var(--text);cursor:pointer">
+        <option value="all">All Categories</option>
+        {% for cat in method_categories %}
+        <option value="{{ cat }}">{{ cat }}</option>
+        {% endfor %}
+      </select>
+      {% endif %}
+    </div>
+    <div class="section-body">
+      {% if country_methods %}
+      <div id="methods-wrap">
+        {% for country, methods in country_methods.items() | sort %}
+        <div class="method-country-group" data-country="{{ country }}">
+          <div class="method-country-header">{{ country }} <span class="method-country-count">({{ methods | length }})</span></div>
+          <div class="methods-wrap">
+            {% for m in methods %}<span class="method-tag method-tag-item" data-method="{{ m }}" data-country="{{ country }}" style="cursor:pointer" onclick="clickMethod(this)">{{ m }}</span>{% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% elif partner_methods %}
+      <div class="methods-wrap" id="methods-wrap">
+        {% for m in partner_methods %}<span class="method-tag method-tag-item" data-method="{{ m }}" style="cursor:pointer" onclick="clickMethod(this)">{{ m }}</span>{% endfor %}
+      </div>
+      {% else %}
+      <div class="field-value muted">N/A</div>
+      {% endif %}
+    </div>
+  <script>
+  const REGION_COUNTRIES = {{ partner_regions | tojson }};
+  const CAT_METHODS = {{ method_categories | tojson }};
+  const REGION_METHODS = {{ region_methods | tojson }};
+  const CAT_COUNTRIES = {{ category_countries | tojson }};
+  const COUNTRY_METHODS = {{ country_methods | tojson }};
+  const METHOD_COUNTRIES = {{ method_countries | tojson }};
+
+  const selectedCountries = new Set();
+  const selectedMethods = new Set();
+
+  function crossFilter() {
+    const regionSel = document.getElementById('region-filter') ? document.getElementById('region-filter').value : 'all';
+    const catSel = document.getElementById('method-cat-filter') ? document.getElementById('method-cat-filter').value : 'all';
+
+    // Union of countries supported by any selected method
+    const allowedCountriesByMethod = new Set();
+    selectedMethods.forEach(m => (METHOD_COUNTRIES[m] || []).forEach(c => allowedCountriesByMethod.add(c)));
+
+    // Union of methods supported by any selected country
+    const allowedMethodsByCountry = new Set();
+    selectedCountries.forEach(c => (COUNTRY_METHODS[c] || []).forEach(m => allowedMethodsByCountry.add(m)));
+
+    let countryCount = 0;
+    document.querySelectorAll('.country-tag').forEach(tag => {
+      const country = tag.textContent.trim();
+      const isSelected = selectedCountries.has(country);
+      const inRegion = regionSel === 'all' || (REGION_COUNTRIES[regionSel] || []).includes(country);
+      const inCat = catSel === 'all' || (CAT_COUNTRIES[catSel] || []).includes(country);
+      // Selected countries always remain visible so they can be deselected
+      const inMethod = selectedMethods.size === 0 || allowedCountriesByMethod.has(country) || isSelected;
+      if (inRegion && inCat && inMethod) {
+        tag.style.display = '';
+        countryCount++;
+      } else {
+        tag.style.display = 'none';
+      }
+      tag.classList.toggle('tag-selected', isSelected);
+    });
+    document.getElementById('country-count').textContent = countryCount;
+    document.getElementById('stat-countries').textContent = countryCount;
+
+    const visibleMethods = new Set();
+    document.querySelectorAll('.method-tag-item').forEach(tag => {
+      const method = tag.dataset.method || tag.textContent.trim();
+      const groupCountry = tag.dataset.country;
+      const isSelected = selectedMethods.has(method);
+      const inCat = catSel === 'all' || (CAT_METHODS[catSel] || []).includes(method);
+      const inRegion = regionSel === 'all' || (REGION_METHODS[regionSel] || []).includes(method);
+      // Country selection filters BOTH by which group the chip is in AND by union match
+      const inCountry = selectedCountries.size === 0
+        || (groupCountry ? selectedCountries.has(groupCountry) : (allowedMethodsByCountry.has(method) || isSelected));
+      if (inCat && inRegion && inCountry) {
+        tag.style.display = '';
+        visibleMethods.add(method);
+      } else {
+        tag.style.display = 'none';
+      }
+      tag.classList.toggle('tag-selected', isSelected);
+    });
+    // Hide country groups that have no visible methods
+    document.querySelectorAll('.method-country-group').forEach(group => {
+      const anyVisible = group.querySelector('.method-tag-item:not([style*="display: none"])');
+      group.style.display = anyVisible ? '' : 'none';
+    });
+    document.getElementById('method-count').textContent = visibleMethods.size;
+    document.getElementById('stat-methods').textContent = visibleMethods.size;
+  }
+
+  function clickCountry(el) {
+    const country = el.textContent.trim();
+    if (selectedCountries.has(country)) {
+      selectedCountries.delete(country);
+    } else {
+      selectedCountries.add(country);
+    }
+    crossFilter();
+  }
+
+  function clickMethod(el) {
+    const method = el.dataset.method || el.textContent.trim();
+    if (selectedMethods.has(method)) {
+      selectedMethods.delete(method);
+    } else {
+      selectedMethods.add(method);
+    }
+    crossFilter();
+  }
+
+  function filterByRegion() { selectedCountries.clear(); selectedMethods.clear(); crossFilter(); }
+  function filterByCategory() { selectedCountries.clear(); selectedMethods.clear(); crossFilter(); }
+
+  // Pre-apply Country Coverage / Payment Method selections carried over from
+  // the partners list (same sessionStorage key used by saveFilterState there).
+  document.addEventListener('DOMContentLoaded', () => {
+    let state = null;
+    try { state = JSON.parse(sessionStorage.getItem('partnersPortalFilters_v1') || 'null'); } catch (e) {}
+    if (!state || !state.filters) return;
+    const ccs = state.filters.cov_country || [];
+    const cms = state.filters.cov_method  || [];
+    if (!ccs.length && !cms.length) return;
+    const norm = s => (s || '').toString().trim().toLowerCase();
+    const wantedC = new Set(ccs.map(norm));
+    const wantedM = new Set(cms.map(norm));
+    let changed = false;
+    document.querySelectorAll('.country-tag').forEach(tag => {
+      const label = tag.textContent.trim();
+      if (wantedC.has(norm(label))) { selectedCountries.add(label); changed = true; }
+    });
+    document.querySelectorAll('.method-tag-item').forEach(tag => {
+      const label = tag.dataset.method || tag.textContent.trim();
+      if (wantedM.has(norm(label))) { selectedMethods.add(label); changed = true; }
+    });
+    if (changed) crossFilter();
+  });
+  </script>
+  </div>
+
+  <!-- Other Characteristics -->
+  <div class="section-card">
+    <div class="section-head"><span class="icon">⚙️</span> Other Characteristics</div>
+    <div class="section-body">
+      {% if characteristics %}
+      <div class="methods-wrap">
+        {% for c in characteristics %}<span class="method-tag">{{ c }}</span>{% endfor %}
+      </div>
+      {% else %}
+      <div class="field-value muted">N/A</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Integrated by Yuno -->
+  <div class="section-card">
+    <div class="section-head"><span class="icon">🔗</span> Integrated by Yuno</div>
+    <div class="section-body">
+      <div class="field-value muted">N/A</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const PARTNER_NAME_FOR_PDF = {{ partner.name | tojson }};
+
+async function _loadImageRasterizedDetail(url) {
+  return await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      let w = img.naturalWidth || 800;
+      let h = img.naturalHeight || 200;
+      const target = 1200;
+      if (w < target) { const s = target / w; w = Math.round(w * s); h = Math.round(h * s); }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      try { resolve({ dataURL: canvas.toDataURL('image/png'), width: w, height: h }); }
+      catch (e) { reject(e); }
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+async function downloadPartnerDetail() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  const pageW = doc.internal.pageSize.getWidth();
+  const pageH = doc.internal.pageSize.getHeight();
+  const now = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+  // Header — same style as portfolio export
+  const headerH = 80;
+  doc.setFillColor(10, 22, 40);
+  doc.rect(0, 0, pageW, headerH, 'F');
+  doc.setFillColor(79, 70, 229);
+  doc.setGState(new doc.GState({ opacity: 0.18 }));
+  doc.ellipse(pageW - 60, 40, 140, 70, 'F');
+  doc.setGState(new doc.GState({ opacity: 1 }));
+
+  let logo = null;
+  try { logo = await _loadImageRasterizedDetail('/static/img/yuno_fulllogo_light.svg'); } catch (e) {}
+  let titleX = 20;
+  if (logo) {
+    const logoH = 16;
+    const logoW = logoH * (logo.width / logo.height);
+    doc.addImage(logo.dataURL, 'PNG', 20, (headerH - logoH) / 2, logoW, logoH);
+    const dividerX = 20 + logoW + 10;
+    doc.setDrawColor(148, 163, 184);
+    doc.setLineWidth(0.6);
+    doc.line(dividerX, headerH/2 - 10, dividerX, headerH/2 + 10);
+    titleX = dividerX + 10;
+  }
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.setTextColor(255, 255, 255);
+  const titleText = PARTNER_NAME_FOR_PDF + ' — Detail';
+  doc.text(titleText, titleX, headerH / 2 + 6);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(203, 213, 225);
+  doc.text(now, pageW - 32, headerH / 2 + 4, { align: 'right' });
+
+  // Collect filtered (visible) data from the page
+  const groups = [...document.querySelectorAll('.method-country-group')]
+    .filter(g => g.style.display !== 'none')
+    .map(g => ({
+      country: g.dataset.country,
+      methods: [...g.querySelectorAll('.method-tag-item')]
+        .filter(t => t.style.display !== 'none')
+        .map(t => t.dataset.method || t.textContent.trim()),
+    }))
+    .filter(g => g.methods.length > 0);
+  // Fallback for partners without grouped methods
+  let flatMethods = [];
+  if (groups.length === 0) {
+    flatMethods = [...document.querySelectorAll('.method-tag-item')]
+      .filter(t => t.style.display !== 'none')
+      .map(t => t.dataset.method || t.textContent.trim());
+  }
+
+  const leftMargin = 32, rightMargin = 32;
+  const contentW = pageW - leftMargin - rightMargin;
+  let y = headerH + 28;
+
+  function ensureSpace(needed) {
+    if (y + needed > pageH - 32) {
+      doc.addPage();
+      y = 32;
+    }
+  }
+
+  // Payment methods section (countries appear as group headers within)
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(15, 23, 42);
+  const uniqueMethods = new Set();
+  if (groups.length) groups.forEach(g => g.methods.forEach(m => uniqueMethods.add(m)));
+  else flatMethods.forEach(m => uniqueMethods.add(m));
+  doc.text(`Payment Methods (${uniqueMethods.size})`, leftMargin, y);
+  y += 14;
+
+  if (groups.length) {
+    for (const g of groups) {
+      ensureSpace(28);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(10);
+      doc.setTextColor(79, 70, 229);
+      doc.text(`${g.country.toUpperCase()} (${g.methods.length})`, leftMargin, y);
+      y += 12;
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(9.5);
+      doc.setTextColor(51, 65, 85);
+      const wrapped = doc.splitTextToSize(g.methods.join(', '), contentW);
+      ensureSpace(wrapped.length * 11);
+      doc.text(wrapped, leftMargin, y);
+      y += wrapped.length * 11 + 12;
+    }
+  } else if (flatMethods.length) {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(51, 65, 85);
+    const wrapped = doc.splitTextToSize(flatMethods.join(', '), contentW);
+    ensureSpace(wrapped.length * 12);
+    doc.text(wrapped, leftMargin, y);
+    y += wrapped.length * 12 + 12;
+  } else {
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(100, 116, 139);
+    doc.text('—', leftMargin, y);
+    y += 16;
+  }
+
+  // Footer
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.5);
+  const footerY = pageH - 28;
+  doc.line(leftMargin, footerY - 14, pageW - rightMargin, footerY - 14);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(148, 163, 184);
+  doc.text('Yuno Partnerships Portal · Confidential', leftMargin, footerY);
+  doc.text(`Generated ${now}`, pageW - rightMargin, footerY, { align: 'right' });
+
+  const safeName = PARTNER_NAME_FOR_PDF.replace(/[^a-z0-9]+/gi, '_').toLowerCase().replace(/^_|_$/g, '');
+  doc.save(`yuno_${safeName}_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+</script>
+
+{% endblock %}

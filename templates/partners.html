@@ -1,0 +1,1114 @@
+{% extends "base.html" %}
+{% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+{% block head %}
+<style>
+.partners-page { display: flex; flex-direction: column; gap: 0; }
+
+/* Stats bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.stat-box {
+  background: #fff;
+  padding: 18px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  align-items: flex-start;
+  text-align: left;
+}
+.stat-box-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.stat-box-value.green { color: #16a34a; }
+.stat-box-value.amber { color: #d97706; }
+.stat-box-value.blue  { color: #2563eb; }
+.stat-box-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text3);
+}
+
+/* Search row */
+.search-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.search-wrap {
+  position: relative;
+  flex: 1;
+}
+.search-wrap svg {
+  position: absolute;
+  left: 11px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text3);
+}
+.search-input {
+  width: 100%;
+  font-family: var(--font);
+  font-size: 12.5px;
+  color: var(--text);
+  background: #fff;
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 7px 12px 7px 32px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.search-input:focus {
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.08);
+}
+
+/* Table */
+.partners-table-wrap {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.partners-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  table-layout: fixed;
+}
+.partners-table th {
+  padding: 8px 10px 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text3);
+  background: #fafafa;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  white-space: nowrap;
+  position: relative;
+}
+.partners-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  vertical-align: middle;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  font-weight: 500;
+}
+/* Column widths via colgroup */
+.partners-table col:nth-child(1) { width: 24%; }
+.partners-table col:nth-child(2) { width: 13%; }
+.partners-table col:nth-child(3) { width: 12%; }
+.partners-table col:nth-child(4) { width: 14%; }
+.partners-table col:nth-child(5) { width: 20%; }
+.partners-table col:nth-child(6) { width: 17%; }
+.partners-table tr:last-child td { border-bottom: none; }
+.partners-table tbody tr:hover td { background: #f8f8fb; }
+
+/* Section title */
+.section-title {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 6px;
+}
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  align-items: flex-end;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 16px;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.filter-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  flex: 1;
+  min-width: 0;
+}
+.filter-item .col-filter-btn {
+  width: 100%;
+  justify-content: space-between;
+}
+.filter-item-label {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text3);
+  white-space: nowrap;
+}
+
+/* Multi-select filter button */
+.col-filter-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text2);
+  background: #fff;
+  border: 1px solid var(--border2);
+  border-radius: 6px;
+  padding: 5px 9px;
+  cursor: pointer;
+  white-space: nowrap;
+  text-transform: none;
+  letter-spacing: 0;
+  user-select: none;
+}
+.col-filter-btn.active { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-light); }
+.col-filter-btn .badge { background: var(--indigo); color: #fff; border-radius: 3px; padding: 0 4px; font-size: 9px; font-weight: 700; }
+
+/* Dropdown */
+.col-filter-wrap { position: relative; display: inline-block; }
+.col-filter-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  min-width: 160px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  z-index: 999;
+  padding: 6px 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.col-filter-dropdown.open { display: block; }
+.col-filter-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.col-filter-option:hover { background: #f5f5ff; }
+.col-filter-option input[type=checkbox] { accent-color: var(--indigo); width: 13px; height: 13px; cursor: pointer; }
+.col-filter-clear { padding: 5px 12px; font-size: 11px; color: #dc2626; cursor: pointer; border-top: 1px solid var(--border); margin-top: 2px; }
+.col-filter-clear:hover { background: #fff5f5; }
+.col-filter-search {
+  width: calc(100% - 16px);
+  margin: 0 8px 6px;
+  padding: 6px 9px;
+  font-size: 12px;
+  font-family: var(--font);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+}
+.col-filter-search:focus { border-color: var(--indigo); }
+
+.connector-name {
+  font-weight: 600;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  overflow: hidden;
+}
+.connector-name-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+.connector-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.connector-avatar img {
+  display: none;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 3px;
+}
+
+.type-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.type-Acquirer        { background: rgba(59,130,246,.12); color: #1d4ed8; }
+.type-PSP, .type-PSP-Aggregator { background: rgba(139,92,246,.12); color: #6d28d9; }
+.type-APM             { background: rgba(20,184,166,.12); color: #0f766e; }
+.type-Fraud, .type-Fraud-Provider { background: rgba(239,68,68,.12); color: #b91c1c; }
+.type-BaaS            { background: rgba(245,158,11,.12); color: #b45309; }
+.type-Other           { background: rgba(107,114,128,.12);color: #4b5563; }
+.type-Plug-In         { background: rgba(6,182,212,.12);  color: #0e7490; }
+
+.tier-pill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 5px;
+  white-space: nowrap;
+}
+.tier-strategic { background: rgba(79,70,229,.12); color: #4F46E5; }
+.tier-tier-1    { background: rgba(37,99,235,.12); color: #1d4ed8; }
+.tier-tier-2    { background: rgba(217,119,6,.12); color: #b45309; }
+.tier-tier-3    { background: rgba(107,114,128,.12); color: #4b5563; }
+.tier-default   { background: rgba(107,114,128,.08); color: #6b7280; }
+
+.status-live           { color: #15803d; font-weight: 700; }
+.status-agreement-sign { color: #15803d; font-weight: 700; }
+.status-agreement-rev  { color: #4ade80; font-weight: 700; }
+.status-initial-neg    { color: #ca8a04; font-weight: 700; }
+.status-prospect       { color: #2563eb; font-weight: 700; }
+.status-lost           { color: #dc2626; font-weight: 700; }
+.status-default        { color: var(--text2); font-weight: 700; }
+
+.partners-table tbody tr { cursor: pointer; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="partners-page">
+
+  <!-- Dark banner -->
+  <div style="
+    background: linear-gradient(120deg, #0a1628 70%, #0f2044 100%);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  ">
+    <div style="position:absolute;right:-40px;top:-40px;width:300px;height:200px;background:radial-gradient(ellipse,rgba(79,70,229,0.25) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Portfolio</div>
+        <div style="font-size:13px;color:#94a3b8">Search, filter and explore Yuno's payment partner ecosystem.</div>
+      </div>
+      <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
+    </div>
+  </div>
+
+  <!-- Stats bar -->
+  <div class="stats-bar">
+    <div class="stat-box">
+      <div class="stat-box-value" id="stat-total-db">{{ total_db }}</div>
+      <div class="stat-box-label">Total Database</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-value blue" id="stat-total-active">{{ total_connected }}</div>
+      <div class="stat-box-label">Active Stage Partners</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-value amber" id="stat-total-signed">{{ total_signed }}</div>
+      <div class="stat-box-label">Total Signed</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-value green" id="stat-total-live">{{ live_count }}</div>
+      <div class="stat-box-label">Live</div>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="search-bar-row">
+    <div class="search-wrap">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-input" id="search" type="text"
+        placeholder="Search by provider, type, region, country, deal stage, integration status…"
+        value="{{ q }}"
+        oninput="applyFilters()"
+        onkeydown="if(event.key==='Enter'){event.preventDefault();applyFilters()}">
+    </div>
+    <button onclick="clearAllFilters()" style="font-family:var(--font);font-size:12px;font-weight:600;color:#dc2626;background:#fff;border:1px solid #fca5a5;border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.15s" onmouseover="this.style.background='#fff5f5'" onmouseout="this.style.background='#fff'">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      Clear filters
+    </button>
+    <div style="position:relative">
+      <button id="export-btn" onclick="toggleExportMenu(event)" style="font-family:var(--font);font-size:12px;font-weight:600;color:#fff;background:#4F46E5;border:none;border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:5px;transition:background 0.15s" onmouseover="this.style.background='#4338ca'" onmouseout="this.style.background='#4F46E5'">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+      </button>
+      <div id="export-menu" style="display:none;position:absolute;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.12);overflow:hidden;min-width:150px;z-index:999">
+        <div onclick="openExportModal('csv')" style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:12.5px;font-weight:600;color:#15803d;cursor:pointer" onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background=''">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          Excel / CSV
+        </div>
+        <div onclick="openExportModal('pdf')" style="display:flex;align-items:center;gap:9px;padding:10px 14px;font-size:12.5px;font-weight:600;color:#dc2626;cursor:pointer;border-top:1px solid var(--border)" onmouseover="this.style.background='#fff5f5'" onmouseout="this.style.background=''">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          PDF
+        </div>
+      </div>
+    </div>
+    <button id="scorecard-btn" onclick="openScorecard()" title="Scorecard" aria-label="Scorecard" style="font-family:var(--font);color:#0f172a;background:#fff;border:1px solid var(--border);border-radius:8px;padding:7px 9px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background 0.15s" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='#fff'">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="section-title" style="display:flex;align-items:center;justify-content:space-between">
+    <span>Filters</span>
+    <button type="button" id="add-filter-btn" title="Add coverage filters" aria-label="Add" onclick="toggleCoverageFilters(event)" style="width:22px;height:22px;border-radius:50%;border:1px solid var(--indigo);background:#fff;color:var(--indigo);font-size:14px;font-weight:700;line-height:1;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;transition:background 0.15s,color 0.15s" onmouseover="this.style.background='var(--indigo)';this.style.color='#fff'" onmouseout="if(!this.classList.contains('active')){this.style.background='#fff';this.style.color='var(--indigo)'}">+</button>
+  </div>
+  <div class="filter-bar">
+    <div class="filter-item">
+      <span class="filter-item-label">Provider</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-connector" onclick="toggleDrop('connector',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-connector">
+          {% for p in partners %}<label class="col-filter-option"><input type="checkbox" value="{{ p.name | lower }}" onchange="applyFilters()"> {{ p.name }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('connector')">Clear</div>
+        </div>
+      </div>
+    </div>
+    {% if role == 'partnerships' %}
+    <div class="filter-item">
+      <span class="filter-item-label">Tier</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-tier" onclick="toggleDrop('tier',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-tier">
+          {% for t in tiers %}<label class="col-filter-option"><input type="checkbox" value="{{ t }}" onchange="applyFilters()"> {% if t == 'Strategic Partner' %}Strategic{% else %}{{ t }}{% endif %}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('tier')">Clear</div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <div class="filter-item">
+      <span class="filter-item-label">Type</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cat" onclick="toggleDrop('cat',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cat">
+          {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cat')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Region</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-region" onclick="toggleDrop('region',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-region">
+          {% for r in regions %}<label class="col-filter-option"><input type="checkbox" value="{{ r }}" onchange="applyFilters()"> {{ r }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('region')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Country</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-country" onclick="toggleDrop('country',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-country">
+          {% for c in countries %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('country')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Deal Stage</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-status" onclick="toggleDrop('status',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-status">
+          {% for s in statuses %}<label class="col-filter-option"><input type="checkbox" value="{{ s }}" onchange="applyFilters()"> {{ s }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('status')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item">
+      <span class="filter-item-label">Integration</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-integration" onclick="toggleDrop('integration',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-integration">
+          {% for s in integration_stages %}<label class="col-filter-option"><input type="checkbox" value="{{ s | title }}" onchange="applyFilters()"> {{ s | title }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('integration')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item coverage-filter" style="display:none">
+      <span class="filter-item-label">Region Coverage</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cov_region" onclick="toggleDrop('cov_region',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cov_region">
+          {% for r in coverage_regions %}<label class="col-filter-option"><input type="checkbox" value="{{ r }}" onchange="applyFilters()"> {{ r }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cov_region')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item coverage-filter" style="display:none">
+      <span class="filter-item-label">Country Coverage</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cov_country" onclick="toggleDrop('cov_country',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cov_country">
+          <input type="text" class="col-filter-search" placeholder="Search country..." oninput="refreshCoverageDropdowns()" onclick="event.stopPropagation()">
+          {% for c in coverage_countries %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cov_country')">Clear</div>
+        </div>
+      </div>
+    </div>
+    <div class="filter-item coverage-filter" style="display:none">
+      <span class="filter-item-label">Payment Method</span>
+      <div class="col-filter-wrap">
+        <div class="col-filter-btn" id="btn-cov_method" onclick="toggleDrop('cov_method',event)">All <span>▾</span></div>
+        <div class="col-filter-dropdown" id="drop-cov_method">
+          <input type="text" class="col-filter-search" placeholder="Search method..." oninput="refreshCoverageDropdowns()" onclick="event.stopPropagation()">
+          {% for m in coverage_methods %}<label class="col-filter-option"><input type="checkbox" value="{{ m }}" onchange="applyFilters()"> {{ m }}</label>{% endfor %}
+          <div class="col-filter-clear" onclick="clearDrop('cov_method')">Clear</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="section-title">Partner Portfolio</div>
+  <div class="partners-table-wrap">
+    <table class="partners-table" id="partners-table">
+      <colgroup><col><col><col><col><col><col></colgroup>
+      <thead>
+        <tr>
+          <th>Provider</th>
+          <th>Type</th>
+          <th>Region</th>
+          <th>Country</th>
+          <th>Deal Stage</th>
+          <th>Integration Status</th>
+        </tr>
+      </thead>
+      <tbody id="partners-tbody">
+        {% for p in partners %}
+        {% set integ_status = (p.integration_stage if p.integration_stage else 'N/A') | title %}
+        <tr data-name="{{ p.name | lower }}"
+            data-type="{{ p.type }}"
+            data-status="{{ p.status }}"
+            data-region="{{ p.region }}"
+            data-country="{{ p.country }}"
+            data-tier="{{ p.tier }}"
+            data-partner="{{ p.name }}"
+            data-manager="{{ p.manager | lower }}"
+            data-integration="{{ integ_status }}"
+            onclick="window.location='/partners/'+encodeURIComponent(this.dataset.partner)"
+            style="cursor:pointer">
+          <td>
+            <div class="connector-name">
+              <div class="connector-avatar" style="background:{{ p.color }}"
+                   data-color="{{ p.color }}">
+                <img src="https://logo.clearbit.com/{{ p.name | lower | replace(' ','') | replace('/','') | replace('(','') | replace(')','') | replace('.','') | replace('-','') }}.com"
+                     loading="lazy"
+                     onload="this.style.display='block';this.parentElement.style.background='#f8fafc';this.parentElement.querySelector('span').style.display='none'"
+                     onerror="this.remove()">
+                <span>{{ p.logo }}</span>
+              </div>
+              <span class="connector-name-text">{{ p.name }}</span>
+              {% if role == 'partnerships' and p.tier %}
+              <span class="tier-pill {% if p.tier == 'Strategic Partner' %}tier-strategic{% elif p.tier == 'Tier 1' %}tier-tier-1{% elif p.tier == 'Tier 2' %}tier-tier-2{% elif p.tier == 'Tier 3' %}tier-tier-3{% else %}tier-default{% endif %}" style="font-size:9px;padding:2px 6px;flex-shrink:0">{% if p.tier == 'Strategic Partner' %}Strategic{% else %}{{ p.tier }}{% endif %}</span>
+              {% elif p.strategic %}
+              <span style="font-size:9px;background:rgba(79,70,229,.1);color:#4F46E5;padding:2px 6px;border-radius:4px;font-weight:700;flex-shrink:0">STRATEGIC</span>
+              {% endif %}
+            </div>
+          </td>
+          <td><span class="type-pill type-{{ p.type | replace('/', '-') | replace(' ', '-') }}">{{ p.type }}</span></td>
+          <td>{{ p.region or '—' }}</td>
+          <td>{{ p.country or '—' }}</td>
+          <td>
+            <span class="{% if 'Lost' in p.status or 'Non-qualified' in p.status or 'Non qualified' in p.status %}status-lost{% elif 'Agreement Signed' in p.status %}status-agreement-sign{% elif 'Agreement Review' in p.status %}status-agreement-rev{% elif 'Initial Negotiation' in p.status %}status-initial-neg{% elif 'Prospect' in p.status or 'Opportunity' in p.status %}status-prospect{% elif 'Live' in p.status %}status-live{% else %}status-default{% endif %}">
+              {{ p.status }}
+            </span>
+          </td>
+          <td>
+            <span style="font-weight:700;
+              {% if (integ_status | lower) == 'live' %}color:#15803d
+              {% elif (integ_status | lower) == 'blocked' %}color:#dc2626
+              {% elif (integ_status | lower) == 'in progress' %}color:#ca8a04
+              {% else %}color:#9ca3af{% endif %}">
+              {{ integ_status }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- Export Column Selector Modal -->
+<div id="export-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;display:none;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:24px;min-width:320px;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+    <div style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:4px">Select Columns to Export</div>
+    <div style="font-size:12px;color:#64748b;margin-bottom:16px" id="export-modal-format"></div>
+    <div id="export-col-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeExportModal()" style="font-family:var(--font);font-size:12px;font-weight:600;padding:8px 16px;border:1px solid var(--border);border-radius:8px;background:#fff;color:#64748b;cursor:pointer">Cancel</button>
+      <button onclick="confirmExport()" style="font-family:var(--font);font-size:12px;font-weight:600;padding:8px 16px;border:none;border-radius:8px;background:#4F46E5;color:#fff;cursor:pointer">Export</button>
+    </div>
+  </div>
+</div>
+
+<!-- Scorecard Modal -->
+<div id="scorecard-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:12px;padding:22px 24px;width:min(900px, 94vw);max-height:90vh;overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div>
+        <div style="font-size:16px;font-weight:700;color:#0f172a">Partner Scorecard</div>
+        <div style="font-size:12px;color:#64748b;margin-top:2px">Deal stage per region — partners with Integration Status = Live are counted under Live.</div>
+      </div>
+      <button onclick="closeScorecard()" style="background:transparent;border:none;cursor:pointer;padding:4px;color:#64748b" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div style="position:relative;height:420px">
+      <canvas id="scorecard-chart"></canvas>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script>
+const SCORECARD_DATA = {{ scorecard_data | tojson }};
+const SCORECARD_COLORS = {
+  "Prospect":            "#2563eb",
+  "Initial Negotiation": "#ca8a04",
+  "Agreement Review":    "#4ade80",
+  "Agreement Signed":    "#15803d",
+  "Live":                "#064e3b"
+};
+let _scorecardChart = null;
+
+function openScorecard() {
+  const modal = document.getElementById('scorecard-modal');
+  modal.style.display = 'flex';
+  if (typeof Chart === 'undefined') {
+    console.error('Chart.js not loaded');
+    return;
+  }
+  const canvas = document.getElementById('scorecard-chart');
+  const ctx = canvas.getContext('2d');
+  if (_scorecardChart) _scorecardChart.destroy();
+  _scorecardChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: SCORECARD_DATA.regions,
+      datasets: SCORECARD_DATA.series.map(s => ({
+        label: s.stage,
+        data: s.counts,
+        backgroundColor: SCORECARD_COLORS[s.stage] || '#94a3b8',
+        borderRadius: 4,
+        borderSkipped: false
+      }))
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { weight: '600' } } },
+        tooltip: { callbacks: { title: items => items[0].label } },
+        datalabels: {
+          color: '#fff',
+          font: { weight: '700', size: 11 },
+          formatter: (v) => v > 0 ? v : '',
+          textStrokeColor: 'rgba(0,0,0,0.35)',
+          textStrokeWidth: 2
+        }
+      },
+      scales: {
+        x: { stacked: true, grid: { display: false }, ticks: { font: { weight: '600' } } },
+        y: { stacked: true, beginAtZero: true, ticks: { precision: 0 }, grid: { color: '#eef2f7' } }
+      }
+    },
+    plugins: (typeof ChartDataLabels !== 'undefined') ? [ChartDataLabels] : []
+  });
+}
+
+function closeScorecard() {
+  document.getElementById('scorecard-modal').style.display = 'none';
+}
+
+document.addEventListener('click', (e) => {
+  const modal = document.getElementById('scorecard-modal');
+  if (modal && modal.style.display === 'flex' && e.target === modal) closeScorecard();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeScorecard();
+});
+
+const FILTERS = ['connector','cat','tier','country','region','status','integration','cov_region','cov_country','cov_method'];
+const PARTNER_COV_COUNTRIES = {{ partner_cov_countries | tojson }};
+const PARTNER_COV_METHODS = {{ partner_cov_methods | tojson }};
+const PARTNER_COV_REGIONS = {{ partner_cov_regions | tojson }};
+const PARTNER_COUNTRY_METHODS = {{ partner_country_methods | tojson }};
+const COUNTRY_TO_METHODS = {{ cov_country_to_methods | tojson }};
+const METHOD_TO_COUNTRIES = {{ cov_method_to_countries | tojson }};
+const REGION_TO_COUNTRIES = {{ cov_region_to_countries | tojson }};
+const REGION_TO_METHODS  = {{ cov_region_to_methods  | tojson }};
+
+const _norm = s => (s || '').toString().trim().toLowerCase();
+const _canon = s => (s || '').toString().toLowerCase().replace(/[^a-z0-9]/g, '');
+function _lcMap(obj) {
+  const out = {};
+  Object.keys(obj || {}).forEach(k => { out[_norm(k)] = (obj[k] || []).map(_norm); });
+  return out;
+}
+const COUNTRY_TO_METHODS_LC = _lcMap(COUNTRY_TO_METHODS);
+const METHOD_TO_COUNTRIES_LC = _lcMap(METHOD_TO_COUNTRIES);
+const REGION_TO_COUNTRIES_LC = _lcMap(REGION_TO_COUNTRIES);
+const REGION_TO_METHODS_LC  = _lcMap(REGION_TO_METHODS);
+const PARTNER_COV_COUNTRIES_LC = _lcMap(PARTNER_COV_COUNTRIES);
+const PARTNER_COV_METHODS_LC = _lcMap(PARTNER_COV_METHODS);
+const PARTNER_COV_REGIONS_LC  = _lcMap(PARTNER_COV_REGIONS);
+const PARTNER_COUNTRY_METHODS_LC = (() => {
+  const out = {};
+  Object.keys(PARTNER_COUNTRY_METHODS || {}).forEach(p => {
+    const inner = PARTNER_COUNTRY_METHODS[p] || {};
+    const innerLc = {};
+    Object.keys(inner).forEach(c => { innerLc[_norm(c)] = (inner[c] || []).map(_norm); });
+    out[_canon(p)] = innerLc;
+  });
+  return out;
+})();
+window.__cov = { COUNTRY_TO_METHODS, METHOD_TO_COUNTRIES, PARTNER_COV_COUNTRIES, PARTNER_COV_METHODS, PARTNER_COUNTRY_METHODS };
+
+function getSelected(key) {
+  return [...document.querySelectorAll(`#drop-${key} input[type=checkbox]:checked`)].map(c => c.value);
+}
+
+function updateBtn(key) {
+  const sel = getSelected(key);
+  const btn = document.getElementById(`btn-${key}`);
+  if (sel.length === 0) {
+    btn.innerHTML = `All <span>▾</span>`;
+    btn.classList.remove('active');
+  } else {
+    btn.innerHTML = `${sel.length} selected <span class="badge">${sel.length}</span> <span>▾</span>`;
+    btn.classList.add('active');
+  }
+}
+
+const ACTIVE_STAGES = new Set(["Agreement Review","Agreement Signed","Initial Negotiation","Live Partner","Only to be integrated"]);
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const sel = {};
+  FILTERS.forEach(k => { sel[k] = getSelected(k); updateBtn(k); });
+
+  let totalDb = 0, totalActive = 0, totalSigned = 0, totalLive = 0;
+
+  document.querySelectorAll('#partners-tbody tr').forEach(row => {
+    const haystack = [
+      row.dataset.name, row.dataset.type, row.dataset.region, row.dataset.country,
+      row.dataset.status, row.dataset.integration, row.dataset.tier, row.dataset.manager
+    ].join(' ').toLowerCase();
+    const partnerKey = _canon(row.dataset.name);
+    const partnerCovC = PARTNER_COV_COUNTRIES_LC[partnerKey] || [];
+    const partnerCovM = PARTNER_COV_METHODS_LC[partnerKey] || [];
+    const partnerCovR = PARTNER_COV_REGIONS_LC[partnerKey] || [];
+    const selCC = sel.cov_country.map(_norm);
+    const selCM = sel.cov_method.map(_norm);
+    const selCR = sel.cov_region.map(_norm);
+    let coverageOk = true;
+    if (selCC.length && selCM.length) {
+      // Both country + method filters active — partner must offer one of the selected methods IN one of the selected countries
+      const pcm = PARTNER_COUNTRY_METHODS_LC[partnerKey] || {};
+      coverageOk = selCC.some(c => {
+        const ms = pcm[c] || [];
+        return selCM.some(m => ms.includes(m));
+      });
+    } else if (selCC.length) {
+      coverageOk = selCC.some(c => partnerCovC.includes(c));
+    } else if (selCM.length) {
+      coverageOk = selCM.some(m => partnerCovM.includes(m));
+    }
+    if (coverageOk && selCR.length) {
+      coverageOk = selCR.some(r => partnerCovR.includes(r));
+    }
+    const show =
+      (!q || haystack.includes(q))
+      && (sel.connector.length === 0   || sel.connector.includes(row.dataset.name))
+      && (sel.cat.length === 0         || sel.cat.includes(row.dataset.type))
+      && (sel.tier.length === 0        || sel.tier.includes(row.dataset.tier))
+      && (sel.country.length === 0     || sel.country.includes(row.dataset.country))
+      && (sel.region.length === 0      || sel.region.includes(row.dataset.region))
+      && (sel.status.length === 0      || sel.status.includes(row.dataset.status))
+      && (sel.integration.length === 0 || sel.integration.includes(row.dataset.integration))
+      && coverageOk;
+    row.style.display = show ? '' : 'none';
+    if (show) {
+      totalDb++;
+      if (ACTIVE_STAGES.has(row.dataset.status)) totalActive++;
+      if (row.dataset.status === 'Agreement Signed') totalSigned++;
+      if (row.dataset.integration === 'Live') totalLive++;
+    }
+  });
+
+  document.getElementById('stat-total-db').textContent      = totalDb;
+  document.getElementById('stat-total-active').textContent  = totalActive;
+  document.getElementById('stat-total-signed').textContent  = totalSigned;
+  document.getElementById('stat-total-live').textContent    = totalLive;
+
+  refreshCoverageDropdowns();
+  saveFilterState();
+}
+
+const FILTER_STATE_KEY = 'partnersPortalFilters_v1';
+
+function saveFilterState() {
+  try {
+    const filters = {};
+    FILTERS.forEach(k => { filters[k] = getSelected(k); });
+    const state = {
+      search: document.getElementById('search')?.value || '',
+      filters,
+      coverageOpen: !!document.querySelector('.coverage-filter') &&
+                    document.querySelector('.coverage-filter').style.display !== 'none',
+      covCountrySearch: document.querySelector('#drop-cov_country .col-filter-search')?.value || '',
+      covMethodSearch: document.querySelector('#drop-cov_method .col-filter-search')?.value || '',
+    };
+    sessionStorage.setItem(FILTER_STATE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+function restoreFilterState() {
+  let state = null;
+  try { state = JSON.parse(sessionStorage.getItem(FILTER_STATE_KEY) || 'null'); } catch (e) {}
+  if (!state) return false;
+  const searchEl = document.getElementById('search');
+  if (searchEl) searchEl.value = state.search || '';
+  if (state.coverageOpen) {
+    document.querySelectorAll('.coverage-filter').forEach(it => it.style.display = '');
+    const btn = document.getElementById('add-filter-btn');
+    if (btn) {
+      btn.classList.add('active');
+      btn.textContent = '−';
+      btn.title = 'Hide coverage filters';
+      btn.style.background = 'var(--indigo)';
+      btn.style.color = '#fff';
+    }
+  }
+  Object.keys(state.filters || {}).forEach(k => {
+    const vals = new Set(state.filters[k] || []);
+    document.querySelectorAll(`#drop-${k} input[type=checkbox]`).forEach(cb => {
+      cb.checked = vals.has(cb.value);
+    });
+  });
+  const sC = document.querySelector('#drop-cov_country .col-filter-search');
+  if (sC) sC.value = state.covCountrySearch || '';
+  const sM = document.querySelector('#drop-cov_method .col-filter-search');
+  if (sM) sM.value = state.covMethodSearch || '';
+  return true;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const restored = restoreFilterState();
+  if (restored) applyFilters();
+});
+
+function refreshCoverageDropdowns() {
+  const selCountries = getSelected('cov_country').map(_norm);
+  const selMethods = getSelected('cov_method').map(_norm);
+  const selRegions = getSelected('cov_region').map(_norm);
+
+  let allowedMethods = null;
+  if (selCountries.length) {
+    allowedMethods = new Set();
+    selCountries.forEach(c => (COUNTRY_TO_METHODS_LC[c] || []).forEach(m => allowedMethods.add(m)));
+  }
+  if (selRegions.length) {
+    const fromRegions = new Set();
+    selRegions.forEach(r => (REGION_TO_METHODS_LC[r] || []).forEach(m => fromRegions.add(m)));
+    allowedMethods = allowedMethods ? new Set([...allowedMethods].filter(m => fromRegions.has(m))) : fromRegions;
+  }
+  let allowedCountries = null;
+  if (selMethods.length) {
+    allowedCountries = new Set();
+    selMethods.forEach(m => (METHOD_TO_COUNTRIES_LC[m] || []).forEach(c => allowedCountries.add(c)));
+  }
+  if (selRegions.length) {
+    const fromRegions = new Set();
+    selRegions.forEach(r => (REGION_TO_COUNTRIES_LC[r] || []).forEach(c => fromRegions.add(c)));
+    allowedCountries = allowedCountries ? new Set([...allowedCountries].filter(c => fromRegions.has(c))) : fromRegions;
+  }
+
+  const qC = (document.querySelector('#drop-cov_country .col-filter-search')?.value || '').toLowerCase();
+  const qM = (document.querySelector('#drop-cov_method .col-filter-search')?.value || '').toLowerCase();
+
+  document.querySelectorAll('#drop-cov_country .col-filter-option').forEach(opt => {
+    const cb = opt.querySelector('input');
+    const v = _norm(cb.value);
+    const txt = (cb.parentElement.textContent || '').trim().toLowerCase();
+    const passSearch = !qC || txt.includes(qC);
+    const passAllowed = !allowedCountries || allowedCountries.has(v) || cb.checked;
+    opt.style.display = (passSearch && passAllowed) ? '' : 'none';
+  });
+  document.querySelectorAll('#drop-cov_method .col-filter-option').forEach(opt => {
+    const cb = opt.querySelector('input');
+    const v = _norm(cb.value);
+    const txt = (cb.parentElement.textContent || '').trim().toLowerCase();
+    const passSearch = !qM || txt.includes(qM);
+    const passAllowed = !allowedMethods || allowedMethods.has(v) || cb.checked;
+    opt.style.display = (passSearch && passAllowed) ? '' : 'none';
+  });
+}
+
+function toggleCoverageFilters(e) {
+  if (e) e.stopPropagation();
+  const items = document.querySelectorAll('.coverage-filter');
+  const willShow = items.length && items[0].style.display === 'none';
+  items.forEach(it => it.style.display = willShow ? '' : 'none');
+  const btn = document.getElementById('add-filter-btn');
+  if (btn) {
+    btn.classList.toggle('active', willShow);
+    btn.textContent = willShow ? '−' : '+';
+    btn.title = willShow ? 'Hide coverage filters' : 'Add coverage filters';
+    if (willShow) { btn.style.background = 'var(--indigo)'; btn.style.color = '#fff'; }
+    else { btn.style.background = '#fff'; btn.style.color = 'var(--indigo)'; }
+  }
+  if (!willShow) {
+    document.querySelectorAll('#drop-cov_country input[type=checkbox], #drop-cov_method input[type=checkbox], #drop-cov_region input[type=checkbox]').forEach(c => c.checked = false);
+    const sC = document.querySelector('#drop-cov_country .col-filter-search'); if (sC) sC.value = '';
+    const sM = document.querySelector('#drop-cov_method .col-filter-search'); if (sM) sM.value = '';
+    applyFilters();
+  }
+}
+
+function toggleDrop(key, e) {
+  e.stopPropagation();
+  const drop = document.getElementById(`drop-${key}`);
+  const isOpen = drop.classList.contains('open');
+  // close all
+  document.querySelectorAll('.col-filter-dropdown').forEach(d => d.classList.remove('open'));
+  if (!isOpen) drop.classList.add('open');
+}
+
+function clearDrop(key) {
+  event.stopPropagation();
+  document.querySelectorAll(`#drop-${key} input[type=checkbox]`).forEach(c => c.checked = false);
+  applyFilters();
+}
+
+// close dropdowns on outside click
+document.addEventListener('click', () => {
+  document.querySelectorAll('.col-filter-dropdown').forEach(d => d.classList.remove('open'));
+});
+
+function clearAllFilters() {
+  document.getElementById('search').value = '';
+  document.querySelectorAll('.col-filter-dropdown input[type=checkbox]').forEach(c => c.checked = false);
+  applyFilters();
+}
+
+function toggleExportMenu(e) {
+  e.stopPropagation();
+  const menu = document.getElementById('export-menu');
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', () => {
+  const menu = document.getElementById('export-menu');
+  if (menu) menu.style.display = 'none';
+});
+
+function getVisibleRows() {
+  return [...document.querySelectorAll('#partners-tbody tr')].filter(r => r.style.display !== 'none');
+}
+
+const ALL_EXPORT_COLS = [
+  {key:'partner', label:'Provider'},
+  {key:'type', label:'Type'},
+  {key:'region', label:'Region'},
+  {key:'country', label:'Country'},
+  {key:'status', label:'Deal Stage'},
+  {key:'integration', label:'Integration Status'},
+  {key:'tier', label:'Tier'},
+  {key:'manager', label:'Manager'},
+];
+
+let _exportFormat = 'csv';
+
+function openExportModal(format) {
+  document.getElementById('export-menu').style.display = 'none';
+  _exportFormat = format;
+  const modal = document.getElementById('export-modal');
+  document.getElementById('export-modal-format').textContent = format === 'csv' ? 'Exporting as Excel / CSV' : 'Exporting as PDF';
+  const list = document.getElementById('export-col-list');
+  const defaultCols = ['partner','type','region','country'];
+  list.innerHTML = ALL_EXPORT_COLS.map(c => `<label style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500;color:#334155;cursor:pointer"><input type="checkbox" class="export-col-cb" value="${c.key}" ${defaultCols.includes(c.key) ? 'checked' : ''}> ${c.label}</label>`).join('');
+  modal.style.display = 'flex';
+}
+
+function closeExportModal() {
+  document.getElementById('export-modal').style.display = 'none';
+}
+
+function getSelectedExportCols() {
+  return [...document.querySelectorAll('.export-col-cb:checked')].map(cb => {
+    const col = ALL_EXPORT_COLS.find(c => c.key === cb.value);
+    return col;
+  });
+}
+
+function confirmExport() {
+  closeExportModal();
+  if (_exportFormat === 'csv') doExportCSV();
+  else doExportPDF();
+}
+
+function doExportCSV() {
+  const cols = getSelectedExportCols();
+  if (!cols.length) return;
+  const rows = getVisibleRows();
+  const headers = cols.map(c => c.label);
+  const data = rows.map(r => cols.map(c => r.dataset[c.key] || ''));
+  const csv = [headers, ...data].map(row => row.map(v => `"${(v||'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type: 'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'yuno_partners.csv'; a.click();
+}
+
+async function loadImageRasterized(url) {
+  return await new Promise((resolve, reject) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      let w = img.naturalWidth || 800;
+      let h = img.naturalHeight || 200;
+      // Upscale for crisp rendering, especially for small SVG intrinsic sizes
+      const target = 1200;
+      if (w < target) {
+        const s = target / w;
+        w = Math.round(w * s);
+        h = Math.round(h * s);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, w, h);
+      try { resolve({ dataURL: canvas.toDataURL('image/png'), width: w, height: h }); }
+      catch (e) { reject(e); }
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
+
+async function doExportPDF() {
+  const cols = getSelectedExportCols();
+  if (!cols.length) return;
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'landscape', unit: 'pt', format: 'a4' });
+  const rows = getVisibleRows();
+  const now = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+  const pageW = doc.internal.pageSize.getWidth();
+
+  // Dark navy header band with subtle indigo glow
+  const headerH = 80;
+  doc.setFillColor(10, 22, 40);
+  doc.rect(0, 0, pageW, headerH, 'F');
+  doc.setFillColor(79, 70, 229);
+  doc.setGState(new doc.GState({ opacity: 0.18 }));
+  doc.ellipse(pageW - 60, 40, 140, 70, 'F');
+  doc.setGState(new doc.GState({ opacity: 1 }));
+
+  let logo = null;
+  try {
+    logo = await loadImageRasterized('/static/img/yuno_fulllogo_light.svg');
+  } catch (e) {}
+
+  let titleX = 20;
+  if (logo) {
+    const logoH = 16;
+    const logoW = logoH * (logo.width / logo.height);
+    doc.addImage(logo.dataURL, 'PNG', 20, (headerH - logoH) / 2, logoW, logoH);
+    const dividerX = 20 + logoW + 10;
+    doc.setDrawColor(148, 163, 184);
+    doc.setLineWidth(0.6);
+    doc.line(dividerX, headerH / 2 - 10, dividerX, headerH / 2 + 10);
+    titleX = dividerX + 10;
+  }
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.setTextColor(255, 255, 255);
+  doc.text('Partner Portfolio', titleX, headerH / 2 + 6);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(10);
+  doc.setTextColor(203, 213, 225);
+  doc.text(now, pageW - 32, headerH / 2 + 4, { align: 'right' });
+
+  const headers = cols.map(c => c.label);
+  const body = rows.map(r => cols.map(c => r.dataset[c.key] || ''));
+
+  doc.autoTable({
+    startY: headerH + 16,
+    head: [headers],
+    body: body,
+    styles: { font: 'helvetica', fontSize: 9, cellPadding: 7, textColor: [51, 65, 85] },
+    headStyles: {
+      fillColor: [79, 70, 229], textColor: 255, fontStyle: 'bold',
+      fontSize: 8.5, cellPadding: 8, halign: 'left',
+    },
+    alternateRowStyles: { fillColor: [248, 250, 252] },
+    columnStyles: { 0: { fontStyle: 'bold' } },
+    tableLineColor: [226, 232, 240],
+    tableLineWidth: 0.5,
+    margin: { left: 32, right: 32 },
+  });
+
+  const finalY = doc.lastAutoTable.finalY + 20;
+  doc.setDrawColor(226, 232, 240);
+  doc.setLineWidth(0.5);
+  doc.line(32, finalY, pageW - 32, finalY);
+  doc.setFontSize(8);
+  doc.setTextColor(148, 163, 184);
+  doc.text('Yuno Partnerships Portal · Confidential', 32, finalY + 12);
+  doc.text(`Generated ${now}`, pageW - 32, finalY + 12, { align: 'right' });
+
+  doc.save(`yuno_partners_${new Date().toISOString().slice(0,10)}.pdf`);
+}
+</script>
+{% endblock %}

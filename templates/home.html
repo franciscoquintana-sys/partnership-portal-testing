@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+{% block content %}
+
+  <!-- Dark banner -->
+  <div style="
+    background: linear-gradient(120deg, #0a1628 70%, #0f2044 100%);
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    position: relative;
+    overflow: hidden;
+  ">
+    <div style="position:absolute;right:-40px;top:-40px;width:300px;height:200px;background:radial-gradient(ellipse,rgba(79,70,229,0.25) 0%,transparent 70%);pointer-events:none"></div>
+    <div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div>
+        <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Home</div>
+        <div style="font-size:13px;color:#94a3b8">{% if role in ('partnerships', 'internal') %}Your partnership command center — everything in one place.{% else %}Your shared workspace with Yuno.{% endif %}</div>
+      </div>
+      <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
+    </div>
+  </div>
+
+<div class="action-cards">
+  {% if role in ('partnerships', 'internal') %}
+
+  <div class="action-card" style="border-top-color:#5B5FDE">
+    <div class="action-card-header">
+      <span class="action-icon">◈</span>
+      <span class="action-title">Partners & Connectors</span>
+    </div>
+    <div class="action-desc">Browse Yuno's full partner network with profiles, coverage, and integration status. Track active deals from prospect to live processing.</div>
+    <div class="action-links">
+      <a href="/partners" class="action-link" style="color:#5B5FDE;border-color:rgba(91,95,222,0.25);background:rgba(91,95,222,0.06)">Partner Portfolio</a>
+      <a href="/mission" class="action-link" style="color:#5B5FDE;border-color:rgba(91,95,222,0.25);background:rgba(91,95,222,0.06)">Partners In Flight</a>
+    </div>
+  </div>
+
+  {% if role == 'partnerships' %}
+  <div class="action-card" style="border-top-color:#10B981">
+    <div class="action-card-header">
+      <span class="action-icon">▲</span>
+      <span class="action-title">Performance</span>
+    </div>
+    <div class="action-desc">Monitor partner approval rates, transaction volumes, and revenue share. Manage leads and coordinate partner-merchant introductions.</div>
+    <div class="action-links">
+      <a href="/performance" class="action-link" style="color:#10B981;border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.06)">Partner Health</a>
+      <a href="/benchmarks" class="action-link" style="color:#10B981;border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.06)">Partner Rev Share</a>
+      <a href="/pipeline" class="action-link" style="color:#10B981;border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.06)">Partner Leads</a>
+      <a href="/introduction" class="action-link" style="color:#10B981;border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.06)">Partner - Merchant Intros</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="action-card" style="border-top-color:#0EA5E9{% if role == 'partnerships' %};grid-column:1/-1{% endif %}">
+    <div class="action-card-header">
+      <span class="action-icon">✦</span>
+      <span class="action-title">Intelligence & Tools</span>
+    </div>
+    <div class="action-desc">Analyze regional payment landscapes, method adoption, and competitive positioning. Simulate merchant scenarios and contact partners through the intake and outreach form.</div>
+    <div class="action-links">
+      <a href="/insights" class="action-link" style="color:#0EA5E9;border-color:rgba(14,165,233,0.25);background:rgba(14,165,233,0.06)">Market Analysis</a>
+      <a href="/merch_sim" class="action-link" style="color:#0EA5E9;border-color:rgba(14,165,233,0.25);background:rgba(14,165,233,0.06)">Merchant Simulator</a>
+      <a href="/intake" class="action-link" style="color:#0EA5E9;border-color:rgba(14,165,233,0.25);background:rgba(14,165,233,0.06)">Intake and Outreach Form</a>
+    </div>
+  </div>
+
+  {% else %}
+
+  <div class="action-card" style="border-top-color:#5B5FDE">
+    <div class="action-card-header">
+      <span class="action-icon">◈</span>
+      <span class="action-title">Partners & Connectors</span>
+    </div>
+    <div class="action-desc">Browse Yuno's full partner network with profiles, coverage, and integration status.</div>
+    <div class="action-links">
+      <a href="/partners" class="action-link" style="color:#5B5FDE;border-color:rgba(91,95,222,0.25);background:rgba(91,95,222,0.06)">Partner Portfolio</a>
+    </div>
+  </div>
+
+  <div class="action-card" style="border-top-color:#10B981">
+    <div class="action-card-header">
+      <span class="action-icon">▲</span>
+      <span class="action-title">Performance</span>
+    </div>
+    <div class="action-desc">Monitor partner approval rates, transaction volumes, and revenue share. Manage the partner leads pipeline.</div>
+    <div class="action-links">
+      <a href="/performance" class="action-link" style="color:#10B981;border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.06)">Partner Health</a>
+      <a href="/benchmarks" class="action-link" style="color:#10B981;border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.06)">Partner Rev Share</a>
+      <a href="/pipeline" class="action-link" style="color:#10B981;border-color:rgba(16,185,129,0.25);background:rgba(16,185,129,0.06)">Partner Leads</a>
+    </div>
+  </div>
+
+  <div class="action-card" style="border-top-color:#0EA5E9;grid-column:1/-1">
+    <div class="action-card-header">
+      <span class="action-icon">✦</span>
+      <span class="action-title">Intelligence & Tools</span>
+    </div>
+    <div class="action-desc">Analyze regional payment landscapes, method adoption, and competitive positioning.</div>
+    <div class="action-links">
+      <a href="/insights" class="action-link" style="color:#0EA5E9;border-color:rgba(14,165,233,0.25);background:rgba(14,165,233,0.06)">Market Analysis</a>
+    </div>
+  </div>
+
+  {% endif %}
+</div>
+
+<!-- Team Structure — as action-card spanning full width -->
+<div class="action-cards" style="margin-top:8px">
+  <div class="action-card" style="border-top-color:#0a1628;grid-column:1/-1;padding:12px 20px 14px">
+    <div class="action-card-header" style="margin-bottom:0">
+      <span class="action-icon">&#9673;</span>
+      <span class="action-title">Partnerships Team Structure</span>
+    </div>
+    <div class="action-desc">Creating and maintaining relationships with providers related to the payments industry such as acquirers, APMs, PSPs, anti-fraud, etc.</div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:0;margin-top:4px">
+
+      <!-- Juan Pablo Ortega -->
+      <div style="text-align:center">
+        <div style="width:28px;height:28px;border-radius:6px;background:#0a1628;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">JP</div>
+        <div style="font-size:10px;font-weight:700;color:#0f172a;margin-top:2px">Juan Pablo Ortega</div>
+        <div style="font-size:9px;color:#64748b">CEO and Co-Founder</div>
+      </div>
+      <div style="width:1px;height:8px;background:var(--border)"></div>
+
+      <!-- Justo Benetti -->
+      <div style="text-align:center">
+        <div style="width:28px;height:28px;border-radius:6px;background:#4F46E5;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">JB</div>
+        <div style="font-size:10px;font-weight:700;color:#0f172a;margin-top:2px">Justo Benetti</div>
+        <div style="font-size:9px;color:#64748b">CRO</div>
+      </div>
+      <div style="width:1px;height:8px;background:var(--border)"></div>
+
+      <!-- Daniela Reyes -->
+      <div style="text-align:center">
+        <div style="width:28px;height:28px;border-radius:6px;background:#8b5cf6;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">DR</div>
+        <div style="font-size:10px;font-weight:700;color:#0f172a;margin-top:2px">Daniela Reyes</div>
+        <div style="font-size:9px;color:#64748b">Global Head of Partnerships</div>
+      </div>
+      <div style="width:1px;height:8px;background:var(--border)"></div>
+
+      <!-- Reports to Daniela -->
+      <div style="display:flex;align-items:flex-start;justify-content:center;gap:0;position:relative;width:100%">
+        <div style="position:absolute;top:0;left:50%;transform:translateX(-50%);width:75%;height:1px;background:var(--border)"></div>
+
+        <!-- Talita + Johanderson -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div style="width:1px;height:8px;background:var(--border)"></div>
+          <div style="text-align:center">
+            <div style="width:26px;height:26px;border-radius:6px;background:#10b981;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">TG</div>
+            <div style="font-size:10px;font-weight:700;color:#0f172a;margin-top:2px">Talita Gama</div>
+            <div style="font-size:9px;color:#64748b">Head of LATAM</div>
+          </div>
+          <div style="width:1px;height:6px;background:var(--border)"></div>
+          <div style="text-align:center">
+            <div style="width:24px;height:24px;border-radius:5px;background:#14b8a6;display:inline-flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff">JG</div>
+            <div style="font-size:9.5px;font-weight:700;color:#0f172a;margin-top:2px">Johanderson Guevara</div>
+            <div style="font-size:8.5px;color:#64748b">SPM Brasil</div>
+          </div>
+        </div>
+
+        <!-- Francisco -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div style="width:1px;height:8px;background:var(--border)"></div>
+          <div style="text-align:center">
+            <div style="width:26px;height:26px;border-radius:6px;background:#3b82f6;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">FQ</div>
+            <div style="font-size:10px;font-weight:700;color:#0f172a;margin-top:2px">Francisco Quintana</div>
+            <div style="font-size:9px;color:#64748b">SPM MEA</div>
+          </div>
+        </div>
+
+        <!-- Alessandra -->
+        <div style="display:flex;flex-direction:column;align-items:center;flex:1">
+          <div style="width:1px;height:8px;background:var(--border)"></div>
+          <div style="text-align:center">
+            <div style="width:26px;height:26px;border-radius:6px;background:#f59e0b;display:inline-flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff">AR</div>
+            <div style="font-size:10px;font-weight:700;color:#0f172a;margin-top:2px">Alessandra Rospigliossi</div>
+            <div style="font-size:9px;color:#64748b">SPM Europe</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}
