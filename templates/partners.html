@@ -114,21 +114,13 @@
   font-size: 12px;
   font-weight: 500;
 }
-/* Column widths via colgroup (6 cols default) */
-.partners-table.cols-6 col:nth-child(1) { width: 24%; }
-.partners-table.cols-6 col:nth-child(2) { width: 13%; }
-.partners-table.cols-6 col:nth-child(3) { width: 12%; }
-.partners-table.cols-6 col:nth-child(4) { width: 14%; }
-.partners-table.cols-6 col:nth-child(5) { width: 20%; }
-.partners-table.cols-6 col:nth-child(6) { width: 17%; }
-/* Column widths for partnerships view (7 cols: + Tier) */
-.partners-table.cols-7 col:nth-child(1) { width: 22%; }
-.partners-table.cols-7 col:nth-child(2) { width: 11%; }
-.partners-table.cols-7 col:nth-child(3) { width: 10%; }
-.partners-table.cols-7 col:nth-child(4) { width: 13%; }
-.partners-table.cols-7 col:nth-child(5) { width: 11%; }
-.partners-table.cols-7 col:nth-child(6) { width: 18%; }
-.partners-table.cols-7 col:nth-child(7) { width: 15%; }
+/* Column widths via colgroup */
+.partners-table col:nth-child(1) { width: 24%; }
+.partners-table col:nth-child(2) { width: 13%; }
+.partners-table col:nth-child(3) { width: 12%; }
+.partners-table col:nth-child(4) { width: 14%; }
+.partners-table col:nth-child(5) { width: 20%; }
+.partners-table col:nth-child(6) { width: 17%; }
 .partners-table tr:last-child td { border-bottom: none; }
 .partners-table tbody tr:hover td { background: #f8f8fb; }
 
@@ -292,21 +284,6 @@
 .type-Other           { background: rgba(107,114,128,.12);color: #4b5563; }
 .type-Plug-In         { background: rgba(6,182,212,.12);  color: #0e7490; }
 
-.tier-pill {
-  display: inline-flex;
-  align-items: center;
-  font-size: 10.5px;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: 5px;
-  white-space: nowrap;
-}
-.tier-strategic { background: rgba(79,70,229,.12); color: #4F46E5; }
-.tier-tier-1    { background: rgba(37,99,235,.12); color: #1d4ed8; }
-.tier-tier-2    { background: rgba(217,119,6,.12); color: #b45309; }
-.tier-tier-3    { background: rgba(107,114,128,.12); color: #4b5563; }
-.tier-default   { background: rgba(107,114,128,.08); color: #6b7280; }
-
 .status-live           { color: #15803d; font-weight: 700; }
 .status-agreement-sign { color: #15803d; font-weight: 700; }
 .status-agreement-rev  { color: #4ade80; font-weight: 700; }
@@ -432,7 +409,6 @@
         </div>
       </div>
     </div>
-    {% if role != 'partnerships' %}
     <div class="filter-item">
       <span class="filter-item-label">Country</span>
       <div class="col-filter-wrap">
@@ -443,19 +419,6 @@
         </div>
       </div>
     </div>
-    {% endif %}
-    {% if role == 'partnerships' %}
-    <div class="filter-item">
-      <span class="filter-item-label">Tier</span>
-      <div class="col-filter-wrap">
-        <div class="col-filter-btn" id="btn-tier" onclick="toggleDrop('tier',event)">All <span>▾</span></div>
-        <div class="col-filter-dropdown" id="drop-tier">
-          {% for t in tiers %}<label class="col-filter-option"><input type="checkbox" value="{{ t }}" onchange="applyFilters()"> {{ t }}</label>{% endfor %}
-          <div class="col-filter-clear" onclick="clearDrop('tier')">Clear</div>
-        </div>
-      </div>
-    </div>
-    {% endif %}
     <div class="filter-item">
       <span class="filter-item-label">Deal Stage</span>
       <div class="col-filter-wrap">
@@ -503,15 +466,14 @@
   <!-- Table -->
   <div class="section-title">Partner Portfolio</div>
   <div class="partners-table-wrap">
-    <table class="partners-table {% if role == 'partnerships' %}cols-7{% else %}cols-6{% endif %}" id="partners-table">
-      <colgroup><col><col><col><col>{% if role == 'partnerships' %}<col>{% endif %}<col><col></colgroup>
+    <table class="partners-table" id="partners-table">
+      <colgroup><col><col><col><col><col><col></colgroup>
       <thead>
         <tr>
           <th>Provider</th>
           <th>Type</th>
           <th>Region</th>
           <th>Country</th>
-          {% if role == 'partnerships' %}<th>Tier</th>{% endif %}
           <th>Deal Stage</th>
           <th>Integration Status</th>
         </tr>
@@ -547,13 +509,6 @@
           <td><span class="type-pill type-{{ p.type | replace('/', '-') | replace(' ', '-') }}">{{ p.type }}</span></td>
           <td>{{ p.region or '—' }}</td>
           <td>{{ p.country or '—' }}</td>
-          {% if role == 'partnerships' %}
-          <td>
-            {% if p.tier %}
-            <span class="tier-pill {% if p.tier == 'Strategic Partner' %}tier-strategic{% elif p.tier == 'Tier 1' %}tier-tier-1{% elif p.tier == 'Tier 2' %}tier-tier-2{% elif p.tier == 'Tier 3' %}tier-tier-3{% else %}tier-default{% endif %}">{{ p.tier }}</span>
-            {% else %}—{% endif %}
-          </td>
-          {% endif %}
           <td>
             <span class="{% if 'Lost' in p.status or 'Non-qualified' in p.status or 'Non qualified' in p.status %}status-lost{% elif 'Agreement Signed' in p.status %}status-agreement-sign{% elif 'Agreement Review' in p.status %}status-agreement-rev{% elif 'Initial Negotiation' in p.status %}status-initial-neg{% elif 'Prospect' in p.status or 'Opportunity' in p.status %}status-prospect{% elif 'Live' in p.status %}status-live{% else %}status-default{% endif %}">
               {{ p.status }}
@@ -683,7 +638,7 @@ document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') closeScorecard();
 });
 
-const FILTERS = ['connector','cat','country','tier','region','status','integration','cov_country','cov_method'];
+const FILTERS = ['connector','cat','country','region','status','integration','cov_country','cov_method'];
 const PARTNER_COV_COUNTRIES = {{ partner_cov_countries | tojson }};
 const PARTNER_COV_METHODS = {{ partner_cov_methods | tojson }};
 const PARTNER_COUNTRY_METHODS = {{ partner_country_methods | tojson }};
@@ -765,7 +720,6 @@ function applyFilters() {
       && (sel.connector.length === 0   || sel.connector.includes(row.dataset.name))
       && (sel.cat.length === 0         || sel.cat.includes(row.dataset.type))
       && (sel.country.length === 0     || sel.country.includes(row.dataset.country))
-      && (sel.tier.length === 0        || sel.tier.includes(row.dataset.tier))
       && (sel.region.length === 0      || sel.region.includes(row.dataset.region))
       && (sel.status.length === 0      || sel.status.includes(row.dataset.status))
       && (sel.integration.length === 0 || sel.integration.includes(row.dataset.integration))
