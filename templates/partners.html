@@ -421,7 +421,7 @@
       <div class="col-filter-wrap">
         <div class="col-filter-btn" id="btn-cat" onclick="toggleDrop('cat',event)">All <span>▾</span></div>
         <div class="col-filter-dropdown" id="drop-cat">
-          {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {% if c == 'PSP/Aggregator' %}PSP/Aggreg{% else %}{{ c }}{% endif %}</label>{% endfor %}
+          {% for c in cats %}<label class="col-filter-option"><input type="checkbox" value="{{ c }}" onchange="applyFilters()"> {{ c }}</label>{% endfor %}
           <div class="col-filter-clear" onclick="clearDrop('cat')">Clear</div>
         </div>
       </div>
@@ -537,7 +537,7 @@
               {% endif %}
             </div>
           </td>
-          <td><span class="type-pill type-{{ p.type | replace('/', '-') | replace(' ', '-') }}">{% if p.type == 'PSP/Aggregator' %}PSP/Aggreg{% else %}{{ p.type }}{% endif %}</span></td>
+          <td><span class="type-pill type-{{ p.type | replace('/', '-') | replace(' ', '-') }}">{{ p.type }}</span></td>
           <td>{{ p.region or '—' }}</td>
           <td>{{ p.country or '—' }}</td>
           <td>
