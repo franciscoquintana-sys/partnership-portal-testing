@@ -720,8 +720,9 @@ function getSelected(key) {
 }
 
 function updateBtn(key) {
-  const sel = getSelected(key);
   const btn = document.getElementById(`btn-${key}`);
+  if (!btn) return;
+  const sel = getSelected(key);
   if (sel.length === 0) {
     btn.innerHTML = `All <span>▾</span>`;
     btn.classList.remove('active');
