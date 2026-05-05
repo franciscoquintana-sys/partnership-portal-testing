@@ -182,6 +182,25 @@ def _parse_partners_df(df):
         strategic = tier.startswith("Strategic")
         mgmt_type = str(row.get("Type of Management", "")).strip()
         initials = "".join(w[0] for w in name.replace("/", " ").replace("(", " ").split() if w)[:2].upper()
+
+        # NDA Status (col J): TRUE -> "Signed", else "N/A"
+        nda_status_raw = str(row.get("NDA Status", "")).strip()
+        nda_signed = nda_status_raw.upper() in ("TRUE", "1", "YES")
+        nda_status_display = "Signed" if nda_signed else "N/A"
+
+        # Agreement Conditions (col W): blank or boolean -> "N/A"; otherwise use the text verbatim
+        agreement_raw = ""
+        for col_name in ("Agreement Conditions", "agreement conditions",
+                         "Agreement conditions", "AGREEMENT CONDITIONS"):
+            v = row.get(col_name, None)
+            if v is not None:
+                agreement_raw = str(v).strip()
+                break
+        if (not agreement_raw) or agreement_raw.lower() in ("nan", "n/a", "true", "false"):
+            commercial_terms = "N/A"
+        else:
+            commercial_terms = agreement_raw
+
         partners.append({
             "name": name,
             "type": offering if offering and offering != "nan" else "Other",
@@ -197,7 +216,9 @@ def _parse_partners_df(df):
             "logo": initials,
             "color": _TYPE_COLOR.get(offering, "#64748b"),
             "cat": offering if offering and offering != "nan" else "Other",
-            "nda": str(row.get("NDA Signed and in drive", "")).strip().upper() in ("TRUE", "1", "YES"),
+            "nda": nda_signed,
+            "nda_status": nda_status_display,
+            "commercial_terms": commercial_terms,
             "revshare": str(row.get("Revshare Contract", "")).strip().upper() in ("TRUE", "1", "YES"),
             "revshare_active": str(row.get("Revshare active", "")).strip().upper() in ("TRUE", "1", "YES"),
             "integration_stage": integration_stage if integration_stage and integration_stage != "nan" else "",
