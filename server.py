@@ -8358,11 +8358,11 @@ COUNTRY_PARTNERS = {
     "Cyprus":              [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Worldpay","type":"Acquirer"},{"name":"JCC","type":"Acquirer"}],
     "Malta":               [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Worldpay","type":"Acquirer"},{"name":"APCO Pay","type":"PSP"}],
     "Serbia":              [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"UniCredit Bank","type":"Acquirer"},{"name":"Banca Intesa","type":"Acquirer"}],
-    "Russia":              [{"name":"Sberbank","type":"Acquirer"},{"name":"Tinkoff","type":"Acquirer"},{"name":"NSPK","type":"Scheme / processor"},{"name":"YooKassa","type":"Gateway"},{"name":"CloudPayments","type":"PSP"}],
+    "Russia":              [{"name":"Zesta / 8b / Carussel","type":"Acquirer"},{"name":"Sberbank","type":"Acquirer"},{"name":"Tinkoff","type":"Acquirer"},{"name":"YooKassa","type":"Gateway"},{"name":"CloudPayments","type":"PSP"}],
     # ---- Middle East ----
     "UAE":                 [{"name":"Network International","type":"PSP"},{"name":"Checkout MENA","type":"Acquirer"},{"name":"Tap Payments","type":"PSP"},{"name":"HyperPay","type":"PSP"},{"name":"Pay10","type":"PSP"}],
     "Saudi Arabia":        [{"name":"Moyasar","type":"PSP"},{"name":"HyperPay","type":"PSP"},{"name":"Tap Payments","type":"PSP"},{"name":"Network International","type":"PSP"},{"name":"Checkout MENA","type":"Acquirer"}],
-    "Israel":              [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Tranzila","type":"PSP"},{"name":"Cardcom","type":"PSP"}],
+    "Israel":              [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Shva","type":"Acquirer"},{"name":"Tranzila","type":"PSP"},{"name":"Cardcom","type":"PSP"}],
     "Turkey":              [{"name":"Izyco","type":"PSP"},{"name":"PayTR","type":"PSP"},{"name":"PARAM","type":"PSP"},{"name":"Paycore","type":"PSP"},{"name":"Adyen","type":"PSP"}],
     "Qatar":               [{"name":"Tap Payments","type":"PSP"},{"name":"Network International","type":"PSP"},{"name":"Checkout MENA","type":"Acquirer"},{"name":"QPay","type":"PSP"},{"name":"QIB","type":"Acquirer"}],
     "Kuwait":              [{"name":"Tap Payments","type":"PSP"},{"name":"Network International","type":"PSP"},{"name":"Checkout MENA","type":"Acquirer"},{"name":"KNet","type":"Acquirer"},{"name":"MyFatoorah","type":"PSP"}],
