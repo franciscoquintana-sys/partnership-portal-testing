@@ -594,10 +594,10 @@ def mission(request: Request):
         cov_region_to_methods=cov["cov_region_to_methods"],
     ))
 
-# Partners Pipeline — kanban of partners grouped by region.
-# Columns: APAC, EUROPE, GLOBAL, LATAM, MEA, NORTH AMERICA.
-# Filters: Year (2026 only for now) and Quarter (Q1-Q4).
-_PIPELINE_REGION_COLUMNS = [
+# ── Partners Pipeline board ──────────────────────────────────────────────────
+# Region kanban with year/quarter filters. Starts empty; users add cards
+# manually via "+ Partner". Every change persists.
+PIPELINE_REGION_COLUMNS = [
     ("APAC",          "APAC",          "#06b6d4"),
     ("EUROPE",        "Europe",        "#4F46E5"),
     ("GLOBAL",        "Global",        "#0f172a"),
@@ -605,31 +605,80 @@ _PIPELINE_REGION_COLUMNS = [
     ("MEA",           "MEA",           "#f59e0b"),
     ("NORTH AMERICA", "North America", "#ef4444"),
 ]
-_PIPELINE_MEA_COUNTRIES = {
-    "UAE", "Saudi Arabia", "Egypt", "Qatar", "Kuwait", "Bahrain", "Oman",
-    "Jordan", "Lebanon", "Iraq", "Israel", "Turkey", "Morocco", "Algeria",
-    "Tunisia", "Senegal", "Côte d'Ivoire", "Cote d'Ivoire", "Cameroon",
-    "Angola", "Mozambique", "Zimbabwe", "Botswana", "Mauritius", "Rwanda",
-    "Zambia", "Ethiopia", "Tanzania", "Uganda", "Ghana", "Kenya", "Nigeria",
-    "South Africa",
-}
+_VALID_PP_COLUMNS = {c[0] for c in PIPELINE_REGION_COLUMNS}
+_VALID_PP_YEARS = {"2026"}
+_VALID_PP_QUARTERS = {"Q1", "Q2", "Q3", "Q4"}
+_PP_FIELDS = {"partner", "year", "quarter", "country", "manager", "comments", "column"}
 
-def _pipeline_region_key(p):
-    region = (p.get("region") or "").strip().upper()
-    country = (p.get("country") or "").strip()
-    if region == "LATAM":
-        return "LATAM"
-    if region in ("APAC", "ASIA") or "CENTRAL ASIA" in region:
-        return "APAC"
-    if region == "NORTH AMERICA":
-        return "NORTH AMERICA"
-    if region == "AFRICA":
-        return "MEA"
-    if region == "EMEA":
-        return "MEA" if country in _PIPELINE_MEA_COUNTRIES else "EUROPE"
-    if region in ("GLOBAL", "REGIONAL", ""):
-        return "GLOBAL"
-    return "GLOBAL"
+PP_STORAGE = os.path.join(DATA_DIR, "partner_pipeline.json")
+
+def _db_init_partner_pipeline():
+    conn = _db_conn()
+    if not conn:
+        return False
+    try:
+        with conn, conn.cursor() as cur:
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS partner_pipeline (
+                    id TEXT PRIMARY KEY,
+                    data JSONB NOT NULL,
+                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                )
+            """)
+        return True
+    except Exception as e:
+        print(f"[partner_pipeline] Postgres init failed: {e}")
+        return False
+    finally:
+        conn.close()
+
+def _load_partner_pipeline():
+    conn = _db_conn()
+    if conn:
+        try:
+            with conn, conn.cursor() as cur:
+                cur.execute("SELECT data FROM partner_pipeline ORDER BY updated_at ASC")
+                return [r[0] for r in cur.fetchall()]
+        except Exception as e:
+            print(f"[partner_pipeline] Postgres load failed: {e}")
+        finally:
+            conn.close()
+    try:
+        with open(PP_STORAGE, encoding="utf-8") as f:
+            return json.load(f)
+    except Exception:
+        return []
+
+def _save_partner_pipeline(data):
+    conn = _db_conn()
+    if conn:
+        try:
+            with conn, conn.cursor() as cur:
+                cur.execute("SELECT id FROM partner_pipeline")
+                existing = {r[0] for r in cur.fetchall()}
+                current = {i["id"] for i in data}
+                for removed_id in existing - current:
+                    cur.execute("DELETE FROM partner_pipeline WHERE id = %s", (removed_id,))
+                for card in data:
+                    cur.execute("""
+                        INSERT INTO partner_pipeline (id, data, updated_at)
+                        VALUES (%s, %s::jsonb, NOW())
+                        ON CONFLICT (id) DO UPDATE
+                          SET data = EXCLUDED.data, updated_at = NOW()
+                    """, (card["id"], json.dumps(card, ensure_ascii=False)))
+            return
+        except Exception as e:
+            print(f"[partner_pipeline] Postgres save failed: {e}")
+        finally:
+            conn.close()
+    try:
+        with open(PP_STORAGE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+    except Exception as e:
+        print(f"[partner_pipeline] JSON save failed: {e}")
+
+_db_init_partner_pipeline()
+PARTNER_PIPELINE = _load_partner_pipeline()
 
 @app.get("/partners_pipeline", response_class=HTMLResponse)
 def partners_pipeline(request: Request, year: str = "2026", quarter: str = "all"):
@@ -638,19 +687,110 @@ def partners_pipeline(request: Request, year: str = "2026", quarter: str = "all"
         return RedirectResponse("/login")
     if role not in ANY_LOGGED_IN_ROLES:
         return RedirectResponse("/home")
-    all_partners = load_partners_excel()
-    board = {key: [] for key, _, _ in _PIPELINE_REGION_COLUMNS}
-    for p in all_partners:
-        board[_pipeline_region_key(p)].append(p)
-    columns = [
-        {"key": k, "title": t, "color": c, "cards": board[k], "count": len(board[k])}
-        for k, t, c in _PIPELINE_REGION_COLUMNS
+    # Filter by year/quarter (year is fixed to 2026 for now)
+    filtered = [
+        c for c in PARTNER_PIPELINE
+        if (year == "all" or c.get("year") == year)
+        and (quarter == "all" or c.get("quarter") == quarter)
     ]
+    columns = [
+        {"key": k, "title": t, "color": col,
+         "cards": [c for c in filtered if c.get("column") == k]}
+        for k, t, col in PIPELINE_REGION_COLUMNS
+    ]
+    try:
+        all_partners_rows = load_partners_excel()
+        partner_catalog = sorted({p["name"] for p in all_partners_rows if p.get("name")})
+    except Exception:
+        partner_catalog = []
     return tr(request, "partners_pipeline.html", ctx(
         request, "partners_pipeline",
-        columns=columns, year=year, quarter=quarter,
-        years=["2026"], quarters=[("all","All quarters"),("Q1","Q1"),("Q2","Q2"),("Q3","Q3"),("Q4","Q4")],
+        columns=columns,
+        all_cards=PARTNER_PIPELINE,
+        year=year, quarter=quarter,
+        years=["2026"],
+        quarters=[("all","All quarters"),("Q1","Q1"),("Q2","Q2"),("Q3","Q3"),("Q4","Q4")],
+        partner_catalog=partner_catalog,
     ))
+
+@app.post("/api/partners_pipeline/create")
+async def api_pp_create(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    fields = body.get("fields") or {}
+    partner = (fields.get("partner") or "").strip()
+    column = (fields.get("column") or "GLOBAL").strip()
+    year = (fields.get("year") or "2026").strip()
+    quarter = (fields.get("quarter") or "Q1").strip()
+    if not partner:
+        return JSONResponse({"error": "partner required"}, status_code=400)
+    if column not in _VALID_PP_COLUMNS:
+        return JSONResponse({"error": "invalid column"}, status_code=400)
+    if year not in _VALID_PP_YEARS:
+        return JSONResponse({"error": "invalid year"}, status_code=400)
+    if quarter not in _VALID_PP_QUARTERS:
+        return JSONResponse({"error": "invalid quarter"}, status_code=400)
+    import uuid
+    new_card = {
+        "id": uuid.uuid4().hex[:10],
+        "column": column,
+        "partner": partner,
+        "year": year,
+        "quarter": quarter,
+        "country": (fields.get("country") or "").strip(),
+        "manager": (fields.get("manager") or "").strip(),
+        "comments": (fields.get("comments") or "").strip(),
+    }
+    PARTNER_PIPELINE.append(new_card)
+    _save_partner_pipeline(PARTNER_PIPELINE)
+    return {"ok": True, "card": new_card}
+
+@app.post("/api/partners_pipeline/update")
+async def api_pp_update(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    card_id = body.get("id")
+    fields = body.get("fields", {})
+    for c in PARTNER_PIPELINE:
+        if c["id"] == card_id:
+            for k, v in fields.items():
+                if k in _PP_FIELDS:
+                    c[k] = v
+            _save_partner_pipeline(PARTNER_PIPELINE)
+            return {"ok": True, "card": c}
+    return JSONResponse({"error": "not found"}, status_code=404)
+
+@app.post("/api/partners_pipeline/move")
+async def api_pp_move(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    card_id = body.get("id")
+    new_column = body.get("column")
+    if new_column not in _VALID_PP_COLUMNS:
+        return JSONResponse({"error": "invalid column"}, status_code=400)
+    for c in PARTNER_PIPELINE:
+        if c["id"] == card_id:
+            c["column"] = new_column
+            _save_partner_pipeline(PARTNER_PIPELINE)
+            return {"ok": True}
+    return JSONResponse({"error": "not found"}, status_code=404)
+
+@app.post("/api/partners_pipeline/delete")
+async def api_pp_delete(request: Request):
+    if not get_role(request):
+        return JSONResponse({"error": "unauthorized"}, status_code=401)
+    body = await request.json()
+    card_id = body.get("id")
+    global PARTNER_PIPELINE
+    before = len(PARTNER_PIPELINE)
+    PARTNER_PIPELINE = [c for c in PARTNER_PIPELINE if c["id"] != card_id]
+    if len(PARTNER_PIPELINE) == before:
+        return JSONResponse({"error": "not found"}, status_code=404)
+    _save_partner_pipeline(PARTNER_PIPELINE)
+    return {"ok": True}
 
 INTRO_COLUMNS = [
     ("request-pricing",      "Request Pricing",          "#6b7280"),
