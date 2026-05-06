@@ -8375,7 +8375,7 @@ COUNTRY_PARTNERS = {
     # ---- APAC ----
     "India":               [{"name":"RazorPay","type":"PSP"},{"name":"Cashfree","type":"PSP"},{"name":"Billdesk","type":"PSP"},{"name":"PayU","type":"Acquirer"},{"name":"Adyen","type":"PSP"}],
     "Singapore":           [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"2C2P / Ant Intl","type":"Acquirer"},{"name":"Nium","type":"PSP"},{"name":"HitPay","type":"PSP"}],
-    "Japan":               [{"name":"GMO","type":"PSP"},{"name":"SMCC","type":"PSP"},{"name":"DGFT","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Netstars","type":"PSP"}],
+    "Japan":               [{"name":"GMO","type":"PSP"},{"name":"SMCC","type":"PSP"},{"name":"NTTD","type":"Acquirer"},{"name":"DGFT","type":"PSP"},{"name":"Adyen","type":"PSP"}],
     "South Korea":         [{"name":"Korea Cyber Payment (KCP)","type":"PSP"},{"name":"Hecto Financial","type":"PSP"},{"name":"Toss Payments","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Stripe","type":"PSP"}],
     "Hong Kong":           [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"AsiaPay","type":"PSP"},{"name":"AllinPay (International)","type":"PSP"},{"name":"Worldline","type":"Acquirer"}],
     "China":               [{"name":"PingPong","type":"PSP"},{"name":"AllinPay (International)","type":"PSP"},{"name":"Lian Lian","type":"PSP"},{"name":"2C2P / Ant Intl","type":"Acquirer"},{"name":"AsiaPay","type":"PSP"}],
