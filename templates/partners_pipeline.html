@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+{% block head %}
+<style>
+.pp-banner {
+  background: linear-gradient(120deg, #0a1628 70%, #0f2044 100%);
+  border-radius: 14px;
+  padding: 24px 28px;
+  margin-bottom: 18px;
+  color: #fff;
+}
+.pp-banner-title { font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+.pp-banner-sub   { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+
+.pp-stats {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.pp-stat {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+.pp-stat-value { font-size: 22px; font-weight: 800; color: #0f172a; line-height: 1; }
+.pp-stat-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.05em;
+  text-transform: uppercase; color: var(--text3); margin-top: 6px;
+}
+.pp-stat-pct { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+.pp-board {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  align-items: flex-start;
+}
+.pp-col {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.pp-col-head {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+}
+.pp-col-title {
+  font-size: 10.5px; font-weight: 700; color: #0f172a;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+.pp-col-count {
+  font-size: 11px; font-weight: 700; color: #fff;
+  background: #94a3b8; padding: 2px 8px; border-radius: 10px;
+}
+.pp-col-body { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.pp-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-left: 3px solid #94a3b8;
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-decoration: none;
+  color: #0f172a;
+  transition: transform .12s, border-color .12s;
+}
+.pp-card:hover { transform: translateY(-1px); border-color: #4F46E5; }
+.pp-card-name { font-size: 12.5px; font-weight: 700; }
+.pp-card-meta { font-size: 10.5px; color: var(--text3); margin-top: 2px; display: flex; gap: 6px; flex-wrap: wrap; }
+.pp-card-tier {
+  font-size: 9px; font-weight: 700; padding: 1px 6px; border-radius: 3px;
+  background: rgba(79,70,229,.1); color: #4F46E5;
+}
+.pp-empty { padding: 14px 10px; font-size: 11.5px; color: var(--text3); text-align: center; font-style: italic; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="pp-banner">
+  <div class="pp-banner-title">Partners Pipeline</div>
+  <div class="pp-banner-sub">All partner relationships across deal stages — from prospect to live (and lost).</div>
+</div>
+
+<div class="pp-stats">
+  {% for c in columns %}
+  <div class="pp-stat">
+    <div class="pp-stat-value" style="color:{{ c.color }}">{{ c.count }}</div>
+    <div class="pp-stat-label">{{ c.title }}</div>
+    <div class="pp-stat-pct">{{ c.pct }}% of {{ total }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="pp-board">
+  {% for c in columns %}
+  <div class="pp-col">
+    <div class="pp-col-head" style="border-bottom-color:{{ c.color }}">
+      <div class="pp-col-title">{{ c.title }}</div>
+      <div class="pp-col-count" style="background:{{ c.color }}">{{ c.count }}</div>
+    </div>
+    <div class="pp-col-body">
+      {% for p in c.cards %}
+      <a href="/partners/{{ p.name | urlencode }}" class="pp-card" style="border-left-color:{{ c.color }}">
+        <div class="pp-card-name">{{ p.name }}</div>
+        <div class="pp-card-meta">
+          {% if p.tier %}<span class="pp-card-tier">{{ p.tier }}</span>{% endif %}
+          {% if p.country %}<span>{{ p.country }}</span>{% elif p.region %}<span>{{ p.region }}</span>{% endif %}
+          {% if p.type %}<span>· {{ p.type }}</span>{% endif %}
+        </div>
+      </a>
+      {% else %}
+      <div class="pp-empty">No partners</div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if other_count %}
+<div style="margin-top:14px;font-size:11px;color:var(--text3)">
+  {{ other_count }} partners with other or unspecified status are not shown.
+</div>
+{% endif %}
+
+{% endblock %}

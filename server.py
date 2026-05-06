@@ -58,7 +58,7 @@ def require_auth(request: Request):
 
 _FULL_NAV = [
     ("", [("home","Home")]),
-    ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight")]),
+    ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight"),("partners_pipeline","Partners Pipeline")]),
     ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("pipeline","Partner Leads"),("introduction","Partner - Merchant Intros")]),
     ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
 ]
@@ -66,7 +66,7 @@ NAV = {
     "partnerships": _FULL_NAV,
     "internal": [
         ("", [("home","Home")]),
-        ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight")]),
+        ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight"),("partners_pipeline","Partners Pipeline")]),
         ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
     ],
     "partner": [
@@ -592,6 +592,43 @@ def mission(request: Request):
         cov_method_to_countries=cov["cov_method_to_countries"],
         cov_region_to_countries=cov["cov_region_to_countries"],
         cov_region_to_methods=cov["cov_region_to_methods"],
+    ))
+
+# Partners Pipeline — funnel of all partners by deal stage (incl. Live + Lost),
+# distinct from /mission (in-flight only) and /pipeline (lead-focused).
+@app.get("/partners_pipeline", response_class=HTMLResponse)
+def partners_pipeline(request: Request):
+    role = require_auth(request)
+    if not role:
+        return RedirectResponse("/login")
+    if role not in ANY_LOGGED_IN_ROLES:
+        return RedirectResponse("/home")
+    all_partners = load_partners_excel()
+    stages = [
+        ("Prospect",            "Prospect",            "#94a3b8"),
+        ("Initial Negotiation", "Initial Negotiation", "#f59e0b"),
+        ("Agreement Review",    "Agreement Review",    "#3b82f6"),
+        ("Agreement Signed",    "Agreement Signed",    "#8b5cf6"),
+        ("Live Partner",        "Live",                "#10b981"),
+        ("Lost",                "Lost",                "#ef4444"),
+    ]
+    board = {key: [] for key, _, _ in stages}
+    other_count = 0
+    for p in all_partners:
+        st = (p.get("status") or "").strip()
+        if st in board:
+            board[st].append(p)
+        else:
+            other_count += 1
+    total = sum(len(v) for v in board.values())
+    columns = [
+        {"key": k, "title": t, "color": c, "cards": board[k], "count": len(board[k]),
+         "pct": round(len(board[k]) * 100 / total, 1) if total else 0}
+        for k, t, c in stages
+    ]
+    return tr(request, "partners_pipeline.html", ctx(
+        request, "partners_pipeline",
+        columns=columns, total=total, other_count=other_count,
     ))
 
 INTRO_COLUMNS = [
