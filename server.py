@@ -8405,7 +8405,7 @@ COUNTRY_PARTNERS = {
     "Algeria":             [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"SATIM","type":"Acquirer"},{"name":"CIB Algeria","type":"Acquirer"},{"name":"Algerie Poste","type":"Acquirer"}],
     "Tunisia":             [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Click to Pay","type":"PSP"},{"name":"Konnect","type":"PSP"},{"name":"Flouci","type":"PSP"}],
     "Senegal":             [{"name":"Onafriq","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"DLocal","type":"Acquirer"},{"name":"PayDunya","type":"PSP"},{"name":"CinetPay","type":"PSP"}],
-    "Côte d'Ivoire":       [{"name":"Onafriq","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"DLocal","type":"Acquirer"},{"name":"PayDunya","type":"PSP"},{"name":"CinetPay","type":"PSP"}],
+    "Côte d'Ivoire":       [{"name":"Onafriq","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"DLocal","type":"Acquirer"},{"name":"Wave Business","type":"PSP"},{"name":"PayDunya","type":"PSP"}],
     "Cameroon":            [{"name":"Onafriq","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"DLocal","type":"Acquirer"},{"name":"PayDunya","type":"PSP"},{"name":"CinetPay","type":"PSP"}],
     "Angola":              [{"name":"Stripe","type":"PSP"},{"name":"Multicaixa Express","type":"Acquirer"},{"name":"EMIS","type":"Acquirer"},{"name":"BAI","type":"Acquirer"},{"name":"BFA","type":"Acquirer"}],
     "Mozambique":          [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"MozaPag","type":"PSP"},{"name":"Standard Bank","type":"Acquirer"},{"name":"Conecta","type":"PSP"}],
