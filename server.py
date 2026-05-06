@@ -610,7 +610,8 @@ _VALID_PP_YEARS = {"2026"}
 _VALID_PP_QUARTERS = {"Q1", "Q2", "Q3", "Q4"}
 _PP_FIELDS = {"partner", "year", "quarter", "country", "manager", "comments", "column"}
 
-PP_STORAGE = os.path.join(DATA_DIR, "partner_pipeline.json")
+def _pp_storage_path():
+    return os.path.join(DATA_DIR, "partner_pipeline.json")
 
 def _db_init_partner_pipeline():
     conn = _db_conn()
@@ -644,7 +645,7 @@ def _load_partner_pipeline():
         finally:
             conn.close()
     try:
-        with open(PP_STORAGE, encoding="utf-8") as f:
+        with open(_pp_storage_path(), encoding="utf-8") as f:
             return json.load(f)
     except Exception:
         return []
@@ -672,13 +673,15 @@ def _save_partner_pipeline(data):
         finally:
             conn.close()
     try:
-        with open(PP_STORAGE, "w", encoding="utf-8") as f:
+        with open(_pp_storage_path(), "w", encoding="utf-8") as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
     except Exception as e:
         print(f"[partner_pipeline] JSON save failed: {e}")
 
-_db_init_partner_pipeline()
-PARTNER_PIPELINE = _load_partner_pipeline()
+# Module-level init/load is deferred — DATA_DIR and _db_conn are defined
+# further down. PARTNER_PIPELINE is bound to a placeholder list here and
+# re-bound below the leads init block where the dependencies exist.
+PARTNER_PIPELINE: list = []
 
 @app.get("/partners_pipeline", response_class=HTMLResponse)
 def partners_pipeline(request: Request, year: str = "2026", quarter: str = "all"):
@@ -1454,6 +1457,11 @@ def _save_leads(data):
 
 _db_init_leads()
 LEADS = _load_leads()
+
+# Partners Pipeline deferred init (functions/columns are defined earlier;
+# DATA_DIR + _db_conn must exist before we try to load).
+_db_init_partner_pipeline()
+PARTNER_PIPELINE = _load_partner_pipeline()
 
 @app.post("/api/leads/move")
 async def api_leads_move(request: Request):
