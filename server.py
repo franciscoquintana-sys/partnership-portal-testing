@@ -8590,31 +8590,29 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         override = COUNTRY_DETAIL_RICH.get(country, {})
         rich_country = {**default_country_detail(), **override}
         # Curated market players from override or hardcoded COUNTRY_PARTNERS list.
+        # This list is the single source of truth: it represents the most
+        # relevant aggregators/gateways/acquirers for big merchants in that
+        # country, with Yuno partners included where they are genuinely a
+        # market player. We do NOT auto-pull any Yuno partner with a coverage
+        # row, because that pads the table with marginal players.
         if "partners_landscape" in override:
             curated = list(rich_country.get("partners_landscape") or [])
         elif country in COUNTRY_PARTNERS:
             curated = list(COUNTRY_PARTNERS[country])
         else:
             curated = []
-        # Our reliable partners covering this country come first; curated entries
-        # follow only when they don't duplicate a partner we already have.
-        # Dedup uses _canon_name so 'Mercado Pago' and 'MercadoPago' collapse, etc.
-        cov_data = _build_coverage_data()
-        partner_cov_countries = cov_data["partner_cov_countries"]
+        # Cap at 5 and dedupe by canonical name (so 'Mercado Pago' and
+        # 'MercadoPago' collapse, etc.).
         landscape = []
         existing = set()
-        for our in _our_partners_for_country(country, all_partners, partner_cov_countries):
-            key = _canon_name(our.get("name", ""))
-            if not key or key in existing:
-                continue
-            landscape.append(our)
-            existing.add(key)
         for entry in curated:
             key = _canon_name(entry.get("name", ""))
             if not key or key in existing:
                 continue
             landscape.append(entry)
             existing.add(key)
+            if len(landscape) >= 5:
+                break
         rich_country["partners_landscape"] = landscape
     else:
         rich_country = None
