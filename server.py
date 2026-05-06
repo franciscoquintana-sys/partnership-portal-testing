@@ -594,41 +594,62 @@ def mission(request: Request):
         cov_region_to_methods=cov["cov_region_to_methods"],
     ))
 
-# Partners Pipeline — funnel of all partners by deal stage (incl. Live + Lost),
-# distinct from /mission (in-flight only) and /pipeline (lead-focused).
+# Partners Pipeline — kanban of partners grouped by region.
+# Columns: APAC, EUROPE, GLOBAL, LATAM, MEA, NORTH AMERICA.
+# Filters: Year (2026 only for now) and Quarter (Q1-Q4).
+_PIPELINE_REGION_COLUMNS = [
+    ("APAC",          "APAC",          "#06b6d4"),
+    ("EUROPE",        "Europe",        "#4F46E5"),
+    ("GLOBAL",        "Global",        "#0f172a"),
+    ("LATAM",         "LATAM",         "#10b981"),
+    ("MEA",           "MEA",           "#f59e0b"),
+    ("NORTH AMERICA", "North America", "#ef4444"),
+]
+_PIPELINE_MEA_COUNTRIES = {
+    "UAE", "Saudi Arabia", "Egypt", "Qatar", "Kuwait", "Bahrain", "Oman",
+    "Jordan", "Lebanon", "Iraq", "Israel", "Turkey", "Morocco", "Algeria",
+    "Tunisia", "Senegal", "Côte d'Ivoire", "Cote d'Ivoire", "Cameroon",
+    "Angola", "Mozambique", "Zimbabwe", "Botswana", "Mauritius", "Rwanda",
+    "Zambia", "Ethiopia", "Tanzania", "Uganda", "Ghana", "Kenya", "Nigeria",
+    "South Africa",
+}
+
+def _pipeline_region_key(p):
+    region = (p.get("region") or "").strip().upper()
+    country = (p.get("country") or "").strip()
+    if region == "LATAM":
+        return "LATAM"
+    if region in ("APAC", "ASIA") or "CENTRAL ASIA" in region:
+        return "APAC"
+    if region == "NORTH AMERICA":
+        return "NORTH AMERICA"
+    if region == "AFRICA":
+        return "MEA"
+    if region == "EMEA":
+        return "MEA" if country in _PIPELINE_MEA_COUNTRIES else "EUROPE"
+    if region in ("GLOBAL", "REGIONAL", ""):
+        return "GLOBAL"
+    return "GLOBAL"
+
 @app.get("/partners_pipeline", response_class=HTMLResponse)
-def partners_pipeline(request: Request):
+def partners_pipeline(request: Request, year: str = "2026", quarter: str = "all"):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
     if role not in ANY_LOGGED_IN_ROLES:
         return RedirectResponse("/home")
     all_partners = load_partners_excel()
-    stages = [
-        ("Prospect",            "Prospect",            "#94a3b8"),
-        ("Initial Negotiation", "Initial Negotiation", "#f59e0b"),
-        ("Agreement Review",    "Agreement Review",    "#3b82f6"),
-        ("Agreement Signed",    "Agreement Signed",    "#8b5cf6"),
-        ("Live Partner",        "Live",                "#10b981"),
-        ("Lost",                "Lost",                "#ef4444"),
-    ]
-    board = {key: [] for key, _, _ in stages}
-    other_count = 0
+    board = {key: [] for key, _, _ in _PIPELINE_REGION_COLUMNS}
     for p in all_partners:
-        st = (p.get("status") or "").strip()
-        if st in board:
-            board[st].append(p)
-        else:
-            other_count += 1
-    total = sum(len(v) for v in board.values())
+        board[_pipeline_region_key(p)].append(p)
     columns = [
-        {"key": k, "title": t, "color": c, "cards": board[k], "count": len(board[k]),
-         "pct": round(len(board[k]) * 100 / total, 1) if total else 0}
-        for k, t, c in stages
+        {"key": k, "title": t, "color": c, "cards": board[k], "count": len(board[k])}
+        for k, t, c in _PIPELINE_REGION_COLUMNS
     ]
     return tr(request, "partners_pipeline.html", ctx(
         request, "partners_pipeline",
-        columns=columns, total=total, other_count=other_count,
+        columns=columns, year=year, quarter=quarter,
+        years=["2026"], quarters=[("all","All quarters"),("Q1","Q1"),("Q2","Q2"),("Q3","Q3"),("Q4","Q4")],
     ))
 
 INTRO_COLUMNS = [
