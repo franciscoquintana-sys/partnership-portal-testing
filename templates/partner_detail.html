@@ -329,7 +329,7 @@
           <div class="field-label">Integration Stage</div>
           <div class="field-value" style="font-weight:700;{% if (partner.integration_stage or '') | lower == 'live' %}color:#15803d{% elif (partner.integration_stage or '') | lower == 'blocked' %}color:#dc2626{% elif (partner.integration_stage or '') | lower == 'in progress' %}color:#ca8a04{% else %}color:#9ca3af{% endif %}">{{ (partner.integration_stage if partner.integration_stage else "N/A") | title }}</div>
         </div>
-        {% if role == 'internal' %}
+        {% if role == 'partnerships' %}
         <div>
           <div class="field-label">NDA</div>
           <div class="field-value{% if partner.nda_status == 'Signed' %} {% else %} muted{% endif %}" {% if partner.nda_status == 'Signed' %}style="font-weight:700;color:#15803d"{% endif %}>{{ partner.nda_status or "N/A" }}</div>
