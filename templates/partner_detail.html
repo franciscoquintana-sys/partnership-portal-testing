@@ -329,6 +329,7 @@
           <div class="field-label">Integration Stage</div>
           <div class="field-value" style="font-weight:700;{% if (partner.integration_stage or '') | lower == 'live' %}color:#15803d{% elif (partner.integration_stage or '') | lower == 'blocked' %}color:#dc2626{% elif (partner.integration_stage or '') | lower == 'in progress' %}color:#ca8a04{% else %}color:#9ca3af{% endif %}">{{ (partner.integration_stage if partner.integration_stage else "N/A") | title }}</div>
         </div>
+        {% if role == 'internal' %}
         <div>
           <div class="field-label">NDA</div>
           <div class="field-value{% if partner.nda_status == 'Signed' %} {% else %} muted{% endif %}" {% if partner.nda_status == 'Signed' %}style="font-weight:700;color:#15803d"{% endif %}>{{ partner.nda_status or "N/A" }}</div>
@@ -337,10 +338,11 @@
           <div class="field-label">KYP</div>
           <div class="field-value muted">N/A</div>
         </div>
-        <div>
+        <div style="grid-column: 1 / -1">
           <div class="field-label">Commercial Terms</div>
           <div class="field-value{% if not partner.commercial_terms or partner.commercial_terms == 'N/A' %} muted{% endif %}" {% if partner.commercial_terms and partner.commercial_terms != 'N/A' %}style="white-space:pre-wrap"{% endif %}>{{ partner.commercial_terms or "N/A" }}</div>
         </div>
+        {% endif %}
       </div>
     </div>
   </div>
