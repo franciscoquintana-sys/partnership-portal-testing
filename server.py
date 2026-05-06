@@ -8362,7 +8362,7 @@ COUNTRY_PARTNERS = {
     # ---- Middle East ----
     "UAE":                 [{"name":"Network International","type":"PSP"},{"name":"Checkout","type":"Acquirer"},{"name":"Tap","type":"PSP"},{"name":"HyperPay","type":"PSP"},{"name":"Pay10","type":"PSP"}],
     "Saudi Arabia":        [{"name":"Moyasar","type":"PSP"},{"name":"HyperPay","type":"PSP"},{"name":"Tap","type":"PSP"},{"name":"Network International","type":"PSP"},{"name":"Checkout","type":"Acquirer"}],
-    "Israel":              [{"name":"Shva","type":"Acquirer"},{"name":"Tranzila","type":"PSP"},{"name":"Cardcom","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Nuvei","type":"PSP"}],
+    "Israel":              [{"name":"Shva","type":"Acquirer"},{"name":"Rapyd","type":"Acquirer"},{"name":"Tranzila","type":"PSP"},{"name":"Cardcom","type":"PSP"},{"name":"Nuvei","type":"PSP"}],
     "Turkey":              [{"name":"iyzico","type":"PSP"},{"name":"PayTR","type":"PSP"},{"name":"Param","type":"PSP"},{"name":"Garanti BBVA","type":"Acquirer"},{"name":"Adyen","type":"PSP"}],
     "Qatar":               [{"name":"Tap","type":"PSP"},{"name":"Checkout","type":"Acquirer"},{"name":"HyperPay","type":"PSP"},{"name":"QPay","type":"PSP"},{"name":"MyFatoorah","type":"PSP"}],
     "Kuwait":              [{"name":"Tap","type":"PSP"},{"name":"Checkout","type":"Acquirer"},{"name":"MyFatoorah","type":"PSP"},{"name":"PayTabs","type":"PSP"},{"name":"Telr","type":"PSP"}],
