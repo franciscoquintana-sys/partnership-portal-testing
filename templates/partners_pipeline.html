@@ -103,14 +103,15 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* Deal-stage colours — match the Partner Portfolio rules */
-.status-live           { color: #15803d; font-weight: 700; }
-.status-agreement-sign { color: #15803d; font-weight: 700; }
-.status-agreement-rev  { color: #4ade80; font-weight: 700; }
-.status-initial-neg    { color: #ca8a04; font-weight: 700; }
-.status-prospect       { color: #2563eb; font-weight: 700; }
-.status-lost           { color: #dc2626; font-weight: 700; }
-.status-default        { color: #64748b; font-weight: 700; }
+/* Deal-stage colours — match the Partner Portfolio rules. Selector is
+   more specific than `.kanban-card-row .value` so it actually wins. */
+.kanban-card-row .value.status-live           { color: #15803d; font-weight: 700; }
+.kanban-card-row .value.status-agreement-sign { color: #15803d; font-weight: 700; }
+.kanban-card-row .value.status-agreement-rev  { color: #4ade80; font-weight: 700; }
+.kanban-card-row .value.status-initial-neg    { color: #ca8a04; font-weight: 700; }
+.kanban-card-row .value.status-prospect       { color: #2563eb; font-weight: 700; }
+.kanban-card-row .value.status-lost           { color: #dc2626; font-weight: 700; }
+.kanban-card-row .value.status-default        { color: #64748b; font-weight: 700; }
 
 /* Modal */
 .pp-modal-backdrop {
