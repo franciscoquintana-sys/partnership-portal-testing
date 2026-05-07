@@ -284,10 +284,11 @@
     </div>
     <div class="pp-field">
       <label>Partner <span style="color:#dc2626">*</span></label>
-      <select id="pp-partner" onchange="onPartnerSelected()">
-        <option value="">Select a partner…</option>
-        {% for p in partner_catalog %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
-      </select>
+      <input id="pp-partner" list="pp-partner-catalog" placeholder="Type or pick a partner…" autocomplete="off"
+             oninput="onPartnerSelected()" onchange="onPartnerSelected()">
+      <datalist id="pp-partner-catalog">
+        {% for p in partner_catalog %}<option value="{{ p }}"></option>{% endfor %}
+      </datalist>
     </div>
     <div class="pp-field-row">
       <div class="pp-field">
