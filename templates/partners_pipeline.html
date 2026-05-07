@@ -244,9 +244,7 @@
       {% set partner_stage = (partner_info.get(card.partner) or {}).get('deal_stage') %}
       <div class="kanban-card" data-id="{{ card.id }}">
         <div class="kanban-card-name">{{ card.partner }}</div>
-        <div class="kanban-card-quarter">{{ card.year }} · {{ card.quarter }}</div>
         {% if partner_stage %}<div class="kanban-card-row"><span class="label">Stage</span><span class="value">{{ partner_stage }}</span></div>{% endif %}
-        {% if card.country %}<div class="kanban-card-row"><span class="label">Country</span><span class="value">{{ card.country }}</span></div>{% endif %}
         {% if card.manager %}<div class="kanban-card-row"><span class="label">PM</span><span class="value">{{ card.manager }}</span></div>{% endif %}
       </div>
       {% endfor %}
@@ -292,18 +290,12 @@
         </select>
       </div>
     </div>
-    <div class="pp-field-row">
-      <div class="pp-field">
-        <label>Partnership Manager</label>
-        <input id="pp-manager" list="pp-manager-list" placeholder="Optional" autocomplete="off">
-        <datalist id="pp-manager-list">
-          {% for m in partner_managers %}<option value="{{ m }}"></option>{% endfor %}
-        </datalist>
-      </div>
-      <div class="pp-field">
-        <label>Country</label>
-        <input id="pp-country" placeholder="Optional">
-      </div>
+    <div class="pp-field">
+      <label>Partnership Manager</label>
+      <input id="pp-manager" list="pp-manager-list" placeholder="Optional" autocomplete="off">
+      <datalist id="pp-manager-list">
+        {% for m in partner_managers %}<option value="{{ m }}"></option>{% endfor %}
+      </datalist>
     </div>
     <!-- Read-only partner detail (visible once a partner is selected) -->
     <div id="pp-partner-detail" style="display:none;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:12px">
@@ -370,10 +362,7 @@ function onPartnerSelected() {
   const info = PP_PARTNER_INFO[name];
   renderPartnerDetail(name);
   if (!info) return;
-  // Autofill blank fields from partner record
-  if (!document.getElementById('pp-country').value) {
-    document.getElementById('pp-country').value = info.country || '';
-  }
+  // Autofill blank Partnership Manager from partner record
   if (!document.getElementById('pp-manager').value) {
     document.getElementById('pp-manager').value = info.manager || '';
   }
@@ -418,7 +407,6 @@ function fillPP(d) {
   document.getElementById('pp-column').value      = d.column || 'GLOBAL';
   document.getElementById('pp-year').value        = d.year || PP_DEFAULT_YEAR;
   document.getElementById('pp-quarter').value     = d.quarter || PP_DEFAULT_QUARTER;
-  document.getElementById('pp-country').value     = d.country || '';
   document.getElementById('pp-manager').value     = d.manager || '';
   document.getElementById('pp-comments').value    = d.comments || '';
   renderPartnerDetail(d.partner || '');
@@ -430,7 +418,6 @@ function readPP() {
     column:     document.getElementById('pp-column').value,
     year:       document.getElementById('pp-year').value,
     quarter:    document.getElementById('pp-quarter').value,
-    country:    document.getElementById('pp-country').value.trim(),
     manager:    document.getElementById('pp-manager').value.trim(),
     comments:   document.getElementById('pp-comments').value.trim(),
   };
