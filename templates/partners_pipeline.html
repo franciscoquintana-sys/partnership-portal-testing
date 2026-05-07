@@ -232,19 +232,34 @@
   </div>
 </div>
 
-<!-- Toolbar: filters + add -->
+<!-- Toolbar: filters + search + add -->
 <form method="get" action="/partners_pipeline" id="pp-filter-form" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+  <div style="position:relative;flex:1;min-width:220px">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"
+         style="position:absolute;left:11px;top:50%;transform:translateY(-50%)">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input id="pp-search" type="text" placeholder="Look for a partner…"
+           oninput="applyPipelineFilter()"
+           style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:8px 12px 8px 32px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;outline:none;transition:border-color 0.15s, box-shadow 0.15s"
+           onfocus="this.style.borderColor='#4f46e5';this.style.boxShadow='0 0 0 3px rgba(79,70,229,0.1)'"
+           onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
+  </div>
+  <select id="pp-manager-filter" onchange="applyPipelineFilter()"
+          style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:200px">
+    <option value="">All partnership managers</option>
+    {% for m in partner_managers %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+  </select>
   <label style="font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#64748b">Year</label>
   <select name="year" onchange="document.getElementById('pp-filter-form').submit()"
-          style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:120px">
+          style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:100px">
     {% for y in years %}<option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>{% endfor %}
   </select>
   <label style="font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#64748b">Quarter</label>
   <select name="quarter" onchange="document.getElementById('pp-filter-form').submit()"
-          style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:160px">
+          style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:140px">
     {% for q, label in quarters %}<option value="{{ q }}" {% if q == quarter %}selected{% endif %}>{{ label }}</option>{% endfor %}
   </select>
-  <span style="flex:1"></span>
   <button type="button" class="btn-primary" onclick="openAddCard()" style="padding:7px 14px;font-size:12.5px;height:34px">+ Partner</button>
 </form>
 
@@ -259,7 +274,7 @@
     <div class="kanban-col-body sortable" data-col="{{ col.key }}">
       {% for card in col.cards %}
       {% set partner_stage = (partner_info.get(card.partner) or {}).get('deal_stage') %}
-      <div class="kanban-card" data-id="{{ card.id }}">
+      <div class="kanban-card" data-id="{{ card.id }}" data-partner="{{ card.partner or '' }}" data-manager="{{ card.manager or '' }}">
         <div class="kanban-card-name">{{ card.partner }}</div>
         {% if partner_stage %}
         <div class="kanban-card-row">
@@ -505,6 +520,25 @@ async function deletePP() {
   if (!res.ok) { alert('Failed to delete'); return; }
   closePP();
   window.location.reload();
+}
+
+function applyPipelineFilter() {
+  const q  = (document.getElementById('pp-search').value || '').trim().toLowerCase();
+  const pm = document.getElementById('pp-manager-filter').value || '';
+  document.querySelectorAll('.kanban-col').forEach(col => {
+    let visible = 0;
+    col.querySelectorAll('.kanban-card').forEach(card => {
+      const partner = (card.dataset.partner || '').toLowerCase();
+      const manager = card.dataset.manager || '';
+      const matchesQ  = !q  || partner.indexOf(q) !== -1;
+      const matchesPm = !pm || manager === pm;
+      const show = matchesQ && matchesPm;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    const countEl = col.querySelector('.kanban-col-count');
+    if (countEl) countEl.textContent = visible;
+  });
 }
 
 bindPPSortables();
