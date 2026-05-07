@@ -260,7 +260,11 @@
           style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:140px">
     {% for q, label in quarters %}<option value="{{ q }}" {% if q == quarter %}selected{% endif %}>{{ label }}</option>{% endfor %}
   </select>
+  {% if can_edit %}
   <button type="button" class="btn-primary" onclick="openAddCard()" style="padding:7px 14px;font-size:12.5px;height:34px">+ Partner</button>
+  {% else %}
+  <span style="font-size:11px;color:#94a3b8;font-style:italic">Read-only access</span>
+  {% endif %}
 </form>
 
 <!-- Kanban -->
@@ -363,6 +367,7 @@
 let PP_CARDS = {{ all_cards | tojson }};
 const PP_PARTNER_INFO = {{ partner_info | tojson }};
 const PP_REGION_KEYS = {{ columns | map(attribute='key') | list | tojson }};
+const PP_CAN_EDIT = {{ can_edit | tojson }};
 let currentPPId = null;
 let ppMode = 'edit';
 const PP_DEFAULT_YEAR = '{{ year if year != "all" else "2026" }}';
@@ -413,6 +418,7 @@ function onPartnerSelected() {
 }
 
 function bindPPSortables() {
+  if (!PP_CAN_EDIT) return;  // read-only roles can't drag
   document.querySelectorAll('.kanban-col-body.sortable').forEach(el => {
     new Sortable(el, {
       group: 'pp',
@@ -435,6 +441,11 @@ function bindPPSortables() {
 }
 
 function bindPPClicks() {
+  // Read-only roles don't open the edit modal at all.
+  if (!PP_CAN_EDIT) {
+    document.querySelectorAll('.kanban-card').forEach(c => { c.style.cursor = 'default'; });
+    return;
+  }
   document.querySelectorAll('.kanban-card').forEach(c => {
     c.onclick = () => openPP(c.dataset.id);
   });

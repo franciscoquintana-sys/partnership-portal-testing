@@ -747,12 +747,16 @@ def partners_pipeline(request: Request, year: str = "2026", quarter: str = "Q2")
         partner_managers=partner_managers,
         partner_info=partner_info,
         deal_stages=_PP_DEAL_STAGES,
+        can_edit=(role in FULL_ACCESS_ROLES),
     ))
 
 @app.post("/api/partners_pipeline/create")
 async def api_pp_create(request: Request):
-    if not get_role(request):
+    role = get_role(request)
+    if not role:
         return JSONResponse({"error": "unauthorized"}, status_code=401)
+    if role not in FULL_ACCESS_ROLES:
+        return JSONResponse({"error": "forbidden"}, status_code=403)
     body = await request.json()
     fields = body.get("fields") or {}
     partner = (fields.get("partner") or "").strip()
@@ -783,8 +787,11 @@ async def api_pp_create(request: Request):
 
 @app.post("/api/partners_pipeline/update")
 async def api_pp_update(request: Request):
-    if not get_role(request):
+    role = get_role(request)
+    if not role:
         return JSONResponse({"error": "unauthorized"}, status_code=401)
+    if role not in FULL_ACCESS_ROLES:
+        return JSONResponse({"error": "forbidden"}, status_code=403)
     body = await request.json()
     card_id = body.get("id")
     fields = body.get("fields", {})
@@ -799,8 +806,11 @@ async def api_pp_update(request: Request):
 
 @app.post("/api/partners_pipeline/move")
 async def api_pp_move(request: Request):
-    if not get_role(request):
+    role = get_role(request)
+    if not role:
         return JSONResponse({"error": "unauthorized"}, status_code=401)
+    if role not in FULL_ACCESS_ROLES:
+        return JSONResponse({"error": "forbidden"}, status_code=403)
     body = await request.json()
     card_id = body.get("id")
     new_column = body.get("column")
@@ -815,8 +825,11 @@ async def api_pp_move(request: Request):
 
 @app.post("/api/partners_pipeline/delete")
 async def api_pp_delete(request: Request):
-    if not get_role(request):
+    role = get_role(request)
+    if not role:
         return JSONResponse({"error": "unauthorized"}, status_code=401)
+    if role not in FULL_ACCESS_ROLES:
+        return JSONResponse({"error": "forbidden"}, status_code=403)
     body = await request.json()
     card_id = body.get("id")
     global PARTNER_PIPELINE
