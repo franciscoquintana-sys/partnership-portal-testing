@@ -354,7 +354,7 @@
     <div class="pp-field"><label>Comments</label><textarea id="pp-comments"></textarea></div>
     <div class="pp-modal-actions">
       <button class="btn-secondary" onclick="closePP()">Close</button>
-      <button class="btn-primary" onclick="savePP()">Save</button>
+      <button class="btn-primary" id="pp-save-btn" onclick="savePP()">Save</button>
     </div>
   </div>
 </div>
@@ -441,11 +441,10 @@ function bindPPSortables() {
 }
 
 function bindPPClicks() {
-  // Read-only roles don't open the edit modal at all.
-  if (!PP_CAN_EDIT) {
-    document.querySelectorAll('.kanban-card').forEach(c => { c.style.cursor = 'default'; });
-    return;
-  }
+  // Both partnerships and internal can open the modal.
+  // Read-only mode is enforced inside openPP() (fields disabled,
+  // Save/Delete hidden) so internal sees the full detail without
+  // being able to mutate anything.
   document.querySelectorAll('.kanban-card').forEach(c => {
     c.onclick = () => openPP(c.dataset.id);
   });
@@ -472,23 +471,40 @@ function readPP() {
   };
 }
 
+function setPPReadOnly(readOnly) {
+  // Disable / re-enable every form control inside the modal.
+  ['pp-partner','pp-column','pp-year','pp-quarter','pp-manager','pp-comments'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'SELECT') el.disabled = readOnly;
+    else el.readOnly = readOnly;
+    el.style.background = readOnly ? '#f8fafc' : '';
+  });
+  // Hide Save + Delete in read-only; the only action is Close.
+  document.getElementById('pp-save-btn').style.display   = readOnly ? 'none' : '';
+  document.getElementById('pp-delete-btn').style.display = readOnly ? 'none' : '';
+}
+
 function openPP(id) {
   const card = PP_CARDS.find(c => c.id === id);
   if (!card) return;
   ppMode = 'edit';
   currentPPId = id;
-  document.getElementById('pp-title').textContent = card.partner || 'Edit Partner';
-  document.getElementById('pp-delete-btn').style.display = '';
+  document.getElementById('pp-title').textContent = card.partner || 'Partner';
   fillPP(card);
+  setPPReadOnly(!PP_CAN_EDIT);
+  if (PP_CAN_EDIT) document.getElementById('pp-delete-btn').style.display = '';
   document.getElementById('pp-modal').classList.add('open');
 }
 
 function openAddCard() {
+  if (!PP_CAN_EDIT) return;  // safety net
   ppMode = 'create';
   currentPPId = null;
   document.getElementById('pp-title').textContent = 'Add Partner';
   document.getElementById('pp-delete-btn').style.display = 'none';
   fillPP({year: PP_DEFAULT_YEAR, quarter: PP_DEFAULT_QUARTER});
+  setPPReadOnly(false);
   document.getElementById('pp-modal').classList.add('open');
   setTimeout(() => document.getElementById('pp-partner').focus(), 50);
 }
