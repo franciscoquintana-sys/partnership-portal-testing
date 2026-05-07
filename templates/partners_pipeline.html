@@ -88,13 +88,29 @@
   color: #64748b;
   display: flex;
   gap: 6px;
+  align-items: baseline;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .kanban-card-row .label {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  flex-shrink: 0;
 }
-.kanban-card-row .value { color: #0f172a; }
+.kanban-card-row .value {
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Deal-stage colours — match the Partner Portfolio rules */
+.status-live           { color: #15803d; font-weight: 700; }
+.status-agreement-sign { color: #15803d; font-weight: 700; }
+.status-agreement-rev  { color: #4ade80; font-weight: 700; }
+.status-initial-neg    { color: #ca8a04; font-weight: 700; }
+.status-prospect       { color: #2563eb; font-weight: 700; }
+.status-lost           { color: #dc2626; font-weight: 700; }
+.status-default        { color: #64748b; font-weight: 700; }
 
 /* Modal */
 .pp-modal-backdrop {
@@ -244,7 +260,12 @@
       {% set partner_stage = (partner_info.get(card.partner) or {}).get('deal_stage') %}
       <div class="kanban-card" data-id="{{ card.id }}">
         <div class="kanban-card-name">{{ card.partner }}</div>
-        {% if partner_stage %}<div class="kanban-card-row"><span class="label">Stage</span><span class="value">{{ partner_stage }}</span></div>{% endif %}
+        {% if partner_stage %}
+        <div class="kanban-card-row">
+          <span class="label">Stage</span>
+          <span class="value {% if 'Lost' in partner_stage or 'Non-qualified' in partner_stage or 'Non qualified' in partner_stage %}status-lost{% elif 'Agreement Signed' in partner_stage %}status-agreement-sign{% elif 'Agreement Review' in partner_stage %}status-agreement-rev{% elif 'Initial Negotiation' in partner_stage %}status-initial-neg{% elif 'Prospect' in partner_stage or 'Opportunity' in partner_stage %}status-prospect{% elif 'Live' in partner_stage %}status-live{% else %}status-default{% endif %}">{{ partner_stage }}</span>
+        </div>
+        {% endif %}
         {% if card.manager %}<div class="kanban-card-row"><span class="label">PM</span><span class="value">{{ card.manager }}</span></div>{% endif %}
       </div>
       {% endfor %}
