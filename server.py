@@ -694,7 +694,7 @@ def _save_partner_pipeline(data):
 PARTNER_PIPELINE: list = []
 
 @app.get("/partners_pipeline", response_class=HTMLResponse)
-def partners_pipeline(request: Request, year: str = "2026", quarter: str = "all"):
+def partners_pipeline(request: Request, year: str = "2026", quarter: str = "Q2"):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
