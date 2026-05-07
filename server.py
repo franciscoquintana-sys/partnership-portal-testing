@@ -716,7 +716,12 @@ def partners_pipeline(request: Request, year: str = "2026", quarter: str = "all"
     except Exception:
         all_partners_rows = []
     partner_catalog = sorted({p["name"] for p in all_partners_rows if p.get("name")})
-    partner_managers = sorted({(p.get("manager") or "").strip() for p in all_partners_rows if (p.get("manager") or "").strip()})
+    partner_managers = sorted({
+        (p.get("manager") or "").strip()
+        for p in all_partners_rows
+        if (p.get("manager") or "").strip()
+        and (p.get("manager") or "").strip().lower() != "not assigned"
+    })
     # Per-partner read-only details (for the modal: NDA / KYP / current Deal Stage / Country / PM)
     partner_info = {
         p["name"]: {
