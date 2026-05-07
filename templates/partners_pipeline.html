@@ -1,0 +1,574 @@
+{% extends "base.html" %}
+{% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+{% block head %}
+<style>
+.kanban-wrapper {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  align-items: flex-start;
+}
+.kanban-col {
+  min-width: 0;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+.kanban-col-header {
+  padding: 10px 10px 8px;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.kanban-col-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+}
+.kanban-col-count {
+  font-size: 11px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 10px;
+  min-width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 6px;
+  flex-shrink: 0;
+}
+.kanban-col-body {
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 80px;
+}
+.kanban-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: grab;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: box-shadow 0.15s, border-color 0.15s;
+  user-select: none;
+}
+.kanban-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.08); border-color: #c7d2fe; }
+.kanban-card.sortable-ghost { opacity: 0.4; }
+.kanban-card.sortable-chosen { cursor: grabbing; }
+.kanban-card-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f172a;
+  line-height: 1.3;
+}
+.kanban-card-quarter {
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #4F46E5;
+  background: rgba(79,70,229,0.08);
+  padding: 1px 6px;
+  border-radius: 3px;
+  width: fit-content;
+}
+.kanban-card-row {
+  font-size: 10.5px;
+  color: #64748b;
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.kanban-card-row .label {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+.kanban-card-row .value {
+  color: #0f172a;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+/* Deal-stage colours — match the Partner Portfolio rules. Selector is
+   more specific than `.kanban-card-row .value` so it actually wins. */
+.kanban-card-row .value.status-live           { color: #15803d; font-weight: 700; }
+.kanban-card-row .value.status-agreement-sign { color: #15803d; font-weight: 700; }
+.kanban-card-row .value.status-agreement-rev  { color: #4ade80; font-weight: 700; }
+.kanban-card-row .value.status-initial-neg    { color: #ca8a04; font-weight: 700; }
+.kanban-card-row .value.status-prospect       { color: #2563eb; font-weight: 700; }
+.kanban-card-row .value.status-lost           { color: #dc2626; font-weight: 700; }
+.kanban-card-row .value.status-default        { color: #64748b; font-weight: 700; }
+
+/* Modal */
+.pp-modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,0.55);
+  z-index: 999;
+  padding: 40px 16px;
+  overflow-y: auto;
+}
+.pp-modal-backdrop.open { display: block; }
+.pp-modal {
+  background: #fff;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 24px 28px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.25);
+}
+.pp-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #eef2f7;
+}
+.pp-modal-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
+.pp-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 12px;
+}
+.pp-field label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+.pp-field input,
+.pp-field select,
+.pp-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 13px;
+  color: #0f172a;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.pp-field textarea { min-height: 80px; resize: vertical; }
+.pp-field input:focus,
+.pp-field select:focus,
+.pp-field textarea:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+}
+.pp-field-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.pp-modal-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid #eef2f7;
+}
+.btn-primary {
+  background: #4f46e5; color: #fff; border: none;
+  border-radius: 8px; padding: 9px 18px;
+  font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.btn-primary:hover { background: #4338ca; }
+.btn-secondary {
+  background: #fff; color: #334155;
+  border: 1px solid #cbd5e1; border-radius: 8px;
+  padding: 9px 18px; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.btn-secondary:hover { background: #f8fafc; }
+.btn-danger {
+  background: #fff; color: #dc2626;
+  border: 1px solid #fca5a5; border-radius: 8px;
+  padding: 9px 14px; font-size: 12px; font-weight: 700; cursor: pointer;
+}
+.btn-danger:hover { background: #fef2f2; }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Dark banner -->
+<div style="
+  background: linear-gradient(120deg, #0a1628 70%, #0f2044 100%);
+  border-radius: 14px;
+  padding: 28px 32px;
+  margin-bottom: 20px;
+  position: relative;
+  overflow: hidden;
+">
+  <div style="position:absolute;right:-40px;top:-40px;width:300px;height:200px;background:radial-gradient(ellipse,rgba(79,70,229,0.25) 0%,transparent 70%);pointer-events:none"></div>
+  <div style="display:flex;align-items:flex-start;justify-content:space-between">
+    <div>
+      <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Partners Pipeline</div>
+      <div style="font-size:13px;color:#94a3b8">Track the partners we're actively working on during a specific period, organised by region with each partner's current deal stage at a glance.</div>
+    </div>
+    <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
+  </div>
+</div>
+
+<!-- Toolbar: filters + search + add -->
+<form method="get" action="/partners_pipeline" id="pp-filter-form" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+  <div style="position:relative;flex:1;min-width:220px">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"
+         style="position:absolute;left:11px;top:50%;transform:translateY(-50%)">
+      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+    </svg>
+    <input id="pp-search" type="text" placeholder="Look for a partner…"
+           oninput="applyPipelineFilter()"
+           style="width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:8px 12px 8px 32px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;outline:none;transition:border-color 0.15s, box-shadow 0.15s"
+           onfocus="this.style.borderColor='#4f46e5';this.style.boxShadow='0 0 0 3px rgba(79,70,229,0.1)'"
+           onblur="this.style.borderColor='#e2e8f0';this.style.boxShadow='none'">
+  </div>
+  <select id="pp-manager-filter" onchange="applyPipelineFilter()"
+          style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:200px">
+    <option value="">All partnership managers</option>
+    {% for m in partner_managers %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+  </select>
+  <label style="font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#64748b">Year</label>
+  <select name="year" onchange="document.getElementById('pp-filter-form').submit()"
+          style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:100px">
+    {% for y in years %}<option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>{% endfor %}
+  </select>
+  <label style="font-size:11px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#64748b">Quarter</label>
+  <select name="quarter" onchange="document.getElementById('pp-filter-form').submit()"
+          style="font-family:inherit;font-size:13px;padding:8px 10px;border:1px solid #e2e8f0;border-radius:8px;background:#fff;min-width:140px">
+    {% for q, label in quarters %}<option value="{{ q }}" {% if q == quarter %}selected{% endif %}>{{ label }}</option>{% endfor %}
+  </select>
+  {% if can_edit %}
+  <button type="button" class="btn-primary" onclick="openAddCard()" style="padding:7px 14px;font-size:12.5px;height:34px">+ Partner</button>
+  {% else %}
+  <span style="font-size:11px;color:#94a3b8;font-style:italic">Read-only access</span>
+  {% endif %}
+</form>
+
+<!-- Kanban -->
+<div class="kanban-wrapper">
+  {% for col in columns %}
+  <div class="kanban-col" data-col="{{ col.key }}" style="border-top: 3px solid {{ col.color }}">
+    <div class="kanban-col-header">
+      <div class="kanban-col-title">{{ col.title }}</div>
+      <div class="kanban-col-count" style="background: {{ col.color }}">{{ col.cards|length }}</div>
+    </div>
+    <div class="kanban-col-body sortable" data-col="{{ col.key }}">
+      {% for card in col.cards %}
+      {% set partner_stage = (partner_info.get(card.partner) or {}).get('deal_stage') %}
+      <div class="kanban-card" data-id="{{ card.id }}" data-partner="{{ card.partner or '' }}" data-manager="{{ card.manager or '' }}">
+        <div class="kanban-card-name">{{ card.partner }}</div>
+        {% if partner_stage %}
+        <div class="kanban-card-row">
+          <span class="label">Stage</span>
+          <span class="value {% if 'Lost' in partner_stage or 'Non-qualified' in partner_stage or 'Non qualified' in partner_stage %}status-lost{% elif 'Agreement Signed' in partner_stage %}status-agreement-sign{% elif 'Agreement Review' in partner_stage %}status-agreement-rev{% elif 'Initial Negotiation' in partner_stage %}status-initial-neg{% elif 'Prospect' in partner_stage or 'Opportunity' in partner_stage %}status-prospect{% elif 'Live' in partner_stage %}status-live{% else %}status-default{% endif %}">{{ partner_stage }}</span>
+        </div>
+        {% endif %}
+        {% if card.manager %}<div class="kanban-card-row"><span class="label">PM</span><span class="value">{{ card.manager }}</span></div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- Detail modal -->
+<div class="pp-modal-backdrop" id="pp-modal" onclick="if(event.target===this)closePP()">
+  <div class="pp-modal">
+    <div class="pp-modal-head">
+      <h2 class="pp-modal-title" id="pp-title">Add Partner</h2>
+      <button class="btn-danger" id="pp-delete-btn" onclick="deletePP()" style="display:none">Delete</button>
+    </div>
+    <div class="pp-field">
+      <label>Partner <span style="color:#dc2626">*</span></label>
+      <input id="pp-partner" list="pp-partner-catalog" placeholder="Type or pick a partner…" autocomplete="off"
+             oninput="onPartnerSelected()" onchange="onPartnerSelected()">
+      <datalist id="pp-partner-catalog">
+        {% for p in partner_catalog %}<option value="{{ p }}"></option>{% endfor %}
+      </datalist>
+    </div>
+    <div class="pp-field-row">
+      <div class="pp-field">
+        <label>Region <span style="color:#dc2626">*</span></label>
+        <select id="pp-column">
+          {% for col in columns %}<option value="{{ col.key }}">{{ col.title }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="pp-field">
+        <label>Year</label>
+        <select id="pp-year">
+          {% for y in years %}<option value="{{ y }}">{{ y }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="pp-field">
+        <label>Quarter</label>
+        <select id="pp-quarter">
+          <option value="Q1">Q1</option>
+          <option value="Q2">Q2</option>
+          <option value="Q3">Q3</option>
+          <option value="Q4">Q4</option>
+        </select>
+      </div>
+    </div>
+    <div class="pp-field">
+      <label>Partnership Manager</label>
+      <input id="pp-manager" list="pp-manager-list" placeholder="Optional" autocomplete="off">
+      <datalist id="pp-manager-list">
+        {% for m in partner_managers %}<option value="{{ m }}"></option>{% endfor %}
+      </datalist>
+    </div>
+    <!-- Read-only partner detail (visible once a partner is selected) -->
+    <div id="pp-partner-detail" style="display:none;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#64748b;margin-bottom:8px">Partner detail</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:12.5px">
+        <div><span style="color:#64748b">NDA:</span> <span id="pp-detail-nda" style="font-weight:700;color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">KYP:</span> <span id="pp-detail-kyp" style="font-weight:700;color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">Type:</span> <span id="pp-detail-type" style="color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">Tier:</span> <span id="pp-detail-tier" style="color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">Region:</span> <span id="pp-detail-region" style="color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">Current Deal Stage:</span> <span id="pp-detail-stage" style="color:#0f172a">—</span></div>
+      </div>
+    </div>
+    <div class="pp-field"><label>Comments</label><textarea id="pp-comments"></textarea></div>
+    <div class="pp-modal-actions">
+      <button class="btn-secondary" onclick="closePP()">Close</button>
+      <button class="btn-primary" id="pp-save-btn" onclick="savePP()">Save</button>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+let PP_CARDS = {{ all_cards | tojson }};
+const PP_PARTNER_INFO = {{ partner_info | tojson }};
+const PP_REGION_KEYS = {{ columns | map(attribute='key') | list | tojson }};
+const PP_CAN_EDIT = {{ can_edit | tojson }};
+let currentPPId = null;
+let ppMode = 'edit';
+const PP_DEFAULT_YEAR = '{{ year if year != "all" else "2026" }}';
+const PP_DEFAULT_QUARTER = '{{ quarter if quarter != "all" else "Q1" }}';
+
+// Map partner.region (free-text) -> our 6 column keys
+function ppRegionKey(region, country) {
+  const r = (region || '').trim().toUpperCase();
+  if (r === 'LATAM') return 'LATAM';
+  if (r === 'APAC' || r === 'ASIA' || r.indexOf('CENTRAL ASIA') !== -1) return 'APAC';
+  if (r === 'NORTH AMERICA') return 'NORTH AMERICA';
+  if (r === 'AFRICA') return 'MEA';
+  if (r === 'EMEA') {
+    const MEA = ['UAE','Saudi Arabia','Egypt','Qatar','Kuwait','Bahrain','Oman','Jordan','Lebanon','Iraq','Israel','Turkey'];
+    return MEA.indexOf(country || '') !== -1 ? 'MEA' : 'EUROPE';
+  }
+  return 'GLOBAL';
+}
+
+function renderPartnerDetail(partnerName) {
+  const info = PP_PARTNER_INFO[partnerName];
+  const wrap = document.getElementById('pp-partner-detail');
+  if (!info) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  document.getElementById('pp-detail-nda').textContent = info.nda_status || 'N/A';
+  document.getElementById('pp-detail-kyp').textContent = info.kyp_status || 'N/A';
+  document.getElementById('pp-detail-type').textContent = info.type || '—';
+  document.getElementById('pp-detail-tier').textContent = info.tier || '—';
+  document.getElementById('pp-detail-region').textContent = info.region || '—';
+  document.getElementById('pp-detail-stage').textContent = info.deal_stage || '—';
+}
+
+function onPartnerSelected() {
+  const name = document.getElementById('pp-partner').value;
+  const info = PP_PARTNER_INFO[name];
+  renderPartnerDetail(name);
+  if (!info) return;
+  // Autofill blank Partnership Manager from partner record
+  if (!document.getElementById('pp-manager').value) {
+    document.getElementById('pp-manager').value = info.manager || '';
+  }
+  // Region: only auto-fill if not already set
+  const colEl = document.getElementById('pp-column');
+  if (ppMode === 'create') {
+    const r = ppRegionKey(info.region, info.country);
+    if (PP_REGION_KEYS.indexOf(r) !== -1) colEl.value = r;
+  }
+}
+
+function bindPPSortables() {
+  if (!PP_CAN_EDIT) return;  // read-only roles can't drag
+  document.querySelectorAll('.kanban-col-body.sortable').forEach(el => {
+    new Sortable(el, {
+      group: 'pp',
+      animation: 150,
+      ghostClass: 'sortable-ghost',
+      chosenClass: 'sortable-chosen',
+      onEnd(evt) {
+        const id = evt.item.dataset.id;
+        const newCol = evt.to.dataset.col;
+        fetch('/api/partners_pipeline/move', {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({id, column: newCol})
+        });
+        const card = PP_CARDS.find(c => c.id === id);
+        if (card) card.column = newCol;
+      }
+    });
+  });
+}
+
+function bindPPClicks() {
+  // Both partnerships and internal can open the modal.
+  // Read-only mode is enforced inside openPP() (fields disabled,
+  // Save/Delete hidden) so internal sees the full detail without
+  // being able to mutate anything.
+  document.querySelectorAll('.kanban-card').forEach(c => {
+    c.onclick = () => openPP(c.dataset.id);
+  });
+}
+
+function fillPP(d) {
+  document.getElementById('pp-partner').value     = d.partner || '';
+  document.getElementById('pp-column').value      = d.column || 'GLOBAL';
+  document.getElementById('pp-year').value        = d.year || PP_DEFAULT_YEAR;
+  document.getElementById('pp-quarter').value     = d.quarter || PP_DEFAULT_QUARTER;
+  document.getElementById('pp-manager').value     = d.manager || '';
+  document.getElementById('pp-comments').value    = d.comments || '';
+  renderPartnerDetail(d.partner || '');
+}
+
+function readPP() {
+  return {
+    partner:    document.getElementById('pp-partner').value.trim(),
+    column:     document.getElementById('pp-column').value,
+    year:       document.getElementById('pp-year').value,
+    quarter:    document.getElementById('pp-quarter').value,
+    manager:    document.getElementById('pp-manager').value.trim(),
+    comments:   document.getElementById('pp-comments').value.trim(),
+  };
+}
+
+function setPPReadOnly(readOnly) {
+  // Disable / re-enable every form control inside the modal.
+  ['pp-partner','pp-column','pp-year','pp-quarter','pp-manager','pp-comments'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.tagName === 'SELECT') el.disabled = readOnly;
+    else el.readOnly = readOnly;
+    el.style.background = readOnly ? '#f8fafc' : '';
+  });
+  // Hide Save + Delete in read-only; the only action is Close.
+  document.getElementById('pp-save-btn').style.display   = readOnly ? 'none' : '';
+  document.getElementById('pp-delete-btn').style.display = readOnly ? 'none' : '';
+}
+
+function openPP(id) {
+  const card = PP_CARDS.find(c => c.id === id);
+  if (!card) return;
+  ppMode = 'edit';
+  currentPPId = id;
+  document.getElementById('pp-title').textContent = card.partner || 'Partner';
+  fillPP(card);
+  setPPReadOnly(!PP_CAN_EDIT);
+  if (PP_CAN_EDIT) document.getElementById('pp-delete-btn').style.display = '';
+  document.getElementById('pp-modal').classList.add('open');
+}
+
+function openAddCard() {
+  if (!PP_CAN_EDIT) return;  // safety net
+  ppMode = 'create';
+  currentPPId = null;
+  document.getElementById('pp-title').textContent = 'Add Partner';
+  document.getElementById('pp-delete-btn').style.display = 'none';
+  fillPP({year: PP_DEFAULT_YEAR, quarter: PP_DEFAULT_QUARTER});
+  setPPReadOnly(false);
+  document.getElementById('pp-modal').classList.add('open');
+  setTimeout(() => document.getElementById('pp-partner').focus(), 50);
+}
+
+function closePP() {
+  document.getElementById('pp-modal').classList.remove('open');
+  currentPPId = null;
+}
+
+async function savePP() {
+  const fields = readPP();
+  if (!fields.partner) { alert('Partner is required'); return; }
+  if (ppMode === 'create') {
+    const res = await fetch('/api/partners_pipeline/create', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({fields})
+    });
+    if (!res.ok) { alert('Failed to save'); return; }
+  } else {
+    const res = await fetch('/api/partners_pipeline/update', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({id: currentPPId, fields})
+    });
+    if (!res.ok) { alert('Failed to update'); return; }
+  }
+  closePP();
+  window.location.reload();
+}
+
+async function deletePP() {
+  if (!currentPPId) return;
+  if (!confirm('Delete this partner card?')) return;
+  const res = await fetch('/api/partners_pipeline/delete', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({id: currentPPId})
+  });
+  if (!res.ok) { alert('Failed to delete'); return; }
+  closePP();
+  window.location.reload();
+}
+
+function applyPipelineFilter() {
+  const q  = (document.getElementById('pp-search').value || '').trim().toLowerCase();
+  const pm = document.getElementById('pp-manager-filter').value || '';
+  document.querySelectorAll('.kanban-col').forEach(col => {
+    let visible = 0;
+    col.querySelectorAll('.kanban-card').forEach(card => {
+      const partner = (card.dataset.partner || '').toLowerCase();
+      const manager = card.dataset.manager || '';
+      const matchesQ  = !q  || partner.indexOf(q) !== -1;
+      const matchesPm = !pm || manager === pm;
+      const show = matchesQ && matchesPm;
+      card.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
+    const countEl = col.querySelector('.kanban-col-count');
+    if (countEl) countEl.textContent = visible;
+  });
+}
+
+bindPPSortables();
+bindPPClicks();
+</script>
+{% endblock %}
