@@ -244,6 +244,7 @@
       <div class="kanban-card" data-id="{{ card.id }}">
         <div class="kanban-card-name">{{ card.partner }}</div>
         <div class="kanban-card-quarter">{{ card.year }} · {{ card.quarter }}</div>
+        {% if card.deal_stage %}<div class="kanban-card-row"><span class="label">Stage</span><span class="value">{{ card.deal_stage }}</span></div>{% endif %}
         {% if card.country %}<div class="kanban-card-row"><span class="label">Country</span><span class="value">{{ card.country }}</span></div>{% endif %}
         {% if card.manager %}<div class="kanban-card-row"><span class="label">PM</span><span class="value">{{ card.manager }}</span></div>{% endif %}
       </div>
@@ -262,10 +263,10 @@
     </div>
     <div class="pp-field">
       <label>Partner <span style="color:#dc2626">*</span></label>
-      <input id="pp-partner" list="pp-partner-catalog" placeholder="Start typing a partner name…" autocomplete="off">
-      <datalist id="pp-partner-catalog">
-        {% for p in partner_catalog %}<option value="{{ p }}"></option>{% endfor %}
-      </datalist>
+      <select id="pp-partner" onchange="onPartnerSelected()">
+        <option value="">Select a partner…</option>
+        {% for p in partner_catalog %}<option value="{{ p }}">{{ p }}</option>{% endfor %}
+      </select>
     </div>
     <div class="pp-field-row">
       <div class="pp-field">
@@ -290,8 +291,38 @@
         </select>
       </div>
     </div>
-    <div class="pp-field"><label>Country</label><input id="pp-country" placeholder="Optional"></div>
-    <div class="pp-field"><label>Partnership Manager</label><input id="pp-manager" placeholder="Optional"></div>
+    <div class="pp-field-row">
+      <div class="pp-field">
+        <label>Deal Stage</label>
+        <select id="pp-deal-stage">
+          <option value="">—</option>
+          {% for s in deal_stages %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="pp-field">
+        <label>Partnership Manager</label>
+        <input id="pp-manager" list="pp-manager-list" placeholder="Optional" autocomplete="off">
+        <datalist id="pp-manager-list">
+          {% for m in partner_managers %}<option value="{{ m }}"></option>{% endfor %}
+        </datalist>
+      </div>
+      <div class="pp-field">
+        <label>Country</label>
+        <input id="pp-country" placeholder="Optional">
+      </div>
+    </div>
+    <!-- Read-only partner detail (visible once a partner is selected) -->
+    <div id="pp-partner-detail" style="display:none;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 14px;margin-bottom:12px">
+      <div style="font-size:10px;font-weight:700;letter-spacing:0.05em;text-transform:uppercase;color:#64748b;margin-bottom:8px">Partner detail</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;font-size:12.5px">
+        <div><span style="color:#64748b">NDA:</span> <span id="pp-detail-nda" style="font-weight:700;color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">KYP:</span> <span id="pp-detail-kyp" style="font-weight:700;color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">Type:</span> <span id="pp-detail-type" style="color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">Tier:</span> <span id="pp-detail-tier" style="color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">Region:</span> <span id="pp-detail-region" style="color:#0f172a">—</span></div>
+        <div><span style="color:#64748b">Current Deal Stage:</span> <span id="pp-detail-stage" style="color:#0f172a">—</span></div>
+      </div>
+    </div>
     <div class="pp-field"><label>Comments</label><textarea id="pp-comments"></textarea></div>
     <div class="pp-modal-actions">
       <button class="btn-secondary" onclick="closePP()">Close</button>
@@ -306,10 +337,64 @@
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
 <script>
 let PP_CARDS = {{ all_cards | tojson }};
+const PP_PARTNER_INFO = {{ partner_info | tojson }};
+const PP_REGION_KEYS = {{ columns | map(attribute='key') | list | tojson }};
 let currentPPId = null;
 let ppMode = 'edit';
 const PP_DEFAULT_YEAR = '{{ year if year != "all" else "2026" }}';
 const PP_DEFAULT_QUARTER = '{{ quarter if quarter != "all" else "Q1" }}';
+
+// Map partner.region (free-text) -> our 6 column keys
+function ppRegionKey(region, country) {
+  const r = (region || '').trim().toUpperCase();
+  if (r === 'LATAM') return 'LATAM';
+  if (r === 'APAC' || r === 'ASIA' || r.indexOf('CENTRAL ASIA') !== -1) return 'APAC';
+  if (r === 'NORTH AMERICA') return 'NORTH AMERICA';
+  if (r === 'AFRICA') return 'MEA';
+  if (r === 'EMEA') {
+    const MEA = ['UAE','Saudi Arabia','Egypt','Qatar','Kuwait','Bahrain','Oman','Jordan','Lebanon','Iraq','Israel','Turkey'];
+    return MEA.indexOf(country || '') !== -1 ? 'MEA' : 'EUROPE';
+  }
+  return 'GLOBAL';
+}
+
+function renderPartnerDetail(partnerName) {
+  const info = PP_PARTNER_INFO[partnerName];
+  const wrap = document.getElementById('pp-partner-detail');
+  if (!info) { wrap.style.display = 'none'; return; }
+  wrap.style.display = '';
+  document.getElementById('pp-detail-nda').textContent = info.nda_status || 'N/A';
+  document.getElementById('pp-detail-kyp').textContent = info.kyp_status || 'N/A';
+  document.getElementById('pp-detail-type').textContent = info.type || '—';
+  document.getElementById('pp-detail-tier').textContent = info.tier || '—';
+  document.getElementById('pp-detail-region').textContent = info.region || '—';
+  document.getElementById('pp-detail-stage').textContent = info.deal_stage || '—';
+}
+
+function onPartnerSelected() {
+  const name = document.getElementById('pp-partner').value;
+  const info = PP_PARTNER_INFO[name];
+  renderPartnerDetail(name);
+  if (!info) return;
+  // Autofill blank fields from partner record
+  if (!document.getElementById('pp-country').value) {
+    document.getElementById('pp-country').value = info.country || '';
+  }
+  if (!document.getElementById('pp-manager').value) {
+    document.getElementById('pp-manager').value = info.manager || '';
+  }
+  // Deal stage: prefer existing card value; otherwise use partner's current stage
+  const dsEl = document.getElementById('pp-deal-stage');
+  if (!dsEl.value && info.deal_stage) {
+    if ([...dsEl.options].some(o => o.value === info.deal_stage)) dsEl.value = info.deal_stage;
+  }
+  // Region: only auto-fill if not already set
+  const colEl = document.getElementById('pp-column');
+  if (ppMode === 'create') {
+    const r = ppRegionKey(info.region, info.country);
+    if (PP_REGION_KEYS.indexOf(r) !== -1) colEl.value = r;
+  }
+}
 
 function bindPPSortables() {
   document.querySelectorAll('.kanban-col-body.sortable').forEach(el => {
@@ -340,24 +425,27 @@ function bindPPClicks() {
 }
 
 function fillPP(d) {
-  document.getElementById('pp-partner').value  = d.partner || '';
-  document.getElementById('pp-column').value   = d.column || 'GLOBAL';
-  document.getElementById('pp-year').value     = d.year || PP_DEFAULT_YEAR;
-  document.getElementById('pp-quarter').value  = d.quarter || PP_DEFAULT_QUARTER;
-  document.getElementById('pp-country').value  = d.country || '';
-  document.getElementById('pp-manager').value  = d.manager || '';
-  document.getElementById('pp-comments').value = d.comments || '';
+  document.getElementById('pp-partner').value     = d.partner || '';
+  document.getElementById('pp-column').value      = d.column || 'GLOBAL';
+  document.getElementById('pp-year').value        = d.year || PP_DEFAULT_YEAR;
+  document.getElementById('pp-quarter').value     = d.quarter || PP_DEFAULT_QUARTER;
+  document.getElementById('pp-deal-stage').value  = d.deal_stage || '';
+  document.getElementById('pp-country').value     = d.country || '';
+  document.getElementById('pp-manager').value     = d.manager || '';
+  document.getElementById('pp-comments').value    = d.comments || '';
+  renderPartnerDetail(d.partner || '');
 }
 
 function readPP() {
   return {
-    partner:  document.getElementById('pp-partner').value.trim(),
-    column:   document.getElementById('pp-column').value,
-    year:     document.getElementById('pp-year').value,
-    quarter:  document.getElementById('pp-quarter').value,
-    country:  document.getElementById('pp-country').value.trim(),
-    manager:  document.getElementById('pp-manager').value.trim(),
-    comments: document.getElementById('pp-comments').value.trim(),
+    partner:    document.getElementById('pp-partner').value.trim(),
+    column:     document.getElementById('pp-column').value,
+    year:       document.getElementById('pp-year').value,
+    quarter:    document.getElementById('pp-quarter').value,
+    deal_stage: document.getElementById('pp-deal-stage').value,
+    country:    document.getElementById('pp-country').value.trim(),
+    manager:    document.getElementById('pp-manager').value.trim(),
+    comments:   document.getElementById('pp-comments').value.trim(),
   };
 }
 
