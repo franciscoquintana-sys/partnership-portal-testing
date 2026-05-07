@@ -241,10 +241,11 @@
     </div>
     <div class="kanban-col-body sortable" data-col="{{ col.key }}">
       {% for card in col.cards %}
+      {% set partner_stage = (partner_info.get(card.partner) or {}).get('deal_stage') %}
       <div class="kanban-card" data-id="{{ card.id }}">
         <div class="kanban-card-name">{{ card.partner }}</div>
         <div class="kanban-card-quarter">{{ card.year }} · {{ card.quarter }}</div>
-        {% if card.deal_stage %}<div class="kanban-card-row"><span class="label">Stage</span><span class="value">{{ card.deal_stage }}</span></div>{% endif %}
+        {% if partner_stage %}<div class="kanban-card-row"><span class="label">Stage</span><span class="value">{{ partner_stage }}</span></div>{% endif %}
         {% if card.country %}<div class="kanban-card-row"><span class="label">Country</span><span class="value">{{ card.country }}</span></div>{% endif %}
         {% if card.manager %}<div class="kanban-card-row"><span class="label">PM</span><span class="value">{{ card.manager }}</span></div>{% endif %}
       </div>
@@ -292,13 +293,6 @@
       </div>
     </div>
     <div class="pp-field-row">
-      <div class="pp-field">
-        <label>Deal Stage</label>
-        <select id="pp-deal-stage">
-          <option value="">—</option>
-          {% for s in deal_stages %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
-        </select>
-      </div>
       <div class="pp-field">
         <label>Partnership Manager</label>
         <input id="pp-manager" list="pp-manager-list" placeholder="Optional" autocomplete="off">
@@ -383,11 +377,6 @@ function onPartnerSelected() {
   if (!document.getElementById('pp-manager').value) {
     document.getElementById('pp-manager').value = info.manager || '';
   }
-  // Deal stage: prefer existing card value; otherwise use partner's current stage
-  const dsEl = document.getElementById('pp-deal-stage');
-  if (!dsEl.value && info.deal_stage) {
-    if ([...dsEl.options].some(o => o.value === info.deal_stage)) dsEl.value = info.deal_stage;
-  }
   // Region: only auto-fill if not already set
   const colEl = document.getElementById('pp-column');
   if (ppMode === 'create') {
@@ -429,7 +418,6 @@ function fillPP(d) {
   document.getElementById('pp-column').value      = d.column || 'GLOBAL';
   document.getElementById('pp-year').value        = d.year || PP_DEFAULT_YEAR;
   document.getElementById('pp-quarter').value     = d.quarter || PP_DEFAULT_QUARTER;
-  document.getElementById('pp-deal-stage').value  = d.deal_stage || '';
   document.getElementById('pp-country').value     = d.country || '';
   document.getElementById('pp-manager').value     = d.manager || '';
   document.getElementById('pp-comments').value    = d.comments || '';
@@ -442,7 +430,6 @@ function readPP() {
     column:     document.getElementById('pp-column').value,
     year:       document.getElementById('pp-year').value,
     quarter:    document.getElementById('pp-quarter').value,
-    deal_stage: document.getElementById('pp-deal-stage').value,
     country:    document.getElementById('pp-country').value.trim(),
     manager:    document.getElementById('pp-manager').value.trim(),
     comments:   document.getElementById('pp-comments').value.trim(),

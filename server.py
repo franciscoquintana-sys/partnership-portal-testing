@@ -608,7 +608,7 @@ PIPELINE_REGION_COLUMNS = [
 _VALID_PP_COLUMNS = {c[0] for c in PIPELINE_REGION_COLUMNS}
 _VALID_PP_YEARS = {"2026"}
 _VALID_PP_QUARTERS = {"Q1", "Q2", "Q3", "Q4"}
-_PP_FIELDS = {"partner", "year", "quarter", "country", "manager", "comments", "column", "deal_stage"}
+_PP_FIELDS = {"partner", "year", "quarter", "country", "manager", "comments", "column"}
 _PP_DEAL_STAGES = [
     "Prospect",
     "Initial Negotiation",
@@ -771,7 +771,6 @@ async def api_pp_create(request: Request):
         "quarter": quarter,
         "country": (fields.get("country") or "").strip(),
         "manager": (fields.get("manager") or "").strip(),
-        "deal_stage": (fields.get("deal_stage") or "").strip(),
         "comments": (fields.get("comments") or "").strip(),
     }
     PARTNER_PIPELINE.append(new_card)
