@@ -14,7 +14,7 @@ from data_layer import (
     load_partners_excel, load_sot_data, PIPELINE_STAGES, PIPELINE_DEALS,
     REVSHARE_BY_PARTNER, REVSHARE_MONTHLY, MERCHANTS, CONTACTS,
     REGION_STATS, COUNTRIES, find_partners, get_sot_countries, get_sot_providers,
-    _ISO_TO_COUNTRY, _VERTICAL_COLS, load_sales_contacts, load_technical_contact,
+    _ISO_TO_COUNTRY, _VERTICAL_COLS, load_sales_contacts, load_technical_contacts,
     load_partner_countries, load_partner_coverage, _load_partners_sot,
     load_sheet_tab_rows,
 )
@@ -477,10 +477,9 @@ def partner_detail(request: Request, name: str, ref: str = "", country: str = ""
     except Exception:
         sales_contacts = []
     try:
-        technical_contact = load_technical_contact(partner["name"])
+        technical_contacts = load_technical_contacts(partner["name"])
     except Exception:
-        technical_contact = {"contact": "N/A", "contact_p1": "N/A", "sla": "N/A",
-                             "escalation": "N/A", "slack": "N/A", "status_page": "N/A"}
+        technical_contacts = []
     try:
         cov = load_partner_coverage(partner["name"])
     except Exception:
@@ -493,7 +492,7 @@ def partner_detail(request: Request, name: str, ref: str = "", country: str = ""
         methods=methods,
         processing=processing,
         sales_contacts=sales_contacts,
-        technical_contact=technical_contact,
+        technical_contacts=technical_contacts,
         partner_countries=cov.get("countries", []),
         partner_regions=cov.get("regions", {}),
         partner_methods=cov.get("methods", []),
@@ -8579,7 +8578,7 @@ COUNTRY_PARTNERS = {
     "United Kingdom":      [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldpay","type":"Acquirer"},{"name":"Checkout","type":"Acquirer"},{"name":"Barclays PLC","type":"Acquirer"}],
     "Germany":             [{"name":"Adyen","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Nexi","type":"Acquirer"},{"name":"Novalnet","type":"Acquirer"}],
     "France":              [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Monext","type":"PSP"},{"name":"Payplug","type":"Acquirer"}],
-    "Spain":               [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Redsys (& 7 local banks)","type":"Acquirer"},{"name":"Comercia / CaixaBank (Redsys)","type":"Acquirer"},{"name":"Paycomet/ banco sabadell (Redsys)","type":"Acquirer"}],
+    "Spain":               [{"name":"Redsys","type":"Acquirer"}],
     "Italy":               [{"name":"Nexi","type":"Acquirer"},{"name":"Adyen","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Hipay","type":"Acquirer"}],
     "Portugal":            [{"name":"SIBS","type":"Acquirer"},{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Hipay","type":"Acquirer"}],
     "Netherlands":         [{"name":"Adyen","type":"PSP"},{"name":"Mollie","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Worldpay","type":"Acquirer"}],

@@ -165,67 +165,154 @@ def _fetch_sheet_df():
     except Exception:
         return pd.DataFrame()
 
+# When a partner appears in multiple rows of the source sheet, we collapse
+# them into one record. Region/Country become "Global" and the Deal Stage /
+# Integration Stage are picked by these priority lists (highest first).
+_DEAL_STAGE_PRIORITY = [
+    "Agreement Signed",
+    "Just Integrated",
+    "Agreement Review",
+    "Initial Negotiation",
+    "Prospect",
+]
+_INTEGRATION_STAGE_PRIORITY = [
+    "Live",
+    "Just Integrated",
+    "In Progress",
+    "Not Started",
+]
+_DEAL_STAGE_DISPLAY_MAP = {
+    "Opportunity Identification": "Prospect",
+    "Non-qualified Partner": "Non-Qualified Partner",
+}
+
+def _pick_by_priority(values, priority):
+    """Return the first value matching the priority order (case-insensitive).
+    Falls back to the first non-empty value, or "" if none."""
+    cleaned = [(v or "").strip() for v in values]
+    cleaned = [v for v in cleaned if v and v.lower() != "nan"]
+    for target in priority:
+        for v in cleaned:
+            if v.casefold() == target.casefold():
+                return v
+    return cleaned[0] if cleaned else ""
+
+def _build_partner_record(name, row):
+    offering = str(row.get("Type", "Other")).strip()
+    stage_raw = str(row.get("Deal Stage", "")).strip()
+    integration_stage = str(row.get("Integration Stage", "")).strip()
+    region = str(row.get("Region", "")).strip()
+    country = str(row.get("Country", "")).strip()
+    tier = str(row.get("Tier", "")).strip()
+    manager = str(row.get("Partner Manager", "")).strip()
+    strategic = tier.startswith("Strategic")
+    mgmt_type = str(row.get("Type of Management", "")).strip()
+    initials = "".join(w[0] for w in name.replace("/", " ").replace("(", " ").split() if w)[:2].upper()
+
+    # NDA Status (col J): TRUE -> "Signed", else "N/A"
+    nda_status_raw = str(row.get("NDA Status", "")).strip()
+    nda_signed = nda_status_raw.upper() in ("TRUE", "1", "YES")
+    nda_status_display = "Signed" if nda_signed else "N/A"
+
+    # Agreement Conditions (col W): blank or boolean -> "N/A"; otherwise use the text verbatim
+    agreement_raw = ""
+    for col_name in ("Agreement Conditions", "agreement conditions",
+                     "Agreement conditions", "AGREEMENT CONDITIONS"):
+        v = row.get(col_name, None)
+        if v is not None:
+            agreement_raw = str(v).strip()
+            break
+    if (not agreement_raw) or agreement_raw.lower() in ("nan", "n/a", "true", "false"):
+        commercial_terms = "N/A"
+    else:
+        commercial_terms = agreement_raw
+
+    return {
+        "name": name,
+        "type": offering if offering and offering != "nan" else "Other",
+        "offering_raw": offering,
+        "region": region if region != "nan" else "",
+        "country": country if country != "nan" else "",
+        "status": _DEAL_STAGE_DISPLAY_MAP.get(stage_raw, stage_raw) if stage_raw and stage_raw != "nan" else "",
+        "stage_raw": stage_raw,
+        "tier": _TIER_MAP.get(tier, tier) if tier and tier != "nan" else "",
+        "manager": manager if manager != "nan" else "",
+        "strategic": strategic,
+        "mgmt_type": mgmt_type if mgmt_type != "nan" else "",
+        "logo": initials,
+        "color": _TYPE_COLOR.get(offering, "#64748b"),
+        "cat": offering if offering and offering != "nan" else "Other",
+        "nda": nda_signed,
+        "nda_status": nda_status_display,
+        "commercial_terms": commercial_terms,
+        "revshare": str(row.get("Revshare Contract", "")).strip().upper() in ("TRUE", "1", "YES"),
+        "revshare_active": str(row.get("Revshare active", "")).strip().upper() in ("TRUE", "1", "YES"),
+        "integration_stage": integration_stage if integration_stage and integration_stage != "nan" else "",
+        "integration_ready": str(row.get("Integration Ready by Yuno", "")).strip().upper() in ("TRUE", "1", "YES"),
+        "integration_used": str(row.get("Integration Used by Merchants", "")).strip().upper() in ("TRUE", "1", "YES"),
+        "comments": str(row.get("Comments", "")).strip() if str(row.get("Comments", "")).strip() != "nan" else "",
+    }
+
+def _resolve_partner_name_col(df):
+    # Source-sheet column for the partner name has changed over time
+    # (Provider → Partner Name). Pick whichever exists.
+    for cand in ("Partner Name", "Provider", "Provider Name", "Partner"):
+        if cand in df.columns:
+            return cand
+    return "Partner Name"
+
+def _build_account_record(row):
+    def s(col):
+        v = str(row.get(col, "")).strip()
+        return "" if v.lower() == "nan" else v
+    deal = s("Deal Stage")
+    return {
+        "account_name": s("Account Name"),
+        "country": s("Country"),
+        "region": s("Region"),
+        "deal_stage": _DEAL_STAGE_DISPLAY_MAP.get(deal, deal),
+        "integration_stage": s("Integration Stage"),
+        "manager": s("Partner Manager"),
+        "mgmt_type": s("Type of Management"),
+        "type": s("Type"),
+    }
+
 def _parse_partners_df(df):
-    seen, partners = set(), []
+    name_col = _resolve_partner_name_col(df)
+    grouped, order = {}, []
     for _, row in df.iterrows():
-        name = str(row.get("Provider", "")).strip().upper()
-        if not name or name in seen or name == "NAN":
+        name = str(row.get(name_col, "")).strip().upper()
+        if not name or name == "NAN":
             continue
-        seen.add(name)
-        offering = str(row.get("Type", "Other")).strip()
-        stage_raw = str(row.get("Deal Stage", "")).strip()
-        integration_stage = str(row.get("Integration Stage", "")).strip()
-        region = str(row.get("Region", "")).strip()
-        country = str(row.get("Country", "")).strip()
-        tier = str(row.get("Tier", "")).strip()
-        manager = str(row.get("Partner Manager", "")).strip()
-        strategic = tier.startswith("Strategic")
-        mgmt_type = str(row.get("Type of Management", "")).strip()
-        initials = "".join(w[0] for w in name.replace("/", " ").replace("(", " ").split() if w)[:2].upper()
+        if name not in grouped:
+            grouped[name] = []
+            order.append(name)
+        grouped[name].append(row)
 
-        # NDA Status (col J): TRUE -> "Signed", else "N/A"
-        nda_status_raw = str(row.get("NDA Status", "")).strip()
-        nda_signed = nda_status_raw.upper() in ("TRUE", "1", "YES")
-        nda_status_display = "Signed" if nda_signed else "N/A"
-
-        # Agreement Conditions (col W): blank or boolean -> "N/A"; otherwise use the text verbatim
-        agreement_raw = ""
-        for col_name in ("Agreement Conditions", "agreement conditions",
-                         "Agreement conditions", "AGREEMENT CONDITIONS"):
-            v = row.get(col_name, None)
-            if v is not None:
-                agreement_raw = str(v).strip()
-                break
-        if (not agreement_raw) or agreement_raw.lower() in ("nan", "n/a", "true", "false"):
-            commercial_terms = "N/A"
-        else:
-            commercial_terms = agreement_raw
-
-        partners.append({
-            "name": name,
-            "type": offering if offering and offering != "nan" else "Other",
-            "offering_raw": offering,
-            "region": region if region != "nan" else "",
-            "country": country if country != "nan" else "",
-            "status": {"Opportunity Identification": "Prospect", "Non-qualified Partner": "Non-Qualified Partner"}.get(stage_raw, stage_raw) if stage_raw and stage_raw != "nan" else "",
-            "stage_raw": stage_raw,
-            "tier": _TIER_MAP.get(tier, tier) if tier and tier != "nan" else "",
-            "manager": manager if manager != "nan" else "",
-            "strategic": strategic,
-            "mgmt_type": mgmt_type if mgmt_type != "nan" else "",
-            "logo": initials,
-            "color": _TYPE_COLOR.get(offering, "#64748b"),
-            "cat": offering if offering and offering != "nan" else "Other",
-            "nda": nda_signed,
-            "nda_status": nda_status_display,
-            "commercial_terms": commercial_terms,
-            "revshare": str(row.get("Revshare Contract", "")).strip().upper() in ("TRUE", "1", "YES"),
-            "revshare_active": str(row.get("Revshare active", "")).strip().upper() in ("TRUE", "1", "YES"),
-            "integration_stage": integration_stage if integration_stage and integration_stage != "nan" else "",
-            "integration_ready": str(row.get("Integration Ready by Yuno", "")).strip().upper() in ("TRUE", "1", "YES"),
-            "integration_used": str(row.get("Integration Used by Merchants", "")).strip().upper() in ("TRUE", "1", "YES"),
-            "comments": str(row.get("Comments", "")).strip() if str(row.get("Comments", "")).strip() != "nan" else "",
-        })
+    partners = []
+    for name in order:
+        rows = grouped[name]
+        partner = _build_partner_record(name, rows[0])
+        partner["accounts"] = [_build_account_record(r) for r in rows]
+        if len(rows) > 1:
+            partner["region"] = "Global"
+            partner["country"] = "Global"
+            mapped_stages = [
+                _DEAL_STAGE_DISPLAY_MAP.get(str(r.get("Deal Stage", "")).strip(),
+                                            str(r.get("Deal Stage", "")).strip())
+                for r in rows
+            ]
+            chosen_stage = _pick_by_priority(mapped_stages, _DEAL_STAGE_PRIORITY)
+            if chosen_stage:
+                partner["status"] = chosen_stage
+                partner["stage_raw"] = chosen_stage
+            chosen_integ = _pick_by_priority(
+                [str(r.get("Integration Stage", "")).strip() for r in rows],
+                _INTEGRATION_STAGE_PRIORITY,
+            )
+            if chosen_integ:
+                partner["integration_stage"] = chosen_integ
+        partners.append(partner)
     return sorted(partners, key=lambda x: x["name"].lower())
 
 def load_partners_excel():
@@ -238,50 +325,70 @@ def load_partners_excel():
     _PARTNERS_CACHE["ts"] = now
     return result
 
-def load_technical_contact(provider_name: str) -> dict:
-    """Return technical contact info from the Technical Contacts sheet."""
+def _find_col(df, candidates):
+    for c in candidates:
+        if c in df.columns:
+            return c
+    # Tolerant match: case-insensitive, whitespace-collapsed
+    norm = {str(col).strip().lower(): col for col in df.columns}
+    for c in candidates:
+        k = c.strip().lower()
+        if k in norm:
+            return norm[k]
+    return None
+
+def load_technical_contacts(provider_name: str) -> list:
+    """Return technical-contact rows for a partner, one per Account Name.
+
+    Each entry: {account_name, contact_p1, contact_p2, slack, status_page}.
+    Returns [] if the partner has no rows or the sheet is unreachable.
+    """
     now = time.time()
     if _TECH_CACHE["data"] is None or now - _TECH_CACHE["ts"] > _CACHE_TTL:
         try:
-            df = _fetch_csv(_TECH_CONTACTS_CSV_URL, header=None, skiprows=5)
-            df.columns = [
-                "Rank", "Provider", "Provider2", "Total Transactions",
-                "Approved Transactions", "Approval Rate", "Status",
-                "Partnership Manager", "Technical Contact (Day to Day)",
-                "Technical Contact P1", "SLA", "Escalation Path",
-                "Slack Channel", "Status Page",
-            ] + [f"extra_{i}" for i in range(max(0, len(df.columns) - 14))]
-            _TECH_CACHE["data"] = df
+            _TECH_CACHE["data"] = _fetch_csv(_TECH_CONTACTS_CSV_URL)
         except Exception:
             _TECH_CACHE["data"] = pd.DataFrame()
         _TECH_CACHE["ts"] = now
 
     df = _TECH_CACHE["data"]
-    na = {"contact": "N/A", "contact_p1": "N/A", "sla": "N/A",
-          "escalation": "N/A", "slack": "N/A", "status_page": "N/A"}
     if df is None or len(df) == 0:
-        return na
+        return []
+
+    partner_col = _find_col(df, ["Partner Name", "Parent Partner", "Partner", "Provider"])
+    account_col = _find_col(df, ["Account Name", "Account"])
+    p1_col = _find_col(df, ["Technical Contact P1", "Technical Contact (P1)"])
+    p2_col = _find_col(df, [
+        "Technical Contact P2 - Partnership Manager Involvement Required",
+        "Technical Contact P2",
+    ])
+    slack_col = _find_col(df, ["Slack Channel", "Slack"])
+    status_col = _find_col(df, ["Status Page", "Status"])
+    if not partner_col:
+        return []
 
     pname = str(provider_name).strip().lower()
-    mask = (df["Provider"].astype(str).str.strip().str.lower() == pname) | \
-           (df["Provider2"].astype(str).str.strip().str.lower() == pname)
+    mask = df[partner_col].astype(str).str.strip().str.lower() == pname
     matches = df[mask]
     if matches.empty:
-        return na
+        return []
 
-    row = matches.iloc[0]
-    def val(col):
+    def val(row, col):
+        if not col:
+            return ""
         v = str(row.get(col, "")).strip()
-        return v if v and v != "nan" else "N/A"
+        return "" if not v or v.lower() == "nan" else v
 
-    return {
-        "contact": val("Technical Contact (Day to Day)"),
-        "contact_p1": val("Technical Contact P1"),
-        "sla": val("SLA"),
-        "escalation": val("Escalation Path"),
-        "slack": val("Slack Channel"),
-        "status_page": val("Status Page"),
-    }
+    out = []
+    for _, row in matches.iterrows():
+        out.append({
+            "account_name": val(row, account_col),
+            "contact_p1": val(row, p1_col),
+            "contact_p2": val(row, p2_col),
+            "slack": val(row, slack_col),
+            "status_page": val(row, status_col),
+        })
+    return out
 
 def _load_partners_sot():
     """Load the Partners SOT sheet (countries, payment methods, etc.)."""
@@ -478,14 +585,32 @@ def load_sales_contacts(provider_name: str) -> list:
         return []
 
     pname = str(provider_name).strip().lower()
+    partner_col = None
+    for cand in ("Parent Partner", "Partner Name", "Partner", "Provider"):
+        if cand in df.columns:
+            partner_col = cand
+            break
+    contact_flag_col = None
+    for cand in ("Contact for Sales", "Contact for AI", "Contact for sales", "Contact for ai"):
+        if cand in df.columns:
+            contact_flag_col = cand
+            break
+    if not partner_col or not contact_flag_col:
+        return []
     mask = (
-        df["Parent Partner"].str.strip().str.lower() == pname
+        df[partner_col].astype(str).str.strip().str.lower() == pname
     ) & (
-        df["Contact for AI"].astype(str).str.strip().str.upper() == "TRUE"
+        df[contact_flag_col].astype(str).str.strip().str.upper() == "TRUE"
     )
     matches = df[mask]
     if matches.empty:
         return []
+
+    account_col = None
+    for cand in ("Account Name", "Account", "Partner Account", "Sub Partner"):
+        if cand in df.columns:
+            account_col = cand
+            break
 
     contacts = []
     seen = set()
@@ -494,7 +619,10 @@ def load_sales_contacts(provider_name: str) -> list:
         am_email = str(row.get("AM Email", "")).strip()
         am_role = str(row.get("AM Role", "")).strip()
         territory = str(row.get("Territory Scope", "")).strip()
-        key = (am_name.lower(), am_email.lower())
+        account_name = str(row.get(account_col, "")).strip() if account_col else ""
+        if account_name.lower() == "nan":
+            account_name = ""
+        key = (am_name.lower(), am_email.lower(), account_name.lower())
         if key in seen:
             continue
         seen.add(key)
@@ -503,6 +631,7 @@ def load_sales_contacts(provider_name: str) -> list:
             "am_email": am_email if am_email and am_email != "nan" else "N/A",
             "am_role": am_role if am_role and am_role != "nan" else "N/A",
             "territory": territory if territory and territory != "nan" else "N/A",
+            "account_name": account_name,
         })
     return contacts
 
