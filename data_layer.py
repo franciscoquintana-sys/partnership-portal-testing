@@ -165,67 +165,128 @@ def _fetch_sheet_df():
     except Exception:
         return pd.DataFrame()
 
+# When a partner appears in multiple rows of the source sheet, we collapse
+# them into one record. Region/Country become "Global" and the Deal Stage /
+# Integration Stage are picked by these priority lists (highest first).
+_DEAL_STAGE_PRIORITY = [
+    "Agreement Signed",
+    "Just Integrated",
+    "Agreement Review",
+    "Initial Negotiation",
+    "Prospect",
+]
+_INTEGRATION_STAGE_PRIORITY = [
+    "Live",
+    "Just Integrated",
+    "In Progress",
+    "Not Started",
+]
+_DEAL_STAGE_DISPLAY_MAP = {
+    "Opportunity Identification": "Prospect",
+    "Non-qualified Partner": "Non-Qualified Partner",
+}
+
+def _pick_by_priority(values, priority):
+    """Return the first value matching the priority order (case-insensitive).
+    Falls back to the first non-empty value, or "" if none."""
+    cleaned = [(v or "").strip() for v in values]
+    cleaned = [v for v in cleaned if v and v.lower() != "nan"]
+    for target in priority:
+        for v in cleaned:
+            if v.casefold() == target.casefold():
+                return v
+    return cleaned[0] if cleaned else ""
+
+def _build_partner_record(name, row):
+    offering = str(row.get("Type", "Other")).strip()
+    stage_raw = str(row.get("Deal Stage", "")).strip()
+    integration_stage = str(row.get("Integration Stage", "")).strip()
+    region = str(row.get("Region", "")).strip()
+    country = str(row.get("Country", "")).strip()
+    tier = str(row.get("Tier", "")).strip()
+    manager = str(row.get("Partner Manager", "")).strip()
+    strategic = tier.startswith("Strategic")
+    mgmt_type = str(row.get("Type of Management", "")).strip()
+    initials = "".join(w[0] for w in name.replace("/", " ").replace("(", " ").split() if w)[:2].upper()
+
+    # NDA Status (col J): TRUE -> "Signed", else "N/A"
+    nda_status_raw = str(row.get("NDA Status", "")).strip()
+    nda_signed = nda_status_raw.upper() in ("TRUE", "1", "YES")
+    nda_status_display = "Signed" if nda_signed else "N/A"
+
+    # Agreement Conditions (col W): blank or boolean -> "N/A"; otherwise use the text verbatim
+    agreement_raw = ""
+    for col_name in ("Agreement Conditions", "agreement conditions",
+                     "Agreement conditions", "AGREEMENT CONDITIONS"):
+        v = row.get(col_name, None)
+        if v is not None:
+            agreement_raw = str(v).strip()
+            break
+    if (not agreement_raw) or agreement_raw.lower() in ("nan", "n/a", "true", "false"):
+        commercial_terms = "N/A"
+    else:
+        commercial_terms = agreement_raw
+
+    return {
+        "name": name,
+        "type": offering if offering and offering != "nan" else "Other",
+        "offering_raw": offering,
+        "region": region if region != "nan" else "",
+        "country": country if country != "nan" else "",
+        "status": _DEAL_STAGE_DISPLAY_MAP.get(stage_raw, stage_raw) if stage_raw and stage_raw != "nan" else "",
+        "stage_raw": stage_raw,
+        "tier": _TIER_MAP.get(tier, tier) if tier and tier != "nan" else "",
+        "manager": manager if manager != "nan" else "",
+        "strategic": strategic,
+        "mgmt_type": mgmt_type if mgmt_type != "nan" else "",
+        "logo": initials,
+        "color": _TYPE_COLOR.get(offering, "#64748b"),
+        "cat": offering if offering and offering != "nan" else "Other",
+        "nda": nda_signed,
+        "nda_status": nda_status_display,
+        "commercial_terms": commercial_terms,
+        "revshare": str(row.get("Revshare Contract", "")).strip().upper() in ("TRUE", "1", "YES"),
+        "revshare_active": str(row.get("Revshare active", "")).strip().upper() in ("TRUE", "1", "YES"),
+        "integration_stage": integration_stage if integration_stage and integration_stage != "nan" else "",
+        "integration_ready": str(row.get("Integration Ready by Yuno", "")).strip().upper() in ("TRUE", "1", "YES"),
+        "integration_used": str(row.get("Integration Used by Merchants", "")).strip().upper() in ("TRUE", "1", "YES"),
+        "comments": str(row.get("Comments", "")).strip() if str(row.get("Comments", "")).strip() != "nan" else "",
+    }
+
 def _parse_partners_df(df):
-    seen, partners = set(), []
+    grouped, order = {}, []
     for _, row in df.iterrows():
         name = str(row.get("Provider", "")).strip().upper()
-        if not name or name in seen or name == "NAN":
+        if not name or name == "NAN":
             continue
-        seen.add(name)
-        offering = str(row.get("Type", "Other")).strip()
-        stage_raw = str(row.get("Deal Stage", "")).strip()
-        integration_stage = str(row.get("Integration Stage", "")).strip()
-        region = str(row.get("Region", "")).strip()
-        country = str(row.get("Country", "")).strip()
-        tier = str(row.get("Tier", "")).strip()
-        manager = str(row.get("Partner Manager", "")).strip()
-        strategic = tier.startswith("Strategic")
-        mgmt_type = str(row.get("Type of Management", "")).strip()
-        initials = "".join(w[0] for w in name.replace("/", " ").replace("(", " ").split() if w)[:2].upper()
+        if name not in grouped:
+            grouped[name] = []
+            order.append(name)
+        grouped[name].append(row)
 
-        # NDA Status (col J): TRUE -> "Signed", else "N/A"
-        nda_status_raw = str(row.get("NDA Status", "")).strip()
-        nda_signed = nda_status_raw.upper() in ("TRUE", "1", "YES")
-        nda_status_display = "Signed" if nda_signed else "N/A"
-
-        # Agreement Conditions (col W): blank or boolean -> "N/A"; otherwise use the text verbatim
-        agreement_raw = ""
-        for col_name in ("Agreement Conditions", "agreement conditions",
-                         "Agreement conditions", "AGREEMENT CONDITIONS"):
-            v = row.get(col_name, None)
-            if v is not None:
-                agreement_raw = str(v).strip()
-                break
-        if (not agreement_raw) or agreement_raw.lower() in ("nan", "n/a", "true", "false"):
-            commercial_terms = "N/A"
-        else:
-            commercial_terms = agreement_raw
-
-        partners.append({
-            "name": name,
-            "type": offering if offering and offering != "nan" else "Other",
-            "offering_raw": offering,
-            "region": region if region != "nan" else "",
-            "country": country if country != "nan" else "",
-            "status": {"Opportunity Identification": "Prospect", "Non-qualified Partner": "Non-Qualified Partner"}.get(stage_raw, stage_raw) if stage_raw and stage_raw != "nan" else "",
-            "stage_raw": stage_raw,
-            "tier": _TIER_MAP.get(tier, tier) if tier and tier != "nan" else "",
-            "manager": manager if manager != "nan" else "",
-            "strategic": strategic,
-            "mgmt_type": mgmt_type if mgmt_type != "nan" else "",
-            "logo": initials,
-            "color": _TYPE_COLOR.get(offering, "#64748b"),
-            "cat": offering if offering and offering != "nan" else "Other",
-            "nda": nda_signed,
-            "nda_status": nda_status_display,
-            "commercial_terms": commercial_terms,
-            "revshare": str(row.get("Revshare Contract", "")).strip().upper() in ("TRUE", "1", "YES"),
-            "revshare_active": str(row.get("Revshare active", "")).strip().upper() in ("TRUE", "1", "YES"),
-            "integration_stage": integration_stage if integration_stage and integration_stage != "nan" else "",
-            "integration_ready": str(row.get("Integration Ready by Yuno", "")).strip().upper() in ("TRUE", "1", "YES"),
-            "integration_used": str(row.get("Integration Used by Merchants", "")).strip().upper() in ("TRUE", "1", "YES"),
-            "comments": str(row.get("Comments", "")).strip() if str(row.get("Comments", "")).strip() != "nan" else "",
-        })
+    partners = []
+    for name in order:
+        rows = grouped[name]
+        partner = _build_partner_record(name, rows[0])
+        if len(rows) > 1:
+            partner["region"] = "Global"
+            partner["country"] = "Global"
+            mapped_stages = [
+                _DEAL_STAGE_DISPLAY_MAP.get(str(r.get("Deal Stage", "")).strip(),
+                                            str(r.get("Deal Stage", "")).strip())
+                for r in rows
+            ]
+            chosen_stage = _pick_by_priority(mapped_stages, _DEAL_STAGE_PRIORITY)
+            if chosen_stage:
+                partner["status"] = chosen_stage
+                partner["stage_raw"] = chosen_stage
+            chosen_integ = _pick_by_priority(
+                [str(r.get("Integration Stage", "")).strip() for r in rows],
+                _INTEGRATION_STAGE_PRIORITY,
+            )
+            if chosen_integ:
+                partner["integration_stage"] = chosen_integ
+        partners.append(partner)
     return sorted(partners, key=lambda x: x["name"].lower())
 
 def load_partners_excel():
