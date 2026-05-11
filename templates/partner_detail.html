@@ -305,6 +305,66 @@
   <div class="section-card">
     <div class="section-head"><span class="icon">📋</span> Partnership Details</div>
     <div class="section-body">
+      {% if partner.accounts and partner.accounts|length > 1 %}
+        {% for acct in partner.accounts %}
+        <div {% if not loop.first %}style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)"{% endif %}>
+          <div style="font-weight:700;font-size:13px;color:#0f172a;margin-bottom:10px">
+            {{ acct.account_name or ("Account " ~ loop.index) }}
+          </div>
+          <div class="field-grid">
+            <div>
+              <div class="field-label">Manager</div>
+              <div class="field-value">{{ acct.manager or "N/A" }}</div>
+            </div>
+            <div>
+              <div class="field-label">Management Type</div>
+              <div class="field-value">{{ acct.mgmt_type or "N/A" }}</div>
+            </div>
+            <div>
+              <div class="field-label">Country</div>
+              <div class="field-value">{{ acct.country or "N/A" }}</div>
+            </div>
+            <div>
+              <div class="field-label">Region</div>
+              <div class="field-value">{{ acct.region or "N/A" }}</div>
+            </div>
+            <div>
+              <div class="field-label">Deal Stage</div>
+              <div class="field-value" style="font-weight:700;
+                {% if 'Lost' in acct.deal_stage or 'Non-qualified' in acct.deal_stage or 'Non qualified' in acct.deal_stage %}color:#dc2626
+                {% elif 'Agreement Signed' in acct.deal_stage %}color:#15803d
+                {% elif 'Agreement Review' in acct.deal_stage %}color:#4ade80
+                {% elif 'Initial Negotiation' in acct.deal_stage %}color:#ca8a04
+                {% elif 'Prospect' in acct.deal_stage or 'Opportunity' in acct.deal_stage %}color:#2563eb
+                {% elif 'Live' in acct.deal_stage %}color:#15803d
+                {% endif %}">{{ acct.deal_stage or "N/A" }}</div>
+            </div>
+            <div>
+              <div class="field-label">Integration Stage</div>
+              <div class="field-value" style="font-weight:700;{% if (acct.integration_stage or '') | lower == 'live' %}color:#15803d{% elif (acct.integration_stage or '') | lower == 'blocked' %}color:#dc2626{% elif (acct.integration_stage or '') | lower == 'in progress' %}color:#ca8a04{% else %}color:#9ca3af{% endif %}">{{ (acct.integration_stage or "N/A") | title }}</div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        {% if role == 'partnerships' %}
+        <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)">
+          <div class="field-grid">
+            <div>
+              <div class="field-label">NDA</div>
+              <div class="field-value{% if partner.nda_status == 'Signed' %} {% else %} muted{% endif %}" {% if partner.nda_status == 'Signed' %}style="font-weight:700;color:#15803d"{% endif %}>{{ partner.nda_status or "N/A" }}</div>
+            </div>
+            <div>
+              <div class="field-label">KYP</div>
+              <div class="field-value muted">N/A</div>
+            </div>
+            <div style="grid-column: 1 / -1">
+              <div class="field-label">Commercial Terms</div>
+              <div class="field-value{% if not partner.commercial_terms or partner.commercial_terms == 'N/A' %} muted{% endif %}" {% if partner.commercial_terms and partner.commercial_terms != 'N/A' %}style="white-space:pre-wrap"{% endif %}>{{ partner.commercial_terms or "N/A" }}</div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+      {% else %}
       <div class="field-grid">
         <div>
           <div class="field-label">Manager</div>
@@ -344,6 +404,7 @@
         </div>
         {% endif %}
       </div>
+      {% endif %}
     </div>
   </div>
 
@@ -351,28 +412,47 @@
   <div class="section-card">
     <div class="section-head"><span class="icon">👥</span> Sales Contacts</div>
     <div class="section-body">
-      {% if sales_contacts %}
-        {% for c in sales_contacts %}
-        <div {% if not loop.first %}style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)"{% endif %}>
-          <div class="contact-row">
-            <div class="contact-avatar" style="background:{% if loop.index % 3 == 1 %}#3b82f6{% elif loop.index % 3 == 2 %}#10b981{% else %}#8b5cf6{% endif %}">{{ c.am_name[:1] if c.am_name != 'N/A' else '?' }}</div>
-            <div class="contact-info">
-              <div class="contact-name">{{ c.am_name }}</div>
-              <div class="contact-sub">{{ c.am_email }}</div>
-            </div>
-          </div>
-          <div class="field-grid" style="margin-top:8px">
-            <div>
-              <div class="field-label">Role</div>
-              <div class="field-value">{{ c.am_role }}</div>
-            </div>
-            <div>
-              <div class="field-label">Territory Scope</div>
-              <div class="field-value">{{ c.territory }}</div>
-            </div>
+      {% macro render_contact(c, idx) %}
+      <div {% if idx > 1 %}style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)"{% endif %}>
+        <div class="contact-row">
+          <div class="contact-avatar" style="background:{% if idx % 3 == 1 %}#3b82f6{% elif idx % 3 == 2 %}#10b981{% else %}#8b5cf6{% endif %}">{{ c.am_name[:1] if c.am_name != 'N/A' else '?' }}</div>
+          <div class="contact-info">
+            <div class="contact-name">{{ c.am_name }}</div>
+            <div class="contact-sub">{{ c.am_email }}</div>
           </div>
         </div>
-        {% endfor %}
+        <div class="field-grid" style="margin-top:8px">
+          <div>
+            <div class="field-label">Role</div>
+            <div class="field-value">{{ c.am_role }}</div>
+          </div>
+          <div>
+            <div class="field-label">Territory Scope</div>
+            <div class="field-value">{{ c.territory }}</div>
+          </div>
+        </div>
+      </div>
+      {% endmacro %}
+      {% if sales_contacts %}
+        {% set distinct_accounts = sales_contacts | map(attribute='account_name') | map('default', '') | select | list | unique | list %}
+        {% if distinct_accounts | length > 1 %}
+          {% set sorted_accounts = sales_contacts | map(attribute='account_name') | unique | list %}
+          {% for acct_name in sorted_accounts %}
+            {% set acct_contacts = sales_contacts | selectattr('account_name', 'equalto', acct_name) | list %}
+            <div {% if not loop.first %}style="margin-top:22px;padding-top:18px;border-top:2px solid var(--border)"{% endif %}>
+              <div style="font-weight:700;font-size:13px;color:#0f172a;margin-bottom:12px">
+                {{ acct_name or "Unassigned" }}
+              </div>
+              {% for c in acct_contacts %}
+                {{ render_contact(c, loop.index) }}
+              {% endfor %}
+            </div>
+          {% endfor %}
+        {% else %}
+          {% for c in sales_contacts %}
+            {{ render_contact(c, loop.index) }}
+          {% endfor %}
+        {% endif %}
       {% else %}
         <div class="contact-row">
           <div class="contact-avatar" style="background:#94a3b8">?</div>
@@ -389,32 +469,52 @@
   <div class="section-card full">
     <div class="section-head"><span class="icon">🔧</span> Technical Contacts</div>
     <div class="section-body">
+      {% macro render_link(value) %}
+        {% if not value %}
+          <span class="muted">N/A</span>
+        {% elif value.startswith('http://') or value.startswith('https://') %}
+          <a href="{{ value }}" target="_blank" rel="noopener" style="color:#4F46E5;font-weight:600;text-decoration:none">Link</a>
+        {% else %}
+          {{ value }}
+        {% endif %}
+      {% endmacro %}
+      {% macro render_tech_row(t) %}
       <div style="display:flex;gap:48px;flex-wrap:wrap">
         <div>
-          <div class="field-label">Technical Contact</div>
-          <div class="field-value">{{ technical_contact.contact }}</div>
-        </div>
-        <div>
           <div class="field-label">Technical Contact P1</div>
-          <div class="field-value">{{ technical_contact.contact_p1 }}</div>
+          <div class="field-value">{{ t.contact_p1 or "N/A" }}</div>
         </div>
         <div>
-          <div class="field-label">SLA</div>
-          <div class="field-value">{{ technical_contact.sla }}</div>
-        </div>
-        <div>
-          <div class="field-label">Escalation Path</div>
-          <div class="field-value">{{ technical_contact.escalation }}</div>
+          <div class="field-label">Technical Contact P2 — PM Involvement Required</div>
+          <div class="field-value">{{ t.contact_p2 or "N/A" }}</div>
         </div>
         <div>
           <div class="field-label">Slack Channel</div>
-          <div class="field-value">{{ technical_contact.slack }}</div>
+          <div class="field-value">{{ render_link(t.slack) }}</div>
         </div>
         <div>
           <div class="field-label">Status Page</div>
-          <div class="field-value">{{ technical_contact.status_page }}</div>
+          <div class="field-value">{{ render_link(t.status_page) }}</div>
         </div>
       </div>
+      {% endmacro %}
+      {% if technical_contacts %}
+        {% set distinct_tech_accounts = technical_contacts | map(attribute='account_name') | unique | list %}
+        {% if distinct_tech_accounts | length > 1 %}
+          {% for t in technical_contacts %}
+          <div {% if not loop.first %}style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border)"{% endif %}>
+            <div style="font-weight:700;font-size:13px;color:#0f172a;margin-bottom:10px">
+              {{ t.account_name or ("Account " ~ loop.index) }}
+            </div>
+            {{ render_tech_row(t) }}
+          </div>
+          {% endfor %}
+        {% else %}
+          {{ render_tech_row(technical_contacts[0]) }}
+        {% endif %}
+      {% else %}
+        <div class="field-value muted">N/A</div>
+      {% endif %}
     </div>
   </div>
 
