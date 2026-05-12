@@ -1369,14 +1369,17 @@ _db_init_partner_pipeline()
 PARTNER_PIPELINE = _load_partner_pipeline()
 
 # ── Access log: append every successful login as a row in the Google Sheet ───
-# Sheet 1DHSU... tab gid 696821005 (resolved to a name on first call).
+# Sheet 1DHSU... tab "Portal Tracker" (looked up by name on first call).
 ACCESS_LOG_SHEET_ID = "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
-ACCESS_LOG_SHEET_GID = "696821005"
+ACCESS_LOG_TAB = "Portal Tracker"
 ACCESS_LOG_HEADERS = ["Timestamp (UTC)", "Email", "Name", "Role", "IP", "User Agent"]
 _ACCESS_LOG_TAB_NAME = {"name": None}
 _ACCESS_LOG_HEADERS_OK = {"done": False}
 
 def _resolve_access_log_tab(token):
+    """Find the 'Portal Tracker' tab by name (case-insensitive). Looking up
+    by name rather than gid so the writer doesn't break when tabs are
+    reordered or someone re-creates the tab."""
     if _ACCESS_LOG_TAB_NAME["name"]:
         return _ACCESS_LOG_TAB_NAME["name"]
     try:
@@ -1387,12 +1390,16 @@ def _resolve_access_log_tab(token):
             headers={"Authorization": f"Bearer {token}"},
             timeout=10,
         ).json()
+        target = ACCESS_LOG_TAB.strip().lower()
         for s in meta.get("sheets", []):
-            if str(s["properties"].get("sheetId")) == ACCESS_LOG_SHEET_GID:
-                _ACCESS_LOG_TAB_NAME["name"] = s["properties"]["title"]
+            title = (s["properties"].get("title") or "").strip()
+            if title.lower() == target:
+                _ACCESS_LOG_TAB_NAME["name"] = title
+                print(f"[access_log] resolved tab title={title!r}", flush=True)
                 return _ACCESS_LOG_TAB_NAME["name"]
+        print(f"[access_log] no tab named {ACCESS_LOG_TAB!r} found", flush=True)
     except Exception as e:
-        print(f"[access_log] tab resolve failed: {e}")
+        print(f"[access_log] tab resolve failed: {e}", flush=True)
     return None
 
 def _ensure_access_log_headers(token, tab):
