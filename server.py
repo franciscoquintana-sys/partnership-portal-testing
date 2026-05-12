@@ -311,6 +311,10 @@ async def auth_callback(request: Request):
     request.session["user_email"] = email
     request.session["user_name"] = user_info.get("name", email)
     request.session["user_picture"] = user_info.get("picture", "")
+    try:
+        _record_access(email, user_info.get("name", email), pending, request)
+    except Exception as e:
+        print(f"[access_log] record failed: {e}")
     return HTMLResponse("<!DOCTYPE html><html><head></head><body>"
         "<script>sessionStorage.setItem('yuno_auth','1');window.location='/home';</script>"
         "</body></html>")
@@ -1363,6 +1367,97 @@ async def api_intros_delete(request: Request):
 # DATA_DIR + _db_conn must exist before we try to load).
 _db_init_partner_pipeline()
 PARTNER_PIPELINE = _load_partner_pipeline()
+
+# ── Access log: append every successful login as a row in the Google Sheet ───
+# Sheet 1DHSU... tab gid 696821005 (resolved to a name on first call).
+ACCESS_LOG_SHEET_ID = "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
+ACCESS_LOG_SHEET_GID = "696821005"
+ACCESS_LOG_HEADERS = ["Timestamp (UTC)", "Email", "Name", "Role", "IP", "User Agent"]
+_ACCESS_LOG_TAB_NAME = {"name": None}
+_ACCESS_LOG_HEADERS_OK = {"done": False}
+
+def _resolve_access_log_tab(token):
+    if _ACCESS_LOG_TAB_NAME["name"]:
+        return _ACCESS_LOG_TAB_NAME["name"]
+    try:
+        import requests as _requests
+        meta = _requests.get(
+            f"https://sheets.googleapis.com/v4/spreadsheets/{ACCESS_LOG_SHEET_ID}"
+            "?fields=sheets.properties",
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=10,
+        ).json()
+        for s in meta.get("sheets", []):
+            if str(s["properties"].get("sheetId")) == ACCESS_LOG_SHEET_GID:
+                _ACCESS_LOG_TAB_NAME["name"] = s["properties"]["title"]
+                return _ACCESS_LOG_TAB_NAME["name"]
+    except Exception as e:
+        print(f"[access_log] tab resolve failed: {e}")
+    return None
+
+def _ensure_access_log_headers(token, tab):
+    """Write the header row in A1:F1 if the sheet is empty. Idempotent
+    per process — only checks once per process lifetime."""
+    if _ACCESS_LOG_HEADERS_OK["done"]:
+        return
+    try:
+        import requests as _requests
+        get_url = (
+            f"https://sheets.googleapis.com/v4/spreadsheets/{ACCESS_LOG_SHEET_ID}"
+            f"/values/{_requests.utils.quote(tab)}!A1:F1"
+        )
+        resp = _requests.get(get_url, headers={"Authorization": f"Bearer {token}"}, timeout=10)
+        existing = resp.json().get("values") or []
+        first_row = existing[0] if existing else []
+        if any((c or "").strip() for c in first_row):
+            _ACCESS_LOG_HEADERS_OK["done"] = True
+            return
+        put_url = (
+            f"https://sheets.googleapis.com/v4/spreadsheets/{ACCESS_LOG_SHEET_ID}"
+            f"/values/{_requests.utils.quote(tab)}!A1:F1?valueInputOption=USER_ENTERED"
+        )
+        _requests.put(
+            put_url, json={"values": [ACCESS_LOG_HEADERS]}, timeout=10,
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        )
+        _ACCESS_LOG_HEADERS_OK["done"] = True
+    except Exception as e:
+        print(f"[access_log] header ensure failed: {e}")
+
+def _record_access(email, name, role, request):
+    if not email:
+        return
+    from data_layer import _get_access_token
+    import requests as _requests
+    fwd = request.headers.get("x-forwarded-for", "")
+    ip = (fwd.split(",")[0].strip() if fwd else (request.client.host if request.client else "")) or ""
+    user_agent = request.headers.get("user-agent", "")[:500]
+    from datetime import datetime, timezone
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+    token = _get_access_token()
+    if not token:
+        print("[access_log] no OAuth token; skipping append")
+        return
+    tab = _resolve_access_log_tab(token)
+    if not tab:
+        print("[access_log] could not resolve tab name")
+        return
+    _ensure_access_log_headers(token, tab)
+    try:
+        url = (
+            f"https://sheets.googleapis.com/v4/spreadsheets/{ACCESS_LOG_SHEET_ID}"
+            f"/values/{_requests.utils.quote(tab)}!A:F:append"
+            "?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS"
+        )
+        body = {"values": [[ts, email, name or "", role or "", ip, user_agent]]}
+        resp = _requests.post(
+            url, json=body, timeout=10,
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        )
+        if resp.status_code >= 300:
+            print(f"[access_log] append failed: {resp.status_code} {resp.text[:200]}")
+    except Exception as e:
+        print(f"[access_log] append exception: {e}")
 
 @app.get("/intake", response_class=HTMLResponse)
 def intake(request: Request):
