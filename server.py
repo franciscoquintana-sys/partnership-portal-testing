@@ -59,7 +59,7 @@ def require_auth(request: Request):
 _FULL_NAV = [
     ("", [("home","Home")]),
     ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight"),("partners_pipeline","Partners Pipeline")]),
-    ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("pipeline","Partner Leads"),("introduction","Partner - Merchant Intros")]),
+    ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("introduction","Partner - Merchant Intros")]),
     ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
 ]
 NAV = {
@@ -72,7 +72,7 @@ NAV = {
     "partner": [
         ("", [("home","Home")]),
         ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio")]),
-        ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("pipeline","Partner Leads")]),
+        ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share")]),
         ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis")]),
     ],
 }
@@ -505,36 +505,6 @@ def partner_detail(request: Request, name: str, ref: str = "", country: str = ""
         characteristics=cov.get("characteristics", []),
         back_ref=ref,
         back_country=country,
-    ))
-
-@app.get("/pipeline", response_class=HTMLResponse)
-def pipeline(request: Request):
-    role = require_auth(request)
-    if not role:
-        return RedirectResponse("/login")
-    if role not in FULL_ACCESS_ROLES:
-        return RedirectResponse("/home")
-    columns = [
-        {"key": k, "title": t, "color": c,
-         "cards": [l for l in LEADS if l.get("column") == k]}
-        for k, t, c in LEAD_COLUMNS
-    ]
-    board_partners = sorted({(l.get("partner") or "").strip() for l in LEADS if (l.get("partner") or "").strip()})
-    board_pms = sorted({(l.get("pm") or "").strip() for l in LEADS if (l.get("pm") or "").strip()})
-    board_merchants = sorted({(l.get("merchant") or "").strip() for l in LEADS if (l.get("merchant") or "").strip()})
-    try:
-        all_partners_rows = load_partners_excel()
-        partner_catalog = sorted({p["name"] for p in all_partners_rows if p.get("name")})
-    except Exception:
-        partner_catalog = []
-    return tr(request, "pipeline.html", ctx(
-        request, "pipeline",
-        columns=columns,
-        all_leads=LEADS,
-        board_partners=board_partners,
-        board_pms=board_pms,
-        board_merchants=board_merchants,
-        partner_catalog=partner_catalog,
     ))
 
 @app.get("/mission", response_class=HTMLResponse)
@@ -1389,193 +1359,10 @@ async def api_intros_delete(request: Request):
     _save_intros(INTROS)
     return {"ok": True}
 
-# ── Partner Leads board ──────────────────────────────────────────────────────
-LEAD_COLUMNS = [
-    ("extra-introductions",   "Extra Introductions",   "#a78bfa"),
-    ("introduced-by-partner", "Introduced by Partner", "#60a5fa"),
-    ("in-negotiation",        "In Negotiation",        "#fbbf24"),
-    ("signed-merchant",       "Signed Merchant",       "#c084fc"),
-    ("live-merchant",         "Live Merchant",         "#22c55e"),
-    ("didnt-qualify",         "Didn't Qualify",        "#86868b"),
-    ("lost",                  "Lost",                  "#ef4444"),
-]
-_VALID_LEAD_COLUMNS = {c[0] for c in LEAD_COLUMNS}
-_LEAD_FIELDS = {"merchant", "partner", "client_type", "bdm", "pm", "comments"}
-
-LEADS_STORAGE = os.path.join(DATA_DIR, "leads.json")
-
-def _seed_leads():
-    # No auto-seed — users own the Partner Leads board themselves.
-    return []
-
-def _db_init_leads():
-    conn = _db_conn()
-    if not conn:
-        return False
-    try:
-        with conn, conn.cursor() as cur:
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS leads (
-                    id TEXT PRIMARY KEY,
-                    data JSONB NOT NULL,
-                    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-                )
-            """)
-            cur.execute("""
-                CREATE TABLE IF NOT EXISTS leads_migrations (
-                    name TEXT PRIMARY KEY,
-                    applied_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-                )
-            """)
-            # One-time wipe of the seeded sample data. Idempotent — only runs
-            # once because the marker row prevents re-runs on future deploys.
-            cur.execute("SELECT 1 FROM leads_migrations WHERE name = 'wipe_seed_2026_04_21'")
-            if not cur.fetchone():
-                cur.execute("DELETE FROM leads")
-                cur.execute("INSERT INTO leads_migrations (name) VALUES ('wipe_seed_2026_04_21')")
-                print("[leads] Applied migration: wipe_seed_2026_04_21")
-        return True
-    except Exception as e:
-        print(f"[leads] Postgres init failed: {e}")
-        return False
-    finally:
-        conn.close()
-
-def _load_leads():
-    conn = _db_conn()
-    if conn:
-        try:
-            with conn, conn.cursor() as cur:
-                cur.execute("SELECT data FROM leads ORDER BY updated_at ASC")
-                rows = cur.fetchall()
-                if rows:
-                    return [r[0] for r in rows]
-                # Empty table — seed it
-                seed = _seed_leads()
-                with conn.cursor() as c2:
-                    for lead in seed:
-                        c2.execute("""
-                            INSERT INTO leads (id, data, updated_at)
-                            VALUES (%s, %s::jsonb, NOW())
-                            ON CONFLICT (id) DO NOTHING
-                        """, (lead["id"], json.dumps(lead, ensure_ascii=False)))
-                return seed
-        except Exception as e:
-            print(f"[leads] Postgres load failed: {e}")
-        finally:
-            conn.close()
-    # JSON fallback
-    try:
-        with open(LEADS_STORAGE, encoding="utf-8") as f:
-            return json.load(f)
-    except Exception:
-        return _seed_leads()
-
-def _save_leads(data):
-    conn = _db_conn()
-    if conn:
-        try:
-            with conn, conn.cursor() as cur:
-                cur.execute("SELECT id FROM leads")
-                existing = {r[0] for r in cur.fetchall()}
-                current = {i["id"] for i in data}
-                for removed_id in existing - current:
-                    cur.execute("DELETE FROM leads WHERE id = %s", (removed_id,))
-                for lead in data:
-                    cur.execute("""
-                        INSERT INTO leads (id, data, updated_at)
-                        VALUES (%s, %s::jsonb, NOW())
-                        ON CONFLICT (id) DO UPDATE
-                          SET data = EXCLUDED.data, updated_at = NOW()
-                    """, (lead["id"], json.dumps(lead, ensure_ascii=False)))
-            return
-        except Exception as e:
-            print(f"[leads] Postgres save failed: {e}")
-        finally:
-            conn.close()
-    try:
-        with open(LEADS_STORAGE, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-    except Exception as e:
-        print(f"[leads] JSON save failed: {e}")
-
-_db_init_leads()
-LEADS = _load_leads()
-
 # Partners Pipeline deferred init (functions/columns are defined earlier;
 # DATA_DIR + _db_conn must exist before we try to load).
 _db_init_partner_pipeline()
 PARTNER_PIPELINE = _load_partner_pipeline()
-
-@app.post("/api/leads/move")
-async def api_leads_move(request: Request):
-    if not get_role(request):
-        return JSONResponse({"error": "unauthorized"}, status_code=401)
-    body = await request.json()
-    lead_id = body.get("id")
-    new_column = body.get("column")
-    if new_column not in _VALID_LEAD_COLUMNS:
-        return JSONResponse({"error": "invalid column"}, status_code=400)
-    for l in LEADS:
-        if l["id"] == lead_id:
-            l["column"] = new_column
-            _save_leads(LEADS)
-            return {"ok": True}
-    return JSONResponse({"error": "not found"}, status_code=404)
-
-@app.post("/api/leads/update")
-async def api_leads_update(request: Request):
-    if not get_role(request):
-        return JSONResponse({"error": "unauthorized"}, status_code=401)
-    body = await request.json()
-    lead_id = body.get("id")
-    fields = body.get("fields", {})
-    for l in LEADS:
-        if l["id"] == lead_id:
-            for k, v in fields.items():
-                if k in _LEAD_FIELDS:
-                    l[k] = v
-            _save_leads(LEADS)
-            return {"ok": True, "lead": l}
-    return JSONResponse({"error": "not found"}, status_code=404)
-
-@app.post("/api/leads/create")
-async def api_leads_create(request: Request):
-    if not get_role(request):
-        return JSONResponse({"error": "unauthorized"}, status_code=401)
-    body = await request.json()
-    fields = body.get("fields") or {}
-    merchant = (fields.get("merchant") or "").strip()
-    if not merchant:
-        return JSONResponse({"error": "merchant required"}, status_code=400)
-    import uuid
-    new_lead = {
-        "id": uuid.uuid4().hex[:10],
-        "column": "extra-introductions",
-        "merchant": merchant,
-        "partner": (fields.get("partner") or "").strip(),
-        "client_type": (fields.get("client_type") or "").strip(),
-        "bdm": (fields.get("bdm") or "").strip(),
-        "pm":  (fields.get("pm")  or "").strip(),
-        "comments": (fields.get("comments") or "").strip(),
-    }
-    LEADS.append(new_lead)
-    _save_leads(LEADS)
-    return {"ok": True, "lead": new_lead}
-
-@app.post("/api/leads/delete")
-async def api_leads_delete(request: Request):
-    if not get_role(request):
-        return JSONResponse({"error": "unauthorized"}, status_code=401)
-    body = await request.json()
-    lead_id = body.get("id")
-    global LEADS
-    before = len(LEADS)
-    LEADS = [l for l in LEADS if l["id"] != lead_id]
-    if len(LEADS) == before:
-        return JSONResponse({"error": "not found"}, status_code=404)
-    _save_leads(LEADS)
-    return {"ok": True}
 
 @app.get("/intake", response_class=HTMLResponse)
 def intake(request: Request):
@@ -8724,48 +8511,48 @@ def _parse_news_date(s: str):
 
 REGION_NEWS = {
     "Africa": [
-        {"category":"PARTNERSHIP","date":"Jan 2026","title":"Flutterwave acquires Nigerian open banking startup Mono","summary":"All-stock deal valued at $25–40M. Africa's largest fintech consolidating open banking capabilities — push toward full-stack payment infrastructure dominance.","url":"https://techcrunch.com/2026/01/05/flutterwave-buys-nigerias-mono-in-rare-african-fintech-exit/"},
-        {"category":"MARKET","date":"Mar 2026","title":"PayPal targets Africa with new cross-border digital wallet in 2026","summary":"PayPal entering African market with a dedicated cross-border wallet. Watch for impact on existing APM and remittance partner relationships.","url":"https://thepaypers.com/payments/news/paypal-sets-sights-on-africa-with-2026-wallet-launch"},
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"Flutterwave secures Nigerian microfinance banking license — moves into deposits and lending","summary":"CBN license lets Flutterwave hold deposits, offer accounts, and lend off its own balance sheet — no more partner-bank dependency. Eyeing similar licenses in South Africa, Egypt, Kenya, Ghana.","url":"https://weetracker.com/2026/04/02/flutterwave-banking-license-africa-fintech-become-banks/"},
+        {"category":"MARKET","date":"Mar 2026","title":"PayPal targets Africa with new cross-border digital wallet in 2026","summary":"PayPal entering the African market with a dedicated cross-border wallet. Watch for impact on existing APM and remittance partner relationships.","url":"https://thepaypers.com/payments/news/paypal-sets-sights-on-africa-with-2026-wallet-launch"},
         {"category":"REGULATION","date":"Mar 2026","title":"EU-Africa PSP regulatory pilot frameworks expected by late 2026","summary":"Regulators moving toward geo-fenced PSP authorizations. EU-Africa pilot collaboration could unlock new cross-border licensing paths for PSP partners.","url":"https://fintechnews.africa/44236/fintech-south-africa/top-fintech-startups-in-south-africa/"},
-        {"category":"PRODUCT","date":"Feb 2026","title":"Ozow integrates crypto as a primary payment method for merchants","summary":"South African PSP Ozow now enables merchants to accept crypto via Bitcoin-centric providers. Growing APM ecosystem in Africa creating new integration opportunities.","url":"https://fintechnews.africa/44236/fintech-south-africa/top-fintech-startups-in-south-africa/"},
+        {"category":"PARTNERSHIP","date":"Jan 2026","title":"Flutterwave acquires Nigerian open banking startup Mono","summary":"All-stock deal valued at $25–40M. Africa's largest fintech consolidating open banking capabilities — push toward full-stack payment infrastructure dominance.","url":"https://techcrunch.com/2026/01/05/flutterwave-buys-nigerias-mono-in-rare-african-fintech-exit/"},
     ],
     "APAC": [
-        {"category":"MARKET","date":"Mar 2026","title":"India UPI hits record 20.7 billion transactions in a single month","summary":"UPI processed 20.7B transactions in October 2025 — the global benchmark for real-time payment scale. Major implications for cross-border corridors.","url":"https://fintechnews.sg/123084/payments/asia-pacific-digital-payments/"},
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"EBANX expands recurring alternative payments to Thailand and 5 more markets","summary":"Announced at Money20/20 Asia in Bangkok (Apr 21–23). UPI AutoPay-style recurring rails now live across 12 emerging markets, unlocking ~1B users for subscription merchants.","url":"https://www.prnewswire.com/apac/news-releases/money2020-asia-ebanx-expands-recurring-alternative-payments-offering-unlocks-a-1-billion-user-potential-across-12-emerging-markets-302748103.html"},
+        {"category":"MARKET","date":"Apr 2026","title":"Project Nexus links India UPI, Singapore PayNow and Thailand PromptPay","summary":"Single settlement fabric across the three RTP networks — driving cross-border B2B opportunities and lower remittance costs. Malaysia and the Philippines next on the roadmap.","url":"https://paymentexpert.com/2026/04/23/apac-emerging-payment-corridors-2026/"},
         {"category":"REGULATION","date":"Mar 2026","title":"Thailand approves first 3 virtual banks — go-live expected mid-2026","summary":"New digital-native banks entering the Thai market will need payment infrastructure partners. Window to establish relationships before they launch.","url":"https://fintechnews.sg/123084/payments/asia-pacific-digital-payments/"},
-        {"category":"REGULATION","date":"Mar 2026","title":"Singapore, HK and Japan advance stablecoin frameworks — institutional adoption rising","summary":"New regulatory frameworks for stablecoins and tokenized assets in three major APAC hubs. PSP and scheme partners need to prepare for digital asset payment flows.","url":"https://panafricanvisions.com/2026/03/money20-20-asia-report-apac-fintech-ecosystem-shifts-from-experimentation-to-scale-as-ai-and-digital-assets-drive-regional-leadership/"},
-        {"category":"MARKET","date":"Mar 2026","title":"Southeast Asia is APAC's #1 growth target — SME fintech solutions in focus","summary":"22.9% of APAC fintechs cite SEA as primary growth target. 72.9% see SME-tailored solutions as key driver. Strong demand for embedded payment infrastructure.","url":"https://www.blockhead.co/2026/03/04/southeast-asia-leads-expansion-as-apac-fintech-prioritizes-ai-inclusion-and-fraud-resilience/"},
+        {"category":"REGULATION","date":"Mar 2026","title":"Singapore Shared Responsibility Framework forces banks, telcos, platforms to absorb scam losses","summary":"New scam-loss allocation rules require detailed reporting on detection times and victim treatment. Major compliance lift for any partner with Singapore exposure.","url":"https://fintechnews.sg/123084/payments/asia-pacific-digital-payments/"},
+        {"category":"MARKET","date":"Mar 2026","title":"India UPI processes 20.7B transactions in a single month — global RTP benchmark","summary":"NIPL extending UPI to 20 countries with FY29 completion target. Cross-border UPI corridors are the new growth frontier for partners with India exposure.","url":"https://fintechnews.sg/123084/payments/asia-pacific-digital-payments/"},
     ],
     "Europe": [
-        {"category":"REGULATION","date":"Mar 2026","title":"PSD3 / PSR — fraud rules and liability changes apply EU-wide simultaneously","summary":"Key provisions on fraud info-sharing, liability, and customer rights will apply at the same time across all EU countries. All PSP and acquirer partners must comply.","url":"https://www.flagright.com/post/impact-of-payment-services-directive-3-psr-on-payment-processors"},
-        {"category":"REGULATION","date":"Mar 2026","title":"ECB opens call for PSPs to join Digital Euro pilot (H2 2027)","summary":"12-month Digital Euro pilot launching second half of 2027. PSP partners that get in early will have first-mover advantage in the European CBDC ecosystem.","url":"https://www.ecb.europa.eu/press/intro/news/html/ecb.mipnews260305.en.html"},
+        {"category":"REGULATION","date":"Apr 22, 2026","title":"COREPER endorses PSD3 / PSR trilogue agreement texts","summary":"Final agreed texts published Apr 23. Parliament ECON Committee vote scheduled May 5; plenary expected later in May. Compliance clock is starting for PSPs and acquirers.","url":"https://www.nortonrosefulbright.com/en/knowledge/publications/cedd39c6/psd3-and-psr-from-provisional-agreement-to-2026-readiness"},
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"Worldpay joins EPI to offer Wero acceptance to European merchants","summary":"Global Payments-owned Worldpay becomes the latest acquirer to integrate the pan-European wallet. Austria's PSA also onboarded — Wero acceptance footprint widening fast.","url":"https://fintechmagazine.com/news/global-payments-will-offering-wero-boost-european-trade"},
+        {"category":"PRODUCT","date":"Feb 2026","title":"Wero passes 50 million registered users across France, Germany, Belgium","summary":"EPI confirms 50M-user milestone. First e-commerce acceptance points live in DE/FR/BE; Netherlands and Luxembourg next. Consumer-side traction now ahead of acquirer rollouts.","url":"https://en.wikipedia.org/wiki/Wero_(payment)"},
         {"category":"MARKET","date":"Feb 2026","title":"Acquirer M&A accelerating — Global Payments buys takepayments, TokenEx merges with IXOPAY","summary":"Fewer acquirers = more single-point-of-failure risk for merchants. Demand for orchestration and fallback routing is surging across Europe.","url":"https://businessofpayments.substack.com/p/business-of-payments-january-2026"},
-        {"category":"PRODUCT","date":"Mar 2026","title":"Wero wallet expands to Netherlands and Luxembourg — Airwallex, Unzer, PPRO join","summary":"European wallet broadening reach. New integrations include Airwallex, Unzer, PPRO, and Raiffeisen (Austria). Merchant acceptance growing rapidly.","url":"https://www.euroshop-tradefair.com/en/media-news/euroshopmag/retail-technology/wero-in-retail-what-merchants-need-to-know-now-about-europes-new-wallet"},
+        {"category":"REGULATION","date":"Mar 2026","title":"ECB opens call for PSPs to join Digital Euro pilot (H2 2027)","summary":"12-month Digital Euro pilot launching second half of 2027. PSP partners that get in early will have first-mover advantage in the European CBDC ecosystem.","url":"https://www.ecb.europa.eu/press/intro/news/html/ecb.mipnews260305.en.html"},
     ],
     "LATAM": [
+        {"category":"REGULATION","date":"Apr 2026","title":"Brazil refuses to change PIX after US trade-investigation pressure","summary":"White House flagged PIX as a trade barrier under Section 301. Brazil rejected changes — PIX now processes ~80B transactions/year and is geopolitically locked in. Expect continued bilateral friction.","url":"https://www.upi.com/Top_News/World-News/2026/04/02/latam-brazil-pix-no-charges/5151775151795"},
+        {"category":"REGULATION","date":"Q1 2026","title":"Brazil Stablecoin Law institutionalises stablecoins for B2B cross-border settlement","summary":"Landmark legislation now in effect — stablecoins have a formal framework for B2B cross-border use. Direct opening for partners building on USDC/USDT rails into Brazil.","url":"https://www.galileo-ft.com/blog/latam-banking-2026-digital-payments-inclusion-convergence/"},
         {"category":"REGULATION","date":"Oct 2026","title":"Mexico Fintech Law 2.0 update — PSPs and wallets impacted","summary":"Major regulatory refresh due October 2026. Partners operating in Mexico must prepare for new compliance requirements around wallets and payment initiators.","url":"https://eduardomoore.substack.com/p/latam-fintech-trends-for-2026"},
         {"category":"REGULATION","date":"Jan 2026","title":"Brazil BCB raises PSP licensing thresholds — consolidation ahead","summary":"PSPs must now reach BRL 200M in transactions or BRL 20M in prepaid accounts to maintain authorization. Smaller players may exit or merge.","url":"https://www.bcb.gov.br/en"},
-        {"category":"MARKET","date":"Mar 2026","title":"Brazil PIX and Open Finance converging — banks and fintechs building shared infra","summary":"Open Finance is enabling credit scoring for underserved segments. The line between fintechs and legacy banks is rapidly blurring.","url":"https://www.galileo-ft.com/blog/latam-banking-2026-digital-payments-inclusion-convergence/"},
         {"category":"REGULATION","date":"Mar 2026","title":"Peru formally includes fintechs and wallets in national payment system","summary":"Peru's updated framework now incorporates fintechs, wallets, and payment initiators — new licensing path and partnership angle in the market.","url":"https://eduardomoore.substack.com/p/latam-fintech-trends-for-2026"},
-        {"category":"MARKET","date":"Mar 2026","title":"Colombia and Peru building interoperable real-time payment frameworks","summary":"Both countries developing instant payment networks expected to formally include fintechs. New payment rails = new routing opportunities for Yuno partners.","url":"https://www.pymnts.com/news/international/latin-america/2026/latin-america-fintechs-digital-shift-endures-despite-regional-volatility"},
-        {"category":"PARTNERSHIP","date":"Dec 2024","title":"PagBrasil becomes a licensed payment institution","summary":"PagBrasil received BCB authorization as an electronic money issuer — new capabilities for cross-border merchants entering Brazil.","url":"https://www.pagbrasil.com/blog/news/pagbrasil-is-now-a-payment-institution-what-changes-for-you/"},
         {"category":"FUNDING","date":"Jan 2026","title":"LatAm fintech VC rebounds — B2B infra and cross-border payments lead","summary":"Fintech led 61% of LatAm VC in 2025. 2026 focus shifts to later-stage, profitable B2B payment infrastructure and cross-border companies.","url":"https://www.crowdfundinsider.com/2026/01/257085-latam-startups-gear-up-for-a-2026-investment-revival-with-fintech-being-key-focus-area-analysis/"},
     ],
     "Middle East": [
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"Careem Pay extends Adyen partnership for international money transfer","summary":"Careem Pay broadens cross-border remittance using Adyen's global rails. Direct overlap with PSP partners pursuing the GCC-to-South Asia corridor.","url":"https://practiceguides.chambers.com/practice-guides/fintech-2026/united-arab-emirates/trends-and-developments"},
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"PayTabs acquires UAE contactless provider TAPn'GO outright","summary":"Saudi-headquartered orchestrator PayTabs takes full ownership of TAPn'GO — contactless tap-to-pay capability now baked in. GCC consolidation among orchestrators / acquirers continues.","url":"https://practiceguides.chambers.com/practice-guides/fintech-2026/united-arab-emirates/trends-and-developments"},
+        {"category":"FUNDING","date":"Q1 2026","title":"UAE captures 66% of MENA startup funding in Q1 2026","summary":"UAE startups raised $625.8M across 46 deals in Q1, two-thirds of all MENA VC. Total MENA volume down 37% YoY to $941M — money concentrating in Dubai/Abu Dhabi infrastructure plays.","url":"https://businesstoday.me/business/uae-captures-66-of-mena-startup-funding-in-q1-2026/"},
         {"category":"REGULATION","date":"Sep 2025","title":"UAE CBUAE new Central Bank Law — PSPs must comply by September 2026","summary":"Federal Decree No. 6 of 2025 consolidated regulation of banks, PSPs, and insurers. All entities newly in scope must regularize licensing by September 16, 2026.","url":"https://www.whitecase.com/insight-alert/uae-enacts-new-cbuae-law-which-repeals-and-replaces-2018-law"},
         {"category":"ENFORCEMENT","date":"Mar 2026","title":"VARA orders KuCoin to halt crypto services in Dubai","summary":"Dubai's VARA confirmed KuCoin holds no authorization to provide digital asset services in or from Dubai. Multiple entities operating under the KuCoin brand were identified.","url":"https://coin360.com/news/dubai-vara-orders-kucoin-halt-unlicensed-crypto-services"},
-        {"category":"ENFORCEMENT","date":"2025","title":"VARA sanctions 19 crypto firms — fines up to $163K, 2 exchanges suspended","summary":"Dubai's VARA fined 19 companies for operating without approval and suspended 2 exchanges for failing to maintain customer fund segregation. Enforcement is intensifying.","url":"https://finance.yahoo.com/news/dubai-regulator-vara-sanctions-19-144833305.html"},
-        {"category":"REGULATION","date":"Mar 2026","title":"GCC and Egypt CBDC pilots modernizing payment rails","summary":"Regulatory sandboxes in KSA, UAE, and Jordan shortening product launch cycles. Saudi Vision 2030 driving massive financial services investment.","url":"https://thefintechtimes.com/mena-region-reaches-digital-economy-inflection-point-as-instant-payments-drive-growth/"},
         {"category":"MARKET","date":"Mar 2026","title":"MENA fintech hits $6.35B — North Africa fastest growing at 17% CAGR","summary":"Market projected to reach $11.46B by 2031. GCC holds 62% share but North Africa is the fastest growing segment — high-potential underserved territory.","url":"https://www.mordorintelligence.com/industry-reports/mena-fintech-market"},
-        {"category":"FUNDING","date":"Jan 2026","title":"Abu Dhabi fintech Mal raises $230M seed — record for MENA region","summary":"Largest seed round ever recorded in MENA. Signals strong investor confidence in regional payment infrastructure. New well-funded players entering the space.","url":"https://fintechnews.ae/"},
     ],
     "North America": [
-        {"category":"REGULATION","date":"Apr 1, 2026","title":"VAMP threshold drops to 1.5% on April 1 — acquirers must act now","summary":"Visa Acquirer Monitoring Program tightens fraud thresholds for US, Canada, and EU. Acquirer partners that miss this risk losing Visa privileges — urgent compliance deadline.","url":"https://optimizedpayments.com/insights/card-fees/visa-acquirer-monitoring-program-vamp-updated-2025-guide/"},
+        {"category":"SCHEME","date":"Apr 2026","title":"Visa + Stripe (Bridge) extend stablecoin-backed cards to 100 countries","summary":"Following the Mar LATAM launch (AR/CO/MX), Visa-Bridge stablecoin cards expanding across Europe, Asia, Africa. Stablecoins becoming a first-class card-funding instrument.","url":"https://fortune.com/2026/03/03/visa-stripe-bridge-stablecoin-backed-cards-100-countries/"},
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"Visa and Fiserv partner on agentic commerce protocols","summary":"Joint stack to let AI agents transact on consumers' behalf. Stripe, PayPal, Google, Mastercard all pursuing parallel agentic standards. First protocol movers will define the next checkout layer.","url":"https://www.americanbanker.com/payments/news/visa-fiserv-partner-to-boost-agentic-commerce"},
+        {"category":"PARTNERSHIP","date":"Mar 2026","title":"Mastercard agrees to acquire stablecoin platform BVNK for up to $1.8B","summary":"Mastercard's biggest stablecoin bet to date. Comes with disclosure that digital-currency payments hit ~$350B in 2025. Schemes are reorganizing around stablecoin rails.","url":"https://cryptoslate.com/visa-stripe-mastercard-rebuild-payments-stablecoins/"},
+        {"category":"REGULATION","date":"Apr 1, 2026","title":"VAMP threshold dropped to 1.5% on April 1 — acquirers under tighter fraud monitoring","summary":"Visa Acquirer Monitoring Program tightened fraud/dispute thresholds for US, Canada, and EU. Acquirer partners that miss it risk losing Visa privileges.","url":"https://optimizedpayments.com/insights/card-fees/visa-acquirer-monitoring-program-vamp-updated-2025-guide/"},
         {"category":"REGULATION","date":"Mar 2026","title":"Visa/Mastercard interchange fee settlement pending court approval","summary":"Settlement would cut interchange rates ~10bps on average, capped for 5 years. Major cost impact for acquirers and merchants. Could reshape partner pricing conversations.","url":"https://optimizedpayments.com/insights/industry-news/what-merchants-need-to-know-about-the-new-visa-mastercard-interchange-settlement/"},
-        {"category":"SCHEME","date":"Mar 2026","title":"Visa and Mastercard racing to set agentic AI payment standards","summary":"Both schemes partnering with Stripe, Google, Adyen, Worldpay, Fiserv, and Checkout.com to define standards for AI-driven commerce. First movers will shape the next payment stack.","url":"https://www.paymentsdive.com/news/visa-mastercard-jockey-to-set-agentic-standards/813910/"},
         {"category":"PARTNERSHIP","date":"Mar 2026","title":"PayPal CEO exits — Stripe reportedly exploring acquisition","summary":"Alex Chriss out; Enrique Lores steps in March 1. Bloomberg reports Stripe exploring a PayPal acquisition. Major partnership uncertainty — monitor closely.","url":"https://www.bankingdive.com/news/who-could-swallow-paypal-stripe-apple-visa-mastercard-google-musk-adyen/813103/"},
-        {"category":"MARKET","date":"Mar 2026","title":"LatAm VC rebound — payments and remittances lead in Central America","summary":"Fintech leading LatAm investment recovery. Central American corridors increasingly attractive for cross-border payments, remittances, and digital wallets for underserved populations.","url":"https://www.latintimes.com/fintech-set-lead-startup-investment-activity-latin-america-2026-report-592862"},
-        {"category":"PARTNERSHIP","date":"Mar 2026","title":"Mastercard holds first Fintech Summit in the Caribbean","summary":"Event hosted in The Bahamas exploring financial inclusion across Caribbean economies. Mastercard pushing digital payment adoption in island markets with government backing.","url":"https://www.mastercard.com/news/latin-america/en"},
-        {"category":"MARKET","date":"Mar 2026","title":"CoDi real-time payments gaining traction as mobile internet expands","summary":"Mexico's CoDi QR-based system growing adoption across Central America. A2A transfers and digital wallets scaling rapidly along key corridors.","url":"https://www.pymnts.com/news/international/latin-america/2026/latin-america-fintechs-digital-shift-endures-despite-regional-volatility"},
     ],
 }
 
