@@ -16,6 +16,7 @@
       <div>
         <div style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:6px">Partners Portal <span style="color:rgba(255,255,255,0.35);font-weight:400">|</span> Market Analysis</div>
         <div style="font-size:13px;color:#94a3b8">Global payment landscape · {{ all_countries | length }} markets · {{ regions | length }} regions</div>
+        {% if last_update %}<div style="font-size:11px;font-weight:600;color:rgba(255,255,255,0.55);margin-top:8px;letter-spacing:0.04em;text-transform:uppercase">Last update: <span style="color:#fff">{{ last_update }}</span></div>{% endif %}
       </div>
       <a href="/logout" style="font-family:var(--font);font-size:12px;font-weight:600;color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:7px;padding:6px 14px;text-decoration:none;white-space:nowrap;position:relative;z-index:1;transition:background 0.15s" onmouseover="this.style.background='rgba(255,255,255,0.14)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">Sign out</a>
     </div>
