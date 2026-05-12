@@ -1372,7 +1372,9 @@ PARTNER_PIPELINE = _load_partner_pipeline()
 # Sheet 1DHSU... tab gid 696821005 (resolved to a name on first call).
 ACCESS_LOG_SHEET_ID = "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
 ACCESS_LOG_SHEET_GID = "696821005"
+ACCESS_LOG_HEADERS = ["Timestamp (UTC)", "Email", "Name", "Role", "IP", "User Agent"]
 _ACCESS_LOG_TAB_NAME = {"name": None}
+_ACCESS_LOG_HEADERS_OK = {"done": False}
 
 def _resolve_access_log_tab(token):
     if _ACCESS_LOG_TAB_NAME["name"]:
@@ -1393,6 +1395,35 @@ def _resolve_access_log_tab(token):
         print(f"[access_log] tab resolve failed: {e}")
     return None
 
+def _ensure_access_log_headers(token, tab):
+    """Write the header row in A1:F1 if the sheet is empty. Idempotent
+    per process — only checks once per process lifetime."""
+    if _ACCESS_LOG_HEADERS_OK["done"]:
+        return
+    try:
+        import requests as _requests
+        get_url = (
+            f"https://sheets.googleapis.com/v4/spreadsheets/{ACCESS_LOG_SHEET_ID}"
+            f"/values/{_requests.utils.quote(tab)}!A1:F1"
+        )
+        resp = _requests.get(get_url, headers={"Authorization": f"Bearer {token}"}, timeout=10)
+        existing = resp.json().get("values") or []
+        first_row = existing[0] if existing else []
+        if any((c or "").strip() for c in first_row):
+            _ACCESS_LOG_HEADERS_OK["done"] = True
+            return
+        put_url = (
+            f"https://sheets.googleapis.com/v4/spreadsheets/{ACCESS_LOG_SHEET_ID}"
+            f"/values/{_requests.utils.quote(tab)}!A1:F1?valueInputOption=USER_ENTERED"
+        )
+        _requests.put(
+            put_url, json={"values": [ACCESS_LOG_HEADERS]}, timeout=10,
+            headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json"},
+        )
+        _ACCESS_LOG_HEADERS_OK["done"] = True
+    except Exception as e:
+        print(f"[access_log] header ensure failed: {e}")
+
 def _record_access(email, name, role, request):
     if not email:
         return
@@ -1411,6 +1442,7 @@ def _record_access(email, name, role, request):
     if not tab:
         print("[access_log] could not resolve tab name")
         return
+    _ensure_access_log_headers(token, tab)
     try:
         url = (
             f"https://sheets.googleapis.com/v4/spreadsheets/{ACCESS_LOG_SHEET_ID}"
