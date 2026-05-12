@@ -1571,7 +1571,13 @@ for _c, _meta in COUNTRIES.items():
         COUNTRY_ISO[_c] = _meta["iso"]
 
 INSIGHTS_HIDDEN_REGIONS = {"global", "emea", "regional", "brazil", "brasil"}
-INSIGHTS_EXTRA_REGIONS  = {"Europe", "Middle East"}
+INSIGHTS_EXTRA_REGIONS  = {"Europe", "Middle East", "Africa"}
+
+# Stamp shown in the Market Analysis banner. Bump this whenever the
+# REGION_NEWS content is refreshed.
+MARKET_ANALYSIS_LAST_UPDATE = "12-May-2026"
+# Calendar window the Last News tab renders.
+NEWS_WINDOW_MONTHS = {(2026, 4), (2026, 5)}
 
 # Ecommerce development index (0-100), composite of online penetration,
 # digital-payments adoption, logistics maturity and consumer trust.
@@ -8606,10 +8612,9 @@ def _parse_news_date(s: str):
 
 REGION_NEWS = {
     "Africa": [
+        {"category":"PARTNERSHIP","date":"May 2026","title":"Paga and Sui launch strategic partnership to transform cross-border payments across Africa","summary":"Joint roadmap covers four products targeting financial accessibility — including tokenized real-world assets accessible from $100 and Sui-blockchain rails for faster, cheaper cross-border transfers.","url":"https://techafricanews.com/2026/05/08/paga-and-sui-launch-strategic-partnership-to-transform-cross-border-payments-across-africa/"},
+        {"category":"MARKET","date":"Apr 2026","title":"Visa Africa Fintech Accelerator hits 104 startups — Cohort 6 opens","summary":"Visa-backed program now spans 100+ startups across the continent. Cohort 6 applications open through May 17, 2026 — pipeline to watch for new acquirer/PSP partnerships.","url":"https://techafricanews.com/2026/04/15/visa-africa-fintech-accelerator-hits-milestone-104-startups-supported-launches-new-cohort/"},
         {"category":"PARTNERSHIP","date":"Apr 2026","title":"Flutterwave secures Nigerian microfinance banking license — moves into deposits and lending","summary":"CBN license lets Flutterwave hold deposits, offer accounts, and lend off its own balance sheet — no more partner-bank dependency. Eyeing similar licenses in South Africa, Egypt, Kenya, Ghana.","url":"https://weetracker.com/2026/04/02/flutterwave-banking-license-africa-fintech-become-banks/"},
-        {"category":"MARKET","date":"Mar 2026","title":"PayPal targets Africa with new cross-border digital wallet in 2026","summary":"PayPal entering the African market with a dedicated cross-border wallet. Watch for impact on existing APM and remittance partner relationships.","url":"https://thepaypers.com/payments/news/paypal-sets-sights-on-africa-with-2026-wallet-launch"},
-        {"category":"REGULATION","date":"Mar 2026","title":"EU-Africa PSP regulatory pilot frameworks expected by late 2026","summary":"Regulators moving toward geo-fenced PSP authorizations. EU-Africa pilot collaboration could unlock new cross-border licensing paths for PSP partners.","url":"https://fintechnews.africa/44236/fintech-south-africa/top-fintech-startups-in-south-africa/"},
-        {"category":"PARTNERSHIP","date":"Jan 2026","title":"Flutterwave acquires Nigerian open banking startup Mono","summary":"All-stock deal valued at $25–40M. Africa's largest fintech consolidating open banking capabilities — push toward full-stack payment infrastructure dominance.","url":"https://techcrunch.com/2026/01/05/flutterwave-buys-nigerias-mono-in-rare-african-fintech-exit/"},
     ],
     "APAC": [
         {"category":"PARTNERSHIP","date":"Apr 2026","title":"EBANX expands recurring alternative payments to Thailand and 5 more markets","summary":"Announced at Money20/20 Asia in Bangkok (Apr 21–23). UPI AutoPay-style recurring rails now live across 12 emerging markets, unlocking ~1B users for subscription merchants.","url":"https://www.prnewswire.com/apac/news-releases/money2020-asia-ebanx-expands-recurring-alternative-payments-offering-unlocks-a-1-billion-user-potential-across-12-emerging-markets-302748103.html"},
@@ -8778,16 +8783,11 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         new_yuno_coverage = {**(rich_country.get("yuno_coverage") or {}), "Live partners": live_partners_enriched}
         rich_country = {**rich_country, "partners_landscape": enriched, "yuno_coverage": new_yuno_coverage}
     # Build news sections: only regions currently visible in the filter,
-    # limited to items from the last ~3 months, with external search URLs.
+    # limited to the calendar months in NEWS_WINDOW_MONTHS.
     if region != "all":
         target_news_regions = [region]
     else:
         target_news_regions = regions
-    today = date.today()
-    cutoff_year, cutoff_month = today.year, today.month - 3
-    while cutoff_month <= 0:
-        cutoff_month += 12
-        cutoff_year -= 1
     news_sections = []
     for r in target_news_regions:
         items = []
@@ -8795,8 +8795,7 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
             d = _parse_news_date(it["date"])
             if d is None:
                 continue
-            ym = (d.year, d.month)
-            if ym < (cutoff_year, cutoff_month) or ym > (today.year, today.month):
+            if (d.year, d.month) not in NEWS_WINDOW_MONTHS:
                 continue
             items.append(it)
         if items:
@@ -8819,6 +8818,7 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         heatmap_chart=heatmap_json,
         has_market_data=has_market_data,
         news_sections=news_sections,
+        last_update=MARKET_ANALYSIS_LAST_UPDATE,
     ))
 
 @app.get("/merch_sim", response_class=HTMLResponse)
