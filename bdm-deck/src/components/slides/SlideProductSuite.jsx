@@ -348,8 +348,8 @@ export default function SlideProductSuite() {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      // Matches slides 6/7 — deck-wide title reference size. May wrap.
-      fontSize: 'clamp(28px, 2.7vw, 52px)',
+      // Matched to the deck's slide 2 / slide 3 title scale.
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -775,10 +775,6 @@ export default function SlideProductSuite() {
             A complete suite · Four pillars ·{' '}
             <span style={styles.titleAccent}>One brain</span>
           </h2>
-          <p style={styles.subtitle}>
-            Engineered to grow with your volume, with AI that ships
-            decisions, not just dashboards
-          </p>
         </div>
 
         <div className="stagger" style={{ ...styles.statsStrip, '--stagger-base': '0.3s', '--stagger-step': '0.08s' }}>
