@@ -109,11 +109,13 @@ const COUNTRIES_BY_REGION = Object.fromEntries(
   ]),
 )
 
-// World atlas TopoJSON — fetched once at first render, then cached.
+// World atlas TopoJSON — served locally from the deck's own public assets
+// so the slide doesn't depend on a third-party CDN at runtime (some
+// embedding contexts block cross-origin fetches). Cached across mounts.
 let _worldFeaturesPromise = null
 function loadWorldFeatures() {
   if (_worldFeaturesPromise) return _worldFeaturesPromise
-  _worldFeaturesPromise = fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+  _worldFeaturesPromise = fetch('/sales-deck/world-atlas.json')
     .then((r) => r.json())
     .then((topo) => feature(topo, topo.objects.countries).features)
     .catch(() => [])
