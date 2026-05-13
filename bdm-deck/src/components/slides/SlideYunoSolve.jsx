@@ -500,17 +500,15 @@ export default function SlideYunoSolve({ data }) {
       letterSpacing: '-0.2px',
     },
     archYunoBlock: {
-      padding: '10px 20px',
-      // Light: solid accent ramp tile so Yuno reads as the brand center.
-      // Dark: the original translucent gradient + ambient glow.
-      background: theme.isLight
-        ? `linear-gradient(135deg, ${theme.accentDeep} 0%, ${theme.accent} 100%)`
-        : 'linear-gradient(135deg, rgba(62,79,224,0.28) 0%, rgba(89,103,228,0.18) 100%)',
-      border: theme.isLight ? `1px solid ${theme.accent}` : '1px solid rgba(62,79,224,0.5)',
+      padding: '14px 22px',
+      // Neutral surface so the coloured Yuno element renders in its native
+      // palette (matches slide 2's centre node treatment) — no blue tile.
+      background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.03)',
+      border: `1px solid ${theme.borderAccent}`,
       borderRadius: '12px',
       boxShadow: theme.isLight
-        ? '0 8px 24px rgba(62,79,224,0.20)'
-        : '0 0 40px rgba(62,79,224,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
+        ? '0 8px 24px rgba(62,79,224,0.12)'
+        : '0 0 40px rgba(62,79,224,0.18), inset 0 1px 0 rgba(255,255,255,0.05)',
       display: 'flex',
       flexDirection: 'column',
       gap: '8px',
@@ -535,9 +533,9 @@ export default function SlideYunoSolve({ data }) {
       fontFamily: 'var(--font-display)',
       fontSize: '20px',
       fontWeight: 500,
-      // Yuno block has a solid blue background in both themes, so the
-      // title text is always white.
-      color: '#fff',
+      // Title sits on the neutral surface alongside the coloured Yuno mark,
+      // so it adopts the standard ink token.
+      color: theme.inkStrong,
       letterSpacing: '-0.3px',
       textTransform: 'lowercase',
     },
