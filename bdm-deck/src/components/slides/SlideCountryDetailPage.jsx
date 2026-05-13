@@ -46,34 +46,36 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 'clamp(28px, 3vw, 60px)',
+      gap: 'clamp(20px, 2vw, 40px)',
       minHeight: 0,
-      padding: 'clamp(40px, 4vw, 80px)',
+    },
+    titleRow: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 'clamp(20px, 1.8vw, 36px)',
+      flexShrink: 0,
     },
     flag: {
-      width: 'clamp(180px, 18vw, 320px)',
+      width: 'clamp(80px, 7vw, 124px)',
       height: 'auto',
-      borderRadius: '14px',
-      boxShadow: '0 24px 60px rgba(0,0,0,0.45)',
+      borderRadius: '10px',
+      boxShadow: '0 16px 40px rgba(0,0,0,0.35)',
       objectFit: 'cover',
+      flexShrink: 0,
     },
     name: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(56px, 6.5vw, 120px)',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 700,
-      letterSpacing: '-2px',
-      lineHeight: 1.02,
+      letterSpacing: '-1.2px',
+      lineHeight: 1.05,
       color: theme.ink,
       margin: 0,
-      textAlign: 'center',
     },
     empty: {
       fontFamily: 'var(--font)',
       fontSize: 'clamp(18px, 1.5vw, 28px)',
       color: theme.inkMuted,
-      textAlign: 'center',
       lineHeight: 1.5,
     },
   }
@@ -82,16 +84,16 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     <SlideBase section="Country Detail">
       <div style={styles.body}>
         {selectedCountry ? (
-          <>
+          <div style={styles.titleRow}>
             {iso && (
               <img
-                src={`https://flagcdn.com/w320/${iso}.png`}
+                src={`https://flagcdn.com/w240/${iso}.png`}
                 alt={`${selectedCountry} flag`}
                 style={styles.flag}
               />
             )}
             <h2 style={styles.name}>{selectedCountry}</h2>
-          </>
+          </div>
         ) : (
           <p style={styles.empty}>
             Pick a country on the previous slide to see its detail here.
