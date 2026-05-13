@@ -23,6 +23,7 @@ import SlideRegionPMsMap from './slides/SlideRegionPMsMap'
 import SlideCountryMarket from './slides/SlideCountryMarket'
 import SlideCountryConnections from './slides/SlideCountryConnections'
 import SlideCountryDetail from './slides/SlideCountryDetail'
+import SlideCountryDetailPage from './slides/SlideCountryDetailPage'
 import SlideCTA from './slides/SlideCTA'
 import { getRegionCountries } from '../data/regional-data'
 import OrbBackground from './OrbBackground'
@@ -82,6 +83,7 @@ const ALL_SLIDES = [
   { Component: SlideLeadership, label: 'Leadership' },
   { Component: SlideTrustedBy, label: 'Trusted By' },
   { Component: SlideCountryDetail, label: 'Country Detail' },
+  { Component: SlideCountryDetailPage, label: 'Country Detail Page' },
   { Component: SlideCTA, label: 'CTA' },
 ]
 
@@ -667,7 +669,14 @@ function SlideViewerInner({ data, onBack, shared = false }) {
               animation: `${direction === 'next' ? 'slideInRight' : 'slideInLeft'} 0.5s cubic-bezier(0.32, 0.72, 0, 1)`,
             }}
           >
-            <SlideComponent data={data} shared={shared} {...(slideProps || {})} />
+            <SlideComponent
+              data={data}
+              shared={shared}
+              goTo={goTo}
+              currentIndex={current}
+              totalSlides={total}
+              {...(slideProps || {})}
+            />
           </div>
 
           {/* Replit auto-numbering. The deck filters in two extra slides

@@ -287,7 +287,7 @@ function PillDropdown({ icon: Icon, label, items, value, onChange }) {
   )
 }
 
-export default function SlideCountryDetail() {
+export default function SlideCountryDetail({ goTo, currentIndex }) {
   const theme = useTheme()
   const [region, setRegion] = useState('all')
   const [country, setCountry] = useState('')
@@ -297,27 +297,18 @@ export default function SlideCountryDetail() {
     return (COUNTRIES_BY_REGION[region] || []).map((c) => ({ country: c, region }))
   }, [region])
 
-  // Navigate the *top* window (the portal page that hosts the deck) to the
-  // portal's Country Detail page. window.open from inside the deck iframe
-  // was hitting popup-blocker territory and dropping the new tab on a
-  // blank document — top-level navigation always lands on the live page.
-  const openDetail = (countryName) => {
-    if (!countryName) return
-    const entry = countriesForPicker.find((c) => c.country === countryName)
-    const r = entry?.region || region
-    const params = new URLSearchParams({ view: 'country', country: countryName })
-    if (r && r !== 'all') params.set('region', r)
-    const url = `/insights?${params.toString()}`
-    try {
-      window.top.location.href = url
-    } catch (_) {
-      window.location.href = url
+  // Picking a country jumps the deck to the next slide, which is the
+  // (currently blank) Country Detail Page reserved for the rich per-country
+  // content.
+  const openDetail = () => {
+    if (typeof goTo === 'function' && typeof currentIndex === 'number') {
+      goTo(currentIndex + 1)
     }
   }
 
   const handleCountryPick = (val) => {
     setCountry(val)
-    if (val) openDetail(val)
+    if (val) openDetail()
   }
 
   const regionPillLabel = region === 'all' ? 'All regions' : (REGION_LABEL[region] || region)
@@ -609,7 +600,7 @@ export default function SlideCountryDetail() {
             <ChoroplethMap
               pickerCountries={countriesForPicker}
               region={region}
-              onPick={(name) => { setCountry(name); openDetail(name) }}
+              onPick={(name) => { setCountry(name); openDetail() }}
               styles={styles}
               theme={theme}
             />
