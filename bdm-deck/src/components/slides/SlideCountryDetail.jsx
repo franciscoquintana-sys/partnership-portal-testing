@@ -39,16 +39,37 @@ const ECOMMERCE_INDEX = {
   'Mozambique': 20, 'Ethiopia': 20, 'Zimbabwe': 19, 'Mauritius': 45,
 }
 
-// Heatmap colour ramp — cool/blue at the top of the index, warm/amber at
-// the bottom. Matches the portal's choropleth direction.
+// Multi-stop sequential palette aligned to Yuno's brand ramp:
+//   0   → #1E2152 (deep navy)
+//   30  → #3E4FE0 (Yuno blue)
+//   65  → #7C89EF (soft blue)
+//   100 → #E8EAF5 (harmony lilac)
+// Mirrors the portal's choropleth direction (dark → light = stronger
+// e-commerce-development index) without the harsh amber low-end.
+const RAMP_STOPS = [
+  { t: 0,    rgb: [30, 33, 82] },
+  { t: 0.30, rgb: [62, 79, 224] },
+  { t: 0.65, rgb: [124, 137, 239] },
+  { t: 1,    rgb: [232, 234, 245] },
+]
+
 function indexColor(value) {
-  if (value == null) return 'rgba(189,195,246,0.10)'
+  if (value == null) return 'rgba(189,195,246,0.08)'
   const v = Math.max(0, Math.min(100, value)) / 100
-  // 0 → soft amber (#FCD34D-ish), 1 → bright Yuno blue (#3E4FE0)
-  const lerp = (a, b) => Math.round(a + (b - a) * v)
-  const r = lerp(252, 62)
-  const g = lerp(211, 79)
-  const b = lerp(77, 224)
+  let lo = RAMP_STOPS[0]
+  let hi = RAMP_STOPS[RAMP_STOPS.length - 1]
+  for (let i = 0; i < RAMP_STOPS.length - 1; i += 1) {
+    if (v >= RAMP_STOPS[i].t && v <= RAMP_STOPS[i + 1].t) {
+      lo = RAMP_STOPS[i]
+      hi = RAMP_STOPS[i + 1]
+      break
+    }
+  }
+  const span = hi.t - lo.t || 1
+  const local = (v - lo.t) / span
+  const r = Math.round(lo.rgb[0] + (hi.rgb[0] - lo.rgb[0]) * local)
+  const g = Math.round(lo.rgb[1] + (hi.rgb[1] - lo.rgb[1]) * local)
+  const b = Math.round(lo.rgb[2] + (hi.rgb[2] - lo.rgb[2]) * local)
   return `rgb(${r}, ${g}, ${b})`
 }
 
@@ -419,8 +440,8 @@ export default function SlideCountryDetail() {
       minHeight: 0,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(14px, 1vw, 22px)',
-      padding: 'clamp(16px, 1.4vw, 28px)',
+      gap: 'clamp(6px, 0.5vw, 10px)',
+      padding: 'clamp(4px, 0.4vw, 10px)',
       border: `1px solid ${theme.borderSubtle}`,
       borderRadius: '16px',
       overflow: 'hidden',
@@ -432,16 +453,6 @@ export default function SlideCountryDetail() {
       minHeight: 0,
       width: '100%',
     },
-    overviewMap: {
-      position: 'absolute',
-      inset: 0,
-      width: '100%',
-      height: '100%',
-      objectFit: 'contain',
-      opacity: theme.isLight ? 0.22 : 0.28,
-      filter: theme.isLight ? 'invert(1) brightness(0.4)' : 'brightness(0) invert(1)',
-      pointerEvents: 'none',
-    },
     overviewSvg: {
       position: 'absolute',
       inset: 0,
@@ -449,18 +460,25 @@ export default function SlideCountryDetail() {
       height: '100%',
     },
     overviewLead: {
-      position: 'relative',
-      zIndex: 1,
+      position: 'absolute',
+      top: 'clamp(10px, 1vw, 18px)',
+      left: 0,
+      right: 0,
+      zIndex: 2,
       textAlign: 'center',
-      fontSize: 'clamp(15px, 1.2vw, 22px)',
+      fontSize: 'clamp(13px, 1vw, 18px)',
       fontWeight: 500,
       color: theme.inkSecondary,
       lineHeight: 1.4,
       margin: 0,
+      pointerEvents: 'none',
     },
     legend: {
-      position: 'relative',
-      zIndex: 1,
+      position: 'absolute',
+      bottom: 'clamp(10px, 1vw, 18px)',
+      left: 0,
+      right: 0,
+      zIndex: 2,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -471,12 +489,13 @@ export default function SlideCountryDetail() {
       letterSpacing: '1.2px',
       textTransform: 'uppercase',
       color: theme.inkMuted,
+      pointerEvents: 'none',
     },
     legendBar: {
-      width: 'clamp(140px, 14vw, 240px)',
-      height: '8px',
-      borderRadius: '4px',
-      background: 'linear-gradient(90deg, rgb(252,211,77) 0%, rgb(62,79,224) 100%)',
+      width: 'clamp(160px, 16vw, 280px)',
+      height: '10px',
+      borderRadius: '5px',
+      background: 'linear-gradient(90deg, rgb(30,33,82) 0%, rgb(62,79,224) 35%, rgb(124,137,239) 70%, rgb(232,234,245) 100%)',
     },
   }
 
@@ -637,15 +656,15 @@ export default function SlideCountryDetail() {
             </>
           ) : (
             <div style={styles.overview}>
-              <p style={styles.overviewLead}>
-                {overviewTitle} — click any country to open its market brief.
-              </p>
               <ChoroplethMap
                 pickerCountries={countriesForPicker}
                 onPick={setCountry}
                 styles={styles}
                 theme={theme}
               />
+              <p style={styles.overviewLead}>
+                {overviewTitle} — click any country to open its market brief.
+              </p>
               <div style={styles.legend}>
                 <span>Lower e-commerce index</span>
                 <span style={styles.legendBar} aria-hidden />
