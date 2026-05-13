@@ -285,19 +285,18 @@ export default function SlideLeadership({ data }) {
     // collapses to 0 when content is already tight (windowed). That keeps
     // the windowed view from overflowing while filling the tall-viewport gap.
     pedigreeStrip: {
-      // No card chrome and no horizontal padding so the strip's left/right
-      // edges line up exactly with the founders + leadership team cards
-      // above. Background/border were creating a visual offset that pushed
-      // the logo content inside the card rail of the grids.
       display: 'flex',
       flexDirection: 'column',
       gap: 'clamp(14px, 1.2vw, 22px)',
-      padding: 0,
-      background: 'transparent',
-      border: 'none',
-      boxShadow: 'none',
+      padding: 'clamp(22px, 2.1vw, 38px) clamp(24px, 2.4vw, 42px)',
+      background: theme.isLight
+        ? theme.bgElevated
+        : 'linear-gradient(180deg, rgba(62,79,224,0.05) 0%, rgba(62,79,224,0.02) 100%)',
+      border: `1px solid ${theme.isLight ? theme.borderDefault : 'rgba(62,79,224,0.12)'}`,
+      borderRadius: '14px',
       marginTop: 'auto',
       transform: 'translateY(-160px)',
+      boxShadow: theme.cardShadow,
     },
     pedigreeStripHeader: {
       display: 'flex',
