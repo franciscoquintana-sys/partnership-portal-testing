@@ -1,5 +1,12 @@
 import { Fragment, useLayoutEffect, useRef, useState } from 'react'
-import { ChartLineDown, Receipt } from '@phosphor-icons/react'
+import {
+  ArrowsSplit,
+  ChartLineDown,
+  Globe,
+  Graph,
+  Receipt,
+  SquaresFour,
+} from '@phosphor-icons/react'
 import SlideBase from './SlideBase'
 import { useTheme } from '../../lib/theme'
 
@@ -176,31 +183,24 @@ function buildObservations(styles) {
   return {
     merchant: [
       {
-        render: () => (
-          <><span style={styles.observationStrong}>Single-processor dependency</span> — heavy
-            reliance on a single processor for key payment flows; any outage or policy change
-            instantly suspends recurring revenue</>
-        ),
+        Icon: Graph,
+        title: 'Single-processor dependency',
+        desc: 'Heavy reliance on a single processor for key payment flows; any outage or policy change instantly suspends recurring revenue.',
       },
       {
-        render: () => (
-          <><span style={styles.observationStrong}>Limited APM coverage</span> — thin local
-            payment coverage outside cards, with long chains of intermediaries just to reach
-            local payments</>
-        ),
+        Icon: SquaresFour,
+        title: 'Limited APM coverage',
+        desc: 'Thin local payment coverage outside cards, with long chains of intermediaries just to reach local payments.',
       },
       {
-        render: () => (
-          <><span style={styles.observationStrong}>No smart routing</span> — declined transactions
-            fall straight to lost revenue instead of being recovered.</>
-        ),
+        Icon: ArrowsSplit,
+        title: 'No smart routing',
+        desc: 'Declined transactions fall straight to lost revenue instead of being recovered.',
       },
       {
-        render: () => (
-          <><span style={styles.observationStrong}>Cross-border inefficiency</span> — many markets
-            and payment flows still centralised through a single provider, driving up cost and
-            dragging down performance.</>
-        ),
+        Icon: Globe,
+        title: 'Cross-border inefficiency',
+        desc: 'Many markets and payment flows still centralised through a single provider, driving up cost and dragging down performance.',
       },
     ],
     // Partner version: reframes the three observations as the reasons a
@@ -668,6 +668,58 @@ export default function SlideInfrastructure({ data }) {
       color: theme.inkStrong,
       fontWeight: 700,
     },
+    obsCard: {
+      display: 'grid',
+      gridTemplateColumns: 'auto auto 1fr',
+      alignItems: 'center',
+      gap: 'clamp(16px, 1.3vw, 26px)',
+      padding: 'clamp(16px, 1.4vw, 28px) clamp(20px, 1.6vw, 32px)',
+      background: theme.isLight
+        ? theme.bgElevated
+        : 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.015) 100%)',
+      border: `1px solid ${theme.borderSubtle}`,
+      borderLeft: `3px solid ${theme.borderAccent}`,
+      borderRadius: '12px',
+      boxShadow: theme.cardShadow,
+    },
+    obsIndex: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'clamp(20px, 1.8vw, 32px)',
+      fontWeight: 700,
+      color: theme.isLight ? theme.accent : 'rgba(180,189,255,0.95)',
+      letterSpacing: '-0.03em',
+      lineHeight: 1,
+      flexShrink: 0,
+    },
+    obsIcon: {
+      width: 'clamp(28px, 2.3vw, 42px)',
+      height: 'clamp(28px, 2.3vw, 42px)',
+      color: theme.inkMuted,
+      flexShrink: 0,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    obsBody: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 'clamp(4px, 0.4vw, 8px)',
+      minWidth: 0,
+    },
+    obsTitle: {
+      fontSize: 'clamp(16px, 1.3vw, 24px)',
+      fontWeight: 700,
+      color: theme.ink,
+      letterSpacing: '-0.2px',
+      lineHeight: 1.15,
+    },
+    obsDesc: {
+      fontSize: 'clamp(13px, 1.05vw, 19px)',
+      fontWeight: 400,
+      color: theme.inkSecondary,
+      lineHeight: 1.4,
+      margin: 0,
+    },
 
     // ---------- Bottom stats row ----------
     statsRow: {
@@ -920,16 +972,33 @@ export default function SlideInfrastructure({ data }) {
           <div className="border-beam" style={{ ...styles.observationsCard, '--beam-duration': '20s', '--beam-delay': '-6s' }}>
             <ObservationsBackdrop />
             <div className="stagger" style={{ ...styles.observationsList, '--stagger-base': '0.5s', '--stagger-step': '0.12s' }}>
-              {OBSERVATIONS.map((obs, i) => (
-                <Fragment key={i}>
-                  <div style={styles.observationItem}>
-                    <p style={styles.observationText}>{obs.render()}</p>
+              {OBSERVATIONS.map((obs, i) => {
+                if (obs.render) {
+                  return (
+                    <Fragment key={i}>
+                      <div style={styles.observationItem}>
+                        <p style={styles.observationText}>{obs.render()}</p>
+                      </div>
+                      {i < OBSERVATIONS.length - 1 && (
+                        <div style={styles.observationDivider} aria-hidden />
+                      )}
+                    </Fragment>
+                  )
+                }
+                const Icon = obs.Icon
+                return (
+                  <div key={i} style={styles.obsCard}>
+                    <span style={styles.obsIndex}>{String(i + 1).padStart(2, '0')}</span>
+                    <span style={styles.obsIcon}>
+                      {Icon ? <Icon size="100%" weight="regular" aria-hidden /> : null}
+                    </span>
+                    <div style={styles.obsBody}>
+                      <span style={styles.obsTitle}>{obs.title}</span>
+                      <p style={styles.obsDesc}>{obs.desc}</p>
+                    </div>
                   </div>
-                  {i < OBSERVATIONS.length - 1 && (
-                    <div style={styles.observationDivider} aria-hidden />
-                  )}
-                </Fragment>
-              ))}
+                )
+              })}
             </div>
           </div>
         </div>
