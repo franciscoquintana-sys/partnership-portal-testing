@@ -39,13 +39,13 @@ const ECOMMERCE_INDEX = {
   'Mozambique': 20, 'Ethiopia': 20, 'Zimbabwe': 19, 'Mauritius': 45,
 }
 
-// Yuno sequential palette — neutral grey at the low end, deep brand blue
-// at the high end. Higher index = deeper blue.
+// Softer Yuno sequential palette — pale neutral grey at the low end, soft
+// brand blue at the high end. Lighter overall so the map reads gentler.
 const RAMP_STOPS = [
-  { t: 0,    rgb: [146, 149, 155] }, // #92959B  security grey
+  { t: 0,    rgb: [209, 213, 219] }, // #D1D5DB  pale neutral grey
   { t: 0.35, rgb: [189, 195, 246] }, // #BDC3F6  pale blue
-  { t: 0.65, rgb: [62, 79, 224]   }, // #3E4FE0  Yuno blue
-  { t: 1,    rgb: [23, 38, 166]   }, // #1726A6  deep blue
+  { t: 0.70, rgb: [124, 137, 239] }, // #7C89EF  soft blue
+  { t: 1,    rgb: [89, 103, 228]  }, // #5967E4  mid blue
 ]
 
 function indexColor(value) {
@@ -491,7 +491,7 @@ export default function SlideCountryDetail() {
       width: 'clamp(160px, 16vw, 280px)',
       height: '10px',
       borderRadius: '5px',
-      background: 'linear-gradient(90deg, #92959B 0%, #BDC3F6 35%, #3E4FE0 65%, #1726A6 100%)',
+      background: 'linear-gradient(90deg, #D1D5DB 0%, #BDC3F6 35%, #7C89EF 70%, #5967E4 100%)',
     },
   }
 
