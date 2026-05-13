@@ -608,7 +608,7 @@ export default function LandingPage({ onGenerate }) {
           </h1>
 
           <div style={styles.subtitle}>
-            <span>Select a merchant, acquirer bank, or partner to generate their tailored brief.</span>
+            <span>Type Client URL to generate their tailored brief.</span>
           </div>
         </div>
 
