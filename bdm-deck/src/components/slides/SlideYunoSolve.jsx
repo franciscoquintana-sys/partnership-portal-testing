@@ -860,7 +860,7 @@ export default function SlideYunoSolve({ data }) {
       <div style={styles.body}>
         <div style={styles.monoKicker}>
           <span style={styles.monoKickerCaret}>&gt;</span>
-          {isBanking ? 'your_brand_your_stack' : 'orchestration_layer'}
+          {isBanking ? 'your_brand_your_stack' : 'Orchestration Layer'}
           <BeamRule delay={1.5} base={theme.beamBase} beam={theme.beam} />
         </div>
 
