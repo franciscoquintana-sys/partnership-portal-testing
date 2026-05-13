@@ -172,11 +172,11 @@ function ArchitectureStack({ merchantName, merchantLogo, isTileLogo, psps, style
       )}
 
       <div ref={merchantRef} style={styles.archMerchant}>
-        <img
-          src="https://lirp.cdn-website.com/1e9ba552/dms3rep/multi/opt/element+4+%2833%29-640w.png"
-          alt={merchantName}
-          style={{ height: '44px', maxWidth: '160px', objectFit: 'contain', filter: 'none' }}
-        />
+        {merchantLogo ? (
+          <img src={merchantLogo} alt={merchantName} style={isTileLogo ? styles.archMerchantLogoTile : styles.archMerchantLogo} />
+        ) : (
+          <span style={styles.archMerchantText}>{merchantName}</span>
+        )}
       </div>
 
       <div ref={yunoRef} style={styles.archYunoBlock}>
