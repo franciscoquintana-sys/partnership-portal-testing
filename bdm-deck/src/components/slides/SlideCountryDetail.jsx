@@ -297,18 +297,22 @@ export default function SlideCountryDetail() {
     return (COUNTRIES_BY_REGION[region] || []).map((c) => ({ country: c, region }))
   }, [region])
 
-  useEffect(() => {
-    if (country && !countriesForPicker.some((c) => c.country === country)) {
-      setCountry('')
-    }
-  }, [region, country, countriesForPicker])
+  // Open the portal's Country Detail page in a new tab. The slide stays on
+  // the map so the presenter can keep clicking around without losing their
+  // place.
+  const openDetail = (countryName) => {
+    if (!countryName) return
+    const entry = countriesForPicker.find((c) => c.country === countryName)
+    const r = entry?.region || region
+    const params = new URLSearchParams({ view: 'country', country: countryName })
+    if (r && r !== 'all') params.set('region', r)
+    window.open(`/insights?${params.toString()}`, '_blank', 'noopener')
+  }
 
-  const resolvedRegion = country
-    ? (countriesForPicker.find((c) => c.country === country)?.region || region)
-    : region
-  const rich = country && resolvedRegion !== 'all'
-    ? getCountryData(resolvedRegion, country)
-    : null
+  const handleCountryPick = (val) => {
+    setCountry(val)
+    if (val) openDetail(val)
+  }
 
   const regionPillLabel = region === 'all' ? 'All regions' : (REGION_LABEL[region] || region)
   const countryPillLabel = country || 'All countries'
@@ -583,7 +587,7 @@ export default function SlideCountryDetail() {
               icon={MapPin}
               label={countryPillLabel}
               value={country}
-              onChange={setCountry}
+              onChange={handleCountryPick}
               items={countryItems}
             />
             {country && (
@@ -599,7 +603,7 @@ export default function SlideCountryDetail() {
             <ChoroplethMap
               pickerCountries={countriesForPicker}
               region={region}
-              onPick={setCountry}
+              onPick={(name) => { setCountry(name); openDetail(name) }}
               styles={styles}
               theme={theme}
             />
