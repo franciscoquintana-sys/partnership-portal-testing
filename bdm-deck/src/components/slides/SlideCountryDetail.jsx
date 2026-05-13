@@ -297,16 +297,22 @@ export default function SlideCountryDetail() {
     return (COUNTRIES_BY_REGION[region] || []).map((c) => ({ country: c, region }))
   }, [region])
 
-  // Open the portal's Country Detail page in a brand-new tab. The slide
-  // itself stays on the map so the presenter can keep clicking through
-  // countries; the detail loads in its own blank window.
+  // Navigate the *top* window (the portal page that hosts the deck) to the
+  // portal's Country Detail page. window.open from inside the deck iframe
+  // was hitting popup-blocker territory and dropping the new tab on a
+  // blank document — top-level navigation always lands on the live page.
   const openDetail = (countryName) => {
     if (!countryName) return
     const entry = countriesForPicker.find((c) => c.country === countryName)
     const r = entry?.region || region
     const params = new URLSearchParams({ view: 'country', country: countryName })
     if (r && r !== 'all') params.set('region', r)
-    window.open(`/insights?${params.toString()}`, '_blank', 'noopener')
+    const url = `/insights?${params.toString()}`
+    try {
+      window.top.location.href = url
+    } catch (_) {
+      window.location.href = url
+    }
   }
 
   const handleCountryPick = (val) => {
