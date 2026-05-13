@@ -1,0 +1,46 @@
+{
+  "name": "bdm-decks",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:merchants": "node scripts/build-merchants.mjs",
+    "build:banks-partners": "node scripts/build-banks-and-partners.mjs",
+    "build:team": "node scripts/build-team-photos.mjs",
+    "build:world-map": "node scripts/build-world-map.mjs",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "start": "node server/index.mjs",
+    "oauth:consent": "node server/oauth-consent.mjs"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.90.0",
+    "@fontsource-variable/geist": "^5.2.8",
+    "@fontsource-variable/geist-mono": "^5.2.7",
+    "@phosphor-icons/react": "^2.1.10",
+    "@supabase/supabase-js": "^2.104.0",
+    "express": "^4.21.2",
+    "googleapis": "^144.0.0",
+    "playwright-core": "^1.59.1",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@imgly/background-removal-node": "^1.4.5",
+    "@playwright/test": "^1.59.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "d3-geo": "^3.1.1",
+    "eslint": "^9.39.4",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.5.0",
+    "sharp": "^0.34.5",
+    "topojson-client": "^3.1.0",
+    "vite": "^8.0.9"
+  }
+}

@@ -1,0 +1,325 @@
+// Cover slide. The globe composition is now assembled inside GlobeHalo so
+// the central glow, orbital rings, and pulse dots are perfectly centered on
+// the globe (was drifting in the old planet1-based design). Ambient
+// particles drift across the whole cover for atmospheric depth.
+import { GlobeHalo, CoverParticles } from './CoverFX'
+import { useTheme } from '../../lib/theme'
+
+function currentMonthYear() {
+  return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+}
+
+// Merchant logos whose asset is dark/colored and disappears on the cover's
+// black background. Forced to white via brightness(0)+invert(1) so they
+// read as clearly as the rest. Matched case-insensitively by COMPANY_NAME
+// so a rename elsewhere in the data doesn't silently break the mapping.
+const DARK_LOGO_MERCHANTS = new Set([
+  'hostinger',
+  'united airlines',
+  'wayfair',
+])
+const WHITE_LOGO_FILTER = 'brightness(0) invert(1)'
+
+export default function SlideCover({ data }) {
+  const theme = useTheme()
+  const isLight = theme.isLight
+
+  const styles = {
+    slide: {
+      width: '100%',
+      height: '100%',
+      position: 'relative',
+      overflow: 'hidden',
+      fontFamily: 'var(--font)',
+      background: theme.bg,
+    },
+    // The globe asset is a white wireframe on transparent, designed
+    // for the dark canvas with `screen` blending. On dark we render
+    // it as an <img> with the original setup. On light, the image's
+    // bright pixels would either disappear or hue-rotate into magenta,
+    // so we instead use the asset as a CSS mask over a solid Yuno-blue
+    // div. That gives a clean, exact `theme.accent` tint without any
+    // filter approximation.
+    globeDecor: {
+      position: 'absolute',
+      inset: 0,
+      width: '100%',
+      height: '100%',
+      opacity: 0.58,
+      mixBlendMode: 'screen',
+      pointerEvents: 'none',
+      objectFit: 'contain',
+      zIndex: 2,
+    },
+    globeMask: {
+      position: 'absolute',
+      inset: 0,
+      width: '100%',
+      height: '100%',
+      backgroundColor: theme.accent,
+      WebkitMaskImage: 'url(/assets/embellishments/globe.png)',
+      maskImage: 'url(/assets/embellishments/globe.png)',
+      WebkitMaskRepeat: 'no-repeat',
+      maskRepeat: 'no-repeat',
+      WebkitMaskSize: 'contain',
+      maskSize: 'contain',
+      WebkitMaskPosition: 'center',
+      maskPosition: 'center',
+      opacity: 0.55,
+      pointerEvents: 'none',
+      zIndex: 2,
+    },
+    wordmarkWatermark: {
+      position: 'absolute',
+      right: 'clamp(-40px, -1.5vw, -20px)',
+      bottom: 'clamp(60px, 7vw, 110px)',
+      width: 'clamp(320px, 34vw, 620px)',
+      height: 'auto',
+      opacity: 0.06,
+      pointerEvents: 'none',
+      userSelect: 'none',
+    },
+    content: {
+      position: 'relative',
+      zIndex: 5,
+      width: '100%',
+      height: '100%',
+      padding: 'clamp(32px, 4%, 72px) clamp(40px, 5%, 96px) clamp(44px, 5%, 80px)',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    },
+    topRow: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 'clamp(14px, 1.2vw, 22px)',
+      lineHeight: 1,
+    },
+    yunoLogo: {
+      // The cover sits on top of the GlobeHalo's outerGlow (a wide
+      // rgba(62,79,224,0.28) blur that reaches across the canvas), so
+      // a 0.92-opacity logo reads as a faint blue-tinted shape. Lock
+      // the cover wordmark to opacity 1 + brightness(0) on light so it
+      // lands as solid black, regardless of the ambient glow tint.
+      height: 'clamp(20px, 1.8vw, 32px)',
+      display: 'block',
+      opacity: isLight ? 1 : theme.logoOpacity,
+      filter: isLight ? 'brightness(0)' : theme.logoFilter,
+    },
+    topCluster: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 'clamp(44px, 4.6vw, 84px)',
+    },
+    greetingBlock: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+    middle: {
+      flex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      maxWidth: '82%',
+      gap: 'clamp(20px, 2.4vw, 40px)',
+    },
+    greeting: {
+      fontFamily: 'var(--font-display)',
+      fontSize: 'clamp(26px, 2.6vw, 46px)',
+      fontWeight: 700,
+      letterSpacing: '-0.6px',
+      lineHeight: 1.05,
+      color: isLight ? theme.accentDeep : 'rgba(189,195,246,0.95)',
+      margin: 0,
+      marginBottom: 'clamp(16px, 1.6vw, 28px)',
+    },
+    merchantLogoWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '20px',
+    },
+    merchantLogo: {
+      height: 'clamp(52px, 5.2vw, 96px)',
+      maxWidth: 'clamp(240px, 22.4vw, 440px)',
+      objectFit: 'contain',
+      display: 'block',
+    },
+    merchantLogoText: {
+      fontFamily: 'var(--font-display)',
+      fontSize: 'clamp(32px, 4vw, 72px)',
+      fontWeight: 700,
+      color: theme.ink,
+      letterSpacing: '-1.2px',
+    },
+    title: {
+      fontFamily: 'var(--font-display)',
+      fontSize: 'clamp(44px, 5vw, 92px)',
+      fontWeight: 400,
+      letterSpacing: '-2px',
+      lineHeight: 1.02,
+      color: isLight ? theme.ink : '#fff',
+      margin: 0,
+      maxWidth: '62%',
+    },
+    titleStrong: {
+      fontWeight: 700,
+      backgroundImage: isLight
+        ? `linear-gradient(135deg, ${theme.accentDeep} 0%, ${theme.accent} 100%)`
+        : 'linear-gradient(135deg, #5967E4 0%, #BDC3F6 55%, #3E4FE0 100%)',
+      WebkitBackgroundClip: 'text',
+      backgroundClip: 'text',
+      WebkitTextFillColor: 'transparent',
+      color: 'transparent',
+    },
+    subtitle: {
+      fontSize: 'clamp(15px, 1.25vw, 21px)',
+      fontWeight: 400,
+      lineHeight: 1.55,
+      color: theme.inkSecondary,
+      maxWidth: '640px',
+      margin: 0,
+    },
+    companyNameInline: {
+      color: theme.ink,
+      fontWeight: 600,
+    },
+    bottom: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+    },
+    location: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'clamp(10px, 0.78vw, 13px)',
+      fontWeight: 500,
+      letterSpacing: '1.4px',
+      textTransform: 'uppercase',
+      color: theme.inkMuted,
+    },
+    confidential: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'clamp(9px, 0.62vw, 11px)',
+      fontWeight: 500,
+      letterSpacing: '1.4px',
+      textTransform: 'uppercase',
+      color: theme.inkFaint,
+    },
+  }
+
+  // Light cover skips the white particle field (invisible on white) and
+  // the heavy radial glows (designed to bloom against black). The globe
+  // image stays so the cover still has a focal motif, just dimmer.
+  return (
+    <div style={styles.slide}>
+      {!isLight && <CoverParticles />}
+      <GlobeHalo>
+        {isLight ? (
+          <div style={styles.globeMask} aria-hidden />
+        ) : (
+          <img src="/sales-deck/assets/embellishments/globe.png" alt="" style={styles.globeDecor} aria-hidden />
+        )}
+      </GlobeHalo>
+
+      <div className="slide-enter" style={styles.content}>
+        <div style={styles.topCluster}>
+          <div style={styles.topRow}>
+            <img src="/sales-deck/assets/yuno-logo-white.svg" alt="Yuno" style={styles.yunoLogo} />
+          </div>
+
+          <div className="stagger" style={{ ...styles.greetingBlock, '--stagger-base': '0.12s', '--stagger-step': '0.15s' }}>
+            {data.MODE === 'banking' && data.COMPANY_NAME === 'Your Bank' ? (
+              <p style={styles.greeting}>Built for your bank</p>
+            ) : (
+              <>
+                <p style={styles.greeting}>
+                  {data.COMPANY_GREETING || `Hello ${data.COMPANY_NAME} team!`}
+                </p>
+                <div style={styles.merchantLogoWrapper}>
+                  {data.COMPANY_LOGO ? (
+                    isLight ? (
+                      // Merchant logo assets in /public/merchants are
+                      // mostly white-on-transparent (built for the dark
+                      // canvas). On light they vanish into the surface.
+                      // Render as a div masked by the logo image, filled
+                      // with theme.accent — clean Yuno-blue silhouette
+                      // regardless of the source asset's color.
+                      <div
+                        role="img"
+                        aria-label={data.COMPANY_NAME}
+                        style={{
+                          ...styles.merchantLogo,
+                          // The div has no intrinsic dimensions like
+                          // an <img> would, so without an explicit
+                          // width it collapses to 0 and the mask has
+                          // nothing to render. Pin it to the same
+                          // clamp the merchantLogo maxWidth uses; the
+                          // mask scales to contain inside that box.
+                          width: 'clamp(240px, 22.4vw, 440px)',
+                          backgroundColor: theme.accent,
+                          WebkitMaskImage: `url(${data.COMPANY_LOGO})`,
+                          maskImage: `url(${data.COMPANY_LOGO})`,
+                          WebkitMaskRepeat: 'no-repeat',
+                          maskRepeat: 'no-repeat',
+                          WebkitMaskSize: 'contain',
+                          maskSize: 'contain',
+                          WebkitMaskPosition: 'left center',
+                          maskPosition: 'left center',
+                        }}
+                      />
+                    ) : (
+                      <img
+                        src={data.COMPANY_LOGO}
+                        alt={data.COMPANY_NAME}
+                        style={{
+                          ...styles.merchantLogo,
+                          ...(DARK_LOGO_MERCHANTS.has((data.COMPANY_NAME || '').toLowerCase())
+                            ? { filter: WHITE_LOGO_FILTER }
+                            : {}),
+                        }}
+                      />
+                    )
+                  ) : (
+                    <span style={styles.merchantLogoText}>{data.COMPANY_NAME}</span>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </div>
+
+        <div className="stagger" style={{ ...styles.middle, '--stagger-base': '0.42s', '--stagger-step': '0.15s' }}>
+          <h1 style={styles.title}>
+            Powering financial infrastructure{' '}
+            <span style={styles.titleStrong}>at global scale</span>
+          </h1>
+
+          {data.MODE === 'banking' ? (
+            <p style={styles.subtitle}>
+              The orchestration layer your merchants run on, white-labeled under your brand,
+              across every market, method, and moment
+            </p>
+          ) : data.MODE === 'partner' ? (
+            <p style={styles.subtitle}>
+              One integration to reach{' '}
+              <span style={styles.titleStrong}>2,000+ enterprise merchants</span>{' '}
+              across every market, method, and moment
+            </p>
+          ) : (
+            <p style={styles.subtitle}>
+              How Yuno unifies payments for{' '}
+              <span style={styles.companyNameInline}>{data.COMPANY_NAME}</span>{' '}
+              across every market, method, and moment
+            </p>
+          )}
+        </div>
+
+        <div style={styles.bottom}>
+          {!isLight && (
+            <span style={styles.location}>{currentMonthYear()}</span>
+          )}
+          <span style={styles.confidential}>Strictly Confidential</span>
+        </div>
+      </div>
+    </div>
+  )
+}

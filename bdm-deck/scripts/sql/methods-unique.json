@@ -1,0 +1,614 @@
+[
+  {
+    "name": "ACH / Bank Transfer",
+    "count": 1
+  },
+  {
+    "name": "ACH Bank Transfer",
+    "count": 1
+  },
+  {
+    "name": "ACH Direct Debit",
+    "count": 5
+  },
+  {
+    "name": "Affirm",
+    "count": 5
+  },
+  {
+    "name": "Affirm/Klarna BNPL",
+    "count": 1
+  },
+  {
+    "name": "Afterpay",
+    "count": 11
+  },
+  {
+    "name": "Afterpay AU",
+    "count": 2
+  },
+  {
+    "name": "Airtel Money",
+    "count": 1
+  },
+  {
+    "name": "Alipay",
+    "count": 15
+  },
+  {
+    "name": "Alipay+",
+    "count": 1
+  },
+  {
+    "name": "Alma",
+    "count": 1
+  },
+  {
+    "name": "Amazon Pay",
+    "count": 1
+  },
+  {
+    "name": "Apple Pay",
+    "count": 11
+  },
+  {
+    "name": "Apple Pay Recurring",
+    "count": 1
+  },
+  {
+    "name": "BACS Direct Debit",
+    "count": 8
+  },
+  {
+    "name": "Bancontact",
+    "count": 107
+  },
+  {
+    "name": "Bizum",
+    "count": 15
+  },
+  {
+    "name": "bKash",
+    "count": 1
+  },
+  {
+    "name": "Blik",
+    "count": 1
+  },
+  {
+    "name": "BLIK",
+    "count": 147
+  },
+  {
+    "name": "Boleto",
+    "count": 108
+  },
+  {
+    "name": "Boleto Bancario",
+    "count": 5
+  },
+  {
+    "name": "Boleto Recorrente",
+    "count": 1
+  },
+  {
+    "name": "CareCredit",
+    "count": 1
+  },
+  {
+    "name": "Carte Bancaire",
+    "count": 5
+  },
+  {
+    "name": "Cartes Bancaires",
+    "count": 6
+  },
+  {
+    "name": "Cash App Pay",
+    "count": 8
+  },
+  {
+    "name": "Cherry",
+    "count": 1
+  },
+  {
+    "name": "Clearpay",
+    "count": 2
+  },
+  {
+    "name": "CoDi",
+    "count": 3
+  },
+  {
+    "name": "Dana",
+    "count": 9
+  },
+  {
+    "name": "DANA",
+    "count": 28
+  },
+  {
+    "name": "Daviplata",
+    "count": 1
+  },
+  {
+    "name": "Digital Wallets",
+    "count": 1
+  },
+  {
+    "name": "Earned Wage Access Rails",
+    "count": 1
+  },
+  {
+    "name": "Easypaisa",
+    "count": 1
+  },
+  {
+    "name": "Efecty",
+    "count": 4
+  },
+  {
+    "name": "EPS",
+    "count": 6
+  },
+  {
+    "name": "Faster Payments",
+    "count": 1
+  },
+  {
+    "name": "Fawry",
+    "count": 4
+  },
+  {
+    "name": "FedNow",
+    "count": 1
+  },
+  {
+    "name": "FPS",
+    "count": 2
+  },
+  {
+    "name": "FPS Instant",
+    "count": 1
+  },
+  {
+    "name": "FPX",
+    "count": 1
+  },
+  {
+    "name": "GCash",
+    "count": 71
+  },
+  {
+    "name": "giropay",
+    "count": 3
+  },
+  {
+    "name": "Giropay",
+    "count": 15
+  },
+  {
+    "name": "GiroPay",
+    "count": 6
+  },
+  {
+    "name": "Giropay/EPS",
+    "count": 1
+  },
+  {
+    "name": "Google Pay",
+    "count": 15
+  },
+  {
+    "name": "Google Pay Recurring",
+    "count": 1
+  },
+  {
+    "name": "GoPay",
+    "count": 11
+  },
+  {
+    "name": "GrabPay",
+    "count": 48
+  },
+  {
+    "name": "HSA/FSA Direct Pay",
+    "count": 1
+  },
+  {
+    "name": "Huabei",
+    "count": 1
+  },
+  {
+    "name": "iDEAL",
+    "count": 147
+  },
+  {
+    "name": "Instacart Pay",
+    "count": 1
+  },
+  {
+    "name": "Instant RTP/FedNow",
+    "count": 1
+  },
+  {
+    "name": "Interac",
+    "count": 14
+  },
+  {
+    "name": "Interac e-Transfer",
+    "count": 2
+  },
+  {
+    "name": "Interac Online",
+    "count": 2
+  },
+  {
+    "name": "JazzCash",
+    "count": 1
+  },
+  {
+    "name": "JCB",
+    "count": 2
+  },
+  {
+    "name": "Kakao Pay",
+    "count": 1
+  },
+  {
+    "name": "KakaoPay",
+    "count": 53
+  },
+  {
+    "name": "Klarna",
+    "count": 27
+  },
+  {
+    "name": "Knet",
+    "count": 1
+  },
+  {
+    "name": "Konbini",
+    "count": 92
+  },
+  {
+    "name": "Line Pay",
+    "count": 2
+  },
+  {
+    "name": "LINE Pay",
+    "count": 5
+  },
+  {
+    "name": "M Pesa",
+    "count": 1
+  },
+  {
+    "name": "M-Pesa",
+    "count": 20
+  },
+  {
+    "name": "MACH",
+    "count": 1
+  },
+  {
+    "name": "Mada",
+    "count": 21
+  },
+  {
+    "name": "Maya",
+    "count": 15
+  },
+  {
+    "name": "MB Way",
+    "count": 3
+  },
+  {
+    "name": "MB WAY",
+    "count": 3
+  },
+  {
+    "name": "MBWay",
+    "count": 1
+  },
+  {
+    "name": "Mercado Pago",
+    "count": 24
+  },
+  {
+    "name": "MercadoPago",
+    "count": 2
+  },
+  {
+    "name": "MobilePay",
+    "count": 10
+  },
+  {
+    "name": "MoMo",
+    "count": 5
+  },
+  {
+    "name": "MTN MoMo",
+    "count": 1
+  },
+  {
+    "name": "Multi-state EBT",
+    "count": 1
+  },
+  {
+    "name": "Multibanco",
+    "count": 3
+  },
+  {
+    "name": "Naver Pay",
+    "count": 5
+  },
+  {
+    "name": "NaverPay",
+    "count": 4
+  },
+  {
+    "name": "Nequi",
+    "count": 30
+  },
+  {
+    "name": "Neteller",
+    "count": 1
+  },
+  {
+    "name": "OPay",
+    "count": 1
+  },
+  {
+    "name": "Open Banking",
+    "count": 28
+  },
+  {
+    "name": "OVO",
+    "count": 8
+  },
+  {
+    "name": "OXXO",
+    "count": 117
+  },
+  {
+    "name": "PagoEfectivo",
+    "count": 2
+  },
+  {
+    "name": "PayNow",
+    "count": 8
+  },
+  {
+    "name": "PayPal",
+    "count": 27
+  },
+  {
+    "name": "PayPal Instant Transfer",
+    "count": 1
+  },
+  {
+    "name": "PayPal Recurring",
+    "count": 1
+  },
+  {
+    "name": "PayPay",
+    "count": 21
+  },
+  {
+    "name": "Paytm",
+    "count": 1
+  },
+  {
+    "name": "Paytm/UPI",
+    "count": 2
+  },
+  {
+    "name": "PayTo",
+    "count": 1
+  },
+  {
+    "name": "PhonePe",
+    "count": 3
+  },
+  {
+    "name": "Pix",
+    "count": 152
+  },
+  {
+    "name": "PIX",
+    "count": 12
+  },
+  {
+    "name": "Pix Instant",
+    "count": 1
+  },
+  {
+    "name": "POLi",
+    "count": 4
+  },
+  {
+    "name": "PostePay",
+    "count": 1
+  },
+  {
+    "name": "PromptPay",
+    "count": 12
+  },
+  {
+    "name": "Przelewy24",
+    "count": 5
+  },
+  {
+    "name": "PSE",
+    "count": 42
+  },
+  {
+    "name": "Push-to-Card",
+    "count": 1
+  },
+  {
+    "name": "QRIS",
+    "count": 2
+  },
+  {
+    "name": "Rapipago",
+    "count": 4
+  },
+  {
+    "name": "Real-Time Payments",
+    "count": 1
+  },
+  {
+    "name": "Revolut Pay",
+    "count": 2
+  },
+  {
+    "name": "RuPay",
+    "count": 5
+  },
+  {
+    "name": "Samsung Pay",
+    "count": 1
+  },
+  {
+    "name": "Satispay",
+    "count": 3
+  },
+  {
+    "name": "SEPA Direct Debit",
+    "count": 89
+  },
+  {
+    "name": "SEPA Instant",
+    "count": 9
+  },
+  {
+    "name": "ShopeePay",
+    "count": 1
+  },
+  {
+    "name": "Skrill",
+    "count": 1
+  },
+  {
+    "name": "Sofort",
+    "count": 13
+  },
+  {
+    "name": "SOFORT",
+    "count": 2
+  },
+  {
+    "name": "Sofort/Giropay",
+    "count": 1
+  },
+  {
+    "name": "Sofort/Klarna",
+    "count": 2
+  },
+  {
+    "name": "SPEI",
+    "count": 56
+  },
+  {
+    "name": "SPEI Instant",
+    "count": 1
+  },
+  {
+    "name": "STC Pay",
+    "count": 2
+  },
+  {
+    "name": "Sunbit",
+    "count": 1
+  },
+  {
+    "name": "Swish",
+    "count": 13
+  },
+  {
+    "name": "Tabby",
+    "count": 1
+  },
+  {
+    "name": "Tabby BNPL",
+    "count": 1
+  },
+  {
+    "name": "Tamara",
+    "count": 2
+  },
+  {
+    "name": "Tamara BNPL",
+    "count": 1
+  },
+  {
+    "name": "Toss",
+    "count": 4
+  },
+  {
+    "name": "Toss Pay",
+    "count": 6
+  },
+  {
+    "name": "Touch 'n Go",
+    "count": 1
+  },
+  {
+    "name": "TrueMoney",
+    "count": 8
+  },
+  {
+    "name": "Trustly",
+    "count": 7
+  },
+  {
+    "name": "Twint",
+    "count": 3
+  },
+  {
+    "name": "UPI",
+    "count": 121
+  },
+  {
+    "name": "UPI Autopay",
+    "count": 1
+  },
+  {
+    "name": "Venmo",
+    "count": 9
+  },
+  {
+    "name": "Vipps",
+    "count": 4
+  },
+  {
+    "name": "Webpay",
+    "count": 2
+  },
+  {
+    "name": "WeChat Pay",
+    "count": 17
+  },
+  {
+    "name": "Wire Transfer / Invoice",
+    "count": 2
+  },
+  {
+    "name": "Wire transfer alternatives",
+    "count": 1
+  },
+  {
+    "name": "Yape",
+    "count": 3
+  },
+  {
+    "name": "Zelle",
+    "count": 2
+  },
+  {
+    "name": "Zip",
+    "count": 2
+  }
+]

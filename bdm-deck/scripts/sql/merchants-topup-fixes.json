@@ -1,0 +1,557 @@
+{
+  "_meta": {
+    "generated_at": "2026-04-22",
+    "note": "Speculative-but-plausible PSP top-ups for 64 merchants with <4 PSPs. All additions are inference based on vertical, geography, and research context. Do NOT assert as fact to customers. Each merchant target: current_count + add_psps = 4. Stripe/PayPal/Apple Pay/Google Pay were intentionally varied with acquirers, BNPL, bank rails, and local APMs to avoid monoculture.",
+    "total_merchants": 64
+  },
+  "1password": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "Apple App Store", "Google Play"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Cybersecurity SaaS B2C+B2B with global subs; PayPal is standard web fallback alongside Stripe cards and mobile IAP."
+  },
+  "adobe": {
+    "current_count": 3,
+    "current_psps": ["Internal Billing Stack", "PayPal", "SEPA Direct Debit"],
+    "add_psps": [
+      {"name": "Chase Paymentech", "role": "US · acquirer"}
+    ],
+    "reasoning": "Adobe operates its own billing stack but settles card volume via large-scale US acquirers; Chase Paymentech is a plausible anchor for Creative Cloud consumer volume."
+  },
+  "amplitude": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Credit Card"],
+    "add_psps": [
+      {"name": "ACH Direct Debit", "role": "US · bank rail"},
+      {"name": "Wire Transfer", "role": "Global · enterprise"}
+    ],
+    "reasoning": "Enterprise analytics SaaS; self-serve runs on Stripe cards, enterprise annual contracts use ACH and wire for large invoices."
+  },
+  "asana": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "Zuora", "Avalara"],
+    "add_psps": [
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "Enterprise SaaS already on Zuora billing + Stripe cards + Avalara tax; ACH is the missing bank rail for annual invoicing."
+  },
+  "bird": {
+    "current_count": 3,
+    "current_psps": ["Braintree", "Apple Pay", "Google Pay"],
+    "add_psps": [
+      {"name": "Adyen", "role": "EU · acquirer"}
+    ],
+    "reasoning": "Micromobility in 20+ EU/Middle East markets; Braintree covers cards+PayPal globally, Adyen likely present or needed for EU APMs (iDEAL, Bancontact, SOFORT)."
+  },
+  "box": {
+    "current_count": 3,
+    "current_psps": ["Credit Card processing", "Wire Transfer / ACH", "Direct Debit"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Enterprise cloud storage with self-serve tier; PayPal complements the card + bank-rail mix for SMB buyers."
+  },
+  "buy-me-a-coffee": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "PayPal"],
+    "add_psps": [
+      {"name": "Apple Pay", "role": "Global · wallet"},
+      {"name": "Google Pay", "role": "Global · wallet"}
+    ],
+    "reasoning": "Creator-tip platform, low-friction micropayments; Apple/Google Pay via Stripe are essential for one-click mobile web checkout."
+  },
+  "calendly": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "PayPal", "Apple App Store"],
+    "add_psps": [
+      {"name": "Google Play", "role": "IAP · Android"}
+    ],
+    "reasoning": "Has iOS IAP but Android IAP missing to complete the mobile stack alongside web via Stripe+PayPal."
+  },
+  "care-com": {
+    "current_count": 1,
+    "current_psps": ["Stripe [INFERENCE]"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"},
+      {"name": "Apple Pay", "role": "Global · wallet"}
+    ],
+    "reasoning": "US caregiver marketplace with membership subs + caregiver payouts; needs ACH for payouts, PayPal/Apple Pay for consumer checkout on family side."
+  },
+  "clickup": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Cards only"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "Productivity SaaS, self-serve + enterprise. PayPal for self-serve, ACH for annual invoicing on enterprise tier."
+  },
+  "deepl": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "SEPA Direct Debit", "Bank Transfer"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "German SaaS with heavy EU user base; already has SEPA and bank transfer, PayPal is default consumer wallet in DACH."
+  },
+  "descript": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Stripe Link"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "Apple Pay", "role": "Global · wallet"}
+    ],
+    "reasoning": "Creator audio/video SaaS; currently Stripe-heavy. PayPal and Apple Pay complete the consumer wallet coverage."
+  },
+  "digitalocean": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "PayPal", "Alipay"],
+    "add_psps": [
+      {"name": "Google Pay", "role": "Global · wallet"}
+    ],
+    "reasoning": "Developer cloud with global dev audience (US, EU, India, China). Alipay already covers China; Google Pay rounds out mobile wallets."
+  },
+  "dropbox": {
+    "current_count": 3,
+    "current_psps": ["Braintree / PayPal", "PayPal", "Apple App Store / Google Play"],
+    "add_psps": [
+      {"name": "SEPA Direct Debit", "role": "EU · bank rail"}
+    ],
+    "reasoning": "Global cloud storage with heavy EU subscriber base; SEPA is the natural recurring-billing rail for the EU Teams tier."
+  },
+  "figma": {
+    "current_count": 1,
+    "current_psps": ["Stripe"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "SEPA Direct Debit", "role": "EU · bank rail"},
+      {"name": "Wire Transfer", "role": "Global · enterprise"}
+    ],
+    "reasoning": "Design SaaS with enterprise tier post-Adobe. Annual invoicing requires bank rails; self-serve likely supports PayPal; SEPA for EU orgs."
+  },
+  "flexport": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "PayPal", "Plaid"],
+    "add_psps": [
+      {"name": "Wire Transfer", "role": "Global · freight"}
+    ],
+    "reasoning": "Freight forwarder with B2B invoicing in five to six figures; wire transfers dominate freight settlement; Plaid already enables ACH."
+  },
+  "fox": {
+    "current_count": 3,
+    "current_psps": ["PayPal", "Apple Pay", "Apple/Google/Amazon/Roku"],
+    "add_psps": [
+      {"name": "Adyen", "role": "US · acquirer"}
+    ],
+    "reasoning": "Media streaming (Fox Nation, Tubi) with CTV + mobile IAP already covered; Adyen is a plausible card acquirer for direct web checkout."
+  },
+  "fundraise-up": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "PayPal", "Gemini"],
+    "add_psps": [
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "Nonprofit donation platform; ACH is standard for larger recurring donations alongside Stripe cards, PayPal, and Gemini crypto."
+  },
+  "github": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "PayPal", "Azure Billing"],
+    "add_psps": [
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "Developer platform (Microsoft); enterprise seats settle via Azure/ACH; already has Stripe cards, PayPal, Azure marketplace rail."
+  },
+  "hellofresh": {
+    "current_count": 3,
+    "current_psps": ["Adyen", "PayPal", "Klarna"],
+    "add_psps": [
+      {"name": "SEPA Direct Debit", "role": "EU · bank rail"}
+    ],
+    "reasoning": "Meal-kit subscription, German origin, heavy DACH base; SEPA is dominant recurring rail for EU subs alongside Adyen cards + PayPal + Klarna."
+  },
+  "hertz": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "Stripe Terminal", "Legacy processors"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Car rental, global; Stripe covers web + terminal, legacy covers back-office. PayPal is common on European/US online booking flows."
+  },
+  "hims-hers": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Adyen"],
+    "add_psps": [
+      {"name": "Affirm", "role": "US · BNPL"},
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Telehealth subscription; Affirm is typical for higher-ticket treatment plans; PayPal for consumer trust in sensitive category."
+  },
+  "hubspot": {
+    "current_count": 3,
+    "current_psps": ["HubSpot Payments", "Stripe", "ACH / SEPA / BACS"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "CRM SaaS with own payments product built on Stripe; PayPal is the missing consumer wallet for self-serve seats."
+  },
+  "instacart": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "Klarna", "Chase"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "US grocery delivery; already has cards, BNPL, US acquirer; PayPal completes consumer-facing wallet options."
+  },
+  "instantly": {
+    "current_count": 1,
+    "current_psps": ["Stripe"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "Apple Pay", "role": "Global · wallet"},
+      {"name": "Google Pay", "role": "Global · wallet"}
+    ],
+    "reasoning": "Cold-email SaaS, SMB-focused, global user base. Stripe-only today; PayPal + Apple/Google Pay are the basic web-wallet expansion set."
+  },
+  "intuit": {
+    "current_count": 3,
+    "current_psps": ["Internal", "ACH", "PayPal/Venmo"],
+    "add_psps": [
+      {"name": "Chase Paymentech", "role": "US · acquirer"}
+    ],
+    "reasoning": "Intuit runs its own processing (QuickBooks Payments) but settles card volume via tier-one US acquirers; Chase is plausible anchor."
+  },
+  "ixl-learning": {
+    "current_count": 1,
+    "current_psps": ["Stripe"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"},
+      {"name": "Apple App Store", "role": "IAP · iOS"}
+    ],
+    "reasoning": "US K-12 ed-tech with family subs + school-district invoicing; PayPal for families, ACH for districts, iOS IAP for their app."
+  },
+  "jane-app": {
+    "current_count": 3,
+    "current_psps": ["Stripe Express", "Stripe Standard", "Stripe"],
+    "add_psps": [
+      {"name": "Moneris", "role": "Canada · acquirer"}
+    ],
+    "reasoning": "Canadian health-practitioner SaaS (deduped all three Stripe variants as Stripe+Stripe Express+Stripe Standard); Moneris is the dominant Canadian acquirer and complements Stripe for Interac support."
+  },
+  "kajabi": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "PayPal"],
+    "add_psps": [
+      {"name": "Apple Pay", "role": "Global · wallet"},
+      {"name": "Klarna", "role": "Global · BNPL"}
+    ],
+    "reasoning": "Creator course platform, higher-ticket digital products ($300-$2000); Klarna fits BNPL for course buyers; Apple Pay for mobile web."
+  },
+  "legalzoom": {
+    "current_count": 1,
+    "current_psps": ["Stripe"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "Affirm", "role": "US · BNPL"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "US legal services, ticket sizes $100-$500+ (LLC formations, wills); Affirm fits BNPL, ACH for business formation invoicing."
+  },
+  "lovable": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Stripe Link"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "Apple Pay", "role": "Global · wallet"}
+    ],
+    "reasoning": "AI app-builder, Swedish, global developer SaaS. Stripe-native stack; PayPal + Apple Pay round out consumer wallets."
+  },
+  "lyft": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "Braintree", "First Data"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "US ride-hailing; already multi-acquirer (Stripe, Braintree, First Data); PayPal completes the wallet stack alongside Apple/Google Pay via acquirers."
+  },
+  "medely": {
+    "current_count": 3,
+    "current_psps": ["ACH Direct Deposit", "Stripe", "Bank Wire"],
+    "add_psps": [
+      {"name": "Plaid", "role": "US · bank data"}
+    ],
+    "reasoning": "US healthcare labor marketplace with clinician payouts; Plaid is natural fit for bank account verification alongside existing ACH/Wire rails."
+  },
+  "mentimeter": {
+    "current_count": 1,
+    "current_psps": ["Stripe"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "SEPA Direct Debit", "role": "EU · bank rail"},
+      {"name": "Wire Transfer", "role": "Global · enterprise"}
+    ],
+    "reasoning": "Swedish audience-engagement SaaS with enterprise tier (Volvo, Unilever); SEPA for EU orgs, wire for enterprise annual contracts."
+  },
+  "mews": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "Adyen", "External gateways"],
+    "add_psps": [
+      {"name": "Worldline", "role": "EU · acquirer"}
+    ],
+    "reasoning": "Czech hospitality PMS serving hotels in 85+ countries; Worldline is a dominant EU hospitality acquirer alongside Adyen and Stripe."
+  },
+  "miro": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Bank Wire / ACH"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "SEPA Direct Debit", "role": "EU · bank rail"}
+    ],
+    "reasoning": "Collaborative whiteboard SaaS, Netherlands HQ, global enterprise; SEPA for EU, PayPal for self-serve consumers."
+  },
+  "nexhealth": {
+    "current_count": 2,
+    "current_psps": ["Stripe Connect", "Affirm"],
+    "add_psps": [
+      {"name": "CareCredit", "role": "US · healthcare BNPL"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "US healthcare-patient-payments platform; CareCredit is the incumbent healthcare BNPL; ACH is common for dental/medical copays."
+  },
+  "notion": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "Apple App Store / Google Play", "SEPA Direct Debit"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Global productivity SaaS; Stripe + mobile IAP + SEPA covers base; PayPal is the missing self-serve wallet for EU/LatAm consumers."
+  },
+  "outdoorsy": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "PayPal"],
+    "add_psps": [
+      {"name": "Affirm", "role": "US · BNPL"},
+      {"name": "Klarna", "role": "Global · BNPL"}
+    ],
+    "reasoning": "RV rental marketplace, US+EU, ticket size $150-$300/day with $500-$2500 deposits; BNPL (Affirm US, Klarna EU/AU) fits high-ticket leisure."
+  },
+  "patreon": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "PayPal", "Apple IAP"],
+    "add_psps": [
+      {"name": "Google Play", "role": "IAP · Android"}
+    ],
+    "reasoning": "Creator membership platform; web covered by Stripe+PayPal, iOS by Apple IAP; Android IAP is the obvious fourth."
+  },
+  "perplexity-ai": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "Apple App Store", "Google Play"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "AI search SaaS with heavy global consumer subs; PayPal is the standard non-card checkout option for web subscription."
+  },
+  "pipedrive": {
+    "current_count": 2,
+    "current_psps": ["PayPal", "SEPA DD / BACS / ACH"],
+    "add_psps": [
+      {"name": "Stripe", "role": "Global · cards"},
+      {"name": "Adyen", "role": "EU · acquirer"}
+    ],
+    "reasoning": "Estonian CRM SaaS, global B2B; surprisingly no card processor listed — Stripe or Adyen would anchor card processing across EU + global."
+  },
+  "pluralsight": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "PayPal"],
+    "add_psps": [
+      {"name": "ACH Direct Debit", "role": "US · bank rail"},
+      {"name": "Wire Transfer", "role": "Global · enterprise"}
+    ],
+    "reasoning": "Tech-skills training SaaS, enterprise (Fortune 500) + individual; ACH + wire are needed for enterprise annual contracts."
+  },
+  "poshmark": {
+    "current_count": 3,
+    "current_psps": ["PayPal/Braintree", "Affirm", "Hyperwallet"],
+    "add_psps": [
+      {"name": "Stripe", "role": "Global · cards"}
+    ],
+    "reasoning": "US fashion resale marketplace; PayPal/Braintree for cards, Affirm for BNPL, Hyperwallet for payouts; Stripe as secondary acquirer fills out the stack."
+  },
+  "quizlet": {
+    "current_count": 3,
+    "current_psps": ["Undisclosed Card Processor", "Apple App Store", "Google Play"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Ed-tech consumer subs, student audience; already has mobile IAP on both platforms; PayPal is common for parents paying for Quizlet Plus."
+  },
+  "raya": {
+    "current_count": 2,
+    "current_psps": ["Apple In-App Purchase", "Stripe"],
+    "add_psps": [
+      {"name": "Google Play", "role": "IAP · Android"},
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Exclusive dating app, mobile-first; Android IAP missing, PayPal as web-wallet fallback for non-card members."
+  },
+  "replit": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Orb"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "Developer cloud IDE, usage-based billing via Orb; Stripe for cards; PayPal for global devs, ACH for team/enterprise tier."
+  },
+  "rippling": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Plaid"],
+    "add_psps": [
+      {"name": "ACH Direct Debit", "role": "US · bank rail"},
+      {"name": "Wire Transfer", "role": "Global · payroll"}
+    ],
+    "reasoning": "HR/payroll platform; Plaid + ACH + wire is the standard payroll funding stack; Stripe handles card payments for SaaS subs."
+  },
+  "squarespace": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "PayPal"],
+    "add_psps": [
+      {"name": "Apple Pay", "role": "Global · wallet"},
+      {"name": "Afterpay", "role": "Global · BNPL"}
+    ],
+    "reasoning": "Website builder + e-commerce platform with merchant checkout; Apple Pay + Afterpay are standard commerce-stack additions."
+  },
+  "substack": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Apple IAP"],
+    "add_psps": [
+      {"name": "Google Play", "role": "IAP · Android"},
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Newsletter/podcast subscriptions; has iOS IAP + Stripe web; Android IAP + PayPal complete the stack."
+  },
+  "supabase": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Stripe Billing"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "Developer backend-as-a-service; deduped Stripe+Stripe Billing; PayPal for global devs, ACH for Team/Enterprise tiers."
+  },
+  "superhuman": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "Apple App Store", "Google Play"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Premium email client; high-ticket ($30/mo+); covers web + mobile IAP; PayPal adds consumer wallet option."
+  },
+  "surepoint": {
+    "current_count": 2,
+    "current_psps": ["Payload", "LawPay"],
+    "add_psps": [
+      {"name": "Stripe", "role": "Global · cards"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "US legal-practice-management SaaS with embedded payments via LawPay + Payload; Stripe as secondary, ACH for high-value legal invoices."
+  },
+  "taskrabbit": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Braintree"],
+    "add_psps": [
+      {"name": "Apple Pay", "role": "Global · wallet"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "Gig-economy marketplace; dual-acquirer for resilience; Apple Pay for mobile UX; ACH for Tasker payouts."
+  },
+  "teachable": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "PayPal"],
+    "add_psps": [
+      {"name": "Apple Pay", "role": "Global · wallet"},
+      {"name": "Klarna", "role": "Global · BNPL"}
+    ],
+    "reasoning": "Creator course platform like Kajabi; higher-ticket courses warrant Klarna BNPL; Apple Pay for mobile web."
+  },
+  "thinkific": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "PayPal"],
+    "add_psps": [
+      {"name": "Apple Pay", "role": "Global · wallet"},
+      {"name": "Afterpay", "role": "Global · BNPL"}
+    ],
+    "reasoning": "Canadian course platform, similar to Teachable/Kajabi; Afterpay (Canadian/AU-friendly) over Klarna, Apple Pay for mobile."
+  },
+  "turo": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Stripe Connect"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "Affirm", "role": "US · BNPL"}
+    ],
+    "reasoning": "US car-sharing marketplace, Stripe-native (payouts via Connect); high-ticket rentals benefit from BNPL; PayPal for international renters."
+  },
+  "twilio": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "PayPal"],
+    "add_psps": [
+      {"name": "ACH Direct Debit", "role": "US · bank rail"},
+      {"name": "Wire Transfer", "role": "Global · enterprise"}
+    ],
+    "reasoning": "Communications API, usage-based billing, heavy enterprise (US + global); ACH + wire are needed for large monthly invoices."
+  },
+  "vercel": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Stripe Billing"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"},
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "Developer PaaS (Next.js company); deduped Stripe+Stripe Billing; PayPal for global devs, ACH for Enterprise tier."
+  },
+  "wix-com": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "PayPal", "MercadoPago"],
+    "add_psps": [
+      {"name": "Adyen", "role": "EU · acquirer"}
+    ],
+    "reasoning": "Israeli website builder + commerce; global merchants; Stripe for US, MercadoPago for LatAm; Adyen is plausible EU anchor for Wix Payments merchants."
+  },
+  "wolf-badger": {
+    "current_count": 3,
+    "current_psps": ["Stripe [INFERENCE]", "Klarna", "Clearpay/Afterpay"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "UK fashion marketplace for independent designers; cards + BNPL (Klarna + Clearpay) covered; PayPal is standard UK commerce wallet."
+  },
+  "youtube": {
+    "current_count": 3,
+    "current_psps": ["Google Payments", "Apple App Store", "Google Play Billing"],
+    "add_psps": [
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "Google-owned; own billing rail, plus mobile IAPs; PayPal is the standard external wallet offered at YouTube Premium/Music checkout."
+  },
+  "zapier": {
+    "current_count": 3,
+    "current_psps": ["Stripe", "PayPal", "Bank Transfer"],
+    "add_psps": [
+      {"name": "ACH Direct Debit", "role": "US · bank rail"}
+    ],
+    "reasoning": "Automation SaaS with Team + Enterprise tiers; ACH is the typical US annual-billing rail alongside Stripe cards, PayPal, and wire."
+  },
+  "zillow": {
+    "current_count": 2,
+    "current_psps": ["Stripe", "Plaid"],
+    "add_psps": [
+      {"name": "ACH Direct Debit", "role": "US · bank rail"},
+      {"name": "PayPal", "role": "Global · wallet"}
+    ],
+    "reasoning": "US real-estate platform; Plaid + ACH for rent payments / earnest-money deposits; PayPal for agent-facing SaaS tier."
+  }
+}

@@ -43,6 +43,25 @@ ANY_LOGGED_IN_ROLES = {"partnerships", "internal"}
 # ------------------------------------------------------------------------------
 
 app.mount("/static", StaticFiles(directory=os.path.join(BASE, "static")), name="static")
+
+# Vendored BDM sales deck (React SPA built by Vite under base /sales-deck/).
+# SPAStaticFiles falls back to index.html on 404 so client-side routes like
+# /sales-deck/m/:slug resolve to the SPA instead of a 404.
+class SPAStaticFiles(StaticFiles):
+    async def get_response(self, path, scope):
+        response = await super().get_response(path, scope)
+        if response.status_code == 404:
+            return await super().get_response("index.html", scope)
+        return response
+
+_SALES_DECK_DIST = os.path.join(BASE, "bdm-deck", "dist")
+if os.path.isdir(_SALES_DECK_DIST):
+    app.mount(
+        "/sales-deck",
+        SPAStaticFiles(directory=_SALES_DECK_DIST, html=True),
+        name="sales-deck",
+    )
+
 templates = Jinja2Templates(directory=os.path.join(BASE, "templates"))
 
 # -- Auth helpers --------------------------------------------------------------

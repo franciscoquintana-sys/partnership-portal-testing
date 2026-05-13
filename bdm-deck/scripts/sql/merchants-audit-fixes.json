@@ -1,0 +1,25 @@
+{
+  "experian": {
+    "web_search_found_real_data": false,
+    "notes": "No se encontró información pública que confirme los PSPs reales de Experian. La investigación original ya marcaba todos como 'Undisclosed'. Búsquedas adicionales (Stripe/Recurly/Zuora/Chargify/Fiserv/Worldpay/Chase Paymentech, Serasa Experian processador) no arrojaron vínculos públicos. Como empresa NASDAQ/LSE, consumer billing US/UK/Brasil/Colombia + B2B enterprise invoicing, lo plausible son acquirers de gran escala y un billing engine de suscripciones. Los 4 PSPs abajo son ESPECULACIÓN basada en el perfil (scale enterprise US/UK, Serasa Experian en Brasil, enterprise invoicing B2B), NO confirmación pública. Marcar como 'likely' en el deck y no afirmar como hecho frente al cliente.",
+    "psps": [
+      {"name": "Chase Paymentech", "role": "US · acquirer"},
+      {"name": "Worldpay", "role": "UK · acquirer"},
+      {"name": "Cielo", "role": "Brazil · acquirer"},
+      {"name": "Stripe", "role": "Global · enterprise billing"}
+    ]
+  },
+  "fanvue": {
+    "notes": "Ambos son procesadores high-risk reales y activos. Online IPS (onlineips.net) es un procesador multinacional con presencia EU + LatAm (Brasil, Colombia, Peru, Mexico, Chile) + US/Canada, sirve e-commerce e iGaming/sports betting, 7M+ txns/mes. Axcess Merchant Services (axcessms.com) está basado en Leeds UK, con red de 390+ bancos y 50+ APMs en 179 monedas, especializado en verticales high-risk: gaming, gambling, crypto, dating, CBD, forex, subscriptions. Ambos encajan con el perfil high-risk adult/creator de Fanvue. Los roles usan 'Regional · gateway' (Online IPS) y 'UK · high-risk' (Axcess), consistentes con el label 'Axcess PS: Regional · gateway' ya presente en psp-roles.json pero refinado con base geográfica real.",
+    "psps_to_update": [
+      {"match_name": "OnlineIPS", "new_role": "Global · high-risk"},
+      {"match_name": "Axcess PS", "new_role": "UK · high-risk"}
+    ]
+  },
+  "hostinger": {
+    "notes": "Hallazgo confirmado: EBANX es el procesador de Hostinger para Boleto Bancário en Brasil (confirmado en hostinger.com/support/how-to-pay-with-boleto-bancario). EBANX es un PSP LatAm cross-border (sede Curitiba, Brasil) que cubre Pix, Boleto, OXXO, SPEI, PSE — exactamente el 'Local PSP (LATAM)' genérico del research file. Se reemplaza el entry 'Local PSP' por 'EBANX' con role 'LatAm · cross-border'. Para el PSP_5 'Local PSP (Asia)' el research no proveyó confirmación pública específica, así que se mantiene fuera de este fix (puede tratarse por separado).",
+    "psps_to_replace": [
+      {"match_name": "Local PSP", "new_name": "EBANX", "new_role": "LatAm · cross-border"}
+    ]
+  }
+}

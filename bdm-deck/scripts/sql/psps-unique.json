@@ -1,0 +1,1130 @@
+[
+  {
+    "name": "ACH",
+    "count": 2
+  },
+  {
+    "name": "ACH / Direct Debit",
+    "count": 1
+  },
+  {
+    "name": "ACH / Fedwire",
+    "count": 1
+  },
+  {
+    "name": "ACH / Nacha",
+    "count": 1
+  },
+  {
+    "name": "ACH / SEPA",
+    "count": 1
+  },
+  {
+    "name": "ACH / SEPA / BACS",
+    "count": 1
+  },
+  {
+    "name": "ACH Debit",
+    "count": 1
+  },
+  {
+    "name": "ACH Direct Deposit",
+    "count": 2
+  },
+  {
+    "name": "ACH/E-check",
+    "count": 1
+  },
+  {
+    "name": "ACH/Fedwire",
+    "count": 1
+  },
+  {
+    "name": "Adyen",
+    "count": 35
+  },
+  {
+    "name": "Affirm",
+    "count": 12
+  },
+  {
+    "name": "Afterpay",
+    "count": 7
+  },
+  {
+    "name": "Afterpay/Zip",
+    "count": 1
+  },
+  {
+    "name": "AirTM",
+    "count": 1
+  },
+  {
+    "name": "Alipay",
+    "count": 3
+  },
+  {
+    "name": "Amazon Appstore",
+    "count": 1
+  },
+  {
+    "name": "Amazon IAP",
+    "count": 1
+  },
+  {
+    "name": "Amazon Pay",
+    "count": 4
+  },
+  {
+    "name": "American Express",
+    "count": 1
+  },
+  {
+    "name": "Ant Group / Alipay",
+    "count": 1
+  },
+  {
+    "name": "Antom",
+    "count": 1
+  },
+  {
+    "name": "App Store / Google Play",
+    "count": 2
+  },
+  {
+    "name": "Apple",
+    "count": 1
+  },
+  {
+    "name": "Apple App Store",
+    "count": 30
+  },
+  {
+    "name": "Apple App Store / Google Play",
+    "count": 3
+  },
+  {
+    "name": "Apple App Store Payments",
+    "count": 1
+  },
+  {
+    "name": "Apple IAP",
+    "count": 2
+  },
+  {
+    "name": "Apple In-App Purchase",
+    "count": 1
+  },
+  {
+    "name": "Apple Internal",
+    "count": 1
+  },
+  {
+    "name": "Apple Pay",
+    "count": 22
+  },
+  {
+    "name": "Apple Pay / Google Pay",
+    "count": 5
+  },
+  {
+    "name": "Apple/Google/Amazon/Roku",
+    "count": 1
+  },
+  {
+    "name": "Asiabill",
+    "count": 1
+  },
+  {
+    "name": "Auth.net",
+    "count": 1
+  },
+  {
+    "name": "Authorize.net",
+    "count": 3
+  },
+  {
+    "name": "Authorize.Net",
+    "count": 1
+  },
+  {
+    "name": "Avalara",
+    "count": 1
+  },
+  {
+    "name": "AWS Marketplace",
+    "count": 1
+  },
+  {
+    "name": "Axcess PS",
+    "count": 1
+  },
+  {
+    "name": "Axepta BNP Paribas",
+    "count": 1
+  },
+  {
+    "name": "Azure Billing",
+    "count": 1
+  },
+  {
+    "name": "Azure Marketplace",
+    "count": 1
+  },
+  {
+    "name": "Bancard",
+    "count": 1
+  },
+  {
+    "name": "Bango",
+    "count": 1
+  },
+  {
+    "name": "Bank of America Merchant Services",
+    "count": 1
+  },
+  {
+    "name": "Bank Transfer",
+    "count": 2
+  },
+  {
+    "name": "Bank Wire",
+    "count": 1
+  },
+  {
+    "name": "Bank Wire / ACH",
+    "count": 1
+  },
+  {
+    "name": "Barclays",
+    "count": 1
+  },
+  {
+    "name": "Bitstamp",
+    "count": 1
+  },
+  {
+    "name": "BNY Mellon",
+    "count": 1
+  },
+  {
+    "name": "BoaCompra",
+    "count": 1
+  },
+  {
+    "name": "Boku",
+    "count": 1
+  },
+  {
+    "name": "Braintree",
+    "count": 15
+  },
+  {
+    "name": "Braintree / PayPal",
+    "count": 1
+  },
+  {
+    "name": "Braintree/PayPal",
+    "count": 1
+  },
+  {
+    "name": "Bridge / Stripe",
+    "count": 1
+  },
+  {
+    "name": "Capital One",
+    "count": 1
+  },
+  {
+    "name": "Card acquiring",
+    "count": 3
+  },
+  {
+    "name": "Card processor",
+    "count": 1
+  },
+  {
+    "name": "Card Processor",
+    "count": 2
+  },
+  {
+    "name": "Cards only",
+    "count": 1
+  },
+  {
+    "name": "Carrier Billing",
+    "count": 1
+  },
+  {
+    "name": "Cash App Pay",
+    "count": 2
+  },
+  {
+    "name": "Celtic Bank",
+    "count": 1
+  },
+  {
+    "name": "Chargebee",
+    "count": 1
+  },
+  {
+    "name": "Charles Schwab Bank",
+    "count": 1
+  },
+  {
+    "name": "Chase",
+    "count": 2
+  },
+  {
+    "name": "Chase Paymentech",
+    "count": 2
+  },
+  {
+    "name": "Check",
+    "count": 1
+  },
+  {
+    "name": "Checkout.com",
+    "count": 5
+  },
+  {
+    "name": "Churn Buster",
+    "count": 1
+  },
+  {
+    "name": "Circle",
+    "count": 2
+  },
+  {
+    "name": "Citi Retail Services",
+    "count": 1
+  },
+  {
+    "name": "Citibank",
+    "count": 2
+  },
+  {
+    "name": "Clearpay/Afterpay",
+    "count": 1
+  },
+  {
+    "name": "Clover / Fiserv",
+    "count": 1
+  },
+  {
+    "name": "Coastal Community Bank",
+    "count": 1
+  },
+  {
+    "name": "CodaPay",
+    "count": 1
+  },
+  {
+    "name": "Comcast Internal Billing",
+    "count": 1
+  },
+  {
+    "name": "Commerce Layer",
+    "count": 1
+  },
+  {
+    "name": "Concardis",
+    "count": 1
+  },
+  {
+    "name": "Credit Card",
+    "count": 3
+  },
+  {
+    "name": "Credit Card processing",
+    "count": 1
+  },
+  {
+    "name": "Credit/Debit Card Processor",
+    "count": 1
+  },
+  {
+    "name": "Cross River Bank",
+    "count": 2
+  },
+  {
+    "name": "Cryptocurrency processor",
+    "count": 1
+  },
+  {
+    "name": "Cybersource",
+    "count": 3
+  },
+  {
+    "name": "CyberSource",
+    "count": 1
+  },
+  {
+    "name": "Cybersource / WorldPay / Moneris",
+    "count": 1
+  },
+  {
+    "name": "CyberSource/Visa",
+    "count": 1
+  },
+  {
+    "name": "Direct Debit",
+    "count": 1
+  },
+  {
+    "name": "Discover Global Network",
+    "count": 1
+  },
+  {
+    "name": "dLocal",
+    "count": 1
+  },
+  {
+    "name": "DOCOMO Digital",
+    "count": 1
+  },
+  {
+    "name": "DTCC",
+    "count": 1
+  },
+  {
+    "name": "Dwolla",
+    "count": 1
+  },
+  {
+    "name": "Ebanx",
+    "count": 1
+  },
+  {
+    "name": "EBANX",
+    "count": 1
+  },
+  {
+    "name": "EBT/SNAP",
+    "count": 1
+  },
+  {
+    "name": "Elavon",
+    "count": 1
+  },
+  {
+    "name": "Enterprise invoicing",
+    "count": 1
+  },
+  {
+    "name": "ESW",
+    "count": 1
+  },
+  {
+    "name": "External gateways",
+    "count": 1
+  },
+  {
+    "name": "Ezypay",
+    "count": 1
+  },
+  {
+    "name": "FiftyOne/Global-e",
+    "count": 1
+  },
+  {
+    "name": "First Data",
+    "count": 2
+  },
+  {
+    "name": "Fiserv",
+    "count": 2
+  },
+  {
+    "name": "Flex",
+    "count": 1
+  },
+  {
+    "name": "Flywire",
+    "count": 1
+  },
+  {
+    "name": "FreedomPay",
+    "count": 2
+  },
+  {
+    "name": "Galileo",
+    "count": 1
+  },
+  {
+    "name": "Galileo/Technisys",
+    "count": 1
+  },
+  {
+    "name": "Gemini",
+    "count": 1
+  },
+  {
+    "name": "GoCardless",
+    "count": 2
+  },
+  {
+    "name": "GoDaddy Payments",
+    "count": 1
+  },
+  {
+    "name": "Google Cloud Marketplace",
+    "count": 1
+  },
+  {
+    "name": "Google Pay",
+    "count": 15
+  },
+  {
+    "name": "Google Payments",
+    "count": 1
+  },
+  {
+    "name": "Google Play",
+    "count": 27
+  },
+  {
+    "name": "Google Play Billing",
+    "count": 2
+  },
+  {
+    "name": "Google Play Store",
+    "count": 1
+  },
+  {
+    "name": "Green Dot Bank",
+    "count": 1
+  },
+  {
+    "name": "HubSpot Payments",
+    "count": 1
+  },
+  {
+    "name": "Hyperwallet",
+    "count": 1
+  },
+  {
+    "name": "Ingenico / Worldline",
+    "count": 1
+  },
+  {
+    "name": "Internal",
+    "count": 2
+  },
+  {
+    "name": "Internal ACH Processing",
+    "count": 1
+  },
+  {
+    "name": "Internal Billing Stack",
+    "count": 1
+  },
+  {
+    "name": "Internal Escrow",
+    "count": 1
+  },
+  {
+    "name": "Internal/Regional Acquirers",
+    "count": 2
+  },
+  {
+    "name": "Intuit Payments",
+    "count": 1
+  },
+  {
+    "name": "J.P. Morgan",
+    "count": 2
+  },
+  {
+    "name": "J.P. Morgan / Mizuho / Waterfall",
+    "count": 1
+  },
+  {
+    "name": "JP Morgan Chase",
+    "count": 1
+  },
+  {
+    "name": "JPMorgan",
+    "count": 1
+  },
+  {
+    "name": "JPMorgan Chase",
+    "count": 3
+  },
+  {
+    "name": "JPMorgan Payments",
+    "count": 1
+  },
+  {
+    "name": "Juspay",
+    "count": 1
+  },
+  {
+    "name": "KCP",
+    "count": 1
+  },
+  {
+    "name": "Klarna",
+    "count": 26
+  },
+  {
+    "name": "LawPay",
+    "count": 1
+  },
+  {
+    "name": "Legacy processors",
+    "count": 1
+  },
+  {
+    "name": "LeoVegas",
+    "count": 1
+  },
+  {
+    "name": "Lightspeed Payments",
+    "count": 1
+  },
+  {
+    "name": "Local bank acquirers",
+    "count": 1
+  },
+  {
+    "name": "Local banking partners",
+    "count": 1
+  },
+  {
+    "name": "Local payout banks",
+    "count": 1
+  },
+  {
+    "name": "Local PSP",
+    "count": 2
+  },
+  {
+    "name": "Lucid Financial Services",
+    "count": 1
+  },
+  {
+    "name": "M-Pesa",
+    "count": 1
+  },
+  {
+    "name": "Marqeta",
+    "count": 3
+  },
+  {
+    "name": "Mastercard",
+    "count": 4
+  },
+  {
+    "name": "Mastercard Gateway",
+    "count": 1
+  },
+  {
+    "name": "Melio",
+    "count": 1
+  },
+  {
+    "name": "Mercado Pago",
+    "count": 1
+  },
+  {
+    "name": "MercadoPago",
+    "count": 1
+  },
+  {
+    "name": "Microsoft Commerce",
+    "count": 1
+  },
+  {
+    "name": "Mobile money networks",
+    "count": 1
+  },
+  {
+    "name": "Modern Treasury",
+    "count": 1
+  },
+  {
+    "name": "Multiple",
+    "count": 1
+  },
+  {
+    "name": "Multiple PSPs",
+    "count": 1
+  },
+  {
+    "name": "MVB Bank",
+    "count": 1
+  },
+  {
+    "name": "Nets",
+    "count": 1
+  },
+  {
+    "name": "Nuvei",
+    "count": 1
+  },
+  {
+    "name": "Omise",
+    "count": 1
+  },
+  {
+    "name": "OnePay",
+    "count": 1
+  },
+  {
+    "name": "OnlineIPS",
+    "count": 1
+  },
+  {
+    "name": "Onyx CenterSource/GroupPay",
+    "count": 1
+  },
+  {
+    "name": "Oracle Payments",
+    "count": 1
+  },
+  {
+    "name": "Orb",
+    "count": 1
+  },
+  {
+    "name": "OTTO Payments",
+    "count": 1
+  },
+  {
+    "name": "Paddle",
+    "count": 1
+  },
+  {
+    "name": "Pathward N.A.",
+    "count": 1
+  },
+  {
+    "name": "Pay Theory",
+    "count": 1
+  },
+  {
+    "name": "Paycheck Deduction",
+    "count": 1
+  },
+  {
+    "name": "Payload",
+    "count": 1
+  },
+  {
+    "name": "Paymentology",
+    "count": 1
+  },
+  {
+    "name": "Payoneer",
+    "count": 2
+  },
+  {
+    "name": "Payoneer Checkout",
+    "count": 2
+  },
+  {
+    "name": "PayPal",
+    "count": 97
+  },
+  {
+    "name": "PayPal / Braintree",
+    "count": 1
+  },
+  {
+    "name": "PayPal / Venmo",
+    "count": 1
+  },
+  {
+    "name": "PayPal Complete",
+    "count": 1
+  },
+  {
+    "name": "PayPal Complete Payments",
+    "count": 1
+  },
+  {
+    "name": "PayPal Payflow Pro",
+    "count": 1
+  },
+  {
+    "name": "PayPal/Braintree",
+    "count": 2
+  },
+  {
+    "name": "PayPal/Venmo",
+    "count": 1
+  },
+  {
+    "name": "Paysafe",
+    "count": 2
+  },
+  {
+    "name": "PayTrace",
+    "count": 1
+  },
+  {
+    "name": "PayU",
+    "count": 1
+  },
+  {
+    "name": "PingPong",
+    "count": 1
+  },
+  {
+    "name": "Plaid",
+    "count": 8
+  },
+  {
+    "name": "Planet",
+    "count": 1
+  },
+  {
+    "name": "Primer",
+    "count": 1
+  },
+  {
+    "name": "Przelewy24",
+    "count": 1
+  },
+  {
+    "name": "PSE",
+    "count": 1
+  },
+  {
+    "name": "Ratepay",
+    "count": 1
+  },
+  {
+    "name": "Recurly",
+    "count": 1
+  },
+  {
+    "name": "Recurly Gateway",
+    "count": 1
+  },
+  {
+    "name": "RevenueCat",
+    "count": 1
+  },
+  {
+    "name": "Rivian Financial Services",
+    "count": 1
+  },
+  {
+    "name": "Rivian Wallet",
+    "count": 1
+  },
+  {
+    "name": "Roku Billing Services",
+    "count": 1
+  },
+  {
+    "name": "Roku Pay",
+    "count": 1
+  },
+  {
+    "name": "Sabre SynXis",
+    "count": 1
+  },
+  {
+    "name": "SafetyPay",
+    "count": 1
+  },
+  {
+    "name": "Salesforce Commerce Cloud",
+    "count": 1
+  },
+  {
+    "name": "Schwab Clearing",
+    "count": 1
+  },
+  {
+    "name": "SeaPass",
+    "count": 1
+  },
+  {
+    "name": "SEPA DD / BACS / ACH",
+    "count": 1
+  },
+  {
+    "name": "SEPA Direct Debit",
+    "count": 4
+  },
+  {
+    "name": "Sertifi",
+    "count": 2
+  },
+  {
+    "name": "Shift4",
+    "count": 1
+  },
+  {
+    "name": "Shop Pay",
+    "count": 3
+  },
+  {
+    "name": "Shoper Payments",
+    "count": 1
+  },
+  {
+    "name": "Shopify Payments",
+    "count": 6
+  },
+  {
+    "name": "SoFi Bank N.A.",
+    "count": 1
+  },
+  {
+    "name": "Sofort",
+    "count": 1
+  },
+  {
+    "name": "Softpay",
+    "count": 1
+  },
+  {
+    "name": "SPEI / Pix / CVU / PSE",
+    "count": 1
+  },
+  {
+    "name": "Square",
+    "count": 2
+  },
+  {
+    "name": "Square Payments",
+    "count": 1
+  },
+  {
+    "name": "Stripe",
+    "count": 121
+  },
+  {
+    "name": "Stripe [INFERENCE]",
+    "count": 3
+  },
+  {
+    "name": "Stripe Adaptive Acceptance",
+    "count": 1
+  },
+  {
+    "name": "Stripe Billing",
+    "count": 3
+  },
+  {
+    "name": "Stripe Capital",
+    "count": 1
+  },
+  {
+    "name": "Stripe Connect",
+    "count": 7
+  },
+  {
+    "name": "Stripe Express",
+    "count": 1
+  },
+  {
+    "name": "Stripe Identity",
+    "count": 1
+  },
+  {
+    "name": "Stripe Link",
+    "count": 2
+  },
+  {
+    "name": "Stripe Optimized Checkout Suite",
+    "count": 1
+  },
+  {
+    "name": "Stripe Radar",
+    "count": 1
+  },
+  {
+    "name": "Stripe Standard",
+    "count": 2
+  },
+  {
+    "name": "Stripe Tax",
+    "count": 1
+  },
+  {
+    "name": "Stripe Terminal",
+    "count": 2
+  },
+  {
+    "name": "Sutton Bank",
+    "count": 2
+  },
+  {
+    "name": "Swedbank Pay",
+    "count": 1
+  },
+  {
+    "name": "Synchrony Bank",
+    "count": 1
+  },
+  {
+    "name": "TAB Bank",
+    "count": 1
+  },
+  {
+    "name": "Third-party iframes",
+    "count": 1
+  },
+  {
+    "name": "Third-party payment processor",
+    "count": 1
+  },
+  {
+    "name": "Third-party POS",
+    "count": 1
+  },
+  {
+    "name": "Tipalti",
+    "count": 4
+  },
+  {
+    "name": "TotalProcessing",
+    "count": 1
+  },
+  {
+    "name": "Tpay",
+    "count": 1
+  },
+  {
+    "name": "Triple-A",
+    "count": 1
+  },
+  {
+    "name": "TrueLayer",
+    "count": 1
+  },
+  {
+    "name": "UATP",
+    "count": 2
+  },
+  {
+    "name": "Undisclosed Acquirer",
+    "count": 1
+  },
+  {
+    "name": "Undisclosed card processor",
+    "count": 1
+  },
+  {
+    "name": "Undisclosed Card Processor",
+    "count": 2
+  },
+  {
+    "name": "Undisclosed Primary Acquirer",
+    "count": 1
+  },
+  {
+    "name": "Undisclosed primary processor",
+    "count": 1
+  },
+  {
+    "name": "Unzer",
+    "count": 1
+  },
+  {
+    "name": "Uplift",
+    "count": 1
+  },
+  {
+    "name": "USA ePay",
+    "count": 1
+  },
+  {
+    "name": "UseePay",
+    "count": 1
+  },
+  {
+    "name": "Venmo",
+    "count": 2
+  },
+  {
+    "name": "Visa",
+    "count": 5
+  },
+  {
+    "name": "Visa / Mastercard",
+    "count": 4
+  },
+  {
+    "name": "Visa / Mastercard / Amex",
+    "count": 1
+  },
+  {
+    "name": "Visa / Mastercard / Amex / Discover",
+    "count": 1
+  },
+  {
+    "name": "Visa Direct",
+    "count": 1
+  },
+  {
+    "name": "Visa Network",
+    "count": 3
+  },
+  {
+    "name": "Visa/MC Direct",
+    "count": 1
+  },
+  {
+    "name": "Visa/MC/Amex/Discover networks",
+    "count": 1
+  },
+  {
+    "name": "WebBank",
+    "count": 1
+  },
+  {
+    "name": "Wire / Check",
+    "count": 1
+  },
+  {
+    "name": "Wire Transfer",
+    "count": 1
+  },
+  {
+    "name": "Wire Transfer / ACH",
+    "count": 1
+  },
+  {
+    "name": "Wire Transfer / Check",
+    "count": 1
+  },
+  {
+    "name": "Wise",
+    "count": 2
+  },
+  {
+    "name": "Worldline",
+    "count": 1
+  },
+  {
+    "name": "Worldpay",
+    "count": 6
+  },
+  {
+    "name": "Xsolla",
+    "count": 3
+  },
+  {
+    "name": "Xsolla Pay Station",
+    "count": 1
+  },
+  {
+    "name": "Zerohash",
+    "count": 1
+  },
+  {
+    "name": "Zip",
+    "count": 1
+  },
+  {
+    "name": "Zuora",
+    "count": 4
+  }
+]
