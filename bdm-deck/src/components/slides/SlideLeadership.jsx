@@ -20,6 +20,23 @@ function PersonCard({ p, founder, style, styles }) {
   const photoStyle = founder
     ? { ...styles.photo, ...styles.photoFounder }
     : styles.photo
+  // Leadership-team cards split the name across two lines (first name on
+  // top, the rest on a second line) so the grid stays uniform regardless
+  // of how long someone's surname is. Founders keep a single line so the
+  // bigger photos stay paired with full inline names.
+  const renderName = () => {
+    if (founder) return <div style={styles.name}>{p.name}</div>
+    const trimmed = (p.name || '').trim()
+    const idx = trimmed.indexOf(' ')
+    const first = idx === -1 ? trimmed : trimmed.slice(0, idx)
+    const rest = idx === -1 ? '' : trimmed.slice(idx + 1)
+    return (
+      <div style={styles.name}>
+        <div>{first}</div>
+        {rest ? <div>{rest}</div> : null}
+      </div>
+    )
+  }
   return (
     <div style={{ ...styles.card, ...style }}>
       <div style={styles.photoWrap}>
@@ -31,7 +48,7 @@ function PersonCard({ p, founder, style, styles }) {
         )}
       </div>
       <div style={styles.meta}>
-        <div style={styles.name}>{p.name}</div>
+        {renderName()}
         <div style={styles.role}>{p.role}</div>
         {founder && p.pedigreeLabel ? (
           <div style={styles.pedigreeLabel}>{p.pedigreeLabel}</div>
@@ -122,9 +139,11 @@ export default function SlideLeadership({ data }) {
       display: 'flex',
       flexDirection: 'column',
       // Spread Founders / Leadership Team / "We've been there" across the
-      // full slide height instead of stacking them tight at the top.
+      // full slide height instead of stacking them tight at the top. Bigger
+      // gap so Leadership Team sits between the other two with real
+      // breathing room.
       justifyContent: 'space-between',
-      gap: 'clamp(32px, 3.2vw, 64px)',
+      gap: 'clamp(64px, 6vw, 140px)',
       minHeight: 0,
     },
 
