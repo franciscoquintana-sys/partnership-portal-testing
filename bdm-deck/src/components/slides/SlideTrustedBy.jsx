@@ -77,13 +77,13 @@ export default function SlideTrustedBy() {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(26px, 2.4vw, 46px)',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
       color: theme.ink,
       margin: 0,
-      maxWidth: '64%',
+      maxWidth: '72%',
     },
     titleAccent: {
       backgroundImage: theme.isLight
@@ -242,10 +242,6 @@ export default function SlideTrustedBy() {
           Trusted by leading companies,{' '}
           <span style={styles.titleAccent}>backed by world-class investors</span>
         </h2>
-        <p style={styles.tagline}>
-          From global merchants to the most respected venture firms,{' '}
-          <span style={styles.taglineEmph}>Yuno is the platform builders bet on</span>
-        </p>
       </div>
 
       <div style={styles.body}>
