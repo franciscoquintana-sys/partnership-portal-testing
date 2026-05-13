@@ -177,16 +177,32 @@ function buildObservations(styles) {
     merchant: [
       {
         render: () => (
-          <>Each market has different <span style={styles.observationStrong}>providers</span>,{' '}
-            <span style={styles.observationStrong}>local rails</span>,{' '}
-            <span style={styles.observationStrong}>regulations</span>, and{' '}
-            <span style={styles.observationStrong}>fraud patterns</span></>
+          <><span style={styles.observationStrong}>Single-processor dependency</span> — any outage
+            or policy change instantly suspends recurring revenue</>
         ),
       },
       {
         render: () => (
-          <><span style={styles.observationStrong}>Every new market</span> implies{' '}
-            <span style={styles.observationStrong}>months of integrations</span> for your team</>
+          <><span style={styles.observationStrong}>Cross-border inefficiency</span> — checkout
+            still routes through centralised, US-first acquiring</>
+        ),
+      },
+      {
+        render: () => (
+          <><span style={styles.observationStrong}>Limited APM coverage</span> — missing UPI in
+            India, Pix in Brazil, wallets across APAC</>
+        ),
+      },
+      {
+        render: () => (
+          <><span style={styles.observationStrong}>No smart routing</span> — declined transactions
+            fall straight to lost revenue instead of being recovered</>
+        ),
+      },
+      {
+        render: () => (
+          <><span style={styles.observationStrong}>High processing cost</span> — fees negotiated
+            per processor, leaving material margin on the table</>
         ),
       },
     ],
@@ -629,7 +645,7 @@ export default function SlideInfrastructure({ data }) {
       zIndex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(18px, 1.6vw, 28px)',
+      gap: 'clamp(12px, 1.1vw, 20px)',
     },
     observationItem: {
       display: 'flex',
@@ -644,7 +660,7 @@ export default function SlideInfrastructure({ data }) {
       opacity: 0.7,
     },
     observationText: {
-      fontSize: 'clamp(26px, 2.2vw, 40px)',
+      fontSize: 'clamp(17px, 1.4vw, 26px)',
       lineHeight: 1.4,
       color: theme.inkSecondary,
       margin: 0,
