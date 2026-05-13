@@ -788,7 +788,7 @@ export default function SlideProductSuite() {
 
         <div style={styles.monoKicker}>
           <span style={styles.monoKickerCaret}>&gt;</span>
-          payment_lifecycle
+          Payment Lifecycle
           <BeamRule delay={3} base={theme.beamBase} beam={theme.beam} />
         </div>
 
