@@ -177,15 +177,10 @@ function buildObservations(styles) {
     merchant: [
       {
         render: () => (
-          <>Each market has different <span style={styles.observationStrong}>providers</span>, <span style={styles.observationStrong}>local
-            rails</span>, <span style={styles.observationStrong}>regulations</span>, and{' '}
+          <>Each market has different <span style={styles.observationStrong}>providers</span>,{' '}
+            <span style={styles.observationStrong}>local rails</span>,{' '}
+            <span style={styles.observationStrong}>regulations</span>, and{' '}
             <span style={styles.observationStrong}>fraud patterns</span></>
-        ),
-      },
-      {
-        render: () => (
-          <><span style={styles.observationStrong}>Long chains of intermediaries</span> just to reach{' '}
-            <span style={styles.observationStrong}>local wallets and methods</span></>
         ),
       },
       {
@@ -649,8 +644,8 @@ export default function SlideInfrastructure({ data }) {
       opacity: 0.7,
     },
     observationText: {
-      fontSize: 'clamp(20px, 1.7vw, 30px)',
-      lineHeight: 1.35,
+      fontSize: 'clamp(26px, 2.2vw, 40px)',
+      lineHeight: 1.4,
       color: theme.inkSecondary,
       margin: 0,
     },
