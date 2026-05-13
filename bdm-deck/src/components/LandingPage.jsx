@@ -359,6 +359,8 @@ const styles = {
     left: '50%',
     transform: 'translateX(-50%)',
     minWidth: '260px',
+    maxHeight: 'min(60vh, 320px)',
+    overflowY: 'auto',
     background: 'rgba(0,0,0,0.92)',
     backdropFilter: 'blur(28px)',
     border: '1px solid rgba(255,255,255,0.08)',
@@ -397,7 +399,7 @@ const styles = {
   // selecting two regions can surface 16+ markets at once.
   countryMenu: {
     minWidth: '280px',
-    maxHeight: '380px',
+    maxHeight: 'min(60vh, 320px)',
     overflowY: 'auto',
   },
   pinIcon: {
