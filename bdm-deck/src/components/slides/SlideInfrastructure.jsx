@@ -412,7 +412,7 @@ export default function SlideInfrastructure({ data }) {
       // Matches slides 6/7 (GlobalPresence, Leadership) — the reference
       // for title size across the deck. Title wraps to two lines at this
       // size, which is intentional.
-      fontSize: 'clamp(28px, 2.7vw, 52px)',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,

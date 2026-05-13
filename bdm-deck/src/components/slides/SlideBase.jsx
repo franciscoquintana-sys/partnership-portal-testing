@@ -62,7 +62,7 @@ export default function SlideBase({ section, slideNumber, children, customBg, th
       background: theme.accent,
     },
     yunoLogo: {
-      height: 'clamp(16px, 1.5vw, 26px)',
+      height: 'clamp(28px, 2.4vw, 44px)',
       opacity: theme.logoOpacity,
       filter: theme.logoFilter,
     },
