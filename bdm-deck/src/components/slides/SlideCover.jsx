@@ -101,7 +101,7 @@ export default function SlideCover({ data }) {
       // a 0.92-opacity logo reads as a faint blue-tinted shape. Lock
       // the cover wordmark to opacity 1 + brightness(0) on light so it
       // lands as solid black, regardless of the ambient glow tint.
-      height: 'clamp(20px, 1.8vw, 32px)',
+      height: 'clamp(32px, 3vw, 56px)',
       display: 'block',
       opacity: isLight ? 1 : theme.logoOpacity,
       filter: isLight ? 'brightness(0)' : theme.logoFilter,
@@ -125,13 +125,13 @@ export default function SlideCover({ data }) {
     },
     greeting: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(26px, 2.6vw, 46px)',
+      fontSize: 'clamp(38px, 4vw, 68px)',
       fontWeight: 700,
       letterSpacing: '-0.6px',
       lineHeight: 1.05,
       color: isLight ? theme.accentDeep : 'rgba(189,195,246,0.95)',
       margin: 0,
-      marginBottom: 'clamp(16px, 1.6vw, 28px)',
+      marginBottom: 'clamp(20px, 2vw, 36px)',
     },
     merchantLogoWrapper: {
       display: 'flex',
@@ -139,27 +139,27 @@ export default function SlideCover({ data }) {
       gap: '20px',
     },
     merchantLogo: {
-      height: 'clamp(52px, 5.2vw, 96px)',
-      maxWidth: 'clamp(240px, 22.4vw, 440px)',
+      height: 'clamp(72px, 7vw, 140px)',
+      maxWidth: 'clamp(320px, 28vw, 560px)',
       objectFit: 'contain',
       display: 'block',
     },
     merchantLogoText: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(32px, 4vw, 72px)',
+      fontSize: 'clamp(48px, 5.5vw, 96px)',
       fontWeight: 700,
       color: theme.ink,
       letterSpacing: '-1.2px',
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(44px, 5vw, 92px)',
+      fontSize: 'clamp(56px, 6.5vw, 120px)',
       fontWeight: 400,
       letterSpacing: '-2px',
       lineHeight: 1.02,
       color: isLight ? theme.ink : '#fff',
       margin: 0,
-      maxWidth: '62%',
+      maxWidth: '70%',
     },
     titleStrong: {
       fontWeight: 700,
@@ -172,11 +172,11 @@ export default function SlideCover({ data }) {
       color: 'transparent',
     },
     subtitle: {
-      fontSize: 'clamp(15px, 1.25vw, 21px)',
+      fontSize: 'clamp(20px, 1.7vw, 30px)',
       fontWeight: 400,
       lineHeight: 1.55,
       color: theme.inkSecondary,
-      maxWidth: '640px',
+      maxWidth: '820px',
       margin: 0,
     },
     companyNameInline: {
@@ -190,7 +190,7 @@ export default function SlideCover({ data }) {
     },
     location: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(10px, 0.78vw, 13px)',
+      fontSize: 'clamp(13px, 1.05vw, 18px)',
       fontWeight: 500,
       letterSpacing: '1.4px',
       textTransform: 'uppercase',
@@ -198,7 +198,7 @@ export default function SlideCover({ data }) {
     },
     confidential: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(9px, 0.62vw, 11px)',
+      fontSize: 'clamp(12px, 0.9vw, 16px)',
       fontWeight: 500,
       letterSpacing: '1.4px',
       textTransform: 'uppercase',
