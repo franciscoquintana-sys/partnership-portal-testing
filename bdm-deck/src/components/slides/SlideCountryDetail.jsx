@@ -492,8 +492,52 @@ export default function SlideCountryDetail() {
       flex: 1,
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
+      gridAutoRows: 'min-content',
       gap: 'clamp(20px, 1.8vw, 36px)',
       minHeight: 0,
+      overflowY: 'auto',
+    },
+    statsCard: {
+      gridColumn: '1 / -1',
+      flexDirection: 'row',
+      gap: 'clamp(20px, 1.8vw, 32px)',
+      alignItems: 'flex-end',
+      flexWrap: 'wrap',
+      padding: 'clamp(18px, 1.6vw, 28px) clamp(24px, 2.2vw, 40px)',
+    },
+    statsGrid: {
+      display: 'flex',
+      flex: 1,
+      gap: 'clamp(28px, 2.8vw, 56px)',
+      flexWrap: 'wrap',
+      alignItems: 'flex-end',
+    },
+    stat: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '4px',
+      minWidth: 0,
+    },
+    statLabel: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'clamp(10px, 0.8vw, 13px)',
+      fontWeight: 700,
+      letterSpacing: '1.6px',
+      textTransform: 'uppercase',
+      color: theme.inkMuted,
+    },
+    statValue: {
+      fontFamily: 'var(--font-display)',
+      fontSize: 'clamp(22px, 1.9vw, 34px)',
+      fontWeight: 700,
+      color: theme.inkStrong,
+      letterSpacing: '-0.3px',
+    },
+    statUnit: {
+      fontSize: 'clamp(13px, 1.1vw, 19px)',
+      fontWeight: 500,
+      color: theme.inkMuted,
+      marginLeft: '4px',
     },
     card: {
       background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.025)',
@@ -708,6 +752,38 @@ export default function SlideCountryDetail() {
         <div style={styles.detail}>
           {rich ? (
             <>
+              {(() => {
+                const idx = ECOMMERCE_INDEX[country]
+                return (
+                  <div style={{ ...styles.card, ...styles.statsCard }}>
+                    <span style={styles.cardHeader}>Snapshot</span>
+                    <div style={styles.statsGrid}>
+                      <div style={styles.stat}>
+                        <span style={styles.statLabel}>Region</span>
+                        <span style={styles.statValue}>{REGION_LABEL[resolvedRegion] || resolvedRegion}</span>
+                      </div>
+                      {idx != null && (
+                        <div style={styles.stat}>
+                          <span style={styles.statLabel}>E-commerce index</span>
+                          <span style={styles.statValue}>{idx}<span style={styles.statUnit}> / 100</span></span>
+                        </div>
+                      )}
+                      {rich.verticals?.length > 0 && (
+                        <div style={styles.stat}>
+                          <span style={styles.statLabel}>Top verticals</span>
+                          <span style={styles.statValue}>{rich.verticals.slice(0, 2).join(' · ')}</span>
+                        </div>
+                      )}
+                      {rich.processors?.length > 0 && (
+                        <div style={styles.stat}>
+                          <span style={styles.statLabel}>Acquirers tracked</span>
+                          <span style={styles.statValue}>{rich.processors.length}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })()}
               <div style={styles.card}>
                 <span style={styles.cardHeader}>Payment Methods</span>
                 <span style={styles.cardTitle}>Top consumer rails</span>
@@ -731,11 +807,22 @@ export default function SlideCountryDetail() {
                 <span style={styles.cardHeader}>Methods Covered</span>
                 <span style={styles.cardTitle}>Live on Yuno</span>
                 <div style={styles.chipRow}>
-                  {(rich.paymentMethodsCovered || rich.verticals || []).slice(0, 12).map((p) => (
+                  {(rich.paymentMethodsCovered || []).slice(0, 12).map((p) => (
                     <span key={p} style={styles.chip}>{p}</span>
                   ))}
                 </div>
               </div>
+              {rich.verticals?.length > 0 && (
+                <div style={styles.card}>
+                  <span style={styles.cardHeader}>Verticals</span>
+                  <span style={styles.cardTitle}>Where commerce concentrates</span>
+                  <div style={styles.chipRow}>
+                    {rich.verticals.slice(0, 12).map((v) => (
+                      <span key={v} style={styles.chip}>{v}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
             </>
           ) : country ? (
             <div style={styles.stub}>
