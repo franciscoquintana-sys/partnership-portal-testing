@@ -3,7 +3,7 @@ import { Bank, Handshake, Storefront, Globe, CaretDown, MapPin, Check } from '@p
 import { resolveMerchant } from '../data/merchants.generated'
 import { resolveBank } from '../data/banks.generated'
 import { resolvePartner } from '../data/partners.generated'
-import { REGIONS, REGION_LABEL, getRegionCountries } from '../data/regional-data'
+import { REGIONS, REGION_LABEL, getRegionCountriesForPicker } from '../data/regional-data'
 
 const styles = {
   container: {
@@ -513,7 +513,7 @@ export default function LandingPage({ onGenerate }) {
   // case where the pill shows e.g. Brazil while LATAM has been deselected.
   useEffect(() => {
     const validCountries = new Set()
-    regions.forEach((r) => getRegionCountries(r).forEach((c) => validCountries.add(c.country)))
+    regions.forEach((r) => getRegionCountriesForPicker(r).forEach((c) => validCountries.add(c.country)))
     setCountries((prev) => prev.filter((c) => validCountries.has(c)))
   }, [regions])
 
@@ -544,7 +544,7 @@ export default function LandingPage({ onGenerate }) {
   }, [showCountryMenu])
 
   const availableCountries = regions
-    .flatMap((r) => getRegionCountries(r).map((c) => ({ country: c.country, region: r })))
+    .flatMap((r) => getRegionCountriesForPicker(r).map((c) => ({ country: c.country, region: r })))
     .sort((a, b) => a.country.localeCompare(b.country))
 
   const toggleRegion = (r) => {

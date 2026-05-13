@@ -1362,14 +1362,65 @@ export const REGIONAL_DATA = {
 
 // Listed in the order shown in the landing-page dropdown — alphabetical
 // by the labels below so it lines up with Country Detail in the portal.
-export const REGIONS = ['APAC', 'Europe', 'LATAM', 'MENAT', 'Americas']
+// Internal keys are kept (Americas, MENAT) to avoid renaming the slide
+// data; REGION_LABEL maps them to the portal-facing names.
+export const REGIONS = ['Africa', 'APAC', 'Europe', 'LATAM', 'MENAT', 'Americas']
 
 export const REGION_LABEL = {
+  Africa: 'Africa',
   Americas: 'North America',
   LATAM: 'LATAM',
   Europe: 'Europe',
   APAC: 'APAC',
   MENAT: 'Middle East',
+}
+
+// Picker-only country lists — mirror the portal's Country Detail per-region
+// rosters so the dropdown shows the same set users see elsewhere in the
+// portal. Slide rendering still pulls rich content from REGIONAL_DATA, so a
+// country picked here without a REGIONAL_DATA entry will simply render
+// region-level slides without country-specific detail.
+export const COUNTRY_LIST_BY_REGION = {
+  Africa: [
+    'Algeria', 'Angola', 'Botswana', 'Cameroon', "Côte d'Ivoire", 'Egypt',
+    'Ethiopia', 'Ghana', 'Kenya', 'Mauritius', 'Morocco', 'Mozambique',
+    'Nigeria', 'Rwanda', 'Senegal', 'South Africa', 'Tanzania', 'Tunisia',
+    'Uganda', 'Zambia', 'Zimbabwe',
+  ],
+  APAC: [
+    'Australia', 'Bangladesh', 'Cambodia', 'China', 'Hong Kong', 'India',
+    'Indonesia', 'Japan', 'Malaysia', 'Myanmar', 'Nepal', 'New Zealand',
+    'Pakistan', 'Philippines', 'Singapore', 'South Korea', 'Sri Lanka',
+    'Taiwan', 'Thailand', 'Vietnam',
+  ],
+  Europe: [
+    'Austria', 'Belgium', 'Bulgaria', 'Croatia', 'Cyprus', 'Czech Republic',
+    'Denmark', 'Estonia', 'Finland', 'France', 'Germany', 'Greece', 'Hungary',
+    'Iceland', 'Ireland', 'Italy', 'Latvia', 'Lithuania', 'Luxembourg',
+    'Malta', 'Netherlands', 'Norway', 'Poland', 'Portugal', 'Romania',
+    'Russia', 'Serbia', 'Slovakia', 'Slovenia', 'Spain', 'Sweden',
+    'Switzerland', 'Ukraine', 'United Kingdom',
+  ],
+  LATAM: [
+    'Argentina', 'Bolivia', 'Brazil', 'Chile', 'Colombia', 'Costa Rica',
+    'Cuba', 'Dominican Republic', 'Ecuador', 'El Salvador', 'Guatemala',
+    'Honduras', 'Jamaica', 'Mexico', 'Nicaragua', 'Panama', 'Paraguay',
+    'Peru', 'Puerto Rico', 'Trinidad and Tobago', 'Uruguay', 'Venezuela',
+  ],
+  MENAT: [
+    'Bahrain', 'Iran', 'Iraq', 'Israel', 'Jordan', 'Kuwait', 'Lebanon',
+    'Oman', 'Qatar', 'Saudi Arabia', 'Turkey', 'UAE',
+  ],
+  Americas: [
+    'Canada', 'United States',
+  ],
+}
+
+// Picker variant of getRegionCountries — returns just country names so the
+// landing-page dropdown can list every country the portal recognises, not
+// just the ones with rich slide data in REGIONAL_DATA.
+export function getRegionCountriesForPicker(region) {
+  return (COUNTRY_LIST_BY_REGION[region] || []).map((country) => ({ country }))
 }
 
 export const REGION_SHORT = {
