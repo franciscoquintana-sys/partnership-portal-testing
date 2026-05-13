@@ -227,7 +227,7 @@ export default function SlideDashboard() {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(28px, 2.7vw, 52px)',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -845,12 +845,6 @@ export default function SlideDashboard() {
           One dashboard,{' '}
           <span style={styles.titleAccent}>every PSP, one click</span>
         </h2>
-
-        <div style={styles.monoKicker}>
-          <span style={styles.monoKickerCaret}>&gt;</span>
-          dashboard.y.uno · routing rules · live
-          <BeamRule />
-        </div>
 
         <div style={styles.mainRow}>
           {/* LEFT — explanatory text */}
