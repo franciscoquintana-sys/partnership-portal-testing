@@ -321,13 +321,13 @@ export default function SlideCountryDetail() {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(14px, 1.2vw, 24px)',
+      gap: 'clamp(8px, 0.8vw, 16px)',
       minHeight: 0,
     },
     headerRow: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(12px, 1vw, 20px)',
+      gap: 'clamp(8px, 0.7vw, 14px)',
       flexShrink: 0,
     },
     title: {
@@ -494,9 +494,8 @@ export default function SlideCountryDetail() {
     overview: {
       gridColumn: '1 / -1',
       position: 'relative',
-      // Let the map take the full remaining slide height — the only thing
-      // above it on this slide is the title + filter row.
-      minHeight: 'clamp(520px, 85vh, 980px)',
+      // Map fills essentially the whole slide canvas below the title.
+      minHeight: 'clamp(700px, 95vh, 1200px)',
       display: 'flex',
       flexDirection: 'column',
       gap: 'clamp(6px, 0.5vw, 10px)',
