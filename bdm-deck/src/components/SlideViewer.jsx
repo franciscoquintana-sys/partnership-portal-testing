@@ -502,6 +502,9 @@ function SlideViewerInner({ data, onBack, shared = false }) {
   const [showHint, setShowHint] = useState(true)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [stageScale, setStageScale] = useState(1)
+  // Country picked on the Country Detail map; consumed by the Country
+  // Detail Page slide so it can render the right country + flag.
+  const [selectedCountry, setSelectedCountry] = useState(null)
   // Portrait phones can't render a 16:9 stage at any useful size — overlay
   // a rotation hint instead of letting the deck shrink to a strip.
   const [needsRotate, setNeedsRotate] = useState(false)
@@ -675,6 +678,8 @@ function SlideViewerInner({ data, onBack, shared = false }) {
               goTo={goTo}
               currentIndex={current}
               totalSlides={total}
+              selectedCountry={selectedCountry}
+              setSelectedCountry={setSelectedCountry}
               {...(slideProps || {})}
             />
           </div>

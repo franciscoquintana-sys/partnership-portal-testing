@@ -287,7 +287,7 @@ function PillDropdown({ icon: Icon, label, items, value, onChange }) {
   )
 }
 
-export default function SlideCountryDetail({ goTo, currentIndex }) {
+export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCountry }) {
   const theme = useTheme()
   const [region, setRegion] = useState('all')
   const [country, setCountry] = useState('')
@@ -298,9 +298,9 @@ export default function SlideCountryDetail({ goTo, currentIndex }) {
   }, [region])
 
   // Picking a country jumps the deck to the next slide, which is the
-  // (currently blank) Country Detail Page reserved for the rich per-country
-  // content.
-  const openDetail = () => {
+  // Country Detail Page (renders name + flag).
+  const openDetail = (countryName) => {
+    if (typeof setSelectedCountry === 'function') setSelectedCountry(countryName)
     if (typeof goTo === 'function' && typeof currentIndex === 'number') {
       goTo(currentIndex + 1)
     }
@@ -308,7 +308,7 @@ export default function SlideCountryDetail({ goTo, currentIndex }) {
 
   const handleCountryPick = (val) => {
     setCountry(val)
-    if (val) openDetail()
+    if (val) openDetail(val)
   }
 
   const regionPillLabel = region === 'all' ? 'All regions' : (REGION_LABEL[region] || region)
@@ -600,7 +600,7 @@ export default function SlideCountryDetail({ goTo, currentIndex }) {
             <ChoroplethMap
               pickerCountries={countriesForPicker}
               region={region}
-              onPick={(name) => { setCountry(name); openDetail() }}
+              onPick={(name) => { setCountry(name); openDetail(name) }}
               styles={styles}
               theme={theme}
             />
