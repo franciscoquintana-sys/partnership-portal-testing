@@ -190,8 +190,8 @@ export default function SlideCover({ data }) {
     },
     location: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(13px, 1.05vw, 18px)',
-      fontWeight: 500,
+      fontSize: 'clamp(18px, 1.6vw, 28px)',
+      fontWeight: 600,
       letterSpacing: '1.4px',
       textTransform: 'uppercase',
       color: theme.inkMuted,
