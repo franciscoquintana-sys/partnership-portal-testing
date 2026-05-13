@@ -970,7 +970,6 @@ export default function SlideInfrastructure({ data }) {
           </div>
 
           <div className="border-beam" style={{ ...styles.observationsCard, '--beam-duration': '20s', '--beam-delay': '-6s' }}>
-            <ObservationsBackdrop />
             <div className="stagger" style={{ ...styles.observationsList, '--stagger-base': '0.5s', '--stagger-step': '0.12s' }}>
               {OBSERVATIONS.map((obs, i) => {
                 if (obs.render) {
