@@ -160,8 +160,8 @@ export default function SlideLeadership({ data }) {
     foundersRow: {
       display: 'grid',
       gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-      gap: 'clamp(20px, 2vw, 40px)',
-      maxWidth: '46%',
+      gap: 'clamp(28px, 2.6vw, 56px)',
+      maxWidth: '60%',
     },
 
     // ---------- Leadership grid ----------
@@ -172,7 +172,7 @@ export default function SlideLeadership({ data }) {
     leadersGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(14, 1fr)',
-      gap: 'clamp(16px, 1.5vw, 30px) clamp(16px, 1.5vw, 30px)',
+      gap: 'clamp(28px, 2.4vw, 52px) clamp(20px, 1.8vw, 38px)',
     },
     // Each person card spans 2 columns of the 14-col track.
     cardSpan: {
@@ -199,16 +199,16 @@ export default function SlideLeadership({ data }) {
       flexShrink: 0,
     },
     photo: {
-      width: 'clamp(64px, 5vw, 92px)',
-      height: 'clamp(64px, 5vw, 92px)',
+      width: 'clamp(96px, 7vw, 132px)',
+      height: 'clamp(96px, 7vw, 132px)',
       borderRadius: '50%',
       objectFit: 'cover',
       background: theme.surface1,
       display: 'block',
     },
     photoFounder: {
-      width: 'clamp(76px, 5.9vw, 108px)',
-      height: 'clamp(76px, 5.9vw, 108px)',
+      width: 'clamp(120px, 9vw, 168px)',
+      height: 'clamp(120px, 9vw, 168px)',
     },
     photoRing: {
       position: 'absolute',
