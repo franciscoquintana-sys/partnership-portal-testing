@@ -297,22 +297,18 @@ export default function SlideCountryDetail() {
     return (COUNTRIES_BY_REGION[region] || []).map((c) => ({ country: c, region }))
   }, [region])
 
-  // Open the portal's Country Detail page in a new tab. The slide stays on
-  // the map so the presenter can keep clicking around without losing their
-  // place.
-  const openDetail = (countryName) => {
-    if (!countryName) return
-    const entry = countriesForPicker.find((c) => c.country === countryName)
+  // Build the embedded portal URL for the currently selected country —
+  // mirrors /insights's Country Detail view with embed chrome stripped.
+  const detailUrl = useMemo(() => {
+    if (!country) return null
+    const entry = countriesForPicker.find((c) => c.country === country)
     const r = entry?.region || region
-    const params = new URLSearchParams({ view: 'country', country: countryName })
+    const params = new URLSearchParams({ view: 'country', country, embed: '1' })
     if (r && r !== 'all') params.set('region', r)
-    window.open(`/insights?${params.toString()}`, '_blank', 'noopener')
-  }
+    return `/insights?${params.toString()}`
+  }, [country, region, countriesForPicker])
 
-  const handleCountryPick = (val) => {
-    setCountry(val)
-    if (val) openDetail(val)
-  }
+  const handleCountryPick = (val) => setCountry(val)
 
   const regionPillLabel = region === 'all' ? 'All regions' : (REGION_LABEL[region] || region)
   const countryPillLabel = country || 'All countries'
@@ -599,20 +595,36 @@ export default function SlideCountryDetail() {
         </div>
 
         <div style={styles.detail}>
-          <div style={styles.overview}>
-            <ChoroplethMap
-              pickerCountries={countriesForPicker}
-              region={region}
-              onPick={(name) => { setCountry(name); openDetail(name) }}
-              styles={styles}
-              theme={theme}
-            />
-            <div style={styles.legend}>
-              <span>Lower e-commerce index</span>
-              <span style={styles.legendBar} aria-hidden />
-              <span>Higher</span>
+          {country && detailUrl ? (
+            <div style={styles.overview}>
+              <iframe
+                src={detailUrl}
+                title={`${country} country detail`}
+                style={{
+                  display: 'block',
+                  width: '100%',
+                  height: '100%',
+                  border: 0,
+                  background: 'transparent',
+                }}
+              />
             </div>
-          </div>
+          ) : (
+            <div style={styles.overview}>
+              <ChoroplethMap
+                pickerCountries={countriesForPicker}
+                region={region}
+                onPick={setCountry}
+                styles={styles}
+                theme={theme}
+              />
+              <div style={styles.legend}>
+                <span>Lower e-commerce index</span>
+                <span style={styles.legendBar} aria-hidden />
+                <span>Higher</span>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </SlideBase>
