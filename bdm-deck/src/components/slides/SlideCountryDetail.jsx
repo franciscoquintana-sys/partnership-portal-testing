@@ -26,17 +26,18 @@ export default function SlideCountryDetail() {
       .sort((a, b) => a.localeCompare(b)),
     [region],
   )
-  const [country, setCountry] = useState(countriesForRegion[0] || '')
+  // Empty string = "no country selected" → render the world map overview
+  // (mirrors the portal's Country Detail empty state).
+  const [country, setCountry] = useState('')
 
-  // If region changes and the current country is no longer valid, snap to
-  // the first country in the new region.
-  const validCountry = countriesForRegion.includes(country) ? country : countriesForRegion[0] || ''
+  // If region changes and the picked country isn't in it anymore, clear
+  // the selection so we fall back to the overview map.
+  const validCountry = country && countriesForRegion.includes(country) ? country : ''
   if (validCountry !== country) {
-    // Defer the update to avoid setting state during render.
     queueMicrotask(() => setCountry(validCountry))
   }
 
-  const rich = getCountryData(region, validCountry)
+  const rich = validCountry ? getCountryData(region, validCountry) : null
 
   const styles = {
     body: {
@@ -185,6 +186,67 @@ export default function SlideCountryDetail() {
       border: `1px dashed ${theme.borderDefault}`,
       borderRadius: '16px',
     },
+    overview: {
+      gridColumn: '1 / -1',
+      position: 'relative',
+      flex: 1,
+      minHeight: 0,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 'clamp(16px, 1.4vw, 28px)',
+      padding: 'clamp(20px, 1.8vw, 36px)',
+      border: `1px solid ${theme.borderSubtle}`,
+      borderRadius: '16px',
+      overflow: 'hidden',
+      background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.02)',
+    },
+    overviewMap: {
+      position: 'absolute',
+      inset: 0,
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain',
+      opacity: theme.isLight ? 0.18 : 0.22,
+      filter: theme.isLight ? 'invert(1) brightness(0.4)' : 'brightness(0) invert(1)',
+      pointerEvents: 'none',
+    },
+    overviewContent: {
+      position: 'relative',
+      zIndex: 1,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 'clamp(14px, 1.2vw, 22px)',
+      maxWidth: '80%',
+      textAlign: 'center',
+    },
+    overviewLead: {
+      fontSize: 'clamp(20px, 1.6vw, 32px)',
+      fontWeight: 600,
+      color: theme.inkSecondary,
+      lineHeight: 1.4,
+      margin: 0,
+    },
+    countryChipRow: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: 'clamp(8px, 0.8vw, 14px)',
+      justifyContent: 'center',
+    },
+    countryChip: {
+      fontFamily: 'var(--font)',
+      fontSize: 'clamp(13px, 1.1vw, 20px)',
+      fontWeight: 600,
+      padding: 'clamp(8px, 0.7vw, 14px) clamp(14px, 1.1vw, 20px)',
+      borderRadius: '999px',
+      background: theme.isLight ? 'rgba(62,79,224,0.07)' : 'rgba(62,79,224,0.15)',
+      border: `1px solid ${theme.borderAccent}`,
+      color: theme.isLight ? theme.accentDeep : '#BDC3F6',
+      cursor: 'pointer',
+      transition: 'transform 0.15s ease, background 0.15s ease',
+    },
   }
 
   const renderList = (items) => (
@@ -225,6 +287,7 @@ export default function SlideCountryDetail() {
                 value={validCountry}
                 onChange={(e) => setCountry(e.target.value)}
               >
+                <option value="">All countries</option>
                 {countriesForRegion.map((c) => (
                   <option key={c} value={c}>{c}</option>
                 ))}
@@ -266,10 +329,31 @@ export default function SlideCountryDetail() {
               </div>
             </>
           ) : (
-            <div style={styles.stub}>
-              Detailed coverage for <strong>{validCountry || 'this market'}</strong> isn&rsquo;t
-              published in the deck yet — pick another country to see Yuno&rsquo;s rich market
-              brief.
+            <div style={styles.overview}>
+              <img
+                src="/sales-deck/world-map.svg"
+                alt=""
+                style={styles.overviewMap}
+                aria-hidden
+              />
+              <div style={styles.overviewContent}>
+                <p style={styles.overviewLead}>
+                  Coverage across <strong>{REGION_LABEL[region] || region}</strong> — pick a
+                  country to see its market brief.
+                </p>
+                <div style={styles.countryChipRow}>
+                  {countriesForRegion.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      style={styles.countryChip}
+                      onClick={() => setCountry(c)}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>
