@@ -197,8 +197,9 @@ function buildObservations(styles) {
       },
       {
         render: () => (
-          <><span style={styles.observationStrong}>High processing cost</span> — every new market
-            means months of integrations and per-PSP fees with no competitive leverage</>
+          <><span style={styles.observationStrong}>Cross-border inefficiency</span> — many markets
+            and payment flows still centralised through a single provider, driving up cost and
+            dragging down performance.</>
         ),
       },
     ],
