@@ -768,7 +768,7 @@ export default function SlideProductSuite() {
   }
 
   return (
-    <SlideBase section="About Yuno · Platform" slideNumber={5}>
+    <SlideBase section="Yuno Platform" slideNumber={5}>
       <div className="stagger" style={{ ...styles.body, '--stagger-base': '0.1s', '--stagger-step': '0.1s' }}>
         <div style={styles.titleRow}>
           <h2 style={styles.title}>
