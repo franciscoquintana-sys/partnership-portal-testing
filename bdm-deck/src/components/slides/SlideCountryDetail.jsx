@@ -329,6 +329,9 @@ export default function SlideCountryDetail() {
       flexDirection: 'column',
       gap: 'clamp(8px, 0.7vw, 14px)',
       flexShrink: 0,
+      // Stays above the map so pill dropdowns aren't covered by the SVG.
+      position: 'relative',
+      zIndex: 5,
     },
     title: {
       fontFamily: 'var(--font-display)',
@@ -393,6 +396,8 @@ export default function SlideCountryDetail() {
       gap: 'clamp(20px, 1.8vw, 36px)',
       minHeight: 0,
       overflowY: country ? 'auto' : 'hidden',
+      position: 'relative',
+      zIndex: 1,
     },
     statsCard: {
       gridColumn: '1 / -1',
