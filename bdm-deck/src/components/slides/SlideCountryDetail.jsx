@@ -8,6 +8,7 @@ import {
   REGIONS,
   REGION_LABEL,
   REGIONAL_DATA,
+  COUNTRY_LIST_BY_REGION,
   getCountryData,
 } from '../../data/regional-data'
 
@@ -95,8 +96,10 @@ const NAME_ALIASES = {
 }
 const normaliseCountry = (n) => NAME_ALIASES[n] || n
 
-// Only surface regions that actually have rich country data in the deck.
-const DETAIL_REGIONS = REGIONS.filter((r) => (REGIONAL_DATA[r] || []).length > 0)
+// Surface every region the portal recognises (matches Country Detail in
+// the partnerships portal). The deck doesn't have rich market data for
+// every country yet — those just show a graceful stub when picked.
+const DETAIL_REGIONS = REGIONS.filter((r) => (COUNTRY_LIST_BY_REGION[r] || []).length > 0)
 
 // World atlas TopoJSON — fetched once at first render, then cached.
 let _worldFeaturesPromise = null
@@ -180,10 +183,10 @@ function ChoroplethMap({ pickerCountries, onPick, styles, theme }) {
   )
 }
 
-// All rich-data countries flattened across the eligible regions — used when
+// Every portal-recognised country flattened across regions — used when
 // "All regions" is selected so the country pill spans the global set.
 const ALL_COUNTRIES = DETAIL_REGIONS.flatMap((r) =>
-  (REGIONAL_DATA[r] || []).map((c) => ({ country: c.country, region: r })),
+  (COUNTRY_LIST_BY_REGION[r] || []).map((country) => ({ country, region: r })),
 ).sort((a, b) => a.country.localeCompare(b.country))
 
 export default function SlideCountryDetail() {
@@ -201,8 +204,8 @@ export default function SlideCountryDetail() {
 
   const countriesForPicker = useMemo(() => {
     if (region === 'all') return ALL_COUNTRIES
-    return (REGIONAL_DATA[region] || [])
-      .map((c) => ({ country: c.country, region }))
+    return (COUNTRY_LIST_BY_REGION[region] || [])
+      .map((country) => ({ country, region }))
       .sort((a, b) => a.country.localeCompare(b.country))
   }, [region])
 
@@ -651,6 +654,11 @@ export default function SlideCountryDetail() {
                 </div>
               </div>
             </>
+          ) : country ? (
+            <div style={styles.stub}>
+              No detailed market brief is published for <strong>{country}</strong> yet. Pick
+              another country or switch back to <em>All countries</em> to explore the global map.
+            </div>
           ) : (
             <div style={styles.overview}>
               <ChoroplethMap
