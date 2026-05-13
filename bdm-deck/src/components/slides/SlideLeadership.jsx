@@ -121,7 +121,10 @@ export default function SlideLeadership({ data }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(24px, 2.4vw, 44px)',
+      // Spread Founders / Leadership Team / "We've been there" across the
+      // full slide height instead of stacking them tight at the top.
+      justifyContent: 'space-between',
+      gap: 'clamp(32px, 3.2vw, 64px)',
       minHeight: 0,
     },
 
