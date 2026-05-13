@@ -78,7 +78,7 @@ export default function SlideGlobalPresence() {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(28px, 2.7vw, 52px)',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -94,12 +94,12 @@ export default function SlideGlobalPresence() {
       WebkitTextFillColor: 'transparent',
     },
     subtitle: {
-      fontSize: 'clamp(12px, 0.95vw, 16px)',
+      fontSize: 'clamp(20px, 1.6vw, 28px)',
       fontWeight: 400,
       color: theme.inkSecondary,
-      maxWidth: '480px',
+      maxWidth: '780px',
       lineHeight: 1.55,
-      marginTop: '6px',
+      marginTop: '8px',
     },
     statsRow: {
       display: 'flex',
@@ -242,12 +242,6 @@ export default function SlideGlobalPresence() {
               </div>
             ))}
           </div>
-        </div>
-
-        <div style={styles.monoKicker}>
-          <span style={styles.monoKickerCaret}>&gt;</span>
-          global_reach / 15+ offices
-          <BeamRule delay={4.5} base={theme.beamBase} beam={theme.beam} />
         </div>
 
         <div style={styles.mapRow}>
