@@ -828,12 +828,34 @@ export default function SlideYunoSolve({ data }) {
     },
   }
 
-  const caps = [
-    { num: '01', title: data.CAPABILITY_1_TITLE, desc: data.CAPABILITY_1_DESC },
-    { num: '02', title: data.CAPABILITY_2_TITLE, desc: data.CAPABILITY_2_DESC },
-    { num: '03', title: data.CAPABILITY_3_TITLE, desc: data.CAPABILITY_3_DESC },
-    { num: '04', title: data.CAPABILITY_4_TITLE, desc: data.CAPABILITY_4_DESC },
+  // Default capability copy — matches the live BDM deck. [merchant] tokens
+  // get swapped for COMPANY_NAME below; per-merchant data still wins when
+  // supplied via CAPABILITY_* fields.
+  const merchantName = data?.COMPANY_NAME || 'the merchant'
+  const applyMerchant = (s) => (s ? s.replace(/\[merchant\]/g, merchantName) : s)
+  const CAP_DEFAULTS = [
+    {
+      title: 'Smart Routing',
+      desc: "Per-transaction decisioning across every acquirer, lifting [merchant]'s auth rate on [key product flow] without a single engineering sprint.",
+    },
+    {
+      title: 'Failover & Retries',
+      desc: 'Automatic cascade across processors rescues declined transactions in real time, turning involuntary churn into recovered revenue.',
+    },
+    {
+      title: 'Local Payment Methods',
+      desc: "1,000+ payment methods, wallets and local rails — UPI, Pix, iDEAL, Konbini, GrabPay — live through one integration, unlocking [merchant]'s global conversion.",
+    },
+    {
+      title: 'Unified Orchestration',
+      desc: 'One reconciliation, one analytics layer, one contract surface across every PSP and market, replacing a fragmented ops mesh with a single control plane.',
+    },
   ]
+  const caps = CAP_DEFAULTS.map((def, i) => ({
+    num: String(i + 1).padStart(2, '0'),
+    title: data[`CAPABILITY_${i + 1}_TITLE`] || def.title,
+    desc: applyMerchant(data[`CAPABILITY_${i + 1}_DESC`] || def.desc),
+  }))
 
   const isBanking = data?.MODE === 'banking'
   const isPartner = data?.MODE === 'partner'
