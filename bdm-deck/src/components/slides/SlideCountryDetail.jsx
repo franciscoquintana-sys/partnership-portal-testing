@@ -39,18 +39,14 @@ const ECOMMERCE_INDEX = {
   'Mozambique': 20, 'Ethiopia': 20, 'Zimbabwe': 19, 'Mauritius': 45,
 }
 
-// Multi-stop sequential palette aligned to Yuno's brand ramp:
-//   0   → #1E2152 (deep navy)
-//   30  → #3E4FE0 (Yuno blue)
-//   65  → #7C89EF (soft blue)
-//   100 → #E8EAF5 (harmony lilac)
-// Mirrors the portal's choropleth direction (dark → light = stronger
-// e-commerce-development index) without the harsh amber low-end.
+// Classic heatmap palette (red → yellow → green) — same legibility as the
+// portal's Country Detail choropleth. Higher index = greener.
 const RAMP_STOPS = [
-  { t: 0,    rgb: [30, 33, 82] },
-  { t: 0.30, rgb: [62, 79, 224] },
-  { t: 0.65, rgb: [124, 137, 239] },
-  { t: 1,    rgb: [232, 234, 245] },
+  { t: 0,    rgb: [220, 38, 38] },   // #DC2626 red
+  { t: 0.25, rgb: [249, 115, 22] },  // #F97316 orange
+  { t: 0.50, rgb: [250, 204, 21] },  // #FACC15 amber
+  { t: 0.75, rgb: [132, 204, 22] },  // #84CC16 lime
+  { t: 1,    rgb: [22, 163, 74] },   // #16A34A green
 ]
 
 function indexColor(value) {
@@ -247,17 +243,18 @@ export default function SlideCountryDetail() {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(24px, 2.4vw, 44px)',
+      gap: 'clamp(14px, 1.2vw, 24px)',
       minHeight: 0,
     },
     headerRow: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(20px, 1.8vw, 32px)',
+      gap: 'clamp(12px, 1vw, 20px)',
+      flexShrink: 0,
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(40px, 3.8vw, 72px)',
+      fontSize: 'clamp(28px, 2.6vw, 48px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -495,7 +492,7 @@ export default function SlideCountryDetail() {
       width: 'clamp(160px, 16vw, 280px)',
       height: '10px',
       borderRadius: '5px',
-      background: 'linear-gradient(90deg, rgb(30,33,82) 0%, rgb(62,79,224) 35%, rgb(124,137,239) 70%, rgb(232,234,245) 100%)',
+      background: 'linear-gradient(90deg, #DC2626 0%, #F97316 25%, #FACC15 50%, #84CC16 75%, #16A34A 100%)',
     },
   }
 
