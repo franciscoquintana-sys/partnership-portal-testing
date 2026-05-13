@@ -293,6 +293,9 @@ export default function SlideLeadership({ data }) {
       border: `1px solid ${theme.isLight ? theme.borderDefault : 'rgba(62,79,224,0.12)'}`,
       borderRadius: '14px',
       marginTop: 'auto',
+      // Pull the pedigree strip up off the slide floor so it doesn't sit
+      // flush against the bottom edge.
+      marginBottom: 'clamp(40px, 4vw, 80px)',
       boxShadow: theme.cardShadow,
     },
     pedigreeStripHeader: {
