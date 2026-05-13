@@ -12,20 +12,17 @@ import {
   getCountryData,
 } from '../../data/regional-data'
 
-// Only surface regions and countries we actually have rich data for, so
-// the picker never shows an entry that lands on a stub.
-const DETAIL_REGIONS = REGIONS.filter((r) => (REGIONAL_DATA[r] || []).length > 0)
+// Pull every region + country the portal's Country Detail recognises so
+// the filter spans the full set, not just the rich-data subset.
+const DETAIL_REGIONS = REGIONS.filter((r) => (COUNTRY_LIST_BY_REGION[r] || []).length > 0)
 const COUNTRIES_BY_REGION = Object.fromEntries(
   DETAIL_REGIONS.map((r) => [
     r,
-    (REGIONAL_DATA[r] || [])
-      .map((c) => c.country)
-      .slice()
-      .sort((a, b) => a.localeCompare(b)),
+    (COUNTRY_LIST_BY_REGION[r] || []).slice().sort((a, b) => a.localeCompare(b)),
   ]),
 )
 
-// Every rich-data country flattened across regions — used when
+// Every portal-recognised country flattened across regions — used when
 // "All regions" is selected so the country pill spans the global set.
 const ALL_COUNTRIES = DETAIL_REGIONS.flatMap((r) =>
   COUNTRIES_BY_REGION[r].map((country) => ({ country, region: r })),
@@ -389,13 +386,11 @@ export default function SlideCountryDetail() {
     },
     detail: {
       flex: 1,
-      display: country ? 'grid' : 'flex',
-      gridTemplateColumns: '1fr 1fr',
-      gridAutoRows: 'min-content',
+      display: 'flex',
       flexDirection: 'column',
       gap: 'clamp(20px, 1.8vw, 36px)',
       minHeight: 0,
-      overflowY: country ? 'auto' : 'hidden',
+      overflowY: 'hidden',
       position: 'relative',
       zIndex: 1,
     },
@@ -600,100 +595,20 @@ export default function SlideCountryDetail() {
         </div>
 
         <div style={styles.detail}>
-          {rich ? (
-            <>
-              {(() => {
-                const idx = ECOMMERCE_INDEX[country]
-                return (
-                  <div style={{ ...styles.card, ...styles.statsCard }}>
-                    <span style={styles.cardHeader}>Snapshot</span>
-                    <div style={styles.statsGrid}>
-                      <div style={styles.stat}>
-                        <span style={styles.statLabel}>Region</span>
-                        <span style={styles.statValue}>{REGION_LABEL[resolvedRegion] || resolvedRegion}</span>
-                      </div>
-                      {idx != null && (
-                        <div style={styles.stat}>
-                          <span style={styles.statLabel}>E-commerce index</span>
-                          <span style={styles.statValue}>{idx}<span style={styles.statUnit}> / 100</span></span>
-                        </div>
-                      )}
-                      {rich.verticals?.length > 0 && (
-                        <div style={styles.stat}>
-                          <span style={styles.statLabel}>Top verticals</span>
-                          <span style={styles.statValue}>{rich.verticals.slice(0, 2).join(' · ')}</span>
-                        </div>
-                      )}
-                      {rich.processors?.length > 0 && (
-                        <div style={styles.stat}>
-                          <span style={styles.statLabel}>Acquirers tracked</span>
-                          <span style={styles.statValue}>{rich.processors.length}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                )
-              })()}
-              <div style={styles.card}>
-                <span style={styles.cardHeader}>Payment Methods</span>
-                <span style={styles.cardTitle}>Top consumer rails</span>
-                {renderList(rich.paymentMethods || [])}
-              </div>
-              <div style={styles.card}>
-                <span style={styles.cardHeader}>Digital Trends</span>
-                <span style={styles.cardTitle}>Market signals</span>
-                {renderList(rich.digitalTrends || [])}
-              </div>
-              <div style={styles.card}>
-                <span style={styles.cardHeader}>Processors</span>
-                <span style={styles.cardTitle}>Acquiring coverage</span>
-                <div style={styles.chipRow}>
-                  {(rich.processors || []).slice(0, 12).map((p) => (
-                    <span key={p} style={styles.chip}>{p}</span>
-                  ))}
-                </div>
-              </div>
-              <div style={styles.card}>
-                <span style={styles.cardHeader}>Methods Covered</span>
-                <span style={styles.cardTitle}>Live on Yuno</span>
-                <div style={styles.chipRow}>
-                  {(rich.paymentMethodsCovered || []).slice(0, 12).map((p) => (
-                    <span key={p} style={styles.chip}>{p}</span>
-                  ))}
-                </div>
-              </div>
-              {rich.verticals?.length > 0 && (
-                <div style={styles.card}>
-                  <span style={styles.cardHeader}>Verticals</span>
-                  <span style={styles.cardTitle}>Where commerce concentrates</span>
-                  <div style={styles.chipRow}>
-                    {rich.verticals.slice(0, 12).map((v) => (
-                      <span key={v} style={styles.chip}>{v}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
-          ) : country ? (
-            <div style={styles.stub}>
-              No detailed market brief is published for <strong>{country}</strong> yet.
+          <div style={styles.overview}>
+            <ChoroplethMap
+              pickerCountries={countriesForPicker}
+              region={region}
+              onPick={setCountry}
+              styles={styles}
+              theme={theme}
+            />
+            <div style={styles.legend}>
+              <span>Lower e-commerce index</span>
+              <span style={styles.legendBar} aria-hidden />
+              <span>Higher</span>
             </div>
-          ) : (
-            <div style={styles.overview}>
-              <ChoroplethMap
-                pickerCountries={countriesForPicker}
-                region={region}
-                onPick={setCountry}
-                styles={styles}
-                theme={theme}
-              />
-              <div style={styles.legend}>
-                <span>Lower e-commerce index</span>
-                <span style={styles.legendBar} aria-hidden />
-                <span>Higher</span>
-              </div>
-            </div>
-          )}
+          </div>
         </div>
       </div>
     </SlideBase>
