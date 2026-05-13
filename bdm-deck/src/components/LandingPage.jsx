@@ -623,7 +623,7 @@ export default function LandingPage({ onGenerate }) {
               <input
                 style={styles.input}
                 type="text"
-                placeholder="Search merchant, bank, or partner..."
+                placeholder="Type URL..."
                 value={merchant}
                 onChange={(e) => {
                   setMerchant(e.target.value)
