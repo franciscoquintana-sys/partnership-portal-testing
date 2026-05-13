@@ -151,10 +151,18 @@ def _site_info(url: str) -> dict:
                 m = _site_re.search(r"<title[^>]*>([^<]+)</title>", html, _site_re.I)
                 if m:
                     raw = m.group(1).strip()
-                    for sep in ("|", " - ", " — ", " · ", ":"):
-                        if sep in raw:
-                            raw = raw.split(sep)[0].strip()
-                            break
+                    # Trim everything after the EARLIEST separator (not just
+                    # the first one we list) so "Lotkeys - Game Top-Ups |
+                    # Gift Cards" collapses to "Lotkeys", not the whole
+                    # left-of-pipe chunk. Spaces on both sides keep us from
+                    # chopping hyphenated words like "Top-Ups".
+                    earliest = -1
+                    for sep in (" | ", " - ", " — ", " – ", " · ", ": "):
+                        i = raw.find(sep)
+                        if i >= 0 and (earliest == -1 or i < earliest):
+                            earliest = i
+                    if earliest >= 0:
+                        raw = raw[:earliest].strip()
                     name = raw
         except Exception:
             pass
