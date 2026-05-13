@@ -73,6 +73,21 @@ import requests as _site_requests
 from urllib.parse import urljoin as _site_urljoin, urlparse as _site_urlparse
 
 
+_BOT_BLOCK_PATTERNS = (
+    "just a moment", "attention required", "access denied",
+    "please verify", "checking your browser", "cloudflare",
+    "one moment, please", "are you human", "captcha",
+    "verify you are a human",
+)
+
+
+def _looks_like_bot_block(s: str) -> bool:
+    if not s:
+        return False
+    low = s.lower()
+    return any(p in low for p in _BOT_BLOCK_PATTERNS)
+
+
 def _brand_name_lookup(label: str):
     """Look up a clean brand name for the given label via DuckDuckGo's
     Instant Answer API (Wikipedia-backed). Free, no auth. Returns the
@@ -143,6 +158,11 @@ def _site_info(url: str) -> dict:
                     name = raw
         except Exception:
             pass
+
+    # Reject Cloudflare / bot-block holding pages — their <title> is
+    # "Just a moment..." which would otherwise end up in the greeting.
+    if _looks_like_bot_block(name):
+        name = None
 
     if not name:
         name = label.capitalize()
