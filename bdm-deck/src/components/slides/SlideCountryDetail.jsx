@@ -120,7 +120,7 @@ function loadWorldFeatures() {
   return _worldFeaturesPromise
 }
 
-function ChoroplethMap({ pickerCountries, onPick, styles, theme }) {
+function ChoroplethMap({ pickerCountries, region, onPick, styles, theme }) {
   const wrapRef = useRef(null)
   const [features, setFeatures] = useState([])
   const [size, setSize] = useState({ w: 800, h: 420 })
@@ -150,11 +150,28 @@ function ChoroplethMap({ pickerCountries, onPick, styles, theme }) {
   )
 
   const { w, h } = size
-  const projection = useMemo(
-    () => geoNaturalEarth1().fitSize([w, h], { type: 'Sphere' }),
-    [w, h],
-  )
-  const path = useMemo(() => geoPath(projection), [projection])
+  // Zoom: when a specific region is selected, fit the projection to the
+  // bounding box of just that region's countries; otherwise show the
+  // whole world (Sphere).
+  const projection = useMemo(() => {
+    if (!w || !h) return null
+    const proj = geoNaturalEarth1()
+    if (region !== 'all' && features.length && pickerSet.size) {
+      const regionFeatures = features.filter((f) =>
+        pickerSet.has(normaliseCountry(f.properties?.name || '')),
+      )
+      if (regionFeatures.length) {
+        proj.fitExtent(
+          [[20, 20], [Math.max(20, w - 20), Math.max(20, h - 20)]],
+          { type: 'FeatureCollection', features: regionFeatures },
+        )
+        return proj
+      }
+    }
+    proj.fitSize([w, h], { type: 'Sphere' })
+    return proj
+  }, [w, h, region, features, pickerSet])
+  const path = useMemo(() => (projection ? geoPath(projection) : () => ''), [projection])
 
   return (
     <div ref={wrapRef} style={styles.overviewMapWrap}>
@@ -724,6 +741,7 @@ export default function SlideCountryDetail() {
             <div style={styles.overview}>
               <ChoroplethMap
                 pickerCountries={countriesForPicker}
+                region={region}
                 onPick={setCountry}
                 styles={styles}
                 theme={theme}
