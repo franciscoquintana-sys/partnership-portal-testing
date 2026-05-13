@@ -183,7 +183,11 @@ function ArchitectureStack({ merchantName, merchantLogo, isTileLogo, psps, style
         <div style={styles.archYunoTitleRow}>
           {/* Yuno block is solid blue in both themes, so the white SVG
               wordmark works for dark + light. No filter swap needed. */}
-          <img src="/sales-deck/assets/yuno-wordmark-white.svg" alt="Yuno" style={styles.archYunoWordmark} />
+          <img
+            src="https://lirp.cdn-website.com/1e9ba552/dms3rep/multi/opt/element+4+%2833%29-640w.png"
+            alt="Yuno"
+            style={{ ...styles.archYunoWordmark, filter: 'none', height: '40px' }}
+          />
           <span style={styles.archYunoTitle}>orchestration</span>
         </div>
         <div style={styles.archYunoFeatures}>
