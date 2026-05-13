@@ -494,9 +494,9 @@ export default function SlideCountryDetail() {
     overview: {
       gridColumn: '1 / -1',
       position: 'relative',
-      // Explicit min height so the grid row (which collapses to min-content
-      // when no country is selected) still gives the map real space to draw.
-      minHeight: 'clamp(360px, 60vh, 720px)',
+      // Let the map take the full remaining slide height — the only thing
+      // above it on this slide is the title + filter row.
+      minHeight: 'clamp(520px, 85vh, 980px)',
       display: 'flex',
       flexDirection: 'column',
       gap: 'clamp(6px, 0.5vw, 10px)',
