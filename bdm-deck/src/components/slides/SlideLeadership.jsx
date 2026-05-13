@@ -176,8 +176,8 @@ export default function SlideLeadership({ data }) {
     foundersRow: {
       display: 'grid',
       gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-      gap: 'clamp(28px, 2.6vw, 56px)',
-      maxWidth: '60%',
+      gap: 'clamp(10px, 0.9vw, 20px)',
+      maxWidth: '42%',
     },
 
     // ---------- Leadership grid ----------
