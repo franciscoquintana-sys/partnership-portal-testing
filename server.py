@@ -79,58 +79,48 @@ def _site_info(url: str) -> dict:
         return {"name": None, "logo": None}
     if not url.startswith(("http://", "https://")):
         url = "https://" + url
+
+    # Resolve the domain so we can build a Google favicon URL (which always
+    # returns a PNG at the requested size — much more reliable than scraping
+    # apple-touch-icon or og:image off the merchant's HTML).
+    try:
+        host = _site_urlparse(url).netloc.replace("www.", "")
+    except Exception:
+        host = ""
+    if not host:
+        return {"name": None, "logo": None}
+
+    logo = f"https://www.google.com/s2/favicons?domain={host}&sz=256"
+
+    # Name still comes from the page when we can reach it (og:site_name →
+    # application-name → <title>), falling back to the domain itself.
+    name = None
     try:
         resp = _site_requests.get(
             url, timeout=4, allow_redirects=True,
             headers={"User-Agent": "Mozilla/5.0 (compatible; YunoPortal/1.0)"},
         )
         html = resp.text
-        base = resp.url
+        for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
+            t = tag.group(0)
+            prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
+            cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
+            if prop and cont and prop.group(1).lower() in ("og:site_name", "application-name"):
+                name = cont.group(1).strip()
+                break
+        if not name:
+            m = _site_re.search(r"<title[^>]*>([^<]+)</title>", html, _site_re.I)
+            if m:
+                raw = m.group(1).strip()
+                for sep in ("|", " - ", " — ", " · ", ":"):
+                    if sep in raw:
+                        raw = raw.split(sep)[0].strip()
+                        break
+                name = raw
     except Exception:
-        return {"name": None, "logo": None}
-
-    name = None
-    for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
-        t = tag.group(0)
-        prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
-        cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
-        if prop and cont and prop.group(1).lower() in ("og:site_name", "application-name"):
-            name = cont.group(1).strip()
-            break
+        pass
     if not name:
-        m = _site_re.search(r"<title[^>]*>([^<]+)</title>", html, _site_re.I)
-        if m:
-            raw = m.group(1).strip()
-            for sep in ("|", " - ", " — ", " · ", ":"):
-                if sep in raw:
-                    raw = raw.split(sep)[0].strip()
-                    break
-            name = raw
-    if not name:
-        host = _site_urlparse(base).netloc.replace("www.", "")
         name = host.split(".")[0].capitalize()
-
-    candidates = []
-    for tag in _site_re.finditer(r"<link[^>]+>", html, _site_re.I):
-        t = tag.group(0)
-        rel = _site_re.search(r'rel=["\']([^"\']+)["\']', t, _site_re.I)
-        href = _site_re.search(r'href=["\']([^"\']+)["\']', t, _site_re.I)
-        if rel and href:
-            r_val = rel.group(1).lower()
-            if "apple-touch-icon" in r_val:
-                candidates.append((0, href.group(1)))
-            elif "icon" in r_val:
-                candidates.append((2, href.group(1)))
-    for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
-        t = tag.group(0)
-        prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
-        cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
-        if prop and cont and prop.group(1).lower() == "og:image":
-            candidates.append((1, cont.group(1)))
-    logo = None
-    if candidates:
-        candidates.sort(key=lambda x: x[0])
-        logo = _site_urljoin(base, candidates[0][1])
 
     return {"name": name, "logo": logo}
 
