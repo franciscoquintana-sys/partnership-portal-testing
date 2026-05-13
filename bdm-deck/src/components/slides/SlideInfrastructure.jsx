@@ -433,7 +433,7 @@ export default function SlideInfrastructure({ data }) {
     contentRow: {
       flex: 1,
       display: 'grid',
-      gridTemplateColumns: '1.9fr 1fr',
+      gridTemplateColumns: '2.6fr 1fr',
       gap: 'clamp(20px, 1.8vw, 36px)',
       minHeight: 0,
     },
@@ -442,7 +442,7 @@ export default function SlideInfrastructure({ data }) {
       background: theme.cardGradientAccent,
       border: `1px solid ${theme.borderSubtle}`,
       borderRadius: '16px',
-      padding: 'clamp(6px, 0.55vw, 12px) clamp(20px, 1.8vw, 36px)',
+      padding: 'clamp(20px, 1.8vw, 40px) clamp(36px, 3vw, 60px)',
       position: 'relative',
       overflow: 'hidden',
       display: 'flex',
@@ -472,7 +472,7 @@ export default function SlideInfrastructure({ data }) {
       // Moderate horizontal runway: enough for traces to draw a visible
       // horizontal segment after the tight corner curves, without stealing
       // so much space that the outer provider pills overflow the card.
-      gap: 'clamp(28px, 2.4vw, 52px)',
+      gap: 'clamp(48px, 4vw, 96px)',
       width: '100%',
       position: 'relative',
       zIndex: 2,
@@ -489,7 +489,7 @@ export default function SlideInfrastructure({ data }) {
       // of the group above/below — justify-content: space-between alone
       // would let them collapse when the card height runs short.
       justifyContent: 'space-between',
-      gap: 'clamp(44px, 3.6vw, 76px)',
+      gap: 'clamp(64px, 5vw, 120px)',
     },
 
     // ---------- Category group (one of six) ----------
