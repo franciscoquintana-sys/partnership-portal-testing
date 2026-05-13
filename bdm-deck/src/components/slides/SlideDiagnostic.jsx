@@ -240,6 +240,43 @@ function TopologyLines({ count = 4, styles, theme }) {
   )
 }
 
+// Default pain copy — used when the merchant data payload has no PAIN_*
+// fields (the URL-driven flow). [merchant] placeholders get replaced with
+// the actual company name; [MAU count] / [# countries] stay bracketed on
+// purpose to flag the per-merchant research gap.
+const DEFAULT_PAINS = [
+  {
+    title: 'Single-processor dependency',
+    tag: 'PRIMARY ACQUIRER',
+    desc: "Heavy reliance on a single processor for [merchant]'s key payment flows — any outage or policy change instantly suspends recurring revenue.",
+  },
+  {
+    title: 'Cross-border inefficiency',
+    tag: 'US-FIRST ROUTING',
+    desc: '[MAU count]+ active users across [# countries]+ countries, yet checkout still routes through centralized, US-first acquiring — costly and failure-prone cross-border.',
+  },
+  {
+    title: 'Limited APM coverage',
+    tag: 'MISSING LOCAL METHODS',
+    desc: "Thin local payment coverage outside cards — missing UPI in India, Pix in Brazil, wallets across APAC — directly capping [merchant]'s global conversion.",
+  },
+  {
+    title: 'No smart routing',
+    tag: 'NO RETRY LOGIC',
+    desc: 'No smart routing or cascade retries across acquirers, so declined transactions fall straight to lost revenue instead of being recovered.',
+  },
+  {
+    title: 'High processing cost',
+    tag: 'PER-PSP FEES',
+    desc: "Interchange, cross-border and FX fees are negotiated per processor with no competitive leverage, leaving material margin on the table at [merchant]'s volume.",
+  },
+]
+
+function applyMerchant(s, merchant) {
+  if (!s) return s
+  return s.replace(/\[merchant\]/g, merchant)
+}
+
 export default function SlideDiagnostic({ data }) {
   const theme = useTheme()
   const isBanking = data?.MODE === 'banking'
@@ -247,13 +284,16 @@ export default function SlideDiagnostic({ data }) {
   const CAPABILITY_DEFS = isBanking ? CAPABILITY_DEFS_BANKING
     : isPartner ? CAPABILITY_DEFS_PARTNER
     : CAPABILITY_DEFS_MERCHANT
-  const pains = [
-    { num: '01', title: data.PAIN_1_TITLE, tag: data.PAIN_1_TAG, desc: data.PAIN_1_DESC },
-    { num: '02', title: data.PAIN_2_TITLE, tag: data.PAIN_2_TAG, desc: data.PAIN_2_DESC },
-    { num: '03', title: data.PAIN_3_TITLE, tag: data.PAIN_3_TAG, desc: data.PAIN_3_DESC },
-    { num: '04', title: data.PAIN_4_TITLE, tag: data.PAIN_4_TAG, desc: data.PAIN_4_DESC },
-    { num: '05', title: data.PAIN_5_TITLE, tag: data.PAIN_5_TAG, desc: data.PAIN_5_DESC },
-  ]
+  const merchantName = data?.COMPANY_NAME || 'the merchant'
+  const pains = [0, 1, 2, 3, 4].map((i) => {
+    const def = DEFAULT_PAINS[i]
+    return {
+      num: String(i + 1).padStart(2, '0'),
+      title: data[`PAIN_${i + 1}_TITLE`] || def.title,
+      tag: data[`PAIN_${i + 1}_TAG`] || def.tag,
+      desc: applyMerchant(data[`PAIN_${i + 1}_DESC`] || def.desc, merchantName),
+    }
+  })
 
   // Render only the PSPs that came from research. If a merchant has 2,
   // 3, or 4 entries in Supabase, render that many chips. No filler
@@ -371,8 +411,8 @@ export default function SlideDiagnostic({ data }) {
       display: 'grid',
       gridTemplateColumns: 'auto auto 1fr',
       alignItems: 'center',
-      gap: 'clamp(12px, 1vw, 18px)',
-      padding: 'clamp(10px, 0.85vw, 15px) clamp(14px, 1.2vw, 22px)',
+      gap: 'clamp(18px, 1.4vw, 28px)',
+      padding: 'clamp(18px, 1.4vw, 28px) clamp(22px, 1.8vw, 36px)',
       background: theme.isLight
         ? theme.bgElevated
         : 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.015) 100%)',
@@ -412,11 +452,11 @@ export default function SlideDiagnostic({ data }) {
     painBody: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(3px, 0.3vw, 6px)',
+      gap: 'clamp(6px, 0.6vw, 12px)',
       minWidth: 0,
     },
     painTitle: {
-      fontSize: 'clamp(14px, 1.1vw, 20px)',
+      fontSize: 'clamp(18px, 1.5vw, 28px)',
       fontWeight: 700,
       color: theme.ink,
       letterSpacing: '-0.2px',
@@ -424,10 +464,10 @@ export default function SlideDiagnostic({ data }) {
       minWidth: 0,
     },
     painDesc: {
-      fontSize: 'clamp(10.5px, 0.82vw, 13.5px)',
+      fontSize: 'clamp(14px, 1.1vw, 20px)',
       fontWeight: 400,
       color: theme.inkMuted,
-      lineHeight: 1.4,
+      lineHeight: 1.45,
       margin: 0,
       letterSpacing: '0.01em',
     },
