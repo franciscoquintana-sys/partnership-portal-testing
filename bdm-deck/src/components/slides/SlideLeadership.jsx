@@ -294,10 +294,12 @@ export default function SlideLeadership({ data }) {
         : 'linear-gradient(180deg, rgba(62,79,224,0.05) 0%, rgba(62,79,224,0.02) 100%)',
       border: `1px solid ${theme.isLight ? theme.borderDefault : 'rgba(62,79,224,0.12)'}`,
       borderRadius: '14px',
+      // Anchor to the bottom of the flex column, then physically translate
+      // the strip up. translateY beats marginBottom here because the parent
+      // is flex with space-between — marginBottom got absorbed by the
+      // distribution algorithm.
       marginTop: 'auto',
-      // Pull the pedigree strip up off the slide floor so it doesn't sit
-      // flush against the bottom edge.
-      marginBottom: 'clamp(80px, 7vw, 150px)',
+      transform: 'translateY(-160px)',
       boxShadow: theme.cardShadow,
     },
     pedigreeStripHeader: {
