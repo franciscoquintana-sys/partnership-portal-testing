@@ -313,9 +313,9 @@ export default function SlideYunoSolve({ data }) {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      // Matches slides 6/7 — deck-wide title reference size. Title wraps
-      // to two lines at this size, which is intentional.
-      fontSize: 'clamp(28px, 2.7vw, 52px)',
+      // Matched to the Infrastructure title so slide 2 and slide 3 read at
+      // the same scale.
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -851,7 +851,8 @@ export default function SlideYunoSolve({ data }) {
           </>
         ) : (
           <>
-            From a processor mesh to <span style={styles.accent}>one scalable Global Financial Infrastructure</span>
+            Yuno brought it all together.{' '}
+            <span style={styles.accent}>One platform, global financial infrastructure at scale</span>
           </>
         )}
       </h2>
