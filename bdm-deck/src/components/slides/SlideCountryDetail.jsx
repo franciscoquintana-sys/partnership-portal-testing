@@ -428,8 +428,8 @@ export default function SlideCountryDetail() {
                         role="option"
                         aria-selected={active}
                         style={{ ...styles.menuItem, ...(active ? styles.menuItemActive : {}) }}
-                        onMouseDown={(e) => {
-                          e.preventDefault()
+                        onClick={(e) => {
+                          e.stopPropagation()
                           setRegion(opt.key)
                           setShowRegionMenu(false)
                         }}
@@ -474,8 +474,8 @@ export default function SlideCountryDetail() {
                         role="option"
                         aria-selected={active}
                         style={{ ...styles.menuItem, ...(active ? styles.menuItemActive : {}) }}
-                        onMouseDown={(e) => {
-                          e.preventDefault()
+                        onClick={(e) => {
+                          e.stopPropagation()
                           setCountry(opt.country)
                           setShowCountryMenu(false)
                         }}
