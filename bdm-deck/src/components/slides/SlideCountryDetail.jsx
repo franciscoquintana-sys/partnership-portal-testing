@@ -197,8 +197,19 @@ const ALL_COUNTRIES = DETAIL_REGIONS.flatMap((r) =>
   COUNTRIES_BY_REGION[r].map((country) => ({ country, region: r })),
 ).sort((a, b) => a.country.localeCompare(b.country))
 
-function PillDropdown({ icon: Icon, label, items, value, onChange, theme }) {
+function PillDropdown({ icon: Icon, label, items, value, onChange }) {
   const [open, setOpen] = useState(false)
+  const wrapRef = useRef(null)
+
+  useEffect(() => {
+    if (!open) return
+    const close = (e) => {
+      if (!wrapRef.current?.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [open])
+
   const pillStyle = {
     position: 'relative',
     display: 'inline-flex',
@@ -218,7 +229,7 @@ function PillDropdown({ icon: Icon, label, items, value, onChange, theme }) {
     backdropFilter: 'blur(12px)',
   }
   return (
-    <div style={{ position: 'relative' }}>
+    <div ref={wrapRef} style={{ position: 'relative' }}>
       <button
         type="button"
         style={pillStyle}
@@ -235,76 +246,69 @@ function PillDropdown({ icon: Icon, label, items, value, onChange, theme }) {
       </button>
 
       {open && (
-        <>
-          {/* Backdrop catches outside clicks — guaranteed to close. */}
-          <div
-            onClick={() => setOpen(false)}
-            style={{ position: 'fixed', inset: 0, zIndex: 30 }}
-          />
-          <div
-            role="listbox"
-            style={{
-              position: 'absolute',
-              top: 'calc(100% + 10px)',
-              left: 0,
-              minWidth: '260px',
-              maxHeight: 'min(60vh, 360px)',
-              overflowY: 'auto',
-              background: 'rgba(0,0,0,0.92)',
-              backdropFilter: 'blur(28px)',
-              border: '1px solid rgba(255,255,255,0.08)',
-              borderRadius: '14px',
-              padding: '8px',
-              boxShadow: '0 28px 72px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.02) inset',
-              zIndex: 40,
-            }}
-          >
-            {items.map((opt) => {
-              const active = value === opt.value
-              return (
-                <div
-                  key={opt.value || 'all'}
-                  role="option"
-                  aria-selected={active}
-                  onClick={() => {
-                    onChange(opt.value)
-                    setOpen(false)
-                  }}
-                  style={{
-                    padding: '10px 14px',
-                    fontSize: '14px',
-                    fontWeight: 500,
-                    color: active ? '#fff' : 'rgba(255,255,255,0.88)',
-                    background: active ? 'rgba(62,79,224,0.16)' : 'transparent',
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    gap: '12px',
-                    transition: 'background 0.12s ease',
-                  }}
-                >
-                  <span>{opt.label}</span>
-                  {opt.tag && (
-                    <span
-                      style={{
-                        fontFamily: 'var(--font-mono)',
-                        fontSize: '11px',
-                        fontWeight: 700,
-                        letterSpacing: '1.2px',
-                        textTransform: 'uppercase',
-                        color: 'rgba(255,255,255,0.4)',
-                      }}
-                    >
-                      {opt.tag}
-                    </span>
-                  )}
-                </div>
-              )
-            })}
-          </div>
-        </>
+        <div
+          role="listbox"
+          style={{
+            position: 'absolute',
+            top: 'calc(100% + 10px)',
+            left: 0,
+            minWidth: '260px',
+            maxHeight: 'min(60vh, 360px)',
+            overflowY: 'auto',
+            background: 'rgba(0,0,0,0.92)',
+            backdropFilter: 'blur(28px)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            borderRadius: '14px',
+            padding: '8px',
+            boxShadow: '0 28px 72px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.02) inset',
+            zIndex: 40,
+          }}
+        >
+          {items.map((opt) => {
+            const active = value === opt.value
+            return (
+              <div
+                key={opt.value || 'all'}
+                role="option"
+                aria-selected={active}
+                onClick={() => {
+                  onChange(opt.value)
+                  setOpen(false)
+                }}
+                style={{
+                  padding: '10px 14px',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                  color: active ? '#fff' : 'rgba(255,255,255,0.88)',
+                  background: active ? 'rgba(62,79,224,0.16)' : 'transparent',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  gap: '12px',
+                  transition: 'background 0.12s ease',
+                }}
+              >
+                <span>{opt.label}</span>
+                {opt.tag && (
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      letterSpacing: '1.2px',
+                      textTransform: 'uppercase',
+                      color: 'rgba(255,255,255,0.4)',
+                    }}
+                  >
+                    {opt.tag}
+                  </span>
+                )}
+              </div>
+            )
+          })}
+        </div>
       )}
     </div>
   )
