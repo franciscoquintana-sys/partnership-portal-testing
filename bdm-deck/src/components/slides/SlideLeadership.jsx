@@ -86,13 +86,13 @@ export default function SlideLeadership({ data }) {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(28px, 2.7vw, 52px)',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
       color: theme.ink,
       margin: 0,
-      maxWidth: '64%',
+      maxWidth: '72%',
     },
     titleAccent: {
       backgroundImage: theme.isLight
@@ -344,13 +344,6 @@ export default function SlideLeadership({ data }) {
             </>
           )}
         </h2>
-        <p style={styles.tagline}>
-          <span style={styles.taglineEmph}>15 operators</span> who scaled
-          payments at the world&rsquo;s most trusted brands,{' '}
-          {isBanking
-            ? 'now building one platform your bank can white-label'
-            : 'now building one platform for merchants'}
-        </p>
       </div>
 
       <div style={styles.body}>
