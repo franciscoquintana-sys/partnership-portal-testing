@@ -183,11 +183,7 @@ function ArchitectureStack({ merchantName, merchantLogo, isTileLogo, psps, style
         <div style={styles.archYunoTitleRow}>
           {/* Yuno block is solid blue in both themes, so the white SVG
               wordmark works for dark + light. No filter swap needed. */}
-          <img
-            src="https://lirp.cdn-website.com/1e9ba552/dms3rep/multi/opt/element+4+%2833%29-640w.png"
-            alt="Yuno"
-            style={{ ...styles.archYunoWordmark, filter: 'none', height: '40px' }}
-          />
+          <img src="/sales-deck/assets/yuno-wordmark-white.svg" alt="Yuno" style={styles.archYunoWordmark} />
           <span style={styles.archYunoTitle}>orchestration</span>
         </div>
         <div style={styles.archYunoFeatures}>
@@ -500,15 +496,17 @@ export default function SlideYunoSolve({ data }) {
       letterSpacing: '-0.2px',
     },
     archYunoBlock: {
-      padding: '14px 22px',
-      // Neutral surface so the coloured Yuno element renders in its native
-      // palette (matches slide 2's centre node treatment) — no blue tile.
-      background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.03)',
-      border: `1px solid ${theme.borderAccent}`,
+      padding: '10px 20px',
+      // Light: solid accent ramp tile so Yuno reads as the brand center.
+      // Dark: the original translucent gradient + ambient glow.
+      background: theme.isLight
+        ? `linear-gradient(135deg, ${theme.accentDeep} 0%, ${theme.accent} 100%)`
+        : 'linear-gradient(135deg, rgba(62,79,224,0.28) 0%, rgba(89,103,228,0.18) 100%)',
+      border: theme.isLight ? `1px solid ${theme.accent}` : '1px solid rgba(62,79,224,0.5)',
       borderRadius: '12px',
       boxShadow: theme.isLight
-        ? '0 8px 24px rgba(62,79,224,0.12)'
-        : '0 0 40px rgba(62,79,224,0.18), inset 0 1px 0 rgba(255,255,255,0.05)',
+        ? '0 8px 24px rgba(62,79,224,0.20)'
+        : '0 0 40px rgba(62,79,224,0.28), inset 0 1px 0 rgba(255,255,255,0.1)',
       display: 'flex',
       flexDirection: 'column',
       gap: '8px',
@@ -533,9 +531,9 @@ export default function SlideYunoSolve({ data }) {
       fontFamily: 'var(--font-display)',
       fontSize: '20px',
       fontWeight: 500,
-      // Title sits on the neutral surface alongside the coloured Yuno mark,
-      // so it adopts the standard ink token.
-      color: theme.inkStrong,
+      // Yuno block has a solid blue background in both themes, so the
+      // title text is always white.
+      color: '#fff',
       letterSpacing: '-0.3px',
       textTransform: 'lowercase',
     },
@@ -926,7 +924,12 @@ export default function SlideYunoSolve({ data }) {
                 <div style={styles.archLabel}>Yuno Platform</div>
                 <div style={styles.archTitle}>Capabilities</div>
               </div>
-              <img src="/sales-deck/assets/yuno-mark-white.svg" alt="" style={styles.capabilitiesMark} aria-hidden />
+              <img
+                src="https://lirp.cdn-website.com/1e9ba552/dms3rep/multi/opt/element+4+%2833%29-640w.png"
+                alt=""
+                style={{ ...styles.capabilitiesMark, opacity: 1, filter: 'none', width: '52px', height: '52px' }}
+                aria-hidden
+              />
             </div>
             <div className="stagger" style={{ ...styles.capList, '--stagger-base': '0.3s', '--stagger-step': '0.09s' }}>
               {caps.map((c) => (
