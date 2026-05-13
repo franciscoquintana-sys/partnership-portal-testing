@@ -40,13 +40,13 @@ const ECOMMERCE_INDEX = {
   'Mozambique': 20, 'Ethiopia': 20, 'Zimbabwe': 19, 'Mauritius': 45,
 }
 
-// Softer Yuno sequential palette — pale neutral grey at the low end, soft
-// brand blue at the high end. Lighter overall so the map reads gentler.
+// Matches the portal's Country Detail choropleth scale exactly:
+//   #eef2ff (light indigo) → #818cf8 (mid indigo) → #1e1b4b (deep navy)
+// Higher e-commerce-development index = deeper indigo.
 const RAMP_STOPS = [
-  { t: 0,    rgb: [209, 213, 219] }, // #D1D5DB  pale neutral grey
-  { t: 0.35, rgb: [189, 195, 246] }, // #BDC3F6  pale blue
-  { t: 0.70, rgb: [124, 137, 239] }, // #7C89EF  soft blue
-  { t: 1,    rgb: [89, 103, 228]  }, // #5967E4  mid blue
+  { t: 0,    rgb: [238, 242, 255] }, // #EEF2FF
+  { t: 0.5,  rgb: [129, 140, 248] }, // #818CF8
+  { t: 1,    rgb: [30,  27,  75 ] }, // #1E1B4B
 ]
 
 function indexColor(value) {
@@ -184,20 +184,27 @@ function ChoroplethMap({ pickerCountries, region, onPick, styles, theme }) {
           const name = normaliseCountry(rawName)
           const idx = ECOMMERCE_INDEX[name]
           const inPicker = pickerSet.has(name)
-          const fill = idx != null ? indexColor(idx) : (theme.isLight ? 'rgba(15,23,42,0.07)' : 'rgba(255,255,255,0.06)')
-          const dimmed = !inPicker
+          // Mirror the portal exactly: only countries that have an index AND
+          // are inside the current region filter receive the indigo fill.
+          // Everything else stays a neutral land tone so the world map still
+          // reads, no opacity tricks.
+          const fill = (idx != null && inPicker)
+            ? indexColor(idx)
+            : (theme.isLight ? '#F1F5F9' : 'rgba(255,255,255,0.06)')
           return (
             <path
               key={f.id || rawName || i}
               d={path(f)}
               fill={fill}
-              opacity={dimmed ? 0.35 : 1}
-              stroke={theme.isLight ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.25)'}
-              strokeWidth={0.5}
-              style={{ cursor: inPicker ? 'pointer' : 'default' }}
-              onClick={() => { if (inPicker) onPick(name) }}
+              stroke="#ffffff"
+              strokeWidth={0.4}
+              vectorEffect="non-scaling-stroke"
+              style={{ cursor: inPicker && idx != null ? 'pointer' : 'default' }}
+              onClick={() => { if (inPicker && idx != null) onPick(name) }}
             >
-              <title>{name}{idx != null ? ` · index ${idx}` : ''}</title>
+              <title>
+                {name}{idx != null && inPicker ? ` · ecommerce development: ${idx}/100` : ''}
+              </title>
             </path>
           )
         })}
@@ -614,7 +621,7 @@ export default function SlideCountryDetail() {
       width: 'clamp(160px, 16vw, 280px)',
       height: '10px',
       borderRadius: '5px',
-      background: 'linear-gradient(90deg, #D1D5DB 0%, #BDC3F6 35%, #7C89EF 70%, #5967E4 100%)',
+      background: 'linear-gradient(90deg, #EEF2FF 0%, #818CF8 50%, #1E1B4B 100%)',
     },
   }
 
