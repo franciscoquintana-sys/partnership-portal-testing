@@ -183,14 +183,16 @@ function buildObservations(styles) {
       },
       {
         render: () => (
-          <><span style={styles.observationStrong}>Cross-border inefficiency</span> — checkout
-            still routes through centralised, US-first acquiring</>
+          <><span style={styles.observationStrong}>Cross-border inefficiency</span> — each market
+            has different providers, local rails, regulations and fraud patterns, yet checkout
+            still routes through US-first acquiring</>
         ),
       },
       {
         render: () => (
-          <><span style={styles.observationStrong}>Limited APM coverage</span> — missing UPI in
-            India, Pix in Brazil, wallets across APAC</>
+          <><span style={styles.observationStrong}>Limited APM coverage</span> — long chains of
+            intermediaries just to reach local wallets; missing UPI in India, Pix in Brazil,
+            wallets across APAC</>
         ),
       },
       {
@@ -201,8 +203,8 @@ function buildObservations(styles) {
       },
       {
         render: () => (
-          <><span style={styles.observationStrong}>High processing cost</span> — fees negotiated
-            per processor, leaving material margin on the table</>
+          <><span style={styles.observationStrong}>High processing cost</span> — every new market
+            means months of integrations and per-PSP fees with no competitive leverage</>
         ),
       },
     ],
