@@ -184,8 +184,9 @@ function buildObservations(styles) {
       },
       {
         render: () => (
-          <><span style={styles.observationStrong}>Limited APM coverage</span> — long chains of
-            intermediaries just to reach local wallets</>
+          <><span style={styles.observationStrong}>Limited APM coverage</span> — thin local
+            payment coverage outside cards, with long chains of intermediaries just to reach
+            local payments</>
         ),
       },
       {
