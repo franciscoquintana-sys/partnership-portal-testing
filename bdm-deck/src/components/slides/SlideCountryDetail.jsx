@@ -96,10 +96,18 @@ const NAME_ALIASES = {
 }
 const normaliseCountry = (n) => NAME_ALIASES[n] || n
 
-// Surface every region the portal recognises (matches Country Detail in
-// the partnerships portal). The deck doesn't have rich market data for
-// every country yet — those just show a graceful stub when picked.
-const DETAIL_REGIONS = REGIONS.filter((r) => (COUNTRY_LIST_BY_REGION[r] || []).length > 0)
+// Only surface regions and countries we actually have rich data for, so
+// the picker never shows an entry that lands on a stub.
+const DETAIL_REGIONS = REGIONS.filter((r) => (REGIONAL_DATA[r] || []).length > 0)
+const COUNTRIES_BY_REGION = Object.fromEntries(
+  DETAIL_REGIONS.map((r) => [
+    r,
+    (REGIONAL_DATA[r] || [])
+      .map((c) => c.country)
+      .slice()
+      .sort((a, b) => a.localeCompare(b)),
+  ]),
+)
 
 // World atlas TopoJSON — fetched once at first render, then cached.
 let _worldFeaturesPromise = null
@@ -183,11 +191,124 @@ function ChoroplethMap({ pickerCountries, onPick, styles, theme }) {
   )
 }
 
-// Every portal-recognised country flattened across regions — used when
+// Every rich-data country flattened across regions — used when
 // "All regions" is selected so the country pill spans the global set.
 const ALL_COUNTRIES = DETAIL_REGIONS.flatMap((r) =>
-  (COUNTRY_LIST_BY_REGION[r] || []).map((country) => ({ country, region: r })),
+  COUNTRIES_BY_REGION[r].map((country) => ({ country, region: r })),
 ).sort((a, b) => a.country.localeCompare(b.country))
+
+function PillDropdown({ icon: Icon, label, items, value, onChange, theme }) {
+  const [open, setOpen] = useState(false)
+  const pillStyle = {
+    position: 'relative',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '10px',
+    padding: 'clamp(10px, 0.9vw, 16px) clamp(18px, 1.4vw, 26px)',
+    background: 'rgba(255,255,255,0.04)',
+    border: `1px solid ${open ? 'rgba(62,79,224,0.55)' : 'rgba(255,255,255,0.12)'}`,
+    boxShadow: open ? '0 0 0 4px rgba(62,79,224,0.10)' : 'none',
+    borderRadius: '100px',
+    color: 'rgba(255,255,255,0.92)',
+    fontFamily: 'var(--font)',
+    fontSize: 'clamp(13px, 1.05vw, 18px)',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.18s ease',
+    backdropFilter: 'blur(12px)',
+  }
+  return (
+    <div style={{ position: 'relative' }}>
+      <button
+        type="button"
+        style={pillStyle}
+        onClick={() => setOpen((v) => !v)}
+      >
+        <Icon size={16} weight="regular" style={{ color: 'rgba(189,195,246,0.95)' }} aria-hidden />
+        <span>{label}</span>
+        <CaretDown
+          size={12}
+          weight="bold"
+          style={{ opacity: 0.7, transition: 'transform 0.18s ease', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
+          aria-hidden
+        />
+      </button>
+
+      {open && (
+        <>
+          {/* Backdrop catches outside clicks — guaranteed to close. */}
+          <div
+            onClick={() => setOpen(false)}
+            style={{ position: 'fixed', inset: 0, zIndex: 30 }}
+          />
+          <div
+            role="listbox"
+            style={{
+              position: 'absolute',
+              top: 'calc(100% + 10px)',
+              left: 0,
+              minWidth: '260px',
+              maxHeight: 'min(60vh, 360px)',
+              overflowY: 'auto',
+              background: 'rgba(0,0,0,0.92)',
+              backdropFilter: 'blur(28px)',
+              border: '1px solid rgba(255,255,255,0.08)',
+              borderRadius: '14px',
+              padding: '8px',
+              boxShadow: '0 28px 72px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.02) inset',
+              zIndex: 40,
+            }}
+          >
+            {items.map((opt) => {
+              const active = value === opt.value
+              return (
+                <div
+                  key={opt.value || 'all'}
+                  role="option"
+                  aria-selected={active}
+                  onClick={() => {
+                    onChange(opt.value)
+                    setOpen(false)
+                  }}
+                  style={{
+                    padding: '10px 14px',
+                    fontSize: '14px',
+                    fontWeight: 500,
+                    color: active ? '#fff' : 'rgba(255,255,255,0.88)',
+                    background: active ? 'rgba(62,79,224,0.16)' : 'transparent',
+                    borderRadius: '10px',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                    transition: 'background 0.12s ease',
+                  }}
+                >
+                  <span>{opt.label}</span>
+                  {opt.tag && (
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        letterSpacing: '1.2px',
+                        textTransform: 'uppercase',
+                        color: 'rgba(255,255,255,0.4)',
+                      }}
+                    >
+                      {opt.tag}
+                    </span>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  )
+}
 
 export default function SlideCountryDetail() {
   const theme = useTheme()
@@ -200,9 +321,7 @@ export default function SlideCountryDetail() {
 
   const countriesForPicker = useMemo(() => {
     if (region === 'all') return ALL_COUNTRIES
-    return (COUNTRY_LIST_BY_REGION[region] || [])
-      .map((country) => ({ country, region }))
-      .sort((a, b) => a.country.localeCompare(b.country))
+    return (COUNTRIES_BY_REGION[region] || []).map((country) => ({ country, region }))
   }, [region])
 
   // Re-validate the selected country when the region changes.
@@ -501,35 +620,31 @@ export default function SlideCountryDetail() {
           <div style={styles.filterRow}>
             <span style={styles.filterKicker}>Filter</span>
 
-            <label style={styles.pill}>
-              <Globe size={16} weight="regular" style={styles.pillIcon} aria-hidden />
-              <select
-                style={styles.nativeSelect}
-                value={region}
-                onChange={(e) => setRegion(e.target.value)}
-              >
-                {regionItems.map((opt) => (
-                  <option key={opt.key} value={opt.key}>{opt.label}</option>
-                ))}
-              </select>
-              <CaretDown size={12} weight="bold" style={styles.pillCaret} aria-hidden />
-            </label>
+            <PillDropdown
+              icon={Globe}
+              label={regionPillLabel}
+              value={region}
+              onChange={setRegion}
+              items={regionItems.map((opt) => ({
+                value: opt.key,
+                label: opt.label,
+                tag: opt.key !== 'all' ? opt.key : null,
+              }))}
+              theme={theme}
+            />
 
-            <label style={styles.pill}>
-              <MapPin size={16} weight="regular" style={styles.pillIcon} aria-hidden />
-              <select
-                style={styles.nativeSelect}
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-              >
-                {countryItems.map((opt) => (
-                  <option key={opt.country || 'all'} value={opt.country}>
-                    {opt.country || 'All countries'}
-                  </option>
-                ))}
-              </select>
-              <CaretDown size={12} weight="bold" style={styles.pillCaret} aria-hidden />
-            </label>
+            <PillDropdown
+              icon={MapPin}
+              label={countryPillLabel}
+              value={country}
+              onChange={setCountry}
+              items={countryItems.map((opt) => ({
+                value: opt.country,
+                label: opt.country || 'All countries',
+                tag: opt.region || null,
+              }))}
+              theme={theme}
+            />
 
             {country && (
               <button
