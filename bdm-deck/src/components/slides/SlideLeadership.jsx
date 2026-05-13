@@ -378,7 +378,7 @@ export default function SlideLeadership({ data }) {
           </div>
         </section>
 
-        <section className="reveal" style={{ '--reveal-delay': '0.45s' }}>
+        <section className="reveal" style={{ '--reveal-delay': '0.45s', marginTop: 'auto' }}>
           <SectionHeader beamDelay={4.5} styles={styles}>Leadership Team</SectionHeader>
           <div className="stagger" style={{ ...styles.leadersGrid, '--stagger-base': '0.55s', '--stagger-step': '0.04s' }}>
             {LEADERS.map((p, i) => (
@@ -398,7 +398,7 @@ export default function SlideLeadership({ data }) {
         <div className="reveal" style={{ ...styles.pedigreeStrip, '--reveal-delay': '1.1s' }}>
           <div style={styles.pedigreeStripHeader}>
             <img src="/sales-deck/assets/yuno-mark-white.svg" alt="" style={styles.pedigreeMark} aria-hidden />
-            <div style={styles.pedigreeStripLabel}>We&rsquo;ve been there. All of it.</div>
+            <div style={styles.pedigreeStripLabel}>We&rsquo;ve been there.</div>
           </div>
           <div style={styles.pedigreeStripLogos}>
             <div className="pedigree-logos-row" style={styles.pedigreeStripLogosRow}>
