@@ -8791,7 +8791,7 @@ REGION_NEWS = {
 }
 
 @app.get("/insights", response_class=HTMLResponse)
-def insights(request: Request, country: str = "", region: str = "all", view: str = "country"):
+def insights(request: Request, country: str = "", region: str = "all", view: str = "country", embed: int = 0):
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
@@ -8953,6 +8953,7 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         has_market_data=has_market_data,
         news_sections=news_sections,
         last_update=MARKET_ANALYSIS_LAST_UPDATE,
+        embed=bool(embed),
     ))
 
 @app.get("/merch_sim", response_class=HTMLResponse)

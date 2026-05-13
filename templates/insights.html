@@ -1,5 +1,14 @@
 {% extends "base.html" %}
-{% block hero %}<style>.topbar{display:none}</style>{% endblock %}
+{% block hero %}
+<style>.topbar{display:none}</style>
+{% if embed %}
+<style>
+  .sidebar{display:none!important}
+  .main{margin-left:0!important;padding:0 14px 18px!important}
+  .main-body{padding:0!important}
+</style>
+{% endif %}
+{% endblock %}
 {% block content %}
 
   <!-- Dark banner -->
