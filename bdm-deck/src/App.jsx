@@ -147,10 +147,29 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
   if (!content && slugKey && RESEARCHED[slugKey]) content = RESEARCHED[slugKey]
   if (!content) content = defaultData
 
+  // URL input — when the typed string looks like a domain or URL, ask the
+  // portal to scrape the live site for a name + PNG logo. Best-effort; on
+  // network/parse failure we fall back to the slug-based name and null logo.
+  let scrapedName = null
+  let scrapedLogo = null
+  const looksLikeUrl = /\.[a-z]{2,}(?:[/?#]|$)/i.test(typed.replace(/^https?:\/\//, ''))
+  if (looksLikeUrl) {
+    try {
+      const r = await fetch(`/api/site-info?url=${encodeURIComponent(typed)}`)
+      if (r.ok) {
+        const j = await r.json()
+        scrapedName = j?.name || null
+        scrapedLogo = j?.logo || null
+      }
+    } catch (_) {
+      // ignore — fall through to defaults
+    }
+  }
+
   return {
     ...content,
-    COMPANY_NAME: match?.name || supabaseName || typed,
-    COMPANY_LOGO: match?.logo || null,
+    COMPANY_NAME: scrapedName || match?.name || supabaseName || typed,
+    COMPANY_LOGO: scrapedLogo || match?.logo || null,
     // Tile-based marks (Bold One) carry a companion white-silhouette PNG
     // so filter:brightness(0) invert(1) diagrams don't flatten the tile
     // to a solid white square. For normal wordmark merchants this is null

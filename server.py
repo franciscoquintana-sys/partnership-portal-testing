@@ -62,6 +62,84 @@ if os.path.isdir(_SALES_DECK_DIST):
         name="sales-deck",
     )
 
+# ---- Sales-deck site-info scraper -------------------------------------------
+# The deck's landing-page input is now URL-driven. When the SPA receives a
+# URL, it pings this endpoint so the cover slide can be stamped with the
+# real merchant name + logo instead of the raw URL string. Best-effort: any
+# fetch or parse failure returns nulls and the SPA falls back to the typed
+# input.
+import re as _site_re
+import requests as _site_requests
+from urllib.parse import urljoin as _site_urljoin, urlparse as _site_urlparse
+
+
+def _site_info(url: str) -> dict:
+    url = (url or "").strip()
+    if not url:
+        return {"name": None, "logo": None}
+    if not url.startswith(("http://", "https://")):
+        url = "https://" + url
+    try:
+        resp = _site_requests.get(
+            url, timeout=8, allow_redirects=True,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; YunoPortal/1.0)"},
+        )
+        html = resp.text
+        base = resp.url
+    except Exception:
+        return {"name": None, "logo": None}
+
+    name = None
+    for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
+        t = tag.group(0)
+        prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
+        cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
+        if prop and cont and prop.group(1).lower() in ("og:site_name", "application-name"):
+            name = cont.group(1).strip()
+            break
+    if not name:
+        m = _site_re.search(r"<title[^>]*>([^<]+)</title>", html, _site_re.I)
+        if m:
+            raw = m.group(1).strip()
+            for sep in ("|", " - ", " — ", " · ", ":"):
+                if sep in raw:
+                    raw = raw.split(sep)[0].strip()
+                    break
+            name = raw
+    if not name:
+        host = _site_urlparse(base).netloc.replace("www.", "")
+        name = host.split(".")[0].capitalize()
+
+    candidates = []
+    for tag in _site_re.finditer(r"<link[^>]+>", html, _site_re.I):
+        t = tag.group(0)
+        rel = _site_re.search(r'rel=["\']([^"\']+)["\']', t, _site_re.I)
+        href = _site_re.search(r'href=["\']([^"\']+)["\']', t, _site_re.I)
+        if rel and href:
+            r_val = rel.group(1).lower()
+            if "apple-touch-icon" in r_val:
+                candidates.append((0, href.group(1)))
+            elif "icon" in r_val:
+                candidates.append((2, href.group(1)))
+    for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
+        t = tag.group(0)
+        prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
+        cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
+        if prop and cont and prop.group(1).lower() == "og:image":
+            candidates.append((1, cont.group(1)))
+    logo = None
+    if candidates:
+        candidates.sort(key=lambda x: x[0])
+        logo = _site_urljoin(base, candidates[0][1])
+
+    return {"name": name, "logo": logo}
+
+
+@app.get("/api/site-info", response_class=JSONResponse)
+def sales_deck_site_info(url: str = ""):
+    return _site_info(url)
+# -----------------------------------------------------------------------------
+
 templates = Jinja2Templates(directory=os.path.join(BASE, "templates"))
 
 # -- Auth helpers --------------------------------------------------------------
