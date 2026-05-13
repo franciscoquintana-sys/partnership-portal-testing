@@ -64,7 +64,6 @@ const ALL_SLIDES = [
   { Component: SlideValueLevers, label: 'Value Levers', onlyForGenericBanking: true },
   { Component: SlideWhiteLabelPromise, label: 'White-label Promise', onlyForGenericBanking: true },
   { Component: SlideInfrastructure, label: 'Infrastructure' },
-  { Component: SlideDiagnostic, label: 'Diagnostic', skipForModes: ['partner', 'banking'] },
   { Component: SlideYunoSolve, label: 'The Solve', skipForModes: ['banking'] },
   // Replit-only setup + emphasis pair. The deck goes from JP straight to
   // Replit's CEO, so we run two custom slides after the generic Solve:
