@@ -8,6 +8,48 @@ import {
   REGIONAL_DATA,
   getCountryData,
 } from '../../data/regional-data'
+import { COUNTRY_COORDS } from '../../data/country-coords'
+
+// Ecommerce-development index (0-100) — same numbers the portal's Country
+// Detail heatmap uses. Drives the colour ramp on the slide map.
+const ECOMMERCE_INDEX = {
+  'South Korea': 95, 'United Kingdom': 94, 'China': 93, 'United States': 92,
+  'Singapore': 92, 'Netherlands': 91, 'Denmark': 91, 'Switzerland': 90,
+  'Germany': 89, 'Hong Kong': 89, 'Sweden': 89, 'Norway': 88, 'Japan': 88,
+  'Finland': 87, 'Australia': 87, 'Ireland': 86, 'Canada': 86, 'France': 85,
+  'Austria': 85, 'Belgium': 84, 'New Zealand': 84, 'Estonia': 83,
+  'Luxembourg': 83, 'Taiwan': 82, 'Spain': 80, 'Israel': 80, 'Italy': 78,
+  'UAE': 78, 'Portugal': 76, 'Czech Republic': 74, 'Slovenia': 73,
+  'Poland': 72, 'Malaysia': 70, 'Saudi Arabia': 69, 'Lithuania': 69,
+  'Latvia': 68, 'Hungary': 67, 'Slovakia': 67, 'Qatar': 66, 'Greece': 65,
+  'Cyprus': 65, 'Malta': 64, 'Bahrain': 64, 'Chile': 63, 'Croatia': 62,
+  'Thailand': 60, 'Bulgaria': 59, 'Romania': 58, 'Kuwait': 58, 'Turkey': 57,
+  'Russia': 56, 'Oman': 55, 'Brazil': 55, 'Argentina': 53, 'Mexico': 52,
+  'Uruguay': 52, 'Colombia': 50, 'Costa Rica': 49, 'Vietnam': 49,
+  'South Africa': 48, 'India': 47, 'Panama': 47, 'Indonesia': 46,
+  'Philippines': 45, 'Peru': 44, 'Ukraine': 43, 'Morocco': 40, 'Jordan': 40,
+  'Egypt': 38, 'Lebanon': 38, 'Sri Lanka': 37, 'Kenya': 36,
+  'Dominican Republic': 35, 'Nigeria': 34, 'Ghana': 33, 'Bangladesh': 33,
+  'Pakistan': 32, 'Algeria': 31, 'Tunisia': 31, 'Botswana': 32,
+  'Ecuador': 32, 'Bolivia': 30, 'Paraguay': 30, 'Guatemala': 30, 'Cambodia': 28,
+  'Rwanda': 28, 'Senegal': 25, "Côte d'Ivoire": 26, 'Nepal': 26, 'Honduras': 26,
+  'Nicaragua': 25, 'Venezuela': 24, 'Tanzania': 24, 'Cameroon': 22,
+  'Angola': 22, 'Iraq': 22, 'Myanmar': 22, 'Uganda': 22, 'Zambia': 22,
+  'Mozambique': 20, 'Ethiopia': 20, 'Zimbabwe': 19, 'Mauritius': 45,
+}
+
+// Heatmap colour ramp — cool/blue at the top of the index, warm/amber at
+// the bottom. Matches the portal's choropleth direction.
+function indexColor(value) {
+  if (value == null) return 'rgba(189,195,246,0.30)'
+  const v = Math.max(0, Math.min(100, value)) / 100
+  // 0 → soft amber (#FCD34D-ish), 1 → bright Yuno blue (#3E4FE0)
+  const lerp = (a, b) => Math.round(a + (b - a) * v)
+  const r = lerp(252, 62)
+  const g = lerp(211, 79)
+  const b = lerp(77, 224)
+  return `rgb(${r}, ${g}, ${b})`
+}
 
 // Only surface regions that actually have rich country data in the deck.
 const DETAIL_REGIONS = REGIONS.filter((r) => (REGIONAL_DATA[r] || []).length > 0)
@@ -267,14 +309,18 @@ export default function SlideCountryDetail() {
       minHeight: 0,
       display: 'flex',
       flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 'clamp(16px, 1.4vw, 28px)',
-      padding: 'clamp(20px, 1.8vw, 36px)',
+      gap: 'clamp(14px, 1vw, 22px)',
+      padding: 'clamp(16px, 1.4vw, 28px)',
       border: `1px solid ${theme.borderSubtle}`,
       borderRadius: '16px',
       overflow: 'hidden',
       background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.02)',
+    },
+    overviewMapWrap: {
+      position: 'relative',
+      flex: 1,
+      minHeight: 0,
+      width: '100%',
     },
     overviewMap: {
       position: 'absolute',
@@ -282,26 +328,45 @@ export default function SlideCountryDetail() {
       width: '100%',
       height: '100%',
       objectFit: 'contain',
-      opacity: theme.isLight ? 0.18 : 0.22,
+      opacity: theme.isLight ? 0.22 : 0.28,
       filter: theme.isLight ? 'invert(1) brightness(0.4)' : 'brightness(0) invert(1)',
       pointerEvents: 'none',
     },
-    overviewContent: {
-      position: 'relative',
-      zIndex: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      gap: 'clamp(14px, 1.2vw, 22px)',
-      maxWidth: '80%',
-      textAlign: 'center',
+    overviewSvg: {
+      position: 'absolute',
+      inset: 0,
+      width: '100%',
+      height: '100%',
     },
     overviewLead: {
-      fontSize: 'clamp(20px, 1.6vw, 32px)',
-      fontWeight: 600,
+      position: 'relative',
+      zIndex: 1,
+      textAlign: 'center',
+      fontSize: 'clamp(15px, 1.2vw, 22px)',
+      fontWeight: 500,
       color: theme.inkSecondary,
       lineHeight: 1.4,
       margin: 0,
+    },
+    legend: {
+      position: 'relative',
+      zIndex: 1,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 'clamp(10px, 0.9vw, 18px)',
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'clamp(10px, 0.8vw, 13px)',
+      fontWeight: 600,
+      letterSpacing: '1.2px',
+      textTransform: 'uppercase',
+      color: theme.inkMuted,
+    },
+    legendBar: {
+      width: 'clamp(140px, 14vw, 240px)',
+      height: '8px',
+      borderRadius: '4px',
+      background: 'linear-gradient(90deg, rgb(252,211,77) 0%, rgb(62,79,224) 100%)',
     },
   }
 
@@ -462,16 +527,58 @@ export default function SlideCountryDetail() {
             </>
           ) : (
             <div style={styles.overview}>
-              <img
-                src="/sales-deck/world-map.svg"
-                alt=""
-                style={styles.overviewMap}
-                aria-hidden
-              />
-              <div style={styles.overviewContent}>
-                <p style={styles.overviewLead}>
-                  {overviewTitle} — pick a country to see its market brief.
-                </p>
+              <p style={styles.overviewLead}>
+                {overviewTitle} — click any country to open its market brief.
+              </p>
+              <div style={styles.overviewMapWrap}>
+                <img
+                  src="/sales-deck/world-map.svg"
+                  alt=""
+                  style={styles.overviewMap}
+                  aria-hidden
+                />
+                <svg
+                  viewBox="0 0 100 60"
+                  preserveAspectRatio="xMidYMid meet"
+                  style={styles.overviewSvg}
+                >
+                  {countriesForPicker.map((entry) => {
+                    const coord = COUNTRY_COORDS[entry.country]
+                    if (!coord) return null
+                    const idx = ECOMMERCE_INDEX[entry.country] ?? null
+                    const fill = indexColor(idx)
+                    const r = 1.3
+                    return (
+                      <g
+                        key={entry.country}
+                        style={{ cursor: 'pointer' }}
+                        onClick={() => setCountry(entry.country)}
+                      >
+                        <title>{entry.country}{idx != null ? ` · index ${idx}` : ''}</title>
+                        <circle
+                          cx={coord.x}
+                          cy={coord.y * 0.6}
+                          r={r + 1.4}
+                          fill={fill}
+                          opacity="0.22"
+                        />
+                        <circle
+                          cx={coord.x}
+                          cy={coord.y * 0.6}
+                          r={r}
+                          fill={fill}
+                          stroke="rgba(255,255,255,0.9)"
+                          strokeWidth="0.25"
+                        />
+                      </g>
+                    )
+                  })}
+                </svg>
+              </div>
+              <div style={styles.legend}>
+                <span>Lower e-commerce index</span>
+                <span style={styles.legendBar} aria-hidden />
+                <span>Higher</span>
               </div>
             </div>
           )}
