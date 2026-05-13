@@ -951,7 +951,7 @@ export default function SlideInfrastructure({ data }) {
                   <img
                     src="https://lirp.cdn-website.com/1e9ba552/dms3rep/multi/opt/element+4+%2833%29-640w.png"
                     alt="Yuno orchestration"
-                    style={styles.centerLogo}
+                    style={{ ...styles.centerLogo, filter: 'none' }}
                   />
                 )}
               </div>
