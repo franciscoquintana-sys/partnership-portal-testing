@@ -297,7 +297,7 @@ export default function SlideLeadership({ data }) {
       marginTop: 'auto',
       // Pull the pedigree strip up off the slide floor so it doesn't sit
       // flush against the bottom edge.
-      marginBottom: 'clamp(40px, 4vw, 80px)',
+      marginBottom: 'clamp(80px, 7vw, 150px)',
       boxShadow: theme.cardShadow,
     },
     pedigreeStripHeader: {
