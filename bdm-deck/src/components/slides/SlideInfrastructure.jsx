@@ -895,14 +895,12 @@ export default function SlideInfrastructure({ data }) {
                     alt="Yuno"
                     style={styles.centerLogo}
                   />
-                ) : !isGenericBanking && data.COMPANY_LOGO ? (
-                  <img
-                    src={data.COMPANY_LOGO_MONO || data.COMPANY_LOGO}
-                    alt={data.COMPANY_NAME}
-                    style={data.COMPANY_LOGO_MONO ? styles.centerLogoTile : styles.centerLogo}
-                  />
                 ) : (
-                  <span style={styles.centerText}>{centerLabel}</span>
+                  <img
+                    src="https://lirp.cdn-website.com/1e9ba552/dms3rep/multi/opt/element+4+%2833%29-640w.png"
+                    alt="Yuno orchestration"
+                    style={styles.centerLogo}
+                  />
                 )}
               </div>
               <div style={styles.diagramColumn}>
