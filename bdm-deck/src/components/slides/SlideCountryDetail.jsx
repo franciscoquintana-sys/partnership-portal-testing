@@ -4,9 +4,12 @@ import { useTheme } from '../../lib/theme'
 import {
   REGIONS,
   REGION_LABEL,
-  COUNTRY_LIST_BY_REGION,
+  REGIONAL_DATA,
   getCountryData,
 } from '../../data/regional-data'
+
+// Only surface regions that actually have rich country data in the deck.
+const DETAIL_REGIONS = REGIONS.filter((r) => (REGIONAL_DATA[r] || []).length > 0)
 
 // Country Detail slide — replicates the portal's per-country panel inside
 // the deck. Two in-slide dropdowns (region, country) drive the rendered
@@ -15,9 +18,12 @@ import {
 
 export default function SlideCountryDetail() {
   const theme = useTheme()
-  const [region, setRegion] = useState(REGIONS[0])
+  const [region, setRegion] = useState(DETAIL_REGIONS[0] || REGIONS[0])
   const countriesForRegion = useMemo(
-    () => (COUNTRY_LIST_BY_REGION[region] || []).slice().sort((a, b) => a.localeCompare(b)),
+    () => (REGIONAL_DATA[region] || [])
+      .map((c) => c.country)
+      .slice()
+      .sort((a, b) => a.localeCompare(b)),
     [region],
   )
   const [country, setCountry] = useState(countriesForRegion[0] || '')
@@ -207,7 +213,7 @@ export default function SlideCountryDetail() {
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
               >
-                {REGIONS.map((r) => (
+                {DETAIL_REGIONS.map((r) => (
                   <option key={r} value={r}>{REGION_LABEL[r] || r}</option>
                 ))}
               </select>
