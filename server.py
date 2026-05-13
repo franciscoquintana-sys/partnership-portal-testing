@@ -8677,7 +8677,7 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         r: REGION_STATS.get(r, {"total":0,"live":0,"strategic":0,"tier1":0,"revshare":"-"})
         for r in regions
     }
-    # Regions Decks always includes Global as its own card, even though
+    # Sales Decks always includes Global as its own card, even though
     # Global is hidden from the filter dropdown.
     deck_order = ["LATAM", "North America", "Europe", "Middle East", "Africa", "APAC", "Global"]
     deck_regions = [r for r in deck_order if r in regions or r == "Global"]
