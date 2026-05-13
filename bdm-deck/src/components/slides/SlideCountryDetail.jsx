@@ -332,7 +332,7 @@ export default function SlideCountryDetail() {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(28px, 2.6vw, 48px)',
+      fontSize: 'clamp(20px, 1.8vw, 32px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -352,11 +352,7 @@ export default function SlideCountryDetail() {
       color: 'transparent',
     },
     subtitle: {
-      fontSize: 'clamp(15px, 1.2vw, 22px)',
-      fontWeight: 500,
-      lineHeight: 1.4,
-      color: theme.inkSecondary,
-      margin: 0,
+      display: 'none',
     },
     filterRow: {
       display: 'flex',
@@ -390,12 +386,13 @@ export default function SlideCountryDetail() {
     },
     detail: {
       flex: 1,
-      display: 'grid',
+      display: country ? 'grid' : 'flex',
       gridTemplateColumns: '1fr 1fr',
       gridAutoRows: 'min-content',
+      flexDirection: 'column',
       gap: 'clamp(20px, 1.8vw, 36px)',
       minHeight: 0,
-      overflowY: 'auto',
+      overflowY: country ? 'auto' : 'hidden',
     },
     statsCard: {
       gridColumn: '1 / -1',
@@ -494,8 +491,11 @@ export default function SlideCountryDetail() {
     overview: {
       gridColumn: '1 / -1',
       position: 'relative',
-      // Map fills essentially the whole slide canvas below the title.
-      minHeight: 'clamp(700px, 95vh, 1200px)',
+      // Fill all remaining body space — flex parent grows, child overview
+      // expands instead of being capped by min-content grid sizing.
+      flex: 1,
+      minHeight: 0,
+      height: '100%',
       display: 'flex',
       flexDirection: 'column',
       gap: 'clamp(6px, 0.5vw, 10px)',
