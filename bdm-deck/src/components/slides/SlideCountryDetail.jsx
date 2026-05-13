@@ -520,7 +520,14 @@ export default function SlideCountryDetail() {
       <div className="slide-enter" style={styles.body}>
         <div style={styles.headerRow}>
           <h2 style={styles.title}>
-            Inside <span style={styles.titleAccent}>{country || 'each market'}</span>
+            {country ? (
+              <>Inside <span style={styles.titleAccent}>{country}</span></>
+            ) : (
+              <>
+                {overviewTitle} —{' '}
+                <span style={styles.titleAccent}>click any country to open its market brief</span>
+              </>
+            )}
           </h2>
           <div style={styles.filterRow}>
             <span style={styles.filterKicker}>Filter</span>
@@ -658,9 +665,6 @@ export default function SlideCountryDetail() {
                 styles={styles}
                 theme={theme}
               />
-              <p style={styles.overviewLead}>
-                {overviewTitle} — click any country to open its market brief.
-              </p>
               <div style={styles.legend}>
                 <span>Lower e-commerce index</span>
                 <span style={styles.legendBar} aria-hidden />
