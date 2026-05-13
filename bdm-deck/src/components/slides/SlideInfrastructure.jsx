@@ -177,8 +177,9 @@ function buildObservations(styles) {
     merchant: [
       {
         render: () => (
-          <><span style={styles.observationStrong}>Single-processor dependency</span> — any outage
-            or policy change instantly suspends recurring revenue</>
+          <><span style={styles.observationStrong}>Single-processor dependency</span> — heavy
+            reliance on a single processor for key payment flows; any outage or policy change
+            instantly suspends recurring revenue</>
         ),
       },
       {
