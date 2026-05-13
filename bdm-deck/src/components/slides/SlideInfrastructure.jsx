@@ -873,8 +873,8 @@ export default function SlideInfrastructure({ data }) {
             </>
           ) : (
             <>
-              Yuno brought it all together.{' '}
-              <span style={styles.titleAccent}>one platform, global financial infrastructure at scale</span>
+              Why global payments still{' '}
+              <span style={styles.titleAccent}>break at scale</span>
             </>
           )}
         </h2>
