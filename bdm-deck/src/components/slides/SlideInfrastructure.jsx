@@ -184,15 +184,13 @@ function buildObservations(styles) {
       {
         render: () => (
           <><span style={styles.observationStrong}>Cross-border inefficiency</span> — each market
-            has different providers, local rails, regulations and fraud patterns, yet checkout
-            still routes through US-first acquiring</>
+            has different providers, local rails, regulations and fraud patterns</>
         ),
       },
       {
         render: () => (
           <><span style={styles.observationStrong}>Limited APM coverage</span> — long chains of
-            intermediaries just to reach local wallets; missing UPI in India, Pix in Brazil,
-            wallets across APAC</>
+            intermediaries just to reach local wallets</>
         ),
       },
       {
