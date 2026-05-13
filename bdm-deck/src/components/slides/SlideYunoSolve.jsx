@@ -924,12 +924,6 @@ export default function SlideYunoSolve({ data }) {
                 <div style={styles.archLabel}>Yuno Platform</div>
                 <div style={styles.archTitle}>Capabilities</div>
               </div>
-              <img
-                src="https://lirp.cdn-website.com/1e9ba552/dms3rep/multi/opt/element+4+%2833%29-640w.png"
-                alt=""
-                style={{ ...styles.capabilitiesMark, opacity: 1, filter: 'none', width: '52px', height: '52px' }}
-                aria-hidden
-              />
             </div>
             <div className="stagger" style={{ ...styles.capList, '--stagger-base': '0.3s', '--stagger-step': '0.09s' }}>
               {caps.map((c) => (
