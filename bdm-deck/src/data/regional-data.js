@@ -1360,14 +1360,16 @@ export const REGIONAL_DATA = {
   ]
 }
 
-export const REGIONS = ['Americas', 'LATAM', 'Europe', 'APAC', 'MENAT']
+// Listed in the order shown in the landing-page dropdown — alphabetical
+// by the labels below so it lines up with Country Detail in the portal.
+export const REGIONS = ['APAC', 'Europe', 'LATAM', 'MENAT', 'Americas']
 
 export const REGION_LABEL = {
-  Americas: 'Americas',
+  Americas: 'North America',
   LATAM: 'LATAM',
   Europe: 'Europe',
-  APAC: 'Asia-Pacific',
-  MENAT: 'Middle East, North Africa & Turkey',
+  APAC: 'APAC',
+  MENAT: 'Middle East',
 }
 
 export const REGION_SHORT = {

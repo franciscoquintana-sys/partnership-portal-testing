@@ -499,6 +499,12 @@ export default function LandingPage({ onGenerate }) {
   const [countries, setCountries] = useState([])
   const [showRegionMenu, setShowRegionMenu] = useState(false)
   const [showCountryMenu, setShowCountryMenu] = useState(false)
+  // 'bottom' = menu drops below the pill; 'top' = menu opens above. Flipped
+  // on open when there is not enough room below the pill (e.g. iframe
+  // viewport too short), so the full list — including its internal scroll —
+  // stays visible.
+  const [regionPlacement, setRegionPlacement] = useState('bottom')
+  const [countryPlacement, setCountryPlacement] = useState('bottom')
   const regionRef = useRef(null)
   const countryRef = useRef(null)
 
@@ -523,9 +529,23 @@ export default function LandingPage({ onGenerate }) {
     return () => document.removeEventListener('mousedown', onDown)
   }, [showRegionMenu, showCountryMenu])
 
-  const availableCountries = regions.flatMap((r) =>
-    getRegionCountries(r).map((c) => ({ country: c.country, region: r })),
-  )
+  // Flip menu placement when there is not enough room below the pill.
+  useEffect(() => {
+    if (showRegionMenu && regionRef.current) {
+      const r = regionRef.current.getBoundingClientRect()
+      setRegionPlacement(window.innerHeight - r.bottom < 260 ? 'top' : 'bottom')
+    }
+  }, [showRegionMenu])
+  useEffect(() => {
+    if (showCountryMenu && countryRef.current) {
+      const r = countryRef.current.getBoundingClientRect()
+      setCountryPlacement(window.innerHeight - r.bottom < 260 ? 'top' : 'bottom')
+    }
+  }, [showCountryMenu])
+
+  const availableCountries = regions
+    .flatMap((r) => getRegionCountries(r).map((c) => ({ country: c.country, region: r })))
+    .sort((a, b) => a.country.localeCompare(b.country))
 
   const toggleRegion = (r) => {
     setRegions((prev) => (prev.includes(r) ? prev.filter((x) => x !== r) : [...prev, r]))
@@ -708,7 +728,16 @@ export default function LandingPage({ onGenerate }) {
             </button>
 
             {showRegionMenu && (
-              <div role="listbox" aria-multiselectable="true" style={styles.regionMenu}>
+              <div
+                role="listbox"
+                aria-multiselectable="true"
+                style={{
+                  ...styles.regionMenu,
+                  ...(regionPlacement === 'top'
+                    ? { top: 'auto', bottom: 'calc(100% + 10px)' }
+                    : {}),
+                }}
+              >
                 {REGIONS.map((r) => {
                   const selected = regions.includes(r)
                   return (
@@ -765,7 +794,17 @@ export default function LandingPage({ onGenerate }) {
               </button>
 
               {showCountryMenu && (
-                <div role="listbox" aria-multiselectable="true" style={{ ...styles.regionMenu, ...styles.countryMenu }}>
+                <div
+                  role="listbox"
+                  aria-multiselectable="true"
+                  style={{
+                    ...styles.regionMenu,
+                    ...styles.countryMenu,
+                    ...(countryPlacement === 'top'
+                      ? { top: 'auto', bottom: 'calc(100% + 10px)' }
+                      : {}),
+                  }}
+                >
                   {availableCountries.map(({ country: c, region: r }) => {
                     const selected = countries.includes(c)
                     return (
