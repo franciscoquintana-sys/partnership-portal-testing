@@ -483,7 +483,7 @@ function currentMonthYear() {
   return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 }
 
-export default function LandingPage({ onGenerate }) {
+export default function LandingPage({ onGenerate, loading = false, errorMessage = null }) {
   const [merchant, setMerchant] = useState('')
   const [focused, setFocused] = useState(false)
   const [entries, setEntries] = useState([]) // merchants + banks + partners
@@ -578,6 +578,7 @@ export default function LandingPage({ onGenerate }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (loading) return
     const pick = filtered[highlightIdx]
     if (pick) {
       onGenerate({ name: pick.name, type: pick.type, regions, countries })
@@ -836,24 +837,39 @@ export default function LandingPage({ onGenerate }) {
 
           <button
             type="submit"
-            disabled={!merchant.trim()}
+            disabled={!merchant.trim() || loading}
             style={{
               ...styles.submitButton,
-              ...(!merchant.trim() ? styles.submitButtonDisabled : {}),
+              ...((!merchant.trim() || loading) ? styles.submitButtonDisabled : {}),
               marginLeft: 'auto',
-              transform: hoveringBtn && merchant.trim() ? 'scale(1.03)' : 'scale(1)',
-              boxShadow: hoveringBtn && merchant.trim()
+              transform: hoveringBtn && merchant.trim() && !loading ? 'scale(1.03)' : 'scale(1)',
+              boxShadow: hoveringBtn && merchant.trim() && !loading
                 ? '0 8px 32px rgba(62,79,224,0.5), 0 0 0 1px rgba(255,255,255,0.2) inset'
-                : merchant.trim()
+                : merchant.trim() && !loading
                   ? '0 4px 20px rgba(62,79,224,0.3)'
                   : 'none',
             }}
             onMouseEnter={() => setHoveringBtn(true)}
             onMouseLeave={() => setHoveringBtn(false)}
           >
-            Let's start →
+            {loading ? 'Loading…' : "Let's start →"}
           </button>
           </div>
+          {(loading || errorMessage) && (
+            <div
+              role="status"
+              aria-live="polite"
+              style={{
+                fontSize: '12.5px',
+                color: errorMessage ? '#FCA5A5' : 'rgba(255,255,255,0.6)',
+                textAlign: 'center',
+                marginTop: '4px',
+                animation: 'fadeIn 0.25s ease-out',
+              }}
+            >
+              {loading ? 'Fetching name and logo…' : errorMessage}
+            </div>
+          )}
         </form>
       </div>
 

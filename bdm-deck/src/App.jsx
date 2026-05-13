@@ -207,6 +207,12 @@ export default function App() {
   const [merchantData, setMerchantData] = useState(null)
   const [sharedMode, setSharedMode] = useState(false)
   const [printMode, setPrintMode] = useState(false)
+  // Loading + error gate for the landing-page → deck transition. The deck
+  // only advances past the intro once both a name and a PNG logo have been
+  // resolved for the typed URL; otherwise the user stays on the landing
+  // page and sees the reason.
+  const [resolving, setResolving] = useState(false)
+  const [resolveError, setResolveError] = useState(null)
 
   // On first render, check the URL. `/m/:slug` → go straight to the deck
   // without the landing page, and hide the internal "send deck" form.
@@ -262,8 +268,19 @@ export default function App() {
   }, [printMode, merchantData])
 
   const handleGenerate = async (rawInput) => {
+    setResolving(true)
+    setResolveError(null)
     const data = await buildMerchantData(rawInput)
-    if (data) setMerchantData(data)
+    setResolving(false)
+    if (data && data.COMPANY_NAME && data.COMPANY_LOGO) {
+      setMerchantData(data)
+      return
+    }
+    if (data && data.COMPANY_NAME) {
+      setResolveError(`Couldn't find a logo for ${data.COMPANY_NAME}. Try another URL.`)
+    } else {
+      setResolveError("Couldn't resolve that URL. Try another.")
+    }
   }
 
   const handleBack = () => {
@@ -285,5 +302,11 @@ export default function App() {
     )
   }
 
-  return <LandingPage onGenerate={handleGenerate} />
+  return (
+    <LandingPage
+      onGenerate={handleGenerate}
+      loading={resolving}
+      errorMessage={resolveError}
+    />
+  )
 }
