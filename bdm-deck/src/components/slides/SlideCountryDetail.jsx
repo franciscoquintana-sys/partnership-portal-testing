@@ -360,12 +360,15 @@ export default function SlideCountryDetail() {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(28px, 2.6vw, 48px)',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
       color: theme.ink,
       margin: 0,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
     },
     titleAccent: {
       backgroundImage: theme.isLight
@@ -375,6 +378,13 @@ export default function SlideCountryDetail() {
       backgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
       color: 'transparent',
+    },
+    subtitle: {
+      fontSize: 'clamp(15px, 1.2vw, 22px)',
+      fontWeight: 500,
+      lineHeight: 1.4,
+      color: theme.inkSecondary,
+      margin: 0,
     },
 
     // ---------- Filter pills (same look + feel as the old landing page) -----
@@ -614,9 +624,20 @@ export default function SlideCountryDetail() {
       <div className="slide-enter" style={styles.body}>
         <div style={styles.headerRow}>
           <h2 style={styles.title}>
-            {overviewTitle} —{' '}
-            <span style={styles.titleAccent}>click any country to open its market brief</span>
+            {country
+              ? <>Inside <span style={styles.titleAccent}>{country}</span></>
+              : (
+                <>
+                  Coverage across{' '}
+                  <span style={styles.titleAccent}>
+                    {region === 'all' ? 'every region' : (REGION_LABEL[region] || region)}
+                  </span>
+                </>
+              )}
           </h2>
+          {!country && (
+            <p style={styles.subtitle}>Click any country to open its market brief.</p>
+          )}
           <div style={styles.filterRow}>
             <span style={styles.filterKicker}>Filter</span>
 
