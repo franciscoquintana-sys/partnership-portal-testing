@@ -173,11 +173,13 @@ export default function SlideLeadership({ data }) {
     },
 
     // ---------- Founders row ----------
+    // Uses the same 14-column track as the leadership grid below, with
+    // each founder spanning 2 columns. That lines founder #1 up with
+    // leadership card #1, and founder #2 up with leadership card #2.
     foundersRow: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-      gap: 'clamp(10px, 0.9vw, 20px)',
-      maxWidth: '42%',
+      gridTemplateColumns: 'repeat(14, 1fr)',
+      gap: 'clamp(28px, 2.4vw, 52px) clamp(20px, 1.8vw, 38px)',
     },
 
     // ---------- Leadership grid ----------
@@ -373,7 +375,7 @@ export default function SlideLeadership({ data }) {
           <SectionHeader beamDelay={0} styles={styles}>Founders</SectionHeader>
           <div className="stagger" style={{ ...styles.foundersRow, '--stagger-base': '0.3s', '--stagger-step': '0.1s' }}>
             {FOUNDERS.map((p) => (
-              <PersonCard key={p.name} p={p} founder styles={styles} />
+              <PersonCard key={p.name} p={p} founder styles={styles} style={styles.cardSpan} />
             ))}
           </div>
         </section>
