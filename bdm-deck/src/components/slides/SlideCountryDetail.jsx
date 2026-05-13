@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { CaretDown, Globe, MapPin } from '@phosphor-icons/react'
-import { geoNaturalEarth1, geoPath } from 'd3-geo'
-import { feature } from 'topojson-client'
+import createPlotlyComponent from 'react-plotly.js/factory'
+import Plotly from 'plotly.js-geo-dist-min'
 import SlideBase from './SlideBase'
 import { useTheme } from '../../lib/theme'
 import {
@@ -11,6 +11,8 @@ import {
   COUNTRY_LIST_BY_REGION,
   getCountryData,
 } from '../../data/regional-data'
+
+const Plot = createPlotlyComponent(Plotly)
 
 // Ecommerce-development index (0-100) — same numbers the portal's Country
 // Detail heatmap uses. Drives the colour ramp on the slide map.
@@ -109,103 +111,65 @@ const COUNTRIES_BY_REGION = Object.fromEntries(
   ]),
 )
 
-// World atlas TopoJSON — served locally from the deck's own public assets
-// so the slide doesn't depend on a third-party CDN at runtime (some
-// embedding contexts block cross-origin fetches). Cached across mounts.
-let _worldFeaturesPromise = null
-function loadWorldFeatures() {
-  if (_worldFeaturesPromise) return _worldFeaturesPromise
-  _worldFeaturesPromise = fetch('/sales-deck/world-atlas.json')
-    .then((r) => r.json())
-    .then((topo) => feature(topo, topo.objects.countries).features)
-    .catch(() => [])
-  return _worldFeaturesPromise
-}
-
 function ChoroplethMap({ pickerCountries, region, onPick, styles, theme }) {
-  const wrapRef = useRef(null)
-  const [features, setFeatures] = useState([])
-  const [size, setSize] = useState({ w: 800, h: 420 })
+  const items = useMemo(() => {
+    const set = new Set(pickerCountries.map((c) => c.country))
+    return Object.entries(ECOMMERCE_INDEX)
+      .filter(([name]) => set.has(name))
+      .sort((a, b) => a[0].localeCompare(b[0]))
+  }, [pickerCountries])
 
-  useEffect(() => {
-    let cancelled = false
-    loadWorldFeatures().then((f) => { if (!cancelled) setFeatures(f) })
-    return () => { cancelled = true }
-  }, [])
+  const data = useMemo(() => ([{
+    type: 'choropleth',
+    locationmode: 'country names',
+    locations: items.map(([name]) => name),
+    z: items.map(([, v]) => v),
+    zmin: 0,
+    zmax: 100,
+    colorscale: [
+      [0,    '#eef2ff'],
+      [0.5,  '#818cf8'],
+      [1,    '#1e1b4b'],
+    ],
+    marker: { line: { color: '#ffffff', width: 0.4 } },
+    colorbar: { title: 'Index', thickness: 10, len: 0.7 },
+    hovertemplate:
+      '<b>%{location}</b><br>Ecommerce development: %{z}/100<br><i>Click for market detail</i><extra></extra>',
+  }]), [items])
 
-  useEffect(() => {
-    const el = wrapRef.current
-    if (!el) return
-    const fit = () => {
-      const r = el.getBoundingClientRect()
-      if (r.width > 0 && r.height > 0) setSize({ w: r.width, h: r.height })
-    }
-    fit()
-    const ro = new ResizeObserver(fit)
-    ro.observe(el)
-    return () => ro.disconnect()
-  }, [])
-
-  const pickerSet = useMemo(
-    () => new Set(pickerCountries.map((c) => c.country)),
-    [pickerCountries],
-  )
-
-  const { w, h } = size
-  // Zoom: when a specific region is selected, fit the projection to the
-  // bounding box of just that region's countries; otherwise show the
-  // whole world (Sphere).
-  const projection = useMemo(() => {
-    if (!w || !h) return null
-    const proj = geoNaturalEarth1()
-    if (region !== 'all' && features.length && pickerSet.size) {
-      const regionFeatures = features.filter((f) =>
-        pickerSet.has(normaliseCountry(f.properties?.name || '')),
-      )
-      if (regionFeatures.length) {
-        proj.fitExtent(
-          [[20, 20], [Math.max(20, w - 20), Math.max(20, h - 20)]],
-          { type: 'FeatureCollection', features: regionFeatures },
-        )
-        return proj
-      }
-    }
-    proj.fitSize([w, h], { type: 'Sphere' })
-    return proj
-  }, [w, h, region, features, pickerSet])
-  const path = useMemo(() => (projection ? geoPath(projection) : () => ''), [projection])
+  const layout = useMemo(() => ({
+    paper_bgcolor: 'rgba(0,0,0,0)',
+    plot_bgcolor: 'rgba(0,0,0,0)',
+    margin: { l: 0, r: 0, t: 0, b: 0 },
+    autosize: true,
+    geo: {
+      showframe: false,
+      showcoastlines: false,
+      projection: { type: 'natural earth' },
+      bgcolor: 'rgba(0,0,0,0)',
+      fitbounds: region !== 'all' && items.length ? 'locations' : undefined,
+      visible: true,
+    },
+    font: {
+      family: 'Geist Variable, -apple-system, BlinkMacSystemFont, Segoe UI, sans-serif',
+      size: 13,
+      color: theme.isLight ? '#0f172a' : '#E8EAF5',
+    },
+  }), [region, items.length, theme.isLight])
 
   return (
-    <div ref={wrapRef} style={styles.overviewMapWrap}>
-      <svg
-        width={w}
-        height={h}
-        viewBox={`0 0 ${w} ${h}`}
-        style={styles.overviewSvg}
-      >
-        {features.map((f, i) => {
-          const rawName = f.properties?.name || ''
-          const name = normaliseCountry(rawName)
-          const idx = ECOMMERCE_INDEX[name]
-          const inPicker = pickerSet.has(name)
-          const fill = idx != null ? indexColor(idx) : (theme.isLight ? 'rgba(15,23,42,0.07)' : 'rgba(255,255,255,0.06)')
-          const dimmed = !inPicker
-          return (
-            <path
-              key={f.id || rawName || i}
-              d={path(f)}
-              fill={fill}
-              opacity={dimmed ? 0.35 : 1}
-              stroke={theme.isLight ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.25)'}
-              strokeWidth={0.5}
-              style={{ cursor: inPicker ? 'pointer' : 'default' }}
-              onClick={() => { if (inPicker) onPick(name) }}
-            >
-              <title>{name}{idx != null ? ` · index ${idx}` : ''}</title>
-            </path>
-          )
-        })}
-      </svg>
+    <div style={styles.overviewMapWrap}>
+      <Plot
+        data={data}
+        layout={layout}
+        config={{ displayModeBar: false, responsive: true }}
+        style={{ width: '100%', height: '100%' }}
+        useResizeHandler
+        onClick={(ev) => {
+          const pt = ev?.points?.[0]
+          if (pt?.location) onPick(pt.location)
+        }}
+      />
     </div>
   )
 }
