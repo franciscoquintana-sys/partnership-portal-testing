@@ -81,7 +81,7 @@ def _site_info(url: str) -> dict:
         url = "https://" + url
     try:
         resp = _site_requests.get(
-            url, timeout=8, allow_redirects=True,
+            url, timeout=4, allow_redirects=True,
             headers={"User-Agent": "Mozilla/5.0 (compatible; YunoPortal/1.0)"},
         )
         html = resp.text

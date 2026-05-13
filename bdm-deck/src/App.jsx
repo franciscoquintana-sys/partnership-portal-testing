@@ -149,11 +149,18 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
 
   // URL input — when the typed string looks like a domain or URL, ask the
   // portal to scrape the live site for a name + PNG logo. Best-effort; on
-  // network/parse failure we fall back to the slug-based name and null logo.
+  // network/parse failure we fall back to the domain-derived name so the
+  // cover never shows the raw URL string in the greeting.
   let scrapedName = null
   let scrapedLogo = null
+  let domainName = null
   const looksLikeUrl = /\.[a-z]{2,}(?:[/?#]|$)/i.test(typed.replace(/^https?:\/\//, ''))
   if (looksLikeUrl) {
+    try {
+      const host = new URL(typed.startsWith('http') ? typed : `https://${typed}`).hostname.replace(/^www\./, '')
+      const first = host.split('.')[0]
+      if (first) domainName = first.charAt(0).toUpperCase() + first.slice(1)
+    } catch (_) { /* ignore */ }
     try {
       const r = await fetch(`/api/site-info?url=${encodeURIComponent(typed)}`)
       if (r.ok) {
@@ -168,7 +175,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
 
   return {
     ...content,
-    COMPANY_NAME: scrapedName || match?.name || supabaseName || typed,
+    COMPANY_NAME: scrapedName || domainName || match?.name || supabaseName || typed,
     COMPANY_LOGO: scrapedLogo || match?.logo || null,
     // Tile-based marks (Bold One) carry a companion white-silhouette PNG
     // so filter:brightness(0) invert(1) diagrams don't flatten the tile
