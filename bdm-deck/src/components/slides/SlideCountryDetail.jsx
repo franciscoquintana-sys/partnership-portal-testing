@@ -197,10 +197,6 @@ export default function SlideCountryDetail() {
   const [region, setRegion] = useState('all')
   const [country, setCountry] = useState('')
 
-  const [showRegionMenu, setShowRegionMenu] = useState(false)
-  const [showCountryMenu, setShowCountryMenu] = useState(false)
-  const regionRef = useRef(null)
-  const countryRef = useRef(null)
 
   const countriesForPicker = useMemo(() => {
     if (region === 'all') return ALL_COUNTRIES
@@ -215,17 +211,6 @@ export default function SlideCountryDetail() {
       setCountry('')
     }
   }, [region, country, countriesForPicker])
-
-  // Outside-click close, matching the landing-page filter behaviour.
-  useEffect(() => {
-    if (!showRegionMenu && !showCountryMenu) return
-    const onDown = (e) => {
-      if (showRegionMenu && !regionRef.current?.contains(e.target)) setShowRegionMenu(false)
-      if (showCountryMenu && !countryRef.current?.contains(e.target)) setShowCountryMenu(false)
-    }
-    document.addEventListener('mousedown', onDown)
-    return () => document.removeEventListener('mousedown', onDown)
-  }, [showRegionMenu, showCountryMenu])
 
   // Resolve the active country's rich data when a specific country is picked.
   const resolvedRegion = country
@@ -289,14 +274,12 @@ export default function SlideCountryDetail() {
       color: theme.inkMuted,
       marginRight: '4px',
     },
-    pillWrap: {
-      position: 'relative',
-    },
     pill: {
+      position: 'relative',
       display: 'inline-flex',
       alignItems: 'center',
       gap: '10px',
-      padding: 'clamp(10px, 0.9vw, 16px) clamp(16px, 1.3vw, 24px)',
+      padding: 'clamp(10px, 0.9vw, 16px) clamp(40px, 3vw, 56px) clamp(10px, 0.9vw, 16px) clamp(16px, 1.3vw, 24px)',
       background: 'rgba(255,255,255,0.04)',
       border: '1px solid rgba(255,255,255,0.12)',
       borderRadius: '100px',
@@ -308,56 +291,45 @@ export default function SlideCountryDetail() {
       transition: 'all 0.18s ease',
       backdropFilter: 'blur(12px)',
     },
-    pillOpen: {
-      borderColor: 'rgba(62,79,224,0.55)',
-      boxShadow: '0 0 0 4px rgba(62,79,224,0.10)',
-    },
     pillIcon: {
       color: 'rgba(189,195,246,0.95)',
+      pointerEvents: 'none',
     },
     pillCaret: {
-      opacity: 0.7,
-      transition: 'transform 0.18s ease',
-    },
-    menu: {
       position: 'absolute',
-      top: 'calc(100% + 10px)',
-      left: 0,
-      minWidth: '260px',
-      maxHeight: 'min(60vh, 360px)',
-      overflowY: 'auto',
-      background: 'rgba(0,0,0,0.92)',
-      backdropFilter: 'blur(28px)',
-      border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '14px',
-      padding: '8px',
-      boxShadow: '0 28px 72px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.02) inset',
-      zIndex: 11,
+      right: '14px',
+      top: '50%',
+      transform: 'translateY(-50%)',
+      opacity: 0.7,
+      pointerEvents: 'none',
     },
-    menuItem: {
-      padding: '10px 14px',
-      fontSize: '14px',
-      fontWeight: 500,
-      color: 'rgba(255,255,255,0.88)',
-      borderRadius: '10px',
+    nativeSelect: {
+      appearance: 'none',
+      WebkitAppearance: 'none',
+      MozAppearance: 'none',
+      background: 'transparent',
+      border: 'none',
+      outline: 'none',
+      color: 'inherit',
+      font: 'inherit',
       cursor: 'pointer',
-      display: 'flex',
+      paddingRight: '4px',
+      minWidth: '140px',
+    },
+    backBtn: {
+      display: 'inline-flex',
       alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: '12px',
-      transition: 'background 0.12s ease',
-    },
-    menuItemActive: {
-      background: 'rgba(62,79,224,0.16)',
+      gap: '8px',
+      padding: 'clamp(10px, 0.9vw, 16px) clamp(16px, 1.3vw, 22px)',
+      background: 'rgba(62,79,224,0.18)',
+      border: '1px solid rgba(62,79,224,0.45)',
+      borderRadius: '100px',
       color: '#fff',
-    },
-    menuItemKey: {
-      fontFamily: 'var(--font-mono)',
-      fontSize: '11px',
-      fontWeight: 700,
-      letterSpacing: '1.2px',
-      textTransform: 'uppercase',
-      color: 'rgba(255,255,255,0.4)',
+      fontFamily: 'var(--font)',
+      fontSize: 'clamp(13px, 1.05vw, 18px)',
+      fontWeight: 600,
+      cursor: 'pointer',
+      transition: 'background 0.18s ease',
     },
 
     // ---------- Detail / overview ------------------------------------------
@@ -529,96 +501,45 @@ export default function SlideCountryDetail() {
           <div style={styles.filterRow}>
             <span style={styles.filterKicker}>Filter</span>
 
-            <div ref={regionRef} style={styles.pillWrap}>
-              <button
-                type="button"
-                style={{ ...styles.pill, ...(showRegionMenu ? styles.pillOpen : {}) }}
-                onClick={() => setShowRegionMenu((v) => !v)}
+            <label style={styles.pill}>
+              <Globe size={16} weight="regular" style={styles.pillIcon} aria-hidden />
+              <select
+                style={styles.nativeSelect}
+                value={region}
+                onChange={(e) => setRegion(e.target.value)}
               >
-                <Globe size={16} weight="regular" style={styles.pillIcon} aria-hidden />
-                <span>{regionPillLabel}</span>
-                <CaretDown
-                  size={12}
-                  weight="bold"
-                  style={{
-                    ...styles.pillCaret,
-                    transform: showRegionMenu ? 'rotate(180deg)' : 'rotate(0deg)',
-                  }}
-                  aria-hidden
-                />
-              </button>
-              {showRegionMenu && (
-                <div role="listbox" style={styles.menu}>
-                  {regionItems.map((opt) => {
-                    const active = region === opt.key
-                    return (
-                      <div
-                        key={opt.key}
-                        role="option"
-                        aria-selected={active}
-                        style={{ ...styles.menuItem, ...(active ? styles.menuItemActive : {}) }}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setRegion(opt.key)
-                          setShowRegionMenu(false)
-                        }}
-                      >
-                        <span>{opt.label}</span>
-                        {opt.key !== 'all' && (
-                          <span style={styles.menuItemKey}>{opt.key}</span>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
+                {regionItems.map((opt) => (
+                  <option key={opt.key} value={opt.key}>{opt.label}</option>
+                ))}
+              </select>
+              <CaretDown size={12} weight="bold" style={styles.pillCaret} aria-hidden />
+            </label>
 
-            <div ref={countryRef} style={styles.pillWrap}>
+            <label style={styles.pill}>
+              <MapPin size={16} weight="regular" style={styles.pillIcon} aria-hidden />
+              <select
+                style={styles.nativeSelect}
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+              >
+                {countryItems.map((opt) => (
+                  <option key={opt.country || 'all'} value={opt.country}>
+                    {opt.country || 'All countries'}
+                  </option>
+                ))}
+              </select>
+              <CaretDown size={12} weight="bold" style={styles.pillCaret} aria-hidden />
+            </label>
+
+            {country && (
               <button
                 type="button"
-                style={{ ...styles.pill, ...(showCountryMenu ? styles.pillOpen : {}) }}
-                onClick={() => setShowCountryMenu((v) => !v)}
+                style={styles.backBtn}
+                onClick={() => setCountry('')}
               >
-                <MapPin size={16} weight="regular" style={styles.pillIcon} aria-hidden />
-                <span>{countryPillLabel}</span>
-                <CaretDown
-                  size={12}
-                  weight="bold"
-                  style={{
-                    ...styles.pillCaret,
-                    transform: showCountryMenu ? 'rotate(180deg)' : 'rotate(0deg)',
-                  }}
-                  aria-hidden
-                />
+                ← Back to map
               </button>
-              {showCountryMenu && (
-                <div role="listbox" style={styles.menu}>
-                  {countryItems.map((opt) => {
-                    const active = country === opt.country
-                    const label = opt.country || 'All countries'
-                    return (
-                      <div
-                        key={opt.country || 'all'}
-                        role="option"
-                        aria-selected={active}
-                        style={{ ...styles.menuItem, ...(active ? styles.menuItemActive : {}) }}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setCountry(opt.country)
-                          setShowCountryMenu(false)
-                        }}
-                      >
-                        <span>{label}</span>
-                        {opt.region && (
-                          <span style={styles.menuItemKey}>{opt.region}</span>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
 
