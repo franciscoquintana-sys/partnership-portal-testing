@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { CaretDown, Globe, MapPin } from '@phosphor-icons/react'
+import { geoNaturalEarth1, geoPath } from 'd3-geo'
+import { feature } from 'topojson-client'
 import SlideBase from './SlideBase'
 import { useTheme } from '../../lib/theme'
 import {
@@ -8,7 +10,6 @@ import {
   REGIONAL_DATA,
   getCountryData,
 } from '../../data/regional-data'
-import { COUNTRY_COORDS } from '../../data/country-coords'
 
 // Ecommerce-development index (0-100) — same numbers the portal's Country
 // Detail heatmap uses. Drives the colour ramp on the slide map.
@@ -41,7 +42,7 @@ const ECOMMERCE_INDEX = {
 // Heatmap colour ramp — cool/blue at the top of the index, warm/amber at
 // the bottom. Matches the portal's choropleth direction.
 function indexColor(value) {
-  if (value == null) return 'rgba(189,195,246,0.30)'
+  if (value == null) return 'rgba(189,195,246,0.10)'
   const v = Math.max(0, Math.min(100, value)) / 100
   // 0 → soft amber (#FCD34D-ish), 1 → bright Yuno blue (#3E4FE0)
   const lerp = (a, b) => Math.round(a + (b - a) * v)
@@ -51,8 +52,117 @@ function indexColor(value) {
   return `rgb(${r}, ${g}, ${b})`
 }
 
+// world-atlas TopoJSON uses long-form country names; our ECOMMERCE_INDEX
+// keys use the short forms. Map the divergent ones so the colour lookup
+// works without renaming our data.
+const NAME_ALIASES = {
+  'United States of America': 'United States',
+  'Russian Federation': 'Russia',
+  'United Republic of Tanzania': 'Tanzania',
+  "Côte d'Ivoire": "Côte d'Ivoire",
+  'Iran (Islamic Republic of)': 'Iran',
+  'United Arab Emirates': 'UAE',
+  'Republic of Korea': 'South Korea',
+  'Czechia': 'Czech Republic',
+  'Viet Nam': 'Vietnam',
+  'Brunei Darussalam': 'Brunei',
+  'Lao PDR': 'Laos',
+  'Syrian Arab Republic': 'Syria',
+  "Dem. Rep. Korea": 'North Korea',
+  "Republic of Moldova": 'Moldova',
+  "The former Yugoslav Republic of Macedonia": 'North Macedonia',
+  'eSwatini': 'Eswatini',
+  'Bolivia (Plurinational State of)': 'Bolivia',
+  'Venezuela (Bolivarian Republic of)': 'Venezuela',
+  'Democratic Republic of the Congo': 'DR Congo',
+  "Lao People's Democratic Republic": 'Laos',
+}
+const normaliseCountry = (n) => NAME_ALIASES[n] || n
+
 // Only surface regions that actually have rich country data in the deck.
 const DETAIL_REGIONS = REGIONS.filter((r) => (REGIONAL_DATA[r] || []).length > 0)
+
+// World atlas TopoJSON — fetched once at first render, then cached.
+let _worldFeaturesPromise = null
+function loadWorldFeatures() {
+  if (_worldFeaturesPromise) return _worldFeaturesPromise
+  _worldFeaturesPromise = fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json')
+    .then((r) => r.json())
+    .then((topo) => feature(topo, topo.objects.countries).features)
+    .catch(() => [])
+  return _worldFeaturesPromise
+}
+
+function ChoroplethMap({ pickerCountries, onPick, styles, theme }) {
+  const wrapRef = useRef(null)
+  const [features, setFeatures] = useState([])
+  const [size, setSize] = useState({ w: 800, h: 420 })
+
+  useEffect(() => {
+    let cancelled = false
+    loadWorldFeatures().then((f) => { if (!cancelled) setFeatures(f) })
+    return () => { cancelled = true }
+  }, [])
+
+  useEffect(() => {
+    const el = wrapRef.current
+    if (!el) return
+    const fit = () => {
+      const r = el.getBoundingClientRect()
+      if (r.width > 0 && r.height > 0) setSize({ w: r.width, h: r.height })
+    }
+    fit()
+    const ro = new ResizeObserver(fit)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+
+  const pickerSet = useMemo(
+    () => new Set(pickerCountries.map((c) => c.country)),
+    [pickerCountries],
+  )
+
+  const { w, h } = size
+  const projection = useMemo(
+    () => geoNaturalEarth1().fitSize([w, h], { type: 'Sphere' }),
+    [w, h],
+  )
+  const path = useMemo(() => geoPath(projection), [projection])
+
+  return (
+    <div ref={wrapRef} style={styles.overviewMapWrap}>
+      <svg
+        width={w}
+        height={h}
+        viewBox={`0 0 ${w} ${h}`}
+        style={styles.overviewSvg}
+      >
+        {features.map((f, i) => {
+          const rawName = f.properties?.name || ''
+          const name = normaliseCountry(rawName)
+          const idx = ECOMMERCE_INDEX[name]
+          const inPicker = pickerSet.has(name)
+          const fill = idx != null ? indexColor(idx) : (theme.isLight ? 'rgba(15,23,42,0.07)' : 'rgba(255,255,255,0.06)')
+          const dimmed = !inPicker
+          return (
+            <path
+              key={f.id || rawName || i}
+              d={path(f)}
+              fill={fill}
+              opacity={dimmed ? 0.35 : 1}
+              stroke={theme.isLight ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.25)'}
+              strokeWidth={0.5}
+              style={{ cursor: inPicker ? 'pointer' : 'default' }}
+              onClick={() => { if (inPicker) onPick(name) }}
+            >
+              <title>{name}{idx != null ? ` · index ${idx}` : ''}</title>
+            </path>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
 
 // All rich-data countries flattened across the eligible regions — used when
 // "All regions" is selected so the country pill spans the global set.
@@ -530,51 +640,12 @@ export default function SlideCountryDetail() {
               <p style={styles.overviewLead}>
                 {overviewTitle} — click any country to open its market brief.
               </p>
-              <div style={styles.overviewMapWrap}>
-                <img
-                  src="/sales-deck/world-map.svg"
-                  alt=""
-                  style={styles.overviewMap}
-                  aria-hidden
-                />
-                <svg
-                  viewBox="0 0 100 60"
-                  preserveAspectRatio="xMidYMid meet"
-                  style={styles.overviewSvg}
-                >
-                  {countriesForPicker.map((entry) => {
-                    const coord = COUNTRY_COORDS[entry.country]
-                    if (!coord) return null
-                    const idx = ECOMMERCE_INDEX[entry.country] ?? null
-                    const fill = indexColor(idx)
-                    const r = 1.3
-                    return (
-                      <g
-                        key={entry.country}
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setCountry(entry.country)}
-                      >
-                        <title>{entry.country}{idx != null ? ` · index ${idx}` : ''}</title>
-                        <circle
-                          cx={coord.x}
-                          cy={coord.y * 0.6}
-                          r={r + 1.4}
-                          fill={fill}
-                          opacity="0.22"
-                        />
-                        <circle
-                          cx={coord.x}
-                          cy={coord.y * 0.6}
-                          r={r}
-                          fill={fill}
-                          stroke="rgba(255,255,255,0.9)"
-                          strokeWidth="0.25"
-                        />
-                      </g>
-                    )
-                  })}
-                </svg>
-              </div>
+              <ChoroplethMap
+                pickerCountries={countriesForPicker}
+                onPick={setCountry}
+                styles={styles}
+                theme={theme}
+              />
               <div style={styles.legend}>
                 <span>Lower e-commerce index</span>
                 <span style={styles.legendBar} aria-hidden />
