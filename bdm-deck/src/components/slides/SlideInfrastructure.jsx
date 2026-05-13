@@ -192,7 +192,7 @@ function buildObservations(styles) {
       {
         render: () => (
           <><span style={styles.observationStrong}>No smart routing</span> — declined transactions
-            fall straight to lost revenue instead of being recovered</>
+            fall straight to lost revenue instead of being recovered.</>
         ),
       },
       {
