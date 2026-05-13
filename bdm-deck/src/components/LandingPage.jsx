@@ -475,14 +475,9 @@ const TYPE_LABEL = {
   partner: 'Partner',
 }
 
-// Synthetic "Banking" entry — surfaces the generic Banking deck in the
-// dropdown so any bank not in banks.csv can still pull up the unbranded
-// vertical pitch. Routed as type='bank' with name='Banking', which the
-// SlideCover sentinel uses to render the generic header (no merchant
-// logo, no possessive greeting).
-const SYNTHETIC_ENTRIES = [
-  { name: 'Banking', type: 'bank', tag: 'Generic vertical' },
-]
+// The search box is URL-only — no preset entries, no Banking shortcut,
+// no merchant / bank / partner suggestions.
+const SYNTHETIC_ENTRIES = []
 
 function currentMonthYear() {
   return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
@@ -552,11 +547,7 @@ export default function LandingPage({ onGenerate }) {
       : `${countries.length} countries`
 
   useEffect(() => {
-    Promise.all([
-      fetch('/merchants.csv').then((r) => r.text()).then((t) => parseNameCsv(t, 'merchant')),
-      fetch('/banks.csv').then((r) => r.text()).then((t) => parseNameCsv(t, 'bank')),
-      fetch('/partners.csv').then((r) => r.text()).then((t) => parseNameCsv(t, 'partner')),
-    ]).then(([m, b, p]) => setEntries([...SYNTHETIC_ENTRIES, ...m, ...b, ...p]))
+    setEntries([])
   }, [])
 
   const filtered = merchant.trim()
