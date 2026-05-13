@@ -17,9 +17,10 @@ function SectionHeader({ children, beamDelay = 0, styles }) {
 }
 
 function PersonCard({ p, founder, style, styles }) {
-  const photoStyle = founder
-    ? { ...styles.photo, ...styles.photoFounder }
-    : styles.photo
+  // Leadership team now visually matches founders — same big photo and the
+  // blue gradient ring — only the name layout (single line for founders,
+  // two lines for the team) differs between the two sections.
+  const photoStyle = { ...styles.photo, ...styles.photoFounder }
   // Leadership-team cards split the name across two lines (first name on
   // top, the rest on a second line) so the grid stays uniform regardless
   // of how long someone's surname is. Founders keep a single line so the
@@ -41,11 +42,7 @@ function PersonCard({ p, founder, style, styles }) {
     <div style={{ ...styles.card, ...style }}>
       <div style={styles.photoWrap}>
         <img src={p.photo} alt={p.name} style={photoStyle} />
-        {founder ? (
-          <span data-mask-ring style={styles.photoRing} aria-hidden />
-        ) : (
-          <span style={styles.photoRingSubtle} aria-hidden />
-        )}
+        <span data-mask-ring style={styles.photoRing} aria-hidden />
       </div>
       <div style={styles.meta}>
         {renderName()}
