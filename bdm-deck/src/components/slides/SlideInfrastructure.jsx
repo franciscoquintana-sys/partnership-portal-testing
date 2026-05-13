@@ -858,7 +858,7 @@ export default function SlideInfrastructure({ data }) {
   }
 
   return (
-    <SlideBase section="About Yuno" slideNumber={2}>
+    <SlideBase section="Problem" slideNumber={2}>
       <div className="stagger" style={{ ...styles.body, '--stagger-base': '0.1s', '--stagger-step': '0.1s' }}>
         <h2 style={styles.title}>
           {isBanking ? (

@@ -863,7 +863,7 @@ export default function SlideYunoSolve({ data }) {
     <SlideBase
       section={isBanking ? 'Banking Vertical'
         : isPartner ? 'For partners · What we deliver to merchants today'
-        : `How Yuno solves for ${data.COMPANY_NAME}`}
+        : 'About Yuno'}
       slideNumber={4}
     >
       <h2 style={styles.title}>
