@@ -312,12 +312,17 @@ def _site_info(url: str) -> dict:
             logo = _site_urljoin(final_url, chosen)
             logo_is_fallback = False
 
-    # No brand asset found anywhere — drop the favicon and let the
-    # cover render the styled wordmark instead. (Google s2 on
-    # ccTLD-only domains like ".as" returns a stylised registry tile
-    # that looks worse than the merchant name in our typeface.)
+    # When the only source is the Google s2 favicon (no brand asset
+    # scraped), keep it for real domains — amazon.com / x.com etc. that
+    # bot-block our scrape still have perfectly fine s2 favicons. Only
+    # drop it when the host itself looks like a non-domain (a bare TLD
+    # such as ".as", or a single label with no dot at all). On those
+    # inputs s2 returns a stylised registry tile that reads worse than
+    # the wordmark.
     if logo_is_fallback:
-        logo = None
+        suspect_host = host.startswith(".") or "." not in host
+        if suspect_host:
+            logo = None
 
     vertical = _detect_vertical(html, name or "", host)
     return {"name": name, "logo": logo, "vertical": vertical}
