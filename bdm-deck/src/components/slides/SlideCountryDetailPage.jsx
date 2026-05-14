@@ -258,14 +258,16 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       gap: 'clamp(10px, 0.9vw, 16px)',
     },
     topStrip: {
-      display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+      // Flex wrap instead of fixed-column grid so each card sizes to its
+      // own content. Long values widen the card itself; the row simply
+      // wraps to a second line when there's no horizontal room left.
+      display: 'flex',
+      flexWrap: 'wrap',
       gap: 'clamp(10px, 0.9vw, 16px)',
     },
     apmsWide: {
-      // Relevant APMs needs more horizontal room than a single-stat card so
-      // up to 3 APM rows fit comfortably.
-      gridColumn: 'span 2',
+      // No grid-span needed in the flex layout — the card just grows to
+      // fit its 3 APM columns.
     },
     apmsRow: {
       display: 'grid',
@@ -294,8 +296,6 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       textTransform: 'uppercase',
       color: theme.inkMuted,
       whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
     },
     overviewCard: {
       background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.03)',
@@ -316,8 +316,6 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       color: theme.inkMuted,
       lineHeight: 1.2,
       whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
     },
     overviewValue: {
       fontFamily: 'var(--font-display)',
@@ -327,8 +325,6 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       letterSpacing: '-0.3px',
       lineHeight: 1.15,
       whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
     },
     grid: {
       display: 'grid',
