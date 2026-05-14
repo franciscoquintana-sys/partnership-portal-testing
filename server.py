@@ -210,7 +210,85 @@ def _site_info(url: str) -> dict:
                         logo = candidate
                         break
 
-    return {"name": name, "logo": logo}
+    vertical = _detect_vertical(html, name or "", host)
+    return {"name": name, "logo": logo, "vertical": vertical}
+
+
+# Keyword bag per vertical. Scored against the scraped HTML (lowercased
+# title + meta + first chunk of body text). The vertical with the most
+# keyword hits wins; minimum 2 hits otherwise we return "general".
+# Order in the dict is the tiebreak preference order — more specific
+# verticals first.
+_VERTICAL_KEYWORDS = {
+    "digital_goods": [
+        "gift card", "giftcard", "gift cards", "top-up", "top up", "topup",
+        "in-game", "game top", "esports", "battle pass", "steam", "discord",
+        "robux", "v-bucks", "psn", "xbox", "nintendo", "playstation",
+        "skins", "virtual currency", "in-app", "subscription codes",
+    ],
+    "gaming": [
+        "casino", "sportsbook", "betting", "wager", "poker", "roulette",
+        "slots", "igaming", "bookmaker", "odds", "bet365",
+    ],
+    "streaming": [
+        "stream", "watch online", "movies", "tv shows", "series",
+        "anime", "music streaming", "podcasts", "live tv",
+    ],
+    "subscription_saas": [
+        "saas", "platform for", "developer", "api", "enterprise",
+        "monthly plan", "annual plan", "subscribe to", "pricing", "free trial",
+        "documentation", "integrate", "automate", "workspace", "crm",
+    ],
+    "marketplace": [
+        "marketplace", "sellers", "vendors", "list your", "sell on",
+        "multi-vendor", "shop owners", "creators",
+    ],
+    "travel": [
+        "flight", "hotel", "book a stay", "book now", "vacation",
+        "airline", "airbnb", "itinerary", "destination", "tour",
+    ],
+    "food_delivery": [
+        "food delivery", "restaurants", "order food", "groceries",
+        "courier", "ride-hailing", "rider", "delivery in",
+    ],
+    "fintech": [
+        "wallet", "send money", "remittance", "neobank", "fintech",
+        "lending", "borrow", "loan", "savings", "investment", "trading",
+    ],
+    "crypto": [
+        "crypto", "bitcoin", "ethereum", "stablecoin", "web3", "blockchain",
+        "defi", "nft", "exchange", "token sale",
+    ],
+    "retail": [
+        "free shipping", "free returns", "add to cart", "checkout",
+        "fashion", "clothing", "apparel", "shoes", "beauty", "skincare",
+        "electronics", "homeware", "store locator",
+    ],
+}
+
+
+def _detect_vertical(html: str, name: str, host: str) -> str:
+    if not html:
+        return "general"
+    low = html.lower()
+    # Only consider the head + first body chunk — keeps noise from
+    # footer/legal text out of the scoring.
+    blob = low[:20000]
+    label_blob = (name + " " + host).lower()
+    scores = {}
+    for vert, kws in _VERTICAL_KEYWORDS.items():
+        hits = 0
+        for kw in kws:
+            if kw in blob or kw in label_blob:
+                hits += 1
+        if hits:
+            scores[vert] = hits
+    if not scores:
+        return "general"
+    best = max(scores, key=lambda k: (scores[k], -list(_VERTICAL_KEYWORDS.keys()).index(k)))
+    if scores[best] < 2:
+        return "general"
+    return best
 
 
 @app.get("/api/site-info", response_class=JSONResponse)

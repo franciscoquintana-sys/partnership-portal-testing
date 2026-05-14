@@ -153,6 +153,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
   // cover never shows the raw URL string in the greeting.
   let scrapedName = null
   let scrapedLogo = null
+  let scrapedVertical = null
   let domainName = null
   const looksLikeUrl = /\.[a-z]{2,}(?:[/?#]|$)/i.test(typed.replace(/^https?:\/\//, ''))
   if (looksLikeUrl) {
@@ -167,6 +168,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
         const j = await r.json()
         scrapedName = j?.name || null
         scrapedLogo = j?.logo || null
+        scrapedVertical = j?.vertical || null
       }
     } catch (_) {
       // ignore — fall through to defaults
@@ -177,6 +179,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
     ...content,
     COMPANY_NAME: scrapedName || domainName || match?.name || supabaseName || typed,
     COMPANY_LOGO: scrapedLogo || match?.logo || null,
+    COMPANY_VERTICAL: scrapedVertical || 'general',
     // Tile-based marks (Bold One) carry a companion white-silhouette PNG
     // so filter:brightness(0) invert(1) diagrams don't flatten the tile
     // to a solid white square. For normal wordmark merchants this is null

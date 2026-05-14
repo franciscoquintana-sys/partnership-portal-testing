@@ -687,6 +687,7 @@ function SlideViewerInner({ data, onBack, shared = false }) {
               totalSlides={total}
               selectedCountry={selectedCountry}
               setSelectedCountry={setSelectedCountry}
+              merchantVertical={data?.COMPANY_VERTICAL || 'general'}
               {...(slideProps || {})}
             />
           </div>

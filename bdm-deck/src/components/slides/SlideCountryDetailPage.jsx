@@ -1,11 +1,35 @@
 import { useEffect, useState } from 'react'
 import SlideBase from './SlideBase'
 import { useTheme } from '../../lib/theme'
-import { COUNTRY_PROVIDERS } from '../../data/country-rich-data'
+import { COUNTRY_PROVIDERS, PROVIDER_VERTICALS } from '../../data/country-rich-data'
 
 // Aliases the rich-JSON country naming → COUNTRY_PROVIDERS naming.
 const PROVIDER_KEY_ALIAS = {
   UAE: 'United Arab Emirates',
+}
+
+// Pick the top 5 providers for the given country, prioritising rows
+// whose PROVIDER_VERTICALS match the merchant's detected vertical
+// (digital_goods, retail, travel, etc.). Falls back to the curated
+// order when no vertical is known or none of the rows match.
+function rankPartnersByVertical(rows, vertical) {
+  if (!rows || rows.length === 0) return []
+  const v = vertical || 'general'
+  const scored = rows.map((row, i) => {
+    const tags = PROVIDER_VERTICALS[row.name] || ['general']
+    const exact = tags.includes(v)
+    const general = tags.includes('general')
+    // Lower score = higher priority. Exact vertical first, then general
+    // (universal) providers, then the rest. Original-order index breaks
+    // ties so the curated "most relevant first" hand-ranking still wins
+    // within each tier.
+    let score = 2
+    if (exact) score = 0
+    else if (general) score = 1
+    return { row, score, i }
+  })
+  scored.sort((a, b) => (a.score - b.score) || (a.i - b.i))
+  return scored.slice(0, 5).map((s) => s.row)
 }
 
 // Portal-aligned country → ISO-2 lookup. Used to pull the flag from
@@ -195,7 +219,7 @@ function PaymentBreakdown({ items, theme }) {
   )
 }
 
-export default function SlideCountryDetailPage({ selectedCountry }) {
+export default function SlideCountryDetailPage({ selectedCountry, merchantVertical }) {
   const theme = useTheme()
   const [rich, setRich] = useState(null)
 
@@ -229,7 +253,8 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
   const providerKey = selectedCountry
     ? (PROVIDER_KEY_ALIAS[selectedCountry] || selectedCountry)
     : null
-  const partners = (providerKey && COUNTRY_PROVIDERS[providerKey]) || []
+  const rawPartners = (providerKey && COUNTRY_PROVIDERS[providerKey]) || []
+  const partners = rankPartnersByVertical(rawPartners, merchantVertical)
 
   // Digital Trends — keep entries that read as market guidance for a
   // merchant looking to *operate* in this country (cross-border / CNP /
@@ -517,9 +542,9 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 16,
+      gap: 14,
       minHeight: 0,
-      overflowY: 'auto',
+      overflow: 'hidden',
     },
     titleRow: {
       display: 'flex',
@@ -747,30 +772,30 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       color: theme.inkMuted, textAlign: 'center', lineHeight: 1.5,
     },
     partnersIntro: {
-      fontSize: '12.5px',
-      lineHeight: 1.45,
+      fontSize: '11.5px',
+      lineHeight: 1.4,
       color: theme.inkSecondary,
       margin: 0,
     },
     partnersTable: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '6px',
-      marginTop: '4px',
+      gap: '5px',
+      marginTop: '2px',
     },
     partnerRow: {
       display: 'grid',
-      gridTemplateColumns: 'minmax(110px, 0.8fr) minmax(0, 1.6fr)',
+      gridTemplateColumns: 'minmax(110px, 0.7fr) minmax(0, 1.8fr)',
       alignItems: 'center',
       gap: '12px',
-      padding: '7px 10px',
+      padding: '6px 10px',
       background: theme.isLight ? 'rgba(62,79,224,0.06)' : 'rgba(62,79,224,0.10)',
       border: `1px solid ${theme.borderAccent}`,
-      borderRadius: '10px',
+      borderRadius: '8px',
     },
     partnerName: {
       fontFamily: 'var(--font-display)',
-      fontSize: '13.5px',
+      fontSize: '12.5px',
       fontWeight: 700,
       color: theme.inkStrong,
       letterSpacing: '-0.2px',
@@ -779,10 +804,10 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     partnerNote: {
       fontFamily: 'var(--font)',
-      fontSize: '11.5px',
+      fontSize: '11px',
       fontWeight: 500,
       color: theme.inkSecondary,
-      lineHeight: 1.35,
+      lineHeight: 1.3,
     },
   }
 
