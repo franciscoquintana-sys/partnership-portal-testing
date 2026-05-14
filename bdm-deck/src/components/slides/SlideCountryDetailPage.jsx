@@ -392,23 +392,16 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
                 <span style={styles.overviewValue}>{value}</span>
               </div>
             ))}
-            {(localPayments.scheme || localPayments.a2a) && (
-              <div style={{ ...styles.overviewCard, ...styles.localCombined }}>
+            {localPayments.scheme && (
+              <div style={styles.overviewCard}>
                 <span style={styles.overviewLabel}>Local schemes</span>
-                <div style={styles.localCombinedRows}>
-                  {localPayments.scheme && (
-                    <div style={styles.localCombinedRow}>
-                      <span style={styles.localCombinedSub}>Scheme</span>
-                      <span style={styles.overviewValue}>{localPayments.scheme}</span>
-                    </div>
-                  )}
-                  {localPayments.a2a && (
-                    <div style={styles.localCombinedRow}>
-                      <span style={styles.localCombinedSub}>A2A</span>
-                      <span style={styles.overviewValue}>{localPayments.a2a}</span>
-                    </div>
-                  )}
-                </div>
+                <span style={styles.overviewValue}>{localPayments.scheme}</span>
+              </div>
+            )}
+            {localPayments.a2a && (
+              <div style={styles.overviewCard}>
+                <span style={styles.overviewLabel}>A2A</span>
+                <span style={styles.overviewValue}>{localPayments.a2a}</span>
               </div>
             )}
             {(localPayments.apms || []).length > 0 && (
