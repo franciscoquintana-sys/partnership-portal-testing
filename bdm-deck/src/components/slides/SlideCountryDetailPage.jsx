@@ -405,14 +405,50 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     'Egypt': [
       'PSP license: CBE-licensed PSP under Banking Law 194/2020.',
       'Data hosting: Data Protection Law 151/2020 (GDPR-aligned); cross-border with adequacy or licence from the Data Protection Centre.',
+      'MoR: feasible — foreign sellers register for the simplified VAT regime; Paymob, Fawry and MyFawry commonly act as local MoR for EGP settlement and tax handling.',
       'Verticals — prohibited: gambling, crypto as payment instrument (CBE directive), adult.',
-      'Tax: VAT 14%; foreign digital service providers register via simplified regime.',
     ],
     'Saudi Arabia': [
       'PSP licenses: SAMA — Acquiring License, Money Transfer License, Electronic Money Institution License under the PSP Regulation. Open Banking Phase 2 live since 2024.',
       'Data hosting: PDPL (fully enforceable Sep 2024) — sensitive-data localisation; SAMA cloud computing rules layered on top for FIs.',
+      'MoR: feasible via SAMA-licensed PSPs (Tap, Geidea, HyperPay) — they handle VAT collection at checkout and Zakat exposure for foreign sellers.',
       'Verticals — prohibited: gambling (Islamic finance), alcohol, adult. Crypto unregulated — SAMA cautious on merchant settlement.',
-      'Tax: VAT 15%; corporate tax 20% for foreign investors; Zakat for GCC-owned businesses.',
+    ],
+    'Qatar': [
+      'PSP licenses: QCB Payment Service Provider under the 2022 strategic framework; QFC offers an alternative common-law jurisdiction (QFCRA) similar to DIFC / ADGM.',
+      'Data hosting: Law No. 13 of 2016 reinforced by Qatar National Cyber Security Strategy; sensitive financial data subject to sectoral localisation.',
+      'MoR: feasible via QCB-licensed PSP or a QFC vehicle.',
+      'Verticals — prohibited: gambling, alcohol-online, adult. Crypto unregulated; pharma online via MoPH-licensed pharmacies.',
+    ],
+    'Bahrain': [
+      'PSP licenses: CBB Payment Service Provider — one of the most progressive GCC frameworks, with the Regulatory Sandbox since 2017 and PSD2-style Open Banking mandated 2018.',
+      'Data hosting: PDPL (2018, GDPR-aligned) enforced by the Personal Data Protection Authority.',
+      'MoR: feasible via CBB-licensed PSP — Bahrain is commonly used as a regional MoR hub for the Gulf.',
+      'Verticals — licensed: crypto under CBB Digital Assets framework (2019 — Rain, CoinMENA registered). Prohibited: gambling, adult; alcohol-online only via licensed channels.',
+    ],
+    'Israel': [
+      'PSP licenses: CMISA license under the Payment Services Law (2019, effective 2020) — PSD2-aligned; Bank of Israel supervises bank-related services.',
+      'Data hosting: Privacy Protection Law (1981, regulations 2017) — cross-border with adequacy or consent; Privacy Protection Authority enforces.',
+      'MoR: feasible via CMISA license; foreign sellers commonly register for VAT under Sec 33A of the VAT Law.',
+      'Verticals — licensed: crypto under ISA (exchange licensing); adult permitted. Restricted/prohibited: gambling outside state operators (Mifal Hapayis, Toto); pharma prescription-only.',
+    ],
+    'Kuwait': [
+      'PSP licenses: CBK Payment Service Provider under the Instructions on Electronic Payments (2018, updated 2023).',
+      'Data hosting: Law No. 20 of 2014 (IT-focused); comprehensive GDPR-aligned PDPL in draft.',
+      'MoR: feasible via CBK-licensed PSP — no VAT yet so MoR tax exposure is limited compared with UAE / Saudi.',
+      'Verticals — prohibited: gambling (Islamic finance), alcohol, adult. Crypto unregulated.',
+    ],
+    'Oman': [
+      'PSP licenses: CBO Payment Service Provider under the 2020 PSP Regulatory Framework.',
+      'Data hosting: PDPL under Royal Decree 6/2022 (GDPR-aligned); cross-border with adequacy or consent.',
+      'MoR: feasible via CBO-licensed PSP (e.g., Thawani).',
+      'Verticals — prohibited: gambling, alcohol-online, adult. Crypto unregulated; pharma online via MoH-licensed pharmacies.',
+    ],
+    'Jordan': [
+      'PSP licenses: CBJ Payment Service Provider under the Electronic Transactions and Electronic Money regulations.',
+      'Data hosting: Data Protection Law (2023, GDPR-aligned, implementation ongoing).',
+      'MoR: feasible via CBJ-licensed PSP; foreign digital providers register for the 16% GST.',
+      'Verticals — prohibited or restricted: gambling, adult. Crypto unregulated; pharma online via JFDA-licensed pharmacies.',
     ],
     'Turkey': [
       'PSP licenses: BDDK e-money / payment institution under Law 6493 (2013). BKM operates the card switch; CBRT operates the FAST rail.',
