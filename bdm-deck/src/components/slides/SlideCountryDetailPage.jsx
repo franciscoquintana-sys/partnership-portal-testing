@@ -132,9 +132,6 @@ function PaymentBreakdown({ items, theme }) {
         display: 'flex',
         flexDirection: 'column',
         gap: '5px',
-        // Spread payment-mix rows vertically so the bars don't cluster
-        // at the top with a blank strip below.
-        justifyContent: 'space-between',
         overflow: 'hidden',
       }}
     >
@@ -705,13 +702,8 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
     },
     list: {
       listStyle: 'none', padding: 0, margin: 0,
-      display: 'flex', flexDirection: 'column',
-      gap: '4px',
-      flex: 1,
+      display: 'flex', flexDirection: 'column', gap: '4px',
       minHeight: 0,
-      // Spread bullets across the card's vertical space so 3 items in a
-      // tall card don't cluster at the top and leave a blank lower half.
-      justifyContent: 'space-between',
     },
     listItem: {
       fontSize: '11.5px',
@@ -814,11 +806,10 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       flexDirection: 'column',
       gap: '4px',
       marginTop: '2px',
-      flex: 1,
+      // Lets the 5 rows shrink to fit when the card is short, so the
+      // last provider never clips off the bottom.
+      flex: '1 1 0',
       minHeight: 0,
-      // Spread the 5 provider rows across the available vertical space
-      // so the card doesn't leave a blank strip at the bottom.
-      justifyContent: 'space-between',
     },
     partnerRow: {
       display: 'grid',
@@ -845,6 +836,13 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       fontWeight: 500,
       color: theme.inkSecondary,
       lineHeight: 1.25,
+      // Cap each note to a single line with ellipsis so a long
+      // market-relevance string can't grow the row and push the 5th
+      // provider off the card.
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      minWidth: 0,
     },
   }
 
