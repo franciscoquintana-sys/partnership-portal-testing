@@ -296,8 +296,10 @@ export default function SlideLeadership({ data }) {
       borderRadius: '14px',
       marginTop: 'auto',
       // Lift the strip clear of the slide bottom so the second row of
-      // pedigree logos never gets clipped.
-      marginBottom: '1000px',
+      // pedigree logos never gets clipped. We use translateY instead of
+      // margin-bottom because the body has justify-content:space-between,
+      // which re-pins the last child to the bottom regardless of margin.
+      transform: 'translateY(-220px)',
       boxShadow: theme.cardShadow,
     },
     pedigreeStripHeader: {
