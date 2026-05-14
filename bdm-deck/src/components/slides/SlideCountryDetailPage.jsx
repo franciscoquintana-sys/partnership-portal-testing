@@ -238,15 +238,14 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     'Alibaba', 'Lazada', 'Shopee', 'iFood', 'Rappi', 'Blinkit', 'Zepto',
     'Zomato', 'Swiggy', 'BigBasket', 'JioMart', 'FamilyMart',
     'PedidosYa', 'GoTo\\b',
-    // Regulator-flavoured lines belong on the Regulation card, not on
-    // Digital Trends. Drop bullets that lead with regulator references,
-    // license language, or compliance topics.
-    '\\bRBI\\b', '\\bBACEN\\b', '\\bCNBV\\b', '\\bBanxico\\b', '\\bSAMA\\b',
-    '\\bCBUAE\\b', '\\bMAS\\b', '\\bSBV\\b', '\\bBSP\\b', 'central\\s+bank',
-    '\\bregulat', '\\blicense', 'payment\\s+aggregator', '\\bcompliance\\b',
-    'data\\s+(local|residency|protection)', 'tokeniz', '\\bkyc\\b',
-    'merchant\\s+of\\s+record', '\\bmor\\b', '\\bvat\\b', '\\bgst\\b',
-    '\\btds\\b', 'withhold', 'lgpd', 'gdpr', 'pix.+regulat',
+    // Drop bullets that are *purely* compliance/legal — those belong on
+    // the Regulation card. Initiative announcements that *mention* a
+    // regulator or program are kept so they still show up here.
+    'payment\\s+aggregator\\s+licen[cs]e', '\\bpa-cb\\b',
+    'data\\s+(local|residency|protection)\\s+law',
+    'merchant\\s+of\\s+record\\s+model', '\\bmor\\s+model',
+    'withhold\\s+tax', 'lgpd', 'gdpr',
+    '\\bvat\\s+(rate|applies|withhold)', '\\bgst\\s+(rate|applies|withhold)',
   ].join('|'), 'i')
   const digitalTrends = rawDigitalTrends.filter((t) => {
     const txt = typeof t === 'string' ? t : (t?.text || t?.title || '')
