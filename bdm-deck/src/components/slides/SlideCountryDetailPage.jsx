@@ -131,29 +131,30 @@ function PaymentBreakdown({ items, theme }) {
         minHeight: 0,
         display: 'flex',
         flexDirection: 'column',
-        gap: '9px',
+        gap: '5px',
+        overflow: 'hidden',
       }}
     >
-      {rows.map((row, i) => {
+      {rows.slice(0, 6).map((row, i) => {
         const widthPct = (row.share / maxShare) * 100
         return (
           <div
             key={i}
             style={{
               display: 'grid',
-              gridTemplateColumns: 'minmax(120px, 1.4fr) minmax(0, 3fr) auto',
+              gridTemplateColumns: 'minmax(100px, 1.3fr) minmax(0, 3fr) auto',
               alignItems: 'center',
-              gap: '11.5px',
+              gap: '9px',
             }}
           >
             <div style={{ minWidth: 0 }}>
               <div
                 style={{
                   fontFamily: 'var(--font)',
-                  fontSize: '13.5px',
+                  fontSize: '11px',
                   fontWeight: 700,
                   color: theme.inkStrong,
-                  lineHeight: 1.25,
+                  lineHeight: 1.2,
                   wordBreak: 'break-word',
                 }}
               >
@@ -163,11 +164,11 @@ function PaymentBreakdown({ items, theme }) {
                 <div
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: '10px',
+                    fontSize: '8.5px',
                     fontWeight: 600,
                     color: theme.inkMuted,
-                    letterSpacing: '0.4px',
-                    lineHeight: 1.35,
+                    letterSpacing: '0.3px',
+                    lineHeight: 1.25,
                     wordBreak: 'break-word',
                   }}
                 >
@@ -178,7 +179,7 @@ function PaymentBreakdown({ items, theme }) {
             <div
               style={{
                 position: 'relative',
-                height: '23px',
+                height: '17px',
                 borderRadius: '999px',
                 background: accentBg,
                 overflow: 'hidden',
@@ -201,7 +202,7 @@ function PaymentBreakdown({ items, theme }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontFamily: 'var(--font)',
-                  fontSize: '11.5px',
+                  fontSize: '10px',
                   fontWeight: 800,
                   fontVariantNumeric: 'tabular-nums',
                   color: theme.inkStrong,
@@ -213,11 +214,11 @@ function PaymentBreakdown({ items, theme }) {
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: '11.5px',
+                fontSize: '10px',
                 fontWeight: 700,
                 color: growthColor(row.growth),
                 fontVariantNumeric: 'tabular-nums',
-                minWidth: '64px',
+                minWidth: '52px',
                 textAlign: 'right',
               }}
             >
@@ -557,30 +558,30 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 14,
+      gap: 9,
       minHeight: 0,
       overflow: 'hidden',
     },
     titleRow: {
       display: 'flex',
       alignItems: 'center',
-      gap: 28,
+      gap: 20,
       flexShrink: 0,
-      marginBottom: 18,
+      marginBottom: 6,
     },
     flag: {
-      width: 96,
+      width: 68,
       height: 'auto',
-      borderRadius: 10,
-      boxShadow: '0 16px 40px rgba(0,0,0,0.35)',
+      borderRadius: 8,
+      boxShadow: '0 12px 28px rgba(0,0,0,0.32)',
       objectFit: 'cover',
       flexShrink: 0,
     },
     name: {
       fontFamily: 'var(--font-display)',
-      fontSize: 56,
+      fontSize: 38,
       fontWeight: 700,
-      letterSpacing: '-1.2px',
+      letterSpacing: '-1px',
       lineHeight: 1.05,
       color: theme.ink,
       margin: 0,
@@ -588,12 +589,14 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
     overviewStrip: {
       display: 'grid',
       gridTemplateColumns: `repeat(${Math.max(1, Math.min(overviewEntries.length, 4))}, minmax(0, 1fr))`,
-      gap: 14,
+      gap: 9,
+      flexShrink: 0,
     },
     topStrip: {
       display: 'flex',
       flexWrap: 'wrap',
-      gap: 14,
+      gap: 9,
+      flexShrink: 0,
     },
     paymentsCard: {
       background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(124,137,239,0.16)',
@@ -605,27 +608,27 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
     apmsRow: {
       display: 'grid',
       gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-      gap: 14,
+      gap: 9,
     },
     localCombined: {
-      gap: 10,
+      gap: 6,
     },
     localCombinedRows: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 10,
+      gap: 6,
     },
     localCombinedRow: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 2,
+      gap: 1,
       minWidth: 0,
     },
     localCombinedSub: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 11,
+      fontSize: 9.5,
       fontWeight: 700,
-      letterSpacing: '1.2px',
+      letterSpacing: '1px',
       textTransform: 'uppercase',
       color: theme.inkMuted,
       whiteSpace: 'nowrap',
@@ -633,55 +636,59 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
     overviewCard: {
       background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(124,137,239,0.16)',
       border: `1px solid ${theme.borderAccent}`,
-      borderRadius: 12,
-      padding: '14px 18px',
+      borderRadius: 10,
+      padding: '9px 12px',
       display: 'flex',
       flexDirection: 'column',
-      gap: 4,
+      gap: 2,
       flex: '1 1 auto',
+      minHeight: 0,
     },
     overviewLabel: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '10px',
+      fontSize: '9px',
       fontWeight: 700,
-      letterSpacing: '1.4px',
+      letterSpacing: '1.2px',
       textTransform: 'uppercase',
       color: theme.inkMuted,
-      lineHeight: 1.2,
+      lineHeight: 1.15,
       whiteSpace: 'nowrap',
     },
     overviewValue: {
       fontFamily: 'var(--font-display)',
-      fontSize: '19px',
+      fontSize: '15px',
       fontWeight: 700,
       color: theme.inkStrong,
-      letterSpacing: '-0.3px',
-      lineHeight: 1.15,
+      letterSpacing: '-0.2px',
+      lineHeight: 1.1,
       whiteSpace: 'nowrap',
     },
     grid: {
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
-      gap: '18px',
+      gap: '11px',
       minHeight: 0,
+      flex: '1 1 0',
     },
     card: {
       // Match the blue-tinted overview/payments cards at the top of the
       // slide so every card on the country detail page reads as one set.
       background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(124,137,239,0.16)',
       border: `1px solid ${theme.borderAccent}`,
-      borderRadius: '14px',
-      padding: '15.5px',
+      borderRadius: '12px',
+      padding: '11px 13px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '9px',
+      gap: '6px',
       minWidth: 0,
+      minHeight: 0,
+      overflow: 'hidden',
     },
     cardHeader: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '19px',
+      fontSize: '14px',
       fontWeight: 700,
-      letterSpacing: '2px',
+      letterSpacing: '1.6px',
       textTransform: 'uppercase',
       color: theme.accent,
     },
@@ -694,13 +701,14 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
     },
     list: {
       listStyle: 'none', padding: 0, margin: 0,
-      display: 'flex', flexDirection: 'column', gap: '6.5px',
+      display: 'flex', flexDirection: 'column', gap: '4px',
+      minHeight: 0,
     },
     listItem: {
-      fontSize: '13.5px',
-      lineHeight: 1.45,
+      fontSize: '11.5px',
+      lineHeight: 1.35,
       color: theme.inkSecondary,
-      paddingLeft: '16px',
+      paddingLeft: '14px',
       position: 'relative',
     },
     listBullet: {
@@ -787,42 +795,42 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       color: theme.inkMuted, textAlign: 'center', lineHeight: 1.5,
     },
     partnersIntro: {
-      fontSize: '11.5px',
-      lineHeight: 1.4,
+      fontSize: '10.5px',
+      lineHeight: 1.35,
       color: theme.inkSecondary,
       margin: 0,
     },
     partnersTable: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '5px',
+      gap: '4px',
       marginTop: '2px',
     },
     partnerRow: {
       display: 'grid',
-      gridTemplateColumns: 'minmax(110px, 0.7fr) minmax(0, 1.8fr)',
+      gridTemplateColumns: 'minmax(100px, 0.7fr) minmax(0, 1.9fr)',
       alignItems: 'center',
-      gap: '12px',
-      padding: '6px 10px',
+      gap: '10px',
+      padding: '4px 9px',
       background: theme.isLight ? 'rgba(62,79,224,0.06)' : 'rgba(62,79,224,0.10)',
       border: `1px solid ${theme.borderAccent}`,
-      borderRadius: '8px',
+      borderRadius: '7px',
     },
     partnerName: {
       fontFamily: 'var(--font-display)',
-      fontSize: '12.5px',
+      fontSize: '11.5px',
       fontWeight: 700,
       color: theme.inkStrong,
       letterSpacing: '-0.2px',
-      lineHeight: 1.2,
+      lineHeight: 1.15,
       wordBreak: 'break-word',
     },
     partnerNote: {
       fontFamily: 'var(--font)',
-      fontSize: '11px',
+      fontSize: '10px',
       fontWeight: 500,
       color: theme.inkSecondary,
-      lineHeight: 1.3,
+      lineHeight: 1.25,
     },
   }
 
@@ -897,7 +905,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
           <div style={styles.card}>
             <span style={styles.cardHeader}>Digital Trends</span>
             <ul style={styles.list}>
-              {digitalTrends.slice(0, 4).map((t, i) => (
+              {digitalTrends.slice(0, 3).map((t, i) => (
                 <li key={i} style={styles.listItem}>
                   <span style={styles.listBullet} aria-hidden />
                   {typeof t === 'string' ? t : (t?.text || t?.title || '')}
@@ -920,7 +928,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
               <div style={styles.card}>
                 <span style={styles.cardHeader}>Regulation</span>
                 <ul style={styles.list}>
-                  {regulation.slice(0, 4).map((line, i) => (
+                  {regulation.slice(0, 3).map((line, i) => (
                     <li key={i} style={styles.listItem}>
                       <span style={styles.listBullet} aria-hidden />
                       {line}
