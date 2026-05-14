@@ -192,6 +192,13 @@ def _site_info(url: str) -> dict:
     # "·Brand" centre-dot prefixes).
     name = (name or "").lstrip(". ·•—–-").strip() or label.capitalize()
 
+    # Always start the merchant name with an uppercase first letter so the
+    # cover greeting reads cleanly ("Hello As team!" rather than "Hello as
+    # team!"). Only touch the first character — preserves intentional inner
+    # casing like "iyzico", "EBANX", "PayU", "dLocal", "iDEAL".
+    if name:
+        name = name[0].upper() + name[1:]
+
     # Logo preference (best → fallback). Earlier = guaranteed transparent
     # background, later = may have a solid bg:
     #   1. SVG icon link (`<link rel="icon" type="image/svg+xml">` or
