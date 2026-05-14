@@ -111,9 +111,8 @@ function PaymentBreakdown({ items, theme }) {
                   fontSize: 'clamp(13px, 1.05vw, 17px)',
                   fontWeight: 700,
                   color: theme.inkStrong,
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
+                  lineHeight: 1.25,
+                  wordBreak: 'break-word',
                 }}
               >
                 {row.name}
@@ -126,9 +125,8 @@ function PaymentBreakdown({ items, theme }) {
                     fontWeight: 600,
                     color: theme.inkMuted,
                     letterSpacing: '0.4px',
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
+                    lineHeight: 1.35,
+                    wordBreak: 'break-word',
                   }}
                 >
                   {row.detail}
@@ -313,9 +311,8 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       letterSpacing: '1.4px',
       textTransform: 'uppercase',
       color: theme.inkMuted,
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      lineHeight: 1.3,
+      wordBreak: 'break-word',
     },
     overviewValue: {
       fontFamily: 'var(--font-display)',
@@ -323,9 +320,8 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       fontWeight: 700,
       color: theme.inkStrong,
       letterSpacing: '-0.3px',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      lineHeight: 1.2,
+      wordBreak: 'break-word',
     },
     grid: {
       display: 'grid',
@@ -435,9 +431,8 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       fontWeight: 700,
       color: theme.inkStrong,
       letterSpacing: '-0.2px',
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      lineHeight: 1.2,
+      wordBreak: 'break-word',
     },
     apmType: {
       fontFamily: 'var(--font-mono)',
