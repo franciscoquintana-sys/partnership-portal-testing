@@ -325,8 +325,8 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       whiteSpace: 'nowrap',
     },
     overviewCard: {
-      background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.03)',
-      border: `1px solid ${theme.borderSubtle}`,
+      background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(124,137,239,0.16)',
+      border: `1px solid ${theme.borderAccent}`,
       borderRadius: '12px',
       padding: 'clamp(12px, 1vw, 18px) clamp(14px, 1.2vw, 22px)',
       display: 'flex',
