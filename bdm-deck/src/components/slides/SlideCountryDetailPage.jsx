@@ -244,28 +244,29 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     return !TRENDS_EXCLUDE.test(txt)
   })
 
-  // Regulation — boost lines most useful to a merchant landing in this
-  // market (Merchant of Record, licensing, settlement, tax, data residency,
-  // tokenisation, cross-border) and drop the lines that read as pure
-  // regulator history or anecdotes.
+  // Regulation — keep everything that matters to a merchant landing in
+  // this market and boost the topics that determine *how* they plug in:
+  // Merchant of Record availability, licensing, settlement, tax, data
+  // residency, tokenisation, cross-border + the regulated / high-risk
+  // industries (gambling, crypto, adult, pharma, firearms, alcohol).
   const MERCHANT_BOOST = new RegExp([
     'merchant\\s+of\\s+record', '\\bmor\\b', 'payment\\s+aggregator',
-    'psp\\s+licen[cs]e', 'settlement', 'withhold', '\\bvat\\b', '\\bgst\\b',
-    'cross[\\s-]?border', 'data\\s+(local|residency|storage)',
-    'tokeniz', '\\bkyc\\b', 'license\\s+(required|needed)',
-    '3[ds]?secure|3ds',
+    'psp\\s+licen[cs]e', 'licen[cs]e\\s+(required|needed)', 'licen[cs]e\\s+from',
+    'settlement', 'payout', 'withhold', '\\bvat\\b', '\\bgst\\b', '\\biva\\b',
+    '\\btds\\b', 'cross[\\s-]?border',
+    'data\\s+(local|residency|storage|protection)',
+    'tokeniz', '\\bkyc\\b', '3[ds]?secure|3ds',
+    'high[\\s-]?risk', 'restricted|prohibited', 'gambling|igaming',
+    'crypto|virtual\\s+asset|stablecoin', 'adult|pornography',
+    'pharma|prescription', 'tobacco|alcohol', 'firearm|weapon',
+    'minor|age[\\s-]?verification',
   ].join('|'), 'i')
-  const REG_EXCLUDE = new RegExp([
-    'history of', 'founded in', 'announced', 'launched in 19', 'launched in 20[01]',
-  ].join('|'), 'i')
-  const regulation = rawRegulation
-    .filter((line) => !REG_EXCLUDE.test(line))
-    .slice()
-    .sort((a, b) => {
-      const am = MERCHANT_BOOST.test(a) ? 0 : 1
-      const bm = MERCHANT_BOOST.test(b) ? 0 : 1
-      return am - bm
-    })
+  // Sort merchant-operating lines to the top; keep everything (no exclude).
+  const regulation = [...rawRegulation].sort((a, b) => {
+    const am = MERCHANT_BOOST.test(a) ? 0 : 1
+    const bm = MERCHANT_BOOST.test(b) ? 0 : 1
+    return am - bm
+  })
 
   const styles = {
     body: {
@@ -603,7 +604,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
           <div style={styles.card}>
             <span style={styles.cardHeader}>Regulation</span>
             <ul style={styles.list}>
-              {regulation.slice(0, 4).map((line, i) => (
+              {regulation.slice(0, 6).map((line, i) => (
                 <li key={i} style={styles.listItem}>
                   <span style={styles.listBullet} aria-hidden />
                   {line}
