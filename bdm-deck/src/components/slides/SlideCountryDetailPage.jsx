@@ -254,6 +254,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       alignItems: 'center',
       gap: 'clamp(20px, 1.8vw, 36px)',
       flexShrink: 0,
+      marginBottom: 'clamp(18px, 1.8vw, 36px)',
     },
     flag: {
       width: 'clamp(72px, 6vw, 108px)',
