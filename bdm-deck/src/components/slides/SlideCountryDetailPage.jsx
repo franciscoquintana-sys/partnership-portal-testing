@@ -53,64 +53,139 @@ const PIE_COLORS = [
   '#1726A6', '#9EA8F2', '#E8EAF5', '#616366',
 ]
 
-function PieChart({ items, theme }) {
-  const valid = (items || [])
-    .map((it) => ({ name: it.name, share: Number(it.share) || 0, detail: it.detail }))
+// Horizontal-bar breakdown — same shape as the portal's Country Detail
+// "Payment Methods Breakdown — Ecommerce" table. Each row: method (+ detail),
+// share rendered as a filled bar with the percentage centered, growth chip
+// (green for +, red for -) on the right.
+function PaymentBreakdown({ items, theme }) {
+  const rows = (items || [])
+    .map((it) => ({
+      name: it?.name || '',
+      detail: it?.detail || '',
+      share: Number(it?.share) || 0,
+      growth: it?.growth || '',
+    }))
     .filter((it) => it.share > 0)
-  const total = valid.reduce((sum, it) => sum + it.share, 0)
-  const size = 220
-  const cx = size / 2
-  const cy = size / 2
-  const r = size / 2 - 6
+    .sort((a, b) => b.share - a.share)
 
-  let angle = -Math.PI / 2 // start at top
-  const slices = valid.map((it, i) => {
-    const slice = (it.share / total) * Math.PI * 2
-    const x1 = cx + r * Math.cos(angle)
-    const y1 = cy + r * Math.sin(angle)
-    angle += slice
-    const x2 = cx + r * Math.cos(angle)
-    const y2 = cy + r * Math.sin(angle)
-    const large = slice > Math.PI ? 1 : 0
-    const d = `M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${large} 1 ${x2} ${y2} Z`
-    return { d, color: PIE_COLORS[i % PIE_COLORS.length], name: it.name, share: it.share, detail: it.detail }
-  })
+  const maxShare = rows.reduce((m, r) => Math.max(m, r.share), 0) || 1
+
+  const accentBg = theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(62,79,224,0.14)'
+  const accentFill = theme.isLight
+    ? 'linear-gradient(90deg, rgba(62,79,224,0.55) 0%, rgba(62,79,224,0.30) 100%)'
+    : 'linear-gradient(90deg, rgba(124,137,239,0.85) 0%, rgba(62,79,224,0.55) 100%)'
+
+  const growthColor = (g) => {
+    if (!g) return theme.inkMuted
+    if (g.startsWith('+')) return '#10b981'
+    if (g.startsWith('-')) return '#ef4444'
+    return theme.inkMuted
+  }
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 'clamp(20px, 2vw, 36px)', flex: 1, minHeight: 0 }}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ flexShrink: 0 }}>
-        {slices.map((s, i) => (
-          <path key={i} d={s.d} fill={s.color} stroke={theme.isLight ? '#ffffff' : '#0B0E16'} strokeWidth="1.5">
-            <title>{s.name}: {s.share}%</title>
-          </path>
-        ))}
-        <circle cx={cx} cy={cy} r={r * 0.45} fill={theme.isLight ? '#ffffff' : '#0B0E16'} />
-      </svg>
-      <ul style={{ flex: 1, listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 'clamp(6px, 0.5vw, 10px)', minWidth: 0 }}>
-        {slices.map((s, i) => (
-          <li
+    <div
+      style={{
+        flex: 1,
+        minHeight: 0,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 'clamp(8px, 0.7vw, 14px)',
+      }}
+    >
+      {rows.map((row, i) => {
+        const widthPct = (row.share / maxShare) * 100
+        return (
+          <div
             key={i}
             style={{
               display: 'grid',
-              gridTemplateColumns: '10px 1fr auto',
+              gridTemplateColumns: 'minmax(120px, 1.4fr) minmax(0, 3fr) auto',
               alignItems: 'center',
-              gap: '10px',
-              fontFamily: 'var(--font)',
-              fontSize: 'clamp(13px, 1.05vw, 18px)',
-              color: theme.inkSecondary,
+              gap: 'clamp(10px, 0.9vw, 18px)',
             }}
           >
+            <div style={{ minWidth: 0 }}>
+              <div
+                style={{
+                  fontFamily: 'var(--font)',
+                  fontSize: 'clamp(13px, 1.05vw, 17px)',
+                  fontWeight: 700,
+                  color: theme.inkStrong,
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+              >
+                {row.name}
+              </div>
+              {row.detail && (
+                <div
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 'clamp(10px, 0.78vw, 12px)',
+                    fontWeight: 600,
+                    color: theme.inkMuted,
+                    letterSpacing: '0.4px',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                  }}
+                >
+                  {row.detail}
+                </div>
+              )}
+            </div>
+            <div
+              style={{
+                position: 'relative',
+                height: 'clamp(22px, 1.8vw, 30px)',
+                borderRadius: '999px',
+                background: accentBg,
+                overflow: 'hidden',
+              }}
+            >
+              <div
+                style={{
+                  width: `${widthPct}%`,
+                  height: '100%',
+                  background: accentFill,
+                  borderRadius: '999px',
+                  transition: 'width 0.4s ease',
+                }}
+              />
+              <div
+                style={{
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontFamily: 'var(--font)',
+                  fontSize: 'clamp(11px, 0.9vw, 14px)',
+                  fontWeight: 800,
+                  fontVariantNumeric: 'tabular-nums',
+                  color: theme.inkStrong,
+                }}
+              >
+                {row.share}%
+              </div>
+            </div>
             <span
-              aria-hidden
-              style={{ width: '10px', height: '10px', borderRadius: '50%', background: s.color }}
-            />
-            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-              {s.name}
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: 'clamp(11px, 0.9vw, 14px)',
+                fontWeight: 700,
+                color: growthColor(row.growth),
+                fontVariantNumeric: 'tabular-nums',
+                minWidth: '64px',
+                textAlign: 'right',
+              }}
+            >
+              {row.growth || ''}
             </span>
-            <span style={{ fontWeight: 700, color: theme.inkStrong }}>{s.share}%</span>
-          </li>
-        ))}
-      </ul>
+          </div>
+        )
+      })}
     </div>
   )
 }
@@ -458,9 +533,9 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
 
           <div style={styles.card}>
             <span style={styles.cardHeader}>Payment Mix</span>
-            <span style={styles.cardTitle}>Distribution of payments</span>
+            <span style={styles.cardTitle}>Distribution of payments in ecommerce</span>
             {breakdown.length > 0
-              ? <PieChart items={breakdown} theme={theme} />
+              ? <PaymentBreakdown items={breakdown} theme={theme} />
               : <p style={{ color: theme.inkMuted, margin: 0 }}>Breakdown not published for this market.</p>}
           </div>
         </div>
