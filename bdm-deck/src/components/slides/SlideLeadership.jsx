@@ -135,12 +135,12 @@ export default function SlideLeadership({ data }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      // Spread Founders / Leadership Team / "We've been there" across the
-      // full slide height instead of stacking them tight at the top. Bigger
-      // gap so Leadership Team sits between the other two with real
-      // breathing room.
-      justifyContent: 'space-between',
-      gap: '77px',
+      // Flow Founders → Leadership Team → "We've been there" naturally
+      // from the top with a compact gap, so the pedigree strip sits in
+      // the upper-middle of the slide instead of being pinned to the
+      // bottom where its second logo row gets clipped.
+      justifyContent: 'flex-start',
+      gap: '48px',
       minHeight: 0,
     },
 
@@ -294,12 +294,9 @@ export default function SlideLeadership({ data }) {
         : 'linear-gradient(180deg, rgba(62,79,224,0.05) 0%, rgba(62,79,224,0.02) 100%)',
       border: `1px solid ${theme.isLight ? theme.borderDefault : 'rgba(62,79,224,0.12)'}`,
       borderRadius: '14px',
-      marginTop: 'auto',
-      // Lift the strip clear of the slide bottom so the second row of
-      // pedigree logos never gets clipped. We use translateY instead of
-      // margin-bottom because the body has justify-content:space-between,
-      // which re-pins the last child to the bottom regardless of margin.
-      transform: 'translateY(-220px)',
+      // No marginTop:auto / translateY anymore — the body now flows
+      // top-down with flex-start, so the pedigree strip naturally lands
+      // right after Leadership Team and stays within the slide bounds.
       boxShadow: theme.cardShadow,
     },
     pedigreeStripHeader: {
@@ -382,7 +379,7 @@ export default function SlideLeadership({ data }) {
           </div>
         </section>
 
-        <section className="reveal" style={{ '--reveal-delay': '0.45s', marginTop: 'auto' }}>
+        <section className="reveal" style={{ '--reveal-delay': '0.45s' }}>
           <SectionHeader beamDelay={4.5} styles={styles}>Leadership Team</SectionHeader>
           <div className="stagger" style={{ ...styles.leadersGrid, '--stagger-base': '0.55s', '--stagger-step': '0.04s' }}>
             {LEADERS.map((p, i) => (
