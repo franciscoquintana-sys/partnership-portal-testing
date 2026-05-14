@@ -604,12 +604,15 @@ function SlideViewerInner({ data, onBack, shared = false }) {
     else prev()
   }, [next, prev])
 
-  // Browser fullscreen makes the deck's window go to screen dimensions, which
-  // means CSS `vw` units inside every slide jump from the iframe size to the
-  // monitor size and the layout reflows / clips. We disable the fullscreen
-  // toggle entirely so the deck always renders inside the iframe at the same
-  // viewport the slides were designed for.
-  const toggleFullscreen = useCallback(() => {}, [])
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen?.()
+      setIsFullscreen(true)
+    } else {
+      document.exitFullscreen?.()
+      setIsFullscreen(false)
+    }
+  }, [])
 
   useEffect(() => {
     const handler = (e) => {

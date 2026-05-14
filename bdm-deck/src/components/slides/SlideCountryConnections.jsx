@@ -29,7 +29,7 @@ export default function SlideCountryConnections({ region, country }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(14px, 1.4vw, 22px)',
+      gap: '22px',
       minHeight: 0,
     },
     titleRow: {
@@ -155,8 +155,8 @@ export default function SlideCountryConnections({ region, country }) {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 'clamp(16px, 1.5vw, 28px)',
-      padding: 'clamp(40px, 4vw, 80px)',
+      gap: '28px',
+      padding: '80px',
       background: 'rgba(220,160,90,0.08)',
       border: '1px dashed rgba(220,160,90,0.45)',
       borderRadius: '16px',
@@ -164,7 +164,7 @@ export default function SlideCountryConnections({ region, country }) {
     },
     verifyKicker: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(11px, 0.85vw, 14px)',
+      fontSize: '14px',
       fontWeight: 700,
       letterSpacing: '2px',
       textTransform: 'uppercase',
@@ -172,7 +172,7 @@ export default function SlideCountryConnections({ region, country }) {
     },
     verifyTitle: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(22px, 1.9vw, 36px)',
+      fontSize: '36px',
       fontWeight: 600,
       letterSpacing: '-0.6px',
       lineHeight: 1.2,
@@ -180,7 +180,7 @@ export default function SlideCountryConnections({ region, country }) {
       maxWidth: '720px',
     },
     verifyBody: {
-      fontSize: 'clamp(13px, 1vw, 16px)',
+      fontSize: '16px',
       lineHeight: 1.6,
       color: theme.inkSecondary,
       maxWidth: '640px',

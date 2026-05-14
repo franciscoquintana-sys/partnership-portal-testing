@@ -33,7 +33,7 @@ const INVESTORS = [
   { name: 'TIGERGLOBAL',             slug: 'tiger-global',            style: { fontWeight: 700, letterSpacing: '1px' } },
   { name: 'andreessen.horowitz',     slug: 'andreessen-horowitz',     style: { fontWeight: 600, letterSpacing: '-0.2px', fontSize: '0.82em' } },
   { name: 'monashees+',              slug: 'monashees',               style: { fontWeight: 600, letterSpacing: '-0.2px', fontStyle: 'italic' } },
-  { name: 'Global PayTech Ventures', slug: 'global-paytech-ventures', imgStyle: { height: 'clamp(46px, 4.2vw, 76px)', maxWidth: 'clamp(110px, 10vw, 180px)' }, style: { fontWeight: 600, letterSpacing: '0.4px', fontSize: '0.78em', textTransform: 'uppercase' } },
+  { name: 'Global PayTech Ventures', slug: 'global-paytech-ventures', imgStyle: { height: '76px', maxWidth: '180px' }, style: { fontWeight: 600, letterSpacing: '0.4px', fontSize: '0.78em', textTransform: 'uppercase' } },
 ]
 
 // Logo with text fallback. onError fires when /trusted/<slug>.png 404s,
@@ -71,13 +71,13 @@ export default function SlideTrustedBy() {
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'space-between',
-      gap: 'clamp(24px, 3vw, 48px)',
-      marginBottom: 'clamp(20px, 2.2vw, 36px)',
+      gap: '48px',
+      marginBottom: '36px',
       flexShrink: 0,
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(40px, 3.8vw, 72px)',
+      fontSize: '72px',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -95,7 +95,7 @@ export default function SlideTrustedBy() {
       color: 'transparent',
     },
     tagline: {
-      fontSize: 'clamp(13px, 1.05vw, 17px)',
+      fontSize: '17px',
       lineHeight: 1.55,
       color: theme.inkSecondary,
       maxWidth: '34%',
@@ -111,7 +111,7 @@ export default function SlideTrustedBy() {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(20px, 2vw, 36px)',
+      gap: '36px',
       minHeight: 0,
     },
     // Wraps the merchant header + grid as a flex-column item so the grid's
@@ -129,7 +129,7 @@ export default function SlideTrustedBy() {
       display: 'flex',
       alignItems: 'center',
       gap: '10px',
-      marginBottom: 'clamp(12px, 1.1vw, 18px)',
+      marginBottom: '18px',
       flexShrink: 0,
     },
     sectionDot: {
@@ -141,7 +141,7 @@ export default function SlideTrustedBy() {
       flexShrink: 0,
     },
     sectionLabel: {
-      fontSize: 'clamp(12px, 0.95vw, 15.5px)',
+      fontSize: '15.5px',
       fontWeight: 700,
       letterSpacing: '1.8px',
       textTransform: 'uppercase',
@@ -153,7 +153,7 @@ export default function SlideTrustedBy() {
       display: 'grid',
       gridTemplateColumns: 'repeat(5, 1fr)',
       gridTemplateRows: 'repeat(2, 1fr)',
-      gap: 'clamp(12px, 1.1vw, 20px)',
+      gap: '20px',
       flex: 1,
       minHeight: 0,
     },
@@ -164,7 +164,7 @@ export default function SlideTrustedBy() {
       background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.025)',
       border: `1px solid ${theme.borderSubtle}`,
       borderRadius: '14px',
-      padding: 'clamp(10px, 0.9vw, 18px)',
+      padding: '18px',
       minHeight: 0,
       minWidth: 0,
       overflow: 'hidden',
@@ -184,7 +184,7 @@ export default function SlideTrustedBy() {
     },
     merchantText: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(20px, 1.9vw, 36px)',
+      fontSize: '36px',
       color: theme.ink,
       lineHeight: 1,
       textAlign: 'center',
@@ -202,8 +202,8 @@ export default function SlideTrustedBy() {
     investorStrip: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(14px, 1.2vw, 22px)',
-      padding: 'clamp(20px, 1.9vw, 34px) clamp(24px, 2.4vw, 42px)',
+      gap: '22px',
+      padding: '34px 42px',
       background: theme.isLight
         ? theme.bgElevated
         : 'linear-gradient(180deg, rgba(62,79,224,0.05) 0%, rgba(62,79,224,0.02) 100%)',
@@ -215,12 +215,12 @@ export default function SlideTrustedBy() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 'clamp(36px, 3.6vw, 72px)',
+      gap: '72px',
       flexWrap: 'nowrap',
     },
     investorImg: {
-      height: 'clamp(28px, 2.4vw, 44px)',
-      maxWidth: 'clamp(120px, 11vw, 200px)',
+      height: '44px',
+      maxWidth: '200px',
       objectFit: 'contain',
       display: 'block',
       filter: theme.invertLogos ? 'brightness(0) invert(1)' : 'brightness(0)',
@@ -228,7 +228,7 @@ export default function SlideTrustedBy() {
     },
     investorText: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(20px, 1.85vw, 34px)',
+      fontSize: '34px',
       color: theme.inkSecondary,
       lineHeight: 1,
       whiteSpace: 'nowrap',

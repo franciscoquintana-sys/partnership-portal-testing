@@ -315,14 +315,14 @@ export default function SlideYunoSolve({ data }) {
       fontFamily: 'var(--font-display)',
       // Matched to the Infrastructure title so slide 2 and slide 3 read at
       // the same scale.
-      fontSize: 'clamp(40px, 3.8vw, 72px)',
+      fontSize: '72px',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
       // Dark used #fff for the H2; light uses the deep ink token.
       color: theme.isLight ? theme.ink : '#fff',
       margin: 0,
-      marginBottom: 'clamp(24px, 2.2vw, 40px)',
+      marginBottom: '40px',
     },
     accent: theme.isLight
       ? {
@@ -575,7 +575,7 @@ export default function SlideYunoSolve({ data }) {
       // Pushes the PSP chips lower so the drop lines from the bus have
       // room to read as distinct traces landing on the chips, rather than
       // terminating right at the chip's top border.
-      marginTop: 'clamp(30px, 2.6vw, 54px)',
+      marginTop: '54px',
     },
     archIllustrativeNote: {
       fontFamily: 'var(--font-mono)',
