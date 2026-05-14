@@ -218,8 +218,27 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       return !NON_APM_TYPE.test(type)
     })
   const breakdown = rich?.payment_methods_breakdown || []
-  const regulation = rich?.regulation || []
-  const digitalTrends = rich?.digital_trends || rich?.digitalTrends || []
+  const rawRegulation = rich?.regulation || []
+  const rawDigitalTrends = rich?.digital_trends || rich?.digitalTrends || []
+
+  // Filter Digital Trends to keep CNP / consumer-ecommerce focus — drop
+  // B2B-only points so the slide aligns with merchants doing card-not-
+  // present / cross-border sales into the country.
+  const B2B_EXCLUDE = /(\bb2b\b|business[\s-]*to[\s-]*business|nearshoring|supply\s*chain|wholesale|invoice\s+finance)/i
+  const digitalTrends = rawDigitalTrends.filter((t) => {
+    const txt = typeof t === 'string' ? t : (t?.text || t?.title || '')
+    return !B2B_EXCLUDE.test(txt)
+  })
+
+  // Sort regulation so the lines most relevant to a merchant landing in
+  // this market (Merchant of Record, Payment Aggregator licensing, settle-
+  // ment / VAT / data residency) bubble to the top of the 4-item display.
+  const MERCHANT_BOOST = /(merchant\s+of\s+record|\bmor\b|payment\s+aggregator|psp\s+license|settlement|withhold|\bvat\b|\bgst\b|cross[\s-]?border|data\s+(local|residency|storage))/i
+  const regulation = [...rawRegulation].sort((a, b) => {
+    const am = MERCHANT_BOOST.test(a) ? 0 : 1
+    const bm = MERCHANT_BOOST.test(b) ? 0 : 1
+    return am - bm
+  })
 
   const styles = {
     body: {
