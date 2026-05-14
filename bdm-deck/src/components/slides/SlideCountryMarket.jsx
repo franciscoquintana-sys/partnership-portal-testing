@@ -96,7 +96,7 @@ export default function SlideCountryMarket({ region, country }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(14px, 1.4vw, 22px)',
+      gap: '18px',
       minHeight: 0,
     },
     titleRow: {

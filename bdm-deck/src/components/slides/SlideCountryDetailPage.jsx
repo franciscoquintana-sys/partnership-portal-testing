@@ -90,7 +90,7 @@ function PaymentBreakdown({ items, theme }) {
         minHeight: 0,
         display: 'flex',
         flexDirection: 'column',
-        gap: 'clamp(8px, 0.7vw, 14px)',
+        gap: '9px',
       }}
     >
       {rows.map((row, i) => {
@@ -102,14 +102,14 @@ function PaymentBreakdown({ items, theme }) {
               display: 'grid',
               gridTemplateColumns: 'minmax(120px, 1.4fr) minmax(0, 3fr) auto',
               alignItems: 'center',
-              gap: 'clamp(10px, 0.9vw, 18px)',
+              gap: '11.5px',
             }}
           >
             <div style={{ minWidth: 0 }}>
               <div
                 style={{
                   fontFamily: 'var(--font)',
-                  fontSize: 'clamp(13px, 1.05vw, 17px)',
+                  fontSize: '13.5px',
                   fontWeight: 700,
                   color: theme.inkStrong,
                   lineHeight: 1.25,
@@ -122,7 +122,7 @@ function PaymentBreakdown({ items, theme }) {
                 <div
                   style={{
                     fontFamily: 'var(--font-mono)',
-                    fontSize: 'clamp(10px, 0.78vw, 12px)',
+                    fontSize: '10px',
                     fontWeight: 600,
                     color: theme.inkMuted,
                     letterSpacing: '0.4px',
@@ -137,7 +137,7 @@ function PaymentBreakdown({ items, theme }) {
             <div
               style={{
                 position: 'relative',
-                height: 'clamp(22px, 1.8vw, 30px)',
+                height: '23px',
                 borderRadius: '999px',
                 background: accentBg,
                 overflow: 'hidden',
@@ -160,7 +160,7 @@ function PaymentBreakdown({ items, theme }) {
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontFamily: 'var(--font)',
-                  fontSize: 'clamp(11px, 0.9vw, 14px)',
+                  fontSize: '11.5px',
                   fontWeight: 800,
                   fontVariantNumeric: 'tabular-nums',
                   color: theme.inkStrong,
@@ -172,7 +172,7 @@ function PaymentBreakdown({ items, theme }) {
             <span
               style={{
                 fontFamily: 'var(--font-mono)',
-                fontSize: 'clamp(11px, 0.9vw, 14px)',
+                fontSize: '11.5px',
                 fontWeight: 700,
                 color: growthColor(row.growth),
                 fontVariantNumeric: 'tabular-nums',
@@ -363,7 +363,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     overviewLabel: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(10px, 0.78vw, 12px)',
+      fontSize: '10px',
       fontWeight: 700,
       letterSpacing: '1.4px',
       textTransform: 'uppercase',
@@ -373,7 +373,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     overviewValue: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(18px, 1.5vw, 26px)',
+      fontSize: '19px',
       fontWeight: 700,
       color: theme.inkStrong,
       letterSpacing: '-0.3px',
@@ -383,22 +383,22 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     grid: {
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
-      gap: 'clamp(16px, 1.4vw, 28px)',
+      gap: '18px',
       minHeight: 0,
     },
     card: {
       background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.025)',
       border: `1px solid ${theme.borderSubtle}`,
       borderRadius: '14px',
-      padding: 'clamp(14px, 1.2vw, 22px)',
+      padding: '15.5px',
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(8px, 0.7vw, 12px)',
+      gap: '9px',
       minWidth: 0,
     },
     cardHeader: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(18px, 1.5vw, 26px)',
+      fontSize: '19px',
       fontWeight: 700,
       letterSpacing: '2px',
       textTransform: 'uppercase',
@@ -406,17 +406,17 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     cardTitle: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(18px, 1.5vw, 26px)',
+      fontSize: '19px',
       fontWeight: 700,
       color: theme.inkStrong,
       letterSpacing: '-0.3px',
     },
     list: {
       listStyle: 'none', padding: 0, margin: 0,
-      display: 'flex', flexDirection: 'column', gap: 'clamp(6px, 0.5vw, 12px)',
+      display: 'flex', flexDirection: 'column', gap: '6.5px',
     },
     listItem: {
-      fontSize: 'clamp(13px, 1.05vw, 18px)',
+      fontSize: '13.5px',
       lineHeight: 1.45,
       color: theme.inkSecondary,
       paddingLeft: '16px',
@@ -429,7 +429,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     localGrid: {
       display: 'grid',
       gridTemplateColumns: '1fr 1fr',
-      gap: 'clamp(10px, 0.9vw, 16px)',
+      gap: '11.5px',
     },
     localCell: {
       display: 'flex',
@@ -438,7 +438,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     localLabel: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(10px, 0.8vw, 12px)',
+      fontSize: '10px',
       fontWeight: 700,
       letterSpacing: '1.4px',
       textTransform: 'uppercase',
@@ -446,7 +446,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     localValue: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(16px, 1.3vw, 22px)',
+      fontSize: '16.5px',
       fontWeight: 700,
       color: theme.inkStrong,
     },
@@ -458,7 +458,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     chip: {
       fontFamily: 'var(--font)',
-      fontSize: 'clamp(11px, 0.95vw, 14px)',
+      fontSize: '12px',
       fontWeight: 600,
       padding: '6px 12px',
       borderRadius: '100px',
@@ -469,14 +469,14 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     apmGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
-      gap: 'clamp(8px, 0.7vw, 12px)',
+      gap: '9px',
       marginTop: '4px',
     },
     apmCard: {
       background: theme.isLight ? 'rgba(62,79,224,0.06)' : 'rgba(62,79,224,0.10)',
       border: `1px solid ${theme.borderAccent}`,
       borderRadius: '10px',
-      padding: 'clamp(8px, 0.7vw, 14px) clamp(10px, 0.9vw, 16px)',
+      padding: '9px 11.5px',
       display: 'flex',
       flexDirection: 'column',
       gap: '2px',
@@ -484,7 +484,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     apmName: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(14px, 1.15vw, 20px)',
+      fontSize: '14.5px',
       fontWeight: 700,
       color: theme.inkStrong,
       letterSpacing: '-0.2px',
@@ -493,7 +493,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     apmType: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(10px, 0.78vw, 12px)',
+      fontSize: '10px',
       fontWeight: 600,
       letterSpacing: '0.6px',
       color: theme.inkMuted,
@@ -502,7 +502,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       flex: 1,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       fontFamily: 'var(--font)',
-      fontSize: 'clamp(18px, 1.5vw, 28px)',
+      fontSize: '19px',
       color: theme.inkMuted, textAlign: 'center', lineHeight: 1.5,
     },
   }

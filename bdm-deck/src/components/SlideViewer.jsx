@@ -609,7 +609,15 @@ function SlideViewerInner({ data, onBack, shared = false }) {
   // monitor size and the layout reflows / clips. We disable the fullscreen
   // toggle entirely so the deck always renders inside the iframe at the same
   // viewport the slides were designed for.
-  const toggleFullscreen = useCallback(() => {}, [])
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen?.()
+      setIsFullscreen(true)
+    } else {
+      document.exitFullscreen?.()
+      setIsFullscreen(false)
+    }
+  }, [])
 
   useEffect(() => {
     const handler = (e) => {

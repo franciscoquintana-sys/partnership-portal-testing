@@ -51,7 +51,7 @@ export default function SlideRegionEcommerceMap({ region }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(14px, 1.4vw, 22px)',
+      gap: '18px',
       minHeight: 0,
     },
     header: {
@@ -73,7 +73,7 @@ export default function SlideRegionEcommerceMap({ region }) {
     legend: {
       display: 'flex',
       flexDirection: 'row',
-      gap: 'clamp(14px, 1.2vw, 22px)',
+      gap: '15.5px',
       flexShrink: 0,
       alignItems: 'flex-end',
       flexWrap: 'wrap',
@@ -94,13 +94,13 @@ export default function SlideRegionEcommerceMap({ region }) {
       flex: 1,
       display: 'grid',
       gridTemplateColumns: '1fr 1.4fr 1fr',
-      gap: 'clamp(14px, 1.2vw, 22px)',
+      gap: '15.5px',
       minHeight: 0,
     },
     side: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(10px, 0.9vw, 14px)',
+      gap: '11.5px',
       minHeight: 0,
     },
     callout: {

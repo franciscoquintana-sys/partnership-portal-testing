@@ -30,7 +30,7 @@ export default function SlideRegionTierMap({ region }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(14px, 1.4vw, 24px)',
+      gap: '18px',
       minHeight: 0,
     },
     title: {
@@ -47,21 +47,21 @@ export default function SlideRegionTierMap({ region }) {
       flex: 1,
       display: 'grid',
       gridTemplateColumns: '1.05fr 0.85fr 1.4fr',
-      gap: 'clamp(18px, 1.6vw, 32px)',
+      gap: '20.5px',
       minHeight: 0,
     },
     // ---- Left column ----
     leftCol: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(14px, 1.2vw, 22px)',
+      gap: '15.5px',
       minHeight: 0,
     },
     statsCard: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(10px, 0.9vw, 16px)',
-      padding: 'clamp(16px, 1.4vw, 26px)',
+      gap: '11.5px',
+      padding: '18px',
       background: 'rgba(124,137,239,0.08)',
       border: '1px solid rgba(124,137,239,0.22)',
       borderRadius: '14px',
@@ -86,7 +86,7 @@ export default function SlideRegionTierMap({ region }) {
     },
     statsRow: {
       display: 'flex',
-      gap: 'clamp(18px, 1.6vw, 32px)',
+      gap: '20.5px',
     },
     statItem: {
       display: 'flex',
@@ -197,15 +197,15 @@ export default function SlideRegionTierMap({ region }) {
     tierColumn: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(10px, 0.9vw, 16px)',
+      gap: '11.5px',
       minHeight: 0,
       overflowY: 'auto',
     },
     tierCard: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(6px, 0.5vw, 10px)',
-      padding: 'clamp(12px, 1vw, 18px) clamp(14px, 1.2vw, 22px)',
+      gap: '6.5px',
+      padding: '13px 15.5px',
       borderRadius: '12px',
       border: '1px solid',
       flexShrink: 0,
