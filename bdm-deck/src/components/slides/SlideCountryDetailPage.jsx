@@ -475,7 +475,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
           <h2 style={styles.name}>{selectedCountry}</h2>
         </div>
 
-        {(overviewEntries.length > 0 || localPayments.scheme || localPayments.a2a || (localPayments.apms || []).length > 0) && (
+        {overviewEntries.length > 0 && (
           <div style={styles.topStrip}>
             {overviewEntries.slice(0, 8).map(([label, value]) => (
               <div key={label} style={styles.overviewCard}>
@@ -483,6 +483,11 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
                 <span style={styles.overviewValue}>{value}</span>
               </div>
             ))}
+          </div>
+        )}
+
+        {(localPayments.scheme || localPayments.a2a || filteredApms.length > 0) && (
+          <div style={styles.topStrip}>
             {localPayments.scheme && (
               <div style={styles.overviewCard}>
                 <span style={styles.overviewLabel}>Local schemes</span>
