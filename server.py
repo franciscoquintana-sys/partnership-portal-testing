@@ -91,7 +91,12 @@ def _looks_like_bot_block(s: str) -> bool:
 def _brand_name_lookup(label: str):
     """Look up a clean brand name for the given label via DuckDuckGo's
     Instant Answer API (Wikipedia-backed). Free, no auth. Returns the
-    canonical heading when the label matches a known company, else None."""
+    canonical heading when the label matches a known company, else None.
+
+    DuckDuckGo returns Wikipedia article titles verbatim — so a label
+    like "as" resolves to ".as" (the Anguilla ccTLD article). Strip
+    any leading dot so the brand name reads naturally on the cover.
+    """
     if not label:
         return None
     try:
@@ -102,6 +107,7 @@ def _brand_name_lookup(label: str):
             headers={"User-Agent": "Mozilla/5.0 (compatible; YunoPortal/1.0)"},
         )
         heading = (resp.json().get("Heading") or "").strip()
+        heading = heading.lstrip(".").strip()
         return heading or None
     except Exception:
         return None
@@ -175,6 +181,11 @@ def _site_info(url: str) -> dict:
 
     if not name:
         name = label.capitalize()
+
+    # Strip any leading punctuation (".", whitespace) that may have come
+    # back from the brand lookup or HTML title (e.g., ".as" ccTLD article,
+    # "·Brand" centre-dot prefixes).
+    name = (name or "").lstrip(". ·•—–-").strip() or label.capitalize()
 
     # Logo preference (best → fallback). Earlier = guaranteed transparent
     # background, later = may have a solid bg:
