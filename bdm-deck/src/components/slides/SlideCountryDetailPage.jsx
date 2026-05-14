@@ -238,6 +238,15 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     'Alibaba', 'Lazada', 'Shopee', 'iFood', 'Rappi', 'Blinkit', 'Zepto',
     'Zomato', 'Swiggy', 'BigBasket', 'JioMart', 'FamilyMart',
     'PedidosYa', 'GoTo\\b',
+    // Regulator-flavoured lines belong on the Regulation card, not on
+    // Digital Trends. Drop bullets that lead with regulator references,
+    // license language, or compliance topics.
+    '\\bRBI\\b', '\\bBACEN\\b', '\\bCNBV\\b', '\\bBanxico\\b', '\\bSAMA\\b',
+    '\\bCBUAE\\b', '\\bMAS\\b', '\\bSBV\\b', '\\bBSP\\b', 'central\\s+bank',
+    '\\bregulat', '\\blicense', 'payment\\s+aggregator', '\\bcompliance\\b',
+    'data\\s+(local|residency|protection)', 'tokeniz', '\\bkyc\\b',
+    'merchant\\s+of\\s+record', '\\bmor\\b', '\\bvat\\b', '\\bgst\\b',
+    '\\btds\\b', 'withhold', 'lgpd', 'gdpr', 'pix.+regulat',
   ].join('|'), 'i')
   const digitalTrends = rawDigitalTrends.filter((t) => {
     const txt = typeof t === 'string' ? t : (t?.text || t?.title || '')
@@ -601,7 +610,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
           <div style={styles.card}>
             <span style={styles.cardHeader}>Regulation</span>
             <ul style={styles.list}>
-              {regulation.slice(0, 6).map((line, i) => (
+              {regulation.slice(0, 4).map((line, i) => (
                 <li key={i} style={styles.listItem}>
                   <span style={styles.listBullet} aria-hidden />
                   {line}
