@@ -266,8 +266,9 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       gap: 'clamp(10px, 0.9vw, 16px)',
     },
     apmsWide: {
-      // No grid-span needed in the flex layout — the card just grows to
-      // fit its 3 APM columns.
+      // Relevant APMs holds 3 inner columns so it carries proportionally
+      // more weight than the single-stat cards next to it on the same row.
+      flex: '3 1 auto',
     },
     apmsRow: {
       display: 'grid',
@@ -305,7 +306,10 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       display: 'flex',
       flexDirection: 'column',
       gap: '6px',
-      minWidth: 0,
+      // Stretch to fill the row — cards distribute evenly horizontally
+      // while still wrapping to a second line when they collectively need
+      // more space than the row offers.
+      flex: '1 1 auto',
     },
     overviewLabel: {
       fontFamily: 'var(--font-mono)',
