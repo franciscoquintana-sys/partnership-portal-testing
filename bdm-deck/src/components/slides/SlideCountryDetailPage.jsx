@@ -221,23 +221,23 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
   const rawRegulation = rich?.regulation || []
   const rawDigitalTrends = rich?.digital_trends || rich?.digitalTrends || []
 
-  // Digital Trends — keep only entries that read as guidance for a
+  // Digital Trends — keep entries that read as market guidance for a
   // merchant looking to *operate* in this country (cross-border / CNP /
-  // ecommerce). Strip B2B narrative and any bullet that name-drops a
-  // specific merchant or super-app brand (those read as anecdotes, not
-  // operating guidance).
+  // ecommerce). Payment-system names (wallets, PSPs, A2A rails) are
+  // *allowed* because they describe the infrastructure a merchant will
+  // plug into. Non-payment retailer / consumer-brand anecdotes are
+  // dropped because they don't help an operator decide how to plug in.
   const TRENDS_EXCLUDE = new RegExp([
     '\\bb2b\\b', 'business[\\s-]*to[\\s-]*business', 'nearshoring',
     'supply\\s*chain', 'wholesale', 'invoice\\s+finance',
-    // Common merchant / super-app names that appear in the dataset's
-    // anecdotal trend lines — block so the slide stays operator-focused.
-    'Mercado\\s+(?:Pago|Libre)|Nubank|\\bNu\\b|PicPay|PagSeguro',
-    'iFood|Rappi|Spotify|Netflix|\\bUber\\b|Amazon|eBay|Alibaba',
-    'Lazada|Shopee|Discord|Blinkit|Zepto|Zomato|Swiggy|BigBasket',
-    'JioMart|KakaoPay|KakaoBank|GrabPay|GrabFin|GoTo|GoPay',
-    'PayPay|LinePay|PayMe|PayPo|PayBox|PayShap|PayTabs|MoMo',
-    'OmanNet|BenefitPay|BitoPro|BitOasis|MyFatoorah|FamilyMart',
-    'CaixaBank|FirstBank|MoneyGram|PromptPay|InstaPay|JazzCash',
+    // Non-payment merchant brand names (retail, marketplaces, streaming,
+    // food delivery, social) — these read as anecdotes, not operating
+    // guidance. PSPs / wallets stay so trends like "Mercado Pago handles
+    // 30% of LATAM ecommerce" still surface.
+    '\\bUber\\b', 'Netflix', 'Spotify', 'Discord', 'Amazon\\b', '\\beBay\\b',
+    'Alibaba', 'Lazada', 'Shopee', 'iFood', 'Rappi', 'Blinkit', 'Zepto',
+    'Zomato', 'Swiggy', 'BigBasket', 'JioMart', 'FamilyMart',
+    'PedidosYa', 'GoTo\\b',
   ].join('|'), 'i')
   const digitalTrends = rawDigitalTrends.filter((t) => {
     const txt = typeof t === 'string' ? t : (t?.text || t?.title || '')
