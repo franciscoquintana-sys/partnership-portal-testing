@@ -176,14 +176,88 @@ def _site_info(url: str) -> dict:
     if not name:
         name = label.capitalize()
 
-    # Logo preference (best → fallback):
-    #   1. Largest apple-touch-icon on the page (180×180+, usually a clean
-    #      PNG with transparency since iOS requires it).
-    #   2. og:image (typically 1200×630 branded card).
-    #   3. Google favicon (set above, always available).
+    # Logo preference (best → fallback). Earlier = guaranteed transparent
+    # background, later = may have a solid bg:
+    #   1. SVG icon link (`<link rel="icon" type="image/svg+xml">` or
+    #      `<link rel="mask-icon">`) — vector, always transparent.
+    #   2. schema.org Organization "logo" — sites set this explicitly when
+    #      they have a clean transparent brand asset.
+    #   3. Largest apple-touch-icon (180×180+, usually clean PNG; iOS
+    #      stopped flattening transparency in iOS 7+).
+    #   4. og:image (typically 1200×630 banner card with solid bg — last
+    #      resort, the client will alpha-key the corners).
+    #   5. Google favicon (set above, always available).
     if html:
+        # 1. SVG icon link
+        svg_href = None
+        for tag in _site_re.finditer(r"<link[^>]+>", html, _site_re.I):
+            t = tag.group(0)
+            rel = _site_re.search(r'rel=["\']([^"\']+)["\']', t, _site_re.I)
+            href = _site_re.search(r'href=["\']([^"\']+)["\']', t, _site_re.I)
+            typ = _site_re.search(r'type=["\']([^"\']+)["\']', t, _site_re.I)
+            if not rel or not href:
+                continue
+            rel_low = rel.group(1).lower()
+            href_val = href.group(1)
+            is_svg_type = typ and typ.group(1).lower() == "image/svg+xml"
+            is_svg_url = href_val.lower().split("?")[0].endswith(".svg")
+            is_mask_icon = "mask-icon" in rel_low
+            is_icon = "icon" in rel_low and "apple-touch-icon" not in rel_low
+            if (is_icon and (is_svg_type or is_svg_url)) or is_mask_icon:
+                svg_href = href_val
+                break
+
+        # 2. schema.org Organization logo (often a clean transparent PNG/SVG)
+        schema_logo = None
+        # Inline JSON-LD blocks
+        for jld in _site_re.finditer(
+            r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(.*?)</script>',
+            html, _site_re.I | _site_re.S,
+        ):
+            blob = jld.group(1)
+            # Naive but robust: look for "logo":"..." or "logo":{"url":"..."}
+            m = _site_re.search(
+                r'"logo"\s*:\s*(?:"([^"]+)"|\{[^{}]*"url"\s*:\s*"([^"]+)")',
+                blob,
+            )
+            if m:
+                schema_logo = m.group(1) or m.group(2)
+                if schema_logo:
+                    break
+
+        # 3. Header <img> with "logo" in class/id/alt — sites almost always
+        #    ship these as transparent PNG/SVG. Look only inside the first
+        #    <header>...</header> block so we don't grab article thumbnails.
+        header_logo = None
+        header_match = _site_re.search(
+            r"<header[^>]*>(.*?)</header>", html, _site_re.I | _site_re.S,
+        )
+        if header_match:
+            header_html = header_match.group(1)
+            for img_tag in _site_re.finditer(r"<img[^>]+>", header_html, _site_re.I):
+                t = img_tag.group(0)
+                cls = _site_re.search(r'class=["\']([^"\']+)["\']', t, _site_re.I)
+                idattr = _site_re.search(r'id=["\']([^"\']+)["\']', t, _site_re.I)
+                alt = _site_re.search(r'alt=["\']([^"\']+)["\']', t, _site_re.I)
+                src = _site_re.search(r'(?:data-src|src)=["\']([^"\']+)["\']', t, _site_re.I)
+                if not src:
+                    continue
+                hay = " ".join(filter(None, [
+                    cls.group(1) if cls else "",
+                    idattr.group(1) if idattr else "",
+                    alt.group(1) if alt else "",
+                ])).lower()
+                if "logo" in hay or "brand" in hay:
+                    src_val = src.group(1)
+                    # Skip 1x1 trackers / data URIs / sprite svgs.
+                    if src_val.startswith("data:"):
+                        continue
+                    header_logo = src_val
+                    break
+
+        # 4. Largest apple-touch-icon
         best_size = 0
-        best_href = None
+        apple_href = None
         for tag in _site_re.finditer(r"<link[^>]+>", html, _site_re.I):
             t = tag.group(0)
             rel = _site_re.search(r'rel=["\']([^"\']+)["\']', t, _site_re.I)
@@ -196,19 +270,23 @@ def _site_info(url: str) -> dict:
             size = int(size_match.group(1)) if size_match else 180
             if size > best_size:
                 best_size = size
-                best_href = href.group(1)
-        if best_href:
-            logo = _site_urljoin(final_url, best_href)
-        else:
-            for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
-                t = tag.group(0)
-                prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
-                cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
-                if prop and cont and prop.group(1).lower() == "og:image":
-                    candidate = _site_urljoin(final_url, cont.group(1).strip())
-                    if _site_re.search(r"\.(png|webp|svg|jpe?g)(\?|$)", candidate, _site_re.I):
-                        logo = candidate
-                        break
+                apple_href = href.group(1)
+
+        # 4. og:image
+        og_href = None
+        for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
+            t = tag.group(0)
+            prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
+            cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
+            if prop and cont and prop.group(1).lower() == "og:image":
+                cand = cont.group(1).strip()
+                if _site_re.search(r"\.(png|webp|svg|jpe?g)(\?|$)", cand, _site_re.I):
+                    og_href = cand
+                    break
+
+        chosen = svg_href or schema_logo or header_logo or apple_href or og_href
+        if chosen:
+            logo = _site_urljoin(final_url, chosen)
 
     vertical = _detect_vertical(html, name or "", host)
     return {"name": name, "logo": logo, "vertical": vertical}

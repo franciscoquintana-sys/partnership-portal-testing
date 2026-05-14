@@ -2,11 +2,103 @@
 // the central glow, orbital rings, and pulse dots are perfectly centered on
 // the globe (was drifting in the old planet1-based design). Ambient
 // particles drift across the whole cover for atmospheric depth.
+import { useEffect, useState } from 'react'
 import { GlobeHalo, CoverParticles } from './CoverFX'
 import { useTheme } from '../../lib/theme'
 
 function currentMonthYear() {
   return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
+}
+
+// Run a fetched logo through a canvas to alpha-key its dominant
+// background color so flat PNG/JPG logos read as transparent on the
+// dark cover. Skip for SVG/data URLs (already vector) and for
+// cross-origin sources that block canvas reads (CORS taint). Falls
+// back to the original src on any failure.
+function TransparentLogo({ src, alt, style, fallbackFilter }) {
+  const [processed, setProcessed] = useState(null)
+  const [failed, setFailed] = useState(false)
+
+  useEffect(() => {
+    if (!src) return
+    const lower = src.toLowerCase().split('?')[0]
+    // Vector / inline images already support transparency.
+    if (lower.endsWith('.svg') || src.startsWith('data:')) {
+      setProcessed(src)
+      return
+    }
+    let cancelled = false
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      if (cancelled) return
+      try {
+        const w = img.naturalWidth || img.width
+        const h = img.naturalHeight || img.height
+        if (!w || !h) { setProcessed(src); return }
+        const canvas = document.createElement('canvas')
+        canvas.width = w
+        canvas.height = h
+        const ctx = canvas.getContext('2d')
+        ctx.drawImage(img, 0, 0, w, h)
+        const imgData = ctx.getImageData(0, 0, w, h) // throws on CORS taint
+        const data = imgData.data
+        // Sample 4 corners. If they cluster around a single color (low
+        // variance) and that color is near-white or near-black, treat
+        // it as the bg and key it out with tolerance.
+        const samples = [
+          [0, 0], [w - 1, 0], [0, h - 1], [w - 1, h - 1],
+        ].map(([x, y]) => {
+          const i = (y * w + x) * 4
+          return [data[i], data[i + 1], data[i + 2], data[i + 3]]
+        })
+        const same = (a, b) =>
+          Math.abs(a[0] - b[0]) < 16
+          && Math.abs(a[1] - b[1]) < 16
+          && Math.abs(a[2] - b[2]) < 16
+        const allClustered = samples.every((s) => same(s, samples[0]))
+        const [r0, g0, b0, a0] = samples[0]
+        const isFlatLight = r0 > 235 && g0 > 235 && b0 > 235
+        const isFlatDark = r0 < 20 && g0 < 20 && b0 < 20
+        const shouldKey = allClustered && a0 > 200 && (isFlatLight || isFlatDark)
+        if (shouldKey) {
+          const tol = 24
+          for (let i = 0; i < data.length; i += 4) {
+            if (
+              Math.abs(data[i] - r0) < tol
+              && Math.abs(data[i + 1] - g0) < tol
+              && Math.abs(data[i + 2] - b0) < tol
+            ) {
+              data[i + 3] = 0
+            }
+          }
+          ctx.putImageData(imgData, 0, 0)
+          setProcessed(canvas.toDataURL('image/png'))
+        } else {
+          // Already transparent or non-uniform — use as-is.
+          setProcessed(src)
+        }
+      } catch (e) {
+        // CORS taint — can't read pixels. Fall back to raw img.
+        setFailed(true)
+      }
+    }
+    img.onerror = () => { if (!cancelled) setFailed(true) }
+    img.src = src
+    return () => { cancelled = true }
+  }, [src])
+
+  const finalSrc = failed ? src : (processed || src)
+  return (
+    <img
+      src={finalSrc}
+      alt={alt}
+      style={{
+        ...style,
+        ...(failed && fallbackFilter ? { filter: fallbackFilter } : {}),
+      }}
+    />
+  )
 }
 
 // Merchant logos whose asset is dark/colored and disappears on the cover's
@@ -267,7 +359,7 @@ export default function SlideCover({ data }) {
                         }}
                       />
                     ) : (
-                      <img
+                      <TransparentLogo
                         src={data.COMPANY_LOGO}
                         alt={data.COMPANY_NAME}
                         style={{
@@ -276,6 +368,11 @@ export default function SlideCover({ data }) {
                             ? { filter: WHITE_LOGO_FILTER }
                             : {}),
                         }}
+                        fallbackFilter={
+                          DARK_LOGO_MERCHANTS.has((data.COMPANY_NAME || '').toLowerCase())
+                            ? WHITE_LOGO_FILTER
+                            : null
+                        }
                       />
                     )
                   ) : (
