@@ -295,7 +295,9 @@ export default function SlideLeadership({ data }) {
       border: `1px solid ${theme.isLight ? theme.borderDefault : 'rgba(62,79,224,0.12)'}`,
       borderRadius: '14px',
       marginTop: 'auto',
-      transform: 'translateY(-160px)',
+      // No vertical translate — the strip now sits naturally at the bottom
+      // of the flex column. The previous -160px lift was tuned for the old
+      // vw-scaled layout and is clipping content with the fixed-px design.
       boxShadow: theme.cardShadow,
     },
     pedigreeStripHeader: {
