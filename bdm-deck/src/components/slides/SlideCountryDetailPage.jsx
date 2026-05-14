@@ -252,10 +252,177 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     return !TRENDS_EXCLUDE.test(txt)
   })
 
-  // Regulation — focused on what a merchant entering this market needs
-  // to consider: licensing, Merchant of Record feasibility, regulated /
-  // high-risk verticals (what's accepted, what's prohibited), tax,
-  // cross-border, data residency.
+  // Regulation card — curated per country, focused on what a merchant
+  // entering the market needs to know: Merchant-of-Record feasibility and
+  // which high-risk verticals are accepted vs prohibited. Source data is
+  // licensing-heavy and inconsistent across markets, so we override it for
+  // the top markets and fall back to a filtered version for the long tail.
+  const REG_OVERRIDES = {
+    'Brazil': [
+      'Merchant of Record: widely used. Foreign sellers settle in BRL via local MoR/PSP partners that absorb ISS, PIS/COFINS and IOF exposure.',
+      'Verticals — allowed (regulated): iGaming & sports betting (Bets.gov.br license, 2024), crypto (Marco Legal), adult content. Restricted: pharma & alcohol (product registration + age).',
+      'Card data: tokenisation strongly encouraged; LGPD treats payment data as sensitive and ANPD enforcement is active.',
+      'Tax stack for MoR: ISS 2–5% (municipal), PIS/COFINS ~9.25% (federal), IOF 0.38% on FX — all flow through MoR economics.',
+    ],
+    'India': [
+      'Merchant of Record: only via PA-CB (cross-border Payment Aggregator) license — high barrier. Most foreign merchants route through a locally licensed PA.',
+      'Verticals — prohibited or restricted: real-money gaming/betting (state laws diverge), crypto as payment, adult, alcohol & tobacco online, firearms. Fantasy sports (skill) permitted.',
+      'Card data localisation mandatory — all data on Indian servers; raw PANs forbidden in the chain (tokenisation since 2022).',
+      'Tax: 18% GST on services; 1% TDS withhold on marketplace payouts (Sec 194-O).',
+    ],
+    'Mexico': [
+      'Merchant of Record: feasible. Foreign sellers register with SAT; PSPs withhold IVA (16%) at checkout for cross-border digital services.',
+      'Verticals — licensed: sports betting & online casino (DGJS / SEGOB), adult content. Restricted/prohibited: crypto as merchant settlement (Banxico), prescription pharma (COFEPRIS only).',
+      'Wallets/e-money require an IFPE license (Fintech Law). Law 2.0 (Oct 2026) tightens PSP capital + Open Finance.',
+      'Cash voucher (OXXO) still serves the ~40% unbanked — effectively mandatory at checkout for mass-market plays.',
+    ],
+    'United States': [
+      'Merchant of Record: feasible state-by-state. Non-bank custody of funds needs Money-Transmitter Licenses (MTL) in 49 states + NY DFS BitLicense for crypto.',
+      'Verticals — state-licensed only: online casino (NJ, MI, PA, CT, WV), sports betting (~40 states), adult (with age-verification laws varying), firearms (FFL + state).',
+      'Prohibited or blocked by networks: cannabis (federally Schedule I — card rails decline), most unlicensed online gambling, prescription pharma outside DEA-registered pharmacies.',
+      'PCI-DSS v4.0 mandatory; no national 3DS mandate; BNPL under Reg Z disclosures since 2024 (CFPB).',
+    ],
+    'UAE': [
+      'Merchant of Record: feasible via CBUAE-licensed PSP or free-zone vehicle (ADGM / DIFC). Federal Decree 6/2025 consolidates the regime — compliance deadline Sep 2026.',
+      'Verticals — licensed: crypto under VARA (Dubai) and ADGM/FSRA — strict enforcement (KuCoin halted 2026, 19 firms sanctioned 2025).',
+      'Prohibited: online gambling, adult content, alcohol-online outside licensed channels, firearms. Pharma online needs MoHAP/DHA license.',
+      'Tax: VAT 5%; corporate tax 9% on profits >AED 375K; PDPL (GDPR-aligned) plus DIFC/ADGM data laws in free zones.',
+    ],
+    'Germany': [
+      'Merchant of Record: feasible via BaFin-licensed PI / EMI; SEPA passport allows cross-border EU operations.',
+      'Verticals — licensed: online gambling under GlüStV (since 2021), crypto under MiCA (2024), adult content under JMStV (strict youth protection), pharma via DocMorris / Apotheke pharmacies.',
+      'Restricted: tobacco/alcohol age-gated; firearms restricted; B2B/B2C e-invoice mandate phasing in from 2025.',
+      'Strict GDPR enforcement (BfDI + state DPAs) + BDSG layered on top — among the EU’s most rigorous regimes.',
+    ],
+    'Indonesia': [
+      'Merchant of Record: feasible via PJP (PSP) license + OSS digital service registration; PTP license needed for remittance.',
+      'Verticals — permitted: crypto trading via Bappebti (not a payment method). Restricted/prohibited: gambling (Kominfo actively blocks), adult content, pharma e-commerce (BPOM only).',
+      'Alcohol & tobacco subject to age + provincial bans in several regions; firearms prohibited.',
+      'Tax: VAT 11%; foreign digital providers must register; PDP Law (2024) requires consent for cross-border data transfer.',
+    ],
+    'Argentina': [
+      'Merchant of Record: feasible but FX controls complicate USD settlement — BCRA authorisation required, often routed through licensed FX agents.',
+      'Verticals — licensed: online gambling by province (CABA, Buenos Aires, Mendoza, etc.). Crypto legal (not tender) — highest per-capita stablecoin user in LatAm; exchanges register with UIF (AML).',
+      'Pharma prescription-only via ANMAT; tobacco/alcohol age-restricted; firearms restricted.',
+      'Tax stack: VAT 21% + provincial gross-income IIBB (3–5%) + PAIS tax (30% FX on imports). PSPCR license to hold customer funds.',
+    ],
+    'Chile': [
+      'Merchant of Record: feasible under the 2023 Fintech Law (LMSF) — six license types including payment initiator and wallet issuer; CMF supervises.',
+      'Verticals — licensed: online gambling via casino concessions (limited operators), crypto under LMSF (stablecoins permitted, rare at checkout), adult content.',
+      'Pharma prescription-only via ISP; tobacco/alcohol regulated; firearms restricted (DGMN).',
+      'Tax: VAT (IVA) 19%; foreign digital providers register under Ley 21.210 (~500 already registered).',
+    ],
+    'Colombia': [
+      'Merchant of Record: feasible via SEDPE (e-money) license or DIAN registration for digital VAT collection.',
+      'Verticals — licensed: online gambling by Coljuegos (one of the more orderly LatAm markets). Crypto legal but unregulated as payment; adult content permitted.',
+      'Pharma prescription-only via INVIMA; tobacco/alcohol regulated; firearms restricted.',
+      'Tax: VAT (IVA) 19% on most digital services; retención en la fuente withholding applies on payouts to local sellers; data protection under Ley 1581 (SIC).',
+    ],
+    'Peru': [
+      'Merchant of Record: feasible via EEDE (e-money) license or SUNAT registration for digital VAT collection.',
+      'Verticals — licensed: online gambling under MINCETUR since 2023 (sports-betting law). Crypto unregulated — BCRP has issued warnings. Adult content permitted.',
+      'Pharma prescription-only via DIGEMID; tobacco/alcohol age-restricted; firearms restricted.',
+      'Tax: VAT (IGV) 18%; SUNAT enforcement on foreign digital providers tightened in 2025; SBS / BCRP co-regulation of payments.',
+    ],
+    'United Kingdom': [
+      'Merchant of Record: feasible — FCA EMI / PI authorisations are a common route for global SaaS and marketplaces.',
+      'Verticals — licensed: online gambling under UKGC (among the world’s strictest — affordability checks, deposit limits, slots stake cap). Crypto-asset promotions under FCA. Adult licensed (age-verification under Online Safety Act 2025).',
+      'Pharma prescription via GPhC-registered pharmacies; alcohol/tobacco age-gated; firearms restricted.',
+      'Tax: VAT 20%; Confirmation of Payee mandatory; APP-fraud reimbursement live since Oct 2024.',
+    ],
+    'France': [
+      'Merchant of Record: feasible via ACPR-licensed PI / EMI; PSD2 SCA strictly enforced.',
+      'Verticals — licensed: online gambling under ANJ (sports, poker, horse racing). Crypto under MiCA (PSAN registration). Adult licensed with Arcom age-verification since 2024.',
+      'Prohibited: online casinos, tobacco online sale; pharma online via state-registered pharmacies only.',
+      'Tax: VAT 20%; CB domestic scheme co-badging gives cheaper interchange; CNIL is a high-profile data regulator.',
+    ],
+    'Italy': [
+      'Merchant of Record: feasible via Banca d’Italia-licensed PI / IMEL; one of the EU’s stricter AML regimes.',
+      'Verticals — licensed: online gambling under ADM — one of Europe’s largest regulated markets (casino, sports, poker, bingo). Crypto under MiCA + CONSOB / OAM registry. Adult content permitted.',
+      'Pharma online via ministry-authorised pharmacies; tobacco state-monopoly; alcohol regulated; firearms restricted.',
+      'Tax: VAT (IVA) 22%; mandatory B2B/B2C e-invoicing since 2019 — non-compliance blocks deductions.',
+    ],
+    'Spain': [
+      'Merchant of Record: feasible via Banco de España-licensed PI / EMI; PSD2 SCA strictly enforced.',
+      'Verticals — licensed: online gambling under DGOJ (since 2012). Crypto under MiCA (CNMV + BdE joint oversight). Adult content permitted.',
+      'Tobacco state-monopoly — online sale prohibited; alcohol regulated; pharma online via state-registered pharmacies; firearms restricted.',
+      'Tax: VAT (IVA) 21%; AEPD enforces data protection strictly; Fintech Sandbox (since 2020) eases pilots.',
+    ],
+    'Japan': [
+      'Merchant of Record: feasible via Funds Transfer Service license (Type I / II / III under the Payment Services Act) — Type III caps at JPY 50K per transfer.',
+      'Verticals — licensed: crypto under FIEA (one of the strictest regimes globally), adult content (age + censorship laws), pharma via licensed pharmacies.',
+      'Prohibited/heavily restricted: online gambling outside limited public lotteries and pari-mutuel (horse, bicycle, motorboat); firearms heavily restricted.',
+      'Tax: consumption tax 10%; APPI (amended 2022) — cross-border transfers require adequacy or specific consent.',
+    ],
+    'Singapore': [
+      'Merchant of Record: feasible via MAS MPI license — common APAC hub. Most global PSPs (Stripe, Adyen, Checkout, Worldpay) hold one.',
+      'Verticals — licensed: crypto under PSA (DPT services strictly regulated — public marketing of crypto banned).',
+      'Prohibited: online gambling outside Singapore Pools / Turf Club, adult content (sites blocked), firearms.',
+      'Tax: GST 9%; stablecoin issuers must hold 100% backing in HQLA with same-day redemption — among the world’s strictest frameworks.',
+    ],
+    'Thailand': [
+      'Merchant of Record: feasible via BOT-licensed PSP; e-Tax and e-Withholding integration mandatory above thresholds.',
+      'Verticals — licensed: crypto under SEC Thailand. 3 virtual banks approved 2026 (SCB-KakaoBank, Krungthai-Gulf, ACM).',
+      'Prohibited (criminal): online gambling outside state lottery and limited horse racing; adult content (blocked); pharma online sale.',
+      'Tax: VAT 7%; PDPA (full enforcement 2022) GDPR-aligned — local representative required for foreign data controllers.',
+    ],
+    'Vietnam': [
+      'Merchant of Record: feasible via IPSP license + 5% digital service tax registration.',
+      'Verticals — restricted/grey: crypto legal-grey (not a permitted payment method).',
+      'Prohibited (criminal): online gambling, adult content (Decree 72 blocks); pharma online restricted via MoH; alcohol/tobacco state-licensed and age-restricted; firearms prohibited.',
+      'Tax: VAT 10%; Personal Data Protection Decree (2023) GDPR-aligned — cross-border transfer requires impact assessment.',
+    ],
+    'Philippines': [
+      'Merchant of Record: feasible via BSP EMI / Payment System Operator license.',
+      'Verticals — licensed: online gambling under PAGCOR (domestic eGames still licensed). Crypto under BSP VASP framework.',
+      'Prohibited or restricted: POGO offshore gambling operations banned 2024; adult content prohibited; pharma online via FDA-registered pharmacies; firearms restricted.',
+      'Tax: VAT 12% (extended to foreign digital providers since 2024); Data Privacy Act GDPR-aligned (NPC).',
+    ],
+    'Australia': [
+      'Merchant of Record: feasible via AUSTRAC registration + ASIC AFSL; Payment Licensing Reform (2024) is replacing the PPF regime with a modern PSP license.',
+      'Verticals — licensed: online gambling under IGA (sports & race wagering allowed); crypto under ASIC + AUSTRAC; adult content (federal age-verification trial 2025).',
+      'Prohibited: online casino & in-play sports betting; pharma online via TGA-registered pharmacies only; firearms restricted.',
+      'Tax: GST 10% (incl. low-value imported goods); Consumer Data Right open-banking framework live.',
+    ],
+    'South Africa': [
+      'Merchant of Record: feasible via SARB approval; FSCA supervises non-bank PSPs.',
+      'Verticals — licensed: online sports betting (provincial), crypto under FSCA (VASP licensing since 2023), adult content permitted.',
+      'Prohibited: online casino at national level; pharma prescription via SAHPRA; alcohol/tobacco regulated; firearms restricted.',
+      'Tax: VAT 15%; POPIA (GDPR-aligned, since 2021) — cross-border transfer needs adequacy or consent.',
+    ],
+    'Nigeria': [
+      'Merchant of Record: feasible via CBN SVB / MMO / PSB licenses.',
+      'Verticals — licensed: online gambling via NLRC and state authorities; crypto partially reopened in 2023 with VASP framework after the 2021 banking ban.',
+      'Prohibited or restricted: adult content; pharma online via NAFDAC; alcohol/tobacco regulated; firearms restricted.',
+      'Tax: VAT 7.5%; NDPR (GDPR-aligned) enforced by NDPC.',
+    ],
+    'Kenya': [
+      'Merchant of Record: feasible via CBK PSP license + Digital Service Tax registration.',
+      'Verticals — licensed: online gambling under BCLB; adult content permitted.',
+      'Restricted/under development: crypto not legal tender — VASP framework in CMA / CBK joint draft 2025; pharma online via PPB; firearms restricted.',
+      'Tax: VAT 16%; Digital Service Tax 1.5% on foreign digital providers; Data Protection Act (2019) GDPR-aligned.',
+    ],
+    'Egypt': [
+      'Merchant of Record: feasible via CBE-licensed PSP.',
+      'Verticals — prohibited: online gambling, crypto as a payment instrument (CBE directive), adult content.',
+      'Pharma online restricted; alcohol/tobacco state-regulated with limited online distribution; firearms restricted.',
+      'Tax: VAT 14%; Data Protection Law 151/2020 GDPR-aligned.',
+    ],
+    'Saudi Arabia': [
+      'Merchant of Record: feasible via SAMA-licensed PSP; Open Banking Phase 2 (payment initiation) live since 2024.',
+      'Verticals — prohibited: online gambling (Islamic finance), alcohol, adult content; crypto unregulated — SAMA cautious on merchant settlement.',
+      'Pharma online via SFDA-licensed pharmacies; tobacco regulated; firearms restricted.',
+      'Tax: VAT 15%; corporate tax 20% for foreign investors (Zakat for GCC-owned businesses); PDPL fully enforceable since Sep 2024 — sensitive-data localisation.',
+    ],
+    'Turkey': [
+      'Merchant of Record: feasible via BDDK-licensed e-money / PSP under Law 6493 (2013).',
+      'Verticals — licensed (state-only): online gambling via state monopoly (İddaa, Milli Piyango).',
+      'Prohibited/restricted: crypto banned as a payment method since 2021 (legal for investing — top-5 global crypto-active market); adult content restricted (BTK blocks); pharma online prohibited (state pharmacy monopoly); alcohol/tobacco heavily taxed.',
+      'Tax: VAT 20%; KVKK predates GDPR — cross-border transfers require DPA approval absent adequacy.',
+    ],
+  }
+
+  // Fallback filters for countries without a curated override.
   const MERCHANT_BOOST = new RegExp([
     'merchant\\s+of\\s+record', '\\bmor\\b', 'payment\\s+aggregator',
     'psp\\s+licen[cs]e', 'licen[cs]e\\s+(required|needed)', 'licen[cs]e\\s+from',
@@ -270,26 +437,29 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     'allowed|forbidden|prohibited|banned',
   ].join('|'), 'i')
 
-  // Filter out lines that read as payment-method descriptions rather than
+  // Drop lines that read as payment-method descriptions rather than
   // regulatory guidance — those belong on the digital trends / payment-mix
-  // cards. Keeps the regulation card focused on licensing, MoR, verticals,
-  // and other merchant-entry considerations.
+  // cards.
   const REG_EXCLUDE = new RegExp([
-    // "PIX is the real-time rail" / "UPI is a free instant transfer" etc.
-    '^(pix|upi|spei|codi|oxxo|fednow|rtp|mada|jamaica\\s+linq|paynow)\\s+(is|are)\\b',
-    // "Installment payments are a cultural default..."
+    '^(pix|upi|spei|codi|oxxo|fednow|rtp|mada|jamaica\\s+linq|paynow|bre[\\s-]?b|pse|bi[\\s-]?fast|qris|aani|sarie|prompt\\s*pay|napas|instapay|payshap|nip|m[\\s-]?pesa|sepa|faster\\s+payments|fast|fps|transferencias|yape|plin|nequi|daviplata|bizum|paypay|line\\s+pay|rakuten|gcash|maya|momo|grab\\s*pay|true\\s*money|tng|mada|satispay|postepay|paypal|alipay|wechat)\\s+(is|are)\\b',
     'installment[s]?\\s+payments?\\s+\\(',
     'cultural\\s+default',
     'parcelamento',
+    'cuotas\\s+sin\\s+inter',
+    'taksit',
+    'real[\\s-]?time\\s+payment\\s+rail',
+    'instant[\\s-]?payment\\s+rail',
+    'launched\\s+(in\\s+)?\\d{4}',
   ].join('|'), 'i')
 
-  const regulation = rawRegulation
-    .filter((line) => !REG_EXCLUDE.test(line))
-    .sort((a, b) => {
-      const am = MERCHANT_BOOST.test(a) ? 0 : 1
-      const bm = MERCHANT_BOOST.test(b) ? 0 : 1
-      return am - bm
-    })
+  const regulation = REG_OVERRIDES[selectedCountry]
+    || rawRegulation
+      .filter((line) => !REG_EXCLUDE.test(line))
+      .sort((a, b) => {
+        const am = MERCHANT_BOOST.test(a) ? 0 : 1
+        const bm = MERCHANT_BOOST.test(b) ? 0 : 1
+        return am - bm
+      })
 
   // All sizes here are fixed pixels (no `vw`). The 1920×1080 design stage
   // already scales uniformly to fit either the iframe or fullscreen, so
