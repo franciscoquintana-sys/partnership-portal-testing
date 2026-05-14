@@ -5,6 +5,7 @@ import { useTheme } from '../../lib/theme'
 // Portal-aligned country → ISO-2 lookup. Used to pull the flag from
 // flagcdn.com so we get a real PNG flag, not a Unicode emoji.
 const COUNTRY_ISO = {
+  "Côte d'Ivoire": 'ci',
   'Brazil': 'br', 'Mexico': 'mx', 'Colombia': 'co', 'Argentina': 'ar',
   'Chile': 'cl', 'Peru': 'pe', 'Uruguay': 'uy', 'Ecuador': 'ec',
   'Bolivia': 'bo', 'Paraguay': 'py', 'Venezuela': 've', 'Costa Rica': 'cr',
@@ -265,6 +266,12 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       flexWrap: 'wrap',
       gap: 'clamp(10px, 0.9vw, 16px)',
     },
+    // Highlight variant for the local payments row — slightly tinted blue
+    // surface so it reads as a different section from the overview metrics.
+    paymentsCard: {
+      background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(124,137,239,0.16)',
+      border: `1px solid ${theme.borderAccent}`,
+    },
     apmsWide: {
       // Relevant APMs holds 3 inner columns so it carries proportionally
       // more weight than the single-stat cards next to it on the same row.
@@ -471,7 +478,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
         <div style={styles.titleRow}>
           {iso && (
             <img
-              src={`https://flagcdn.com/w240/${iso}.png`}
+              src={`https://flagcdn.com/w320/${iso}.png`}
               alt={`${selectedCountry} flag`}
               style={styles.flag}
             />
@@ -493,19 +500,19 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
         {(localPayments.scheme || localPayments.a2a || filteredApms.length > 0) && (
           <div style={styles.topStrip}>
             {localPayments.scheme && (
-              <div style={styles.overviewCard}>
+              <div style={{ ...styles.overviewCard, ...styles.paymentsCard }}>
                 <span style={styles.overviewLabel}>Local schemes</span>
                 <span style={styles.overviewValue}>{localPayments.scheme}</span>
               </div>
             )}
             {localPayments.a2a && (
-              <div style={styles.overviewCard}>
+              <div style={{ ...styles.overviewCard, ...styles.paymentsCard }}>
                 <span style={styles.overviewLabel}>A2A</span>
                 <span style={styles.overviewValue}>{localPayments.a2a}</span>
               </div>
             )}
             {filteredApms.length > 0 && (
-              <div style={{ ...styles.overviewCard, ...styles.localCombined, ...styles.apmsWide }}>
+              <div style={{ ...styles.overviewCard, ...styles.paymentsCard, ...styles.localCombined, ...styles.apmsWide }}>
                 <span style={styles.overviewLabel}>Relevant APMs</span>
                 <div style={styles.apmsRow}>
                   {filteredApms.slice(0, 3).map((a, i) => {
