@@ -252,11 +252,10 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     return !TRENDS_EXCLUDE.test(txt)
   })
 
-  // Regulation — keep everything that matters to a merchant landing in
-  // this market and boost the topics that determine *how* they plug in:
-  // Merchant of Record availability, licensing, settlement, tax, data
-  // residency, tokenisation, cross-border + the regulated / high-risk
-  // industries (gambling, crypto, adult, pharma, firearms, alcohol).
+  // Regulation — focused on what a merchant entering this market needs
+  // to consider: licensing, Merchant of Record feasibility, regulated /
+  // high-risk verticals (what's accepted, what's prohibited), tax,
+  // cross-border, data residency.
   const MERCHANT_BOOST = new RegExp([
     'merchant\\s+of\\s+record', '\\bmor\\b', 'payment\\s+aggregator',
     'psp\\s+licen[cs]e', 'licen[cs]e\\s+(required|needed)', 'licen[cs]e\\s+from',
@@ -267,14 +266,30 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     'high[\\s-]?risk', 'restricted|prohibited', 'gambling|igaming',
     'crypto|virtual\\s+asset|stablecoin', 'adult|pornography',
     'pharma|prescription', 'tobacco|alcohol', 'firearm|weapon',
-    'minor|age[\\s-]?verification',
+    'minor|age[\\s-]?verification', '\\bvertical', '\\bindustry',
+    'allowed|forbidden|prohibited|banned',
   ].join('|'), 'i')
-  // Sort merchant-operating lines to the top; keep everything (no exclude).
-  const regulation = [...rawRegulation].sort((a, b) => {
-    const am = MERCHANT_BOOST.test(a) ? 0 : 1
-    const bm = MERCHANT_BOOST.test(b) ? 0 : 1
-    return am - bm
-  })
+
+  // Filter out lines that read as payment-method descriptions rather than
+  // regulatory guidance — those belong on the digital trends / payment-mix
+  // cards. Keeps the regulation card focused on licensing, MoR, verticals,
+  // and other merchant-entry considerations.
+  const REG_EXCLUDE = new RegExp([
+    // "PIX is the real-time rail" / "UPI is a free instant transfer" etc.
+    '^(pix|upi|spei|codi|oxxo|fednow|rtp|mada|jamaica\\s+linq|paynow)\\s+(is|are)\\b',
+    // "Installment payments are a cultural default..."
+    'installment[s]?\\s+payments?\\s+\\(',
+    'cultural\\s+default',
+    'parcelamento',
+  ].join('|'), 'i')
+
+  const regulation = rawRegulation
+    .filter((line) => !REG_EXCLUDE.test(line))
+    .sort((a, b) => {
+      const am = MERCHANT_BOOST.test(a) ? 0 : 1
+      const bm = MERCHANT_BOOST.test(b) ? 0 : 1
+      return am - bm
+    })
 
   // All sizes here are fixed pixels (no `vw`). The 1920×1080 design stage
   // already scales uniformly to fit either the iframe or fullscreen, so
