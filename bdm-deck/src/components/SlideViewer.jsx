@@ -517,14 +517,17 @@ function SlideViewerInner({ data, onBack, shared = false }) {
 
   // Fit the 1920x1080 stage into whatever space slideArea has. ResizeObserver
   // reruns on window resize and on fullscreen toggle so preview and
-  // presentation render identically.
+  // presentation render identically. We cap scale at 1 so the stage never
+  // upscales beyond its native 1920x1080 — on wide screens the slide stays
+  // the same physical size with extra letterbox space around it instead of
+  // blowing text up to the point it looks horrible.
   useEffect(() => {
     const el = slideAreaRef.current
     if (!el) return
     const fit = () => {
       const { width, height } = el.getBoundingClientRect()
       if (!width || !height) return
-      setStageScale(Math.min(width / 1920, height / 1080))
+      setStageScale(Math.min(1, Math.min(width / 1920, height / 1080)))
     }
     fit()
     const ro = new ResizeObserver(fit)
