@@ -193,9 +193,11 @@ function ChoroplethMap({ pickerCountries, region, onPick, styles, theme }) {
   )
 }
 
-function PillDropdown({ icon: Icon, label, items, value, onChange }) {
+function PillDropdown({ icon: Icon, label, items, value, onChange, searchPlaceholder = 'Type to search…' }) {
   const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
   const wrapRef = useRef(null)
+  const inputRef = useRef(null)
 
   useEffect(() => {
     if (!open) return
@@ -205,6 +207,41 @@ function PillDropdown({ icon: Icon, label, items, value, onChange }) {
     document.addEventListener('mousedown', close)
     return () => document.removeEventListener('mousedown', close)
   }, [open])
+
+  // Reset the typed query and autofocus the search input each time the
+  // dropdown opens — keystrokes go straight into filtering.
+  useEffect(() => {
+    if (open) {
+      setQuery('')
+      const id = requestAnimationFrame(() => inputRef.current?.focus())
+      return () => cancelAnimationFrame(id)
+    }
+  }, [open])
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return items
+    return items.filter((opt) => {
+      const label = (opt.label || '').toLowerCase()
+      const tag = (opt.tag || '').toLowerCase()
+      return label.includes(q) || tag.includes(q)
+    })
+  }, [items, query])
+
+  // Enter: pick the first filtered item (skipping the "All" placeholder
+  // when there's a real match below it).
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') {
+      setOpen(false)
+      return
+    }
+    if (e.key === 'Enter' && filtered.length > 0) {
+      e.preventDefault()
+      const pick = filtered.find((opt) => opt.value) || filtered[0]
+      onChange(pick.value)
+      setOpen(false)
+    }
+  }
 
   const pillStyle = {
     position: 'relative',
@@ -241,7 +278,8 @@ function PillDropdown({ icon: Icon, label, items, value, onChange }) {
           role="listbox"
           style={{
             position: 'absolute', top: 'calc(100% + 10px)', left: 0,
-            minWidth: '260px', maxHeight: 'min(60vh, 360px)', overflowY: 'auto',
+            minWidth: '280px', maxHeight: 'min(60vh, 400px)',
+            display: 'flex', flexDirection: 'column',
             background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(28px)',
             border: '1px solid rgba(255,255,255,0.08)', borderRadius: '14px',
             padding: '8px',
@@ -249,38 +287,70 @@ function PillDropdown({ icon: Icon, label, items, value, onChange }) {
             zIndex: 40,
           }}
         >
-          {items.map((opt) => {
-            const active = value === opt.value
-            return (
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            placeholder={searchPlaceholder}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              padding: '10px 14px', marginBottom: '6px',
+              background: 'rgba(255,255,255,0.04)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              borderRadius: '10px',
+              color: '#fff',
+              fontFamily: 'var(--font)',
+              fontSize: '13.5px',
+              outline: 'none',
+            }}
+          />
+          <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+            {filtered.length === 0 ? (
               <div
-                key={opt.value || 'all'}
-                role="option"
-                aria-selected={active}
-                onClick={() => { onChange(opt.value); setOpen(false) }}
                 style={{
-                  padding: '10px 14px', fontSize: '14px', fontWeight: 500,
-                  color: active ? '#fff' : 'rgba(255,255,255,0.88)',
-                  background: active ? 'rgba(62,79,224,0.16)' : 'transparent',
-                  borderRadius: '10px', cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  gap: '12px', transition: 'background 0.12s ease',
+                  padding: '12px 14px', fontSize: '13px',
+                  color: 'rgba(255,255,255,0.5)', textAlign: 'center',
                 }}
               >
-                <span>{opt.label}</span>
-                {opt.tag && (
-                  <span
+                No matches
+              </div>
+            ) : (
+              filtered.map((opt) => {
+                const active = value === opt.value
+                return (
+                  <div
+                    key={opt.value || 'all'}
+                    role="option"
+                    aria-selected={active}
+                    onClick={() => { onChange(opt.value); setOpen(false) }}
                     style={{
-                      fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700,
-                      letterSpacing: '1.2px', textTransform: 'uppercase',
-                      color: 'rgba(255,255,255,0.4)',
+                      padding: '10px 14px', fontSize: '14px', fontWeight: 500,
+                      color: active ? '#fff' : 'rgba(255,255,255,0.88)',
+                      background: active ? 'rgba(62,79,224,0.16)' : 'transparent',
+                      borderRadius: '10px', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      gap: '12px', transition: 'background 0.12s ease',
                     }}
                   >
-                    {opt.tag}
-                  </span>
-                )}
-              </div>
-            )
-          })}
+                    <span>{opt.label}</span>
+                    {opt.tag && (
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-mono)', fontSize: '11px', fontWeight: 700,
+                          letterSpacing: '1.2px', textTransform: 'uppercase',
+                          color: 'rgba(255,255,255,0.4)',
+                        }}
+                      >
+                        {opt.tag}
+                      </span>
+                    )}
+                  </div>
+                )
+              })
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -608,6 +678,7 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
               value={region}
               onChange={setRegion}
               items={regionItems}
+              searchPlaceholder="Type a region…"
             />
             <PillDropdown
               icon={MapPin}
@@ -615,6 +686,7 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
               value={country}
               onChange={handleCountryPick}
               items={countryItems}
+              searchPlaceholder="Type a country…"
             />
             {country && (
               <button type="button" style={styles.backBtn} onClick={() => setCountry('')}>
