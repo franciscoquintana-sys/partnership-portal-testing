@@ -221,24 +221,51 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
   const rawRegulation = rich?.regulation || []
   const rawDigitalTrends = rich?.digital_trends || rich?.digitalTrends || []
 
-  // Filter Digital Trends to keep CNP / consumer-ecommerce focus — drop
-  // B2B-only points so the slide aligns with merchants doing card-not-
-  // present / cross-border sales into the country.
-  const B2B_EXCLUDE = /(\bb2b\b|business[\s-]*to[\s-]*business|nearshoring|supply\s*chain|wholesale|invoice\s+finance)/i
+  // Digital Trends — keep only entries that read as guidance for a
+  // merchant looking to *operate* in this country (cross-border / CNP /
+  // ecommerce). Strip B2B narrative and any bullet that name-drops a
+  // specific merchant or super-app brand (those read as anecdotes, not
+  // operating guidance).
+  const TRENDS_EXCLUDE = new RegExp([
+    '\\bb2b\\b', 'business[\\s-]*to[\\s-]*business', 'nearshoring',
+    'supply\\s*chain', 'wholesale', 'invoice\\s+finance',
+    // Common merchant / super-app names that appear in the dataset's
+    // anecdotal trend lines — block so the slide stays operator-focused.
+    'Mercado\\s+(?:Pago|Libre)|Nubank|\\bNu\\b|PicPay|PagSeguro',
+    'iFood|Rappi|Spotify|Netflix|\\bUber\\b|Amazon|eBay|Alibaba',
+    'Lazada|Shopee|Discord|Blinkit|Zepto|Zomato|Swiggy|BigBasket',
+    'JioMart|KakaoPay|KakaoBank|GrabPay|GrabFin|GoTo|GoPay',
+    'PayPay|LinePay|PayMe|PayPo|PayBox|PayShap|PayTabs|MoMo',
+    'OmanNet|BenefitPay|BitoPro|BitOasis|MyFatoorah|FamilyMart',
+    'CaixaBank|FirstBank|MoneyGram|PromptPay|InstaPay|JazzCash',
+  ].join('|'), 'i')
   const digitalTrends = rawDigitalTrends.filter((t) => {
     const txt = typeof t === 'string' ? t : (t?.text || t?.title || '')
-    return !B2B_EXCLUDE.test(txt)
+    return !TRENDS_EXCLUDE.test(txt)
   })
 
-  // Sort regulation so the lines most relevant to a merchant landing in
-  // this market (Merchant of Record, Payment Aggregator licensing, settle-
-  // ment / VAT / data residency) bubble to the top of the 4-item display.
-  const MERCHANT_BOOST = /(merchant\s+of\s+record|\bmor\b|payment\s+aggregator|psp\s+license|settlement|withhold|\bvat\b|\bgst\b|cross[\s-]?border|data\s+(local|residency|storage))/i
-  const regulation = [...rawRegulation].sort((a, b) => {
-    const am = MERCHANT_BOOST.test(a) ? 0 : 1
-    const bm = MERCHANT_BOOST.test(b) ? 0 : 1
-    return am - bm
-  })
+  // Regulation — boost lines most useful to a merchant landing in this
+  // market (Merchant of Record, licensing, settlement, tax, data residency,
+  // tokenisation, cross-border) and drop the lines that read as pure
+  // regulator history or anecdotes.
+  const MERCHANT_BOOST = new RegExp([
+    'merchant\\s+of\\s+record', '\\bmor\\b', 'payment\\s+aggregator',
+    'psp\\s+licen[cs]e', 'settlement', 'withhold', '\\bvat\\b', '\\bgst\\b',
+    'cross[\\s-]?border', 'data\\s+(local|residency|storage)',
+    'tokeniz', '\\bkyc\\b', 'license\\s+(required|needed)',
+    '3[ds]?secure|3ds',
+  ].join('|'), 'i')
+  const REG_EXCLUDE = new RegExp([
+    'history of', 'founded in', 'announced', 'launched in 19', 'launched in 20[01]',
+  ].join('|'), 'i')
+  const regulation = rawRegulation
+    .filter((line) => !REG_EXCLUDE.test(line))
+    .slice()
+    .sort((a, b) => {
+      const am = MERCHANT_BOOST.test(a) ? 0 : 1
+      const bm = MERCHANT_BOOST.test(b) ? 0 : 1
+      return am - bm
+    })
 
   const styles = {
     body: {
