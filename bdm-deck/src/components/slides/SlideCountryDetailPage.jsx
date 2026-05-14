@@ -1,12 +1,23 @@
 import { useEffect, useState } from 'react'
 import SlideBase from './SlideBase'
 import { useTheme } from '../../lib/theme'
-import { COUNTRY_PROVIDERS, PROVIDER_VERTICALS } from '../../data/country-rich-data'
+import { COUNTRY_PROVIDERS, PROVIDER_VERTICALS, REGION_PROVIDERS } from '../../data/country-rich-data'
+import { COUNTRY_LIST_BY_REGION } from '../../data/regional-data'
 
 // Aliases the rich-JSON country naming → COUNTRY_PROVIDERS naming.
 const PROVIDER_KEY_ALIAS = {
   UAE: 'United Arab Emirates',
 }
+
+// country → region lookup so we can fall back to REGION_PROVIDERS when
+// a country has no curated row. Built once at module load.
+const COUNTRY_REGION = (() => {
+  const out = {}
+  for (const [region, countries] of Object.entries(COUNTRY_LIST_BY_REGION || {})) {
+    for (const c of (countries || [])) out[c] = region
+  }
+  return out
+})()
 
 // Pick the top 5 providers for the given country, prioritising rows
 // whose PROVIDER_VERTICALS match the merchant's detected vertical
@@ -253,7 +264,11 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
   const providerKey = selectedCountry
     ? (PROVIDER_KEY_ALIAS[selectedCountry] || selectedCountry)
     : null
-  const rawPartners = (providerKey && COUNTRY_PROVIDERS[providerKey]) || []
+  const countryRegion = selectedCountry ? COUNTRY_REGION[selectedCountry] : null
+  const rawPartners =
+    (providerKey && COUNTRY_PROVIDERS[providerKey])
+    || (countryRegion && REGION_PROVIDERS[countryRegion])
+    || []
   const partners = rankPartnersByVertical(rawPartners, merchantVertical)
 
   // Digital Trends — keep entries that read as market guidance for a
@@ -916,7 +931,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
             )}
 
             <div style={styles.card}>
-              <span style={styles.cardHeader}>Partners</span>
+              <span style={styles.cardHeader}>Providers</span>
               <p style={styles.partnersIntro}>
                 We have partnerships with the region&rsquo;s most relevant providers
                 (PSPs, Acquirers, APMs, Product and others), ranging from the largest
@@ -924,20 +939,14 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
                 integrate any provider in less than a month and source new ones as
                 needed.
               </p>
-              {partners.length > 0 ? (
-                <div style={styles.partnersTable}>
-                  {partners.slice(0, 5).map((p, i) => (
-                    <div key={`${p.name}-${i}`} style={styles.partnerRow}>
-                      <span style={styles.partnerName}>{p.name}</span>
-                      <span style={styles.partnerNote}>{p.relevance || p.description || ''}</span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p style={{ ...styles.partnersIntro, color: theme.inkMuted, fontStyle: 'italic' }}>
-                  Partner roster for this market not published in the deck dataset.
-                </p>
-              )}
+              <div style={styles.partnersTable}>
+                {partners.slice(0, 5).map((p, i) => (
+                  <div key={`${p.name}-${i}`} style={styles.partnerRow}>
+                    <span style={styles.partnerName}>{p.name}</span>
+                    <span style={styles.partnerNote}>{p.relevance || p.description || ''}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}

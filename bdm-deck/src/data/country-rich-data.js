@@ -615,6 +615,64 @@ export const PROVIDER_VERTICALS = {
   'Maya':             ['general', 'retail'],
   'Yape':             ['general', 'retail'],
   'Plin':             ['general', 'retail'],
+  // Africa
+  'Flutterwave':      ['general', 'retail', 'marketplace', 'digital_goods'],
+  'Cellulant':        ['general', 'retail', 'fintech'],
+  'DPO Group':        ['general', 'retail', 'travel'],
+  'Paystack':         ['general', 'retail', 'subscription_saas'],
+  'Interswitch':      ['general', 'retail'],
+  'Yoco':             ['general', 'retail'],
+  'Ozow':             ['general', 'retail', 'fintech'],
+  'M-PESA':           ['general', 'retail', 'fintech'],
+}
+
+// Regional fallback used when a country has no curated COUNTRY_PROVIDERS
+// row. Pan-regional names that work for any merchant entering the region.
+// Slide 10 falls through: COUNTRY_PROVIDERS[country] → REGION_PROVIDERS[region]
+// → empty. Keep these to 5 strong, well-known names per region.
+export const REGION_PROVIDERS = {
+  Americas: [
+    { name: 'Adyen',         type: 'Aggregator + Gateway', description: 'Global enterprise PSP with direct acquirer access', relevance: 'Default for global enterprise brands' },
+    { name: 'Stripe',        type: 'Aggregator + Gateway', description: 'Developer-first PSP, dominant in NA digital-native commerce', relevance: '#1 PSP for SaaS / marketplaces in NA' },
+    { name: 'Checkout.com',  type: 'Aggregator + Gateway', description: 'Global PSP with deep enterprise tooling', relevance: 'Strong fit for cross-border + digital-goods brands' },
+    { name: 'Worldpay',      type: 'Acquirer + Gateway',   description: 'Top global acquirer', relevance: 'Default acquirer for cross-border merchants in NA' },
+    { name: 'Cybersource',   type: 'Gateway',              description: 'Visa-owned enterprise gateway', relevance: 'Standard gateway for legacy enterprise merchants' },
+  ],
+  LATAM: [
+    { name: 'dLocal',        type: 'Cross-border PSP',    description: 'Cross-border PSP for emerging markets', relevance: 'Global merchants entering LATAM via single contract' },
+    { name: 'EBANX',         type: 'Cross-border PSP',    description: 'LATAM-focused cross-border PSP', relevance: 'Deep LATAM APM + local-acquiring coverage' },
+    { name: 'PayU',          type: 'Aggregator + Gateway', description: 'Global PSP with deep LATAM acquiring', relevance: 'Top international PSP across LATAM' },
+    { name: 'Mercado Pago',  type: 'Wallet + Acquirer',   description: "Mercado Libre's payment arm", relevance: '#1 wallet across many LATAM markets' },
+    { name: 'Kushki',        type: 'Aggregator + Gateway', description: 'Pan-LATAM PSP with strong local acquiring', relevance: 'Top alternative PSP for digital-native LATAM brands' },
+  ],
+  Europe: [
+    { name: 'Adyen',         type: 'Aggregator + Gateway', description: 'Global enterprise PSP with EU acquirer access', relevance: 'Default for global enterprise brands in Europe' },
+    { name: 'Checkout.com',  type: 'Aggregator + Gateway', description: 'Global PSP with mature European acceptance', relevance: 'Strong fit for cross-border + digital-goods brands' },
+    { name: 'Worldpay',      type: 'Acquirer + Gateway',  description: 'Top global acquirer with EU capability', relevance: 'Default acquirer for cross-border EU merchants' },
+    { name: 'Stripe',        type: 'Aggregator + Gateway', description: 'Developer-first PSP with EU acceptance', relevance: 'Top PSP for SaaS / marketplaces / startups' },
+    { name: 'Klarna',        type: 'BNPL + Wallet',        description: 'Sweden-rooted EU BNPL/invoice leader', relevance: 'Default BNPL across the EU' },
+  ],
+  APAC: [
+    { name: 'Adyen',         type: 'Aggregator + Gateway', description: 'Global PSP with Singapore HQ for APAC', relevance: 'Default for global enterprise brands in APAC' },
+    { name: 'Airwallex',     type: 'Aggregator + Gateway', description: 'APAC-HQ\'d global PSP', relevance: 'Top APAC cross-border PSP' },
+    { name: 'Stripe',        type: 'Aggregator + Gateway', description: 'Developer-first PSP with strong APAC acceptance', relevance: 'Top PSP for SaaS / digital-native merchants' },
+    { name: 'Checkout.com',  type: 'Aggregator + Gateway', description: 'Global PSP with mature APAC acceptance', relevance: 'Strong fit for cross-border + digital-goods brands' },
+    { name: '2C2P',          type: 'Aggregator + Gateway', description: 'SEA-focused PSP', relevance: 'Top regional PSP with deep APAC APM coverage' },
+  ],
+  MENAT: [
+    { name: 'Network International', type: 'Acquirer + Gateway', description: 'UAE-HQ\'d MEA acquirer covering 50+ markets', relevance: 'Top regional acquirer across MENAT' },
+    { name: 'Tap',           type: 'Aggregator + Gateway', description: 'Kuwait/UAE-based GCC PSP', relevance: 'Cross-border GCC merchant reach' },
+    { name: 'PayTabs',       type: 'Aggregator + Gateway', description: 'Riyadh-HQ\'d regional gateway', relevance: 'Mid-market PSP across MENAT' },
+    { name: 'HyperPay',      type: 'Aggregator + Gateway', description: 'Riyadh-HQ\'d regional gateway built for MENA enterprises', relevance: 'Strong enterprise coverage across the region' },
+    { name: 'Checkout.com',  type: 'Aggregator + Gateway', description: 'Global PSP with high-performance MENA acquiring', relevance: 'Default for enterprise + cross-border brands' },
+  ],
+  Africa: [
+    { name: 'Flutterwave',   type: 'Aggregator + Gateway', description: 'Pan-African PSP HQ\'d in Nigeria', relevance: '#1 pan-African PSP — operates across 30+ African markets' },
+    { name: 'Cellulant',     type: 'Aggregator + Gateway', description: 'Pan-African PSP with mobile-money + bank rails', relevance: 'Top regional PSP for African mobile-money flows' },
+    { name: 'Network International', type: 'Acquirer + Gateway', description: 'UAE-HQ\'d MEA acquirer covering 50+ markets', relevance: 'Top regional acquirer across Africa' },
+    { name: 'DPO Group',     type: 'Aggregator + Gateway', description: 'East-African PSP (Network International-owned)', relevance: 'Strong East + Southern Africa coverage' },
+    { name: 'dLocal',        type: 'Cross-border PSP',    description: 'Cross-border PSP for emerging markets', relevance: 'Global merchants entering Africa via single contract' },
+  ],
 }
 
 // Rich provider rows per country for the connections table. Each entry:
