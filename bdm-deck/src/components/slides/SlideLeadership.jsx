@@ -106,7 +106,10 @@ export default function SlideLeadership({ data }) {
       lineHeight: 1.1,
       color: theme.ink,
       margin: 0,
-      maxWidth: '72%',
+      maxWidth: '100%',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
     },
     titleAccent: {
       backgroundImage: theme.isLight
