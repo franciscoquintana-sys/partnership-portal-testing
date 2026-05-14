@@ -387,8 +387,10 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       minHeight: 0,
     },
     card: {
-      background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.025)',
-      border: `1px solid ${theme.borderSubtle}`,
+      // Match the blue-tinted overview/payments cards at the top of the
+      // slide so every card on the country detail page reads as one set.
+      background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(124,137,239,0.16)',
+      border: `1px solid ${theme.borderAccent}`,
       borderRadius: '14px',
       padding: '15.5px',
       display: 'flex',
@@ -588,7 +590,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
           </div>
 
           <div style={styles.card}>
-            <span style={styles.cardHeader}>Payment Mix</span>
+            <span style={styles.cardHeader}>Payment Mix E-commerce</span>
             {breakdown.length > 0
               ? <PaymentBreakdown items={breakdown} theme={theme} />
               : <p style={{ color: theme.inkMuted, margin: 0 }}>Breakdown not published for this market.</p>}
