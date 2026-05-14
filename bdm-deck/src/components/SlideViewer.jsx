@@ -527,7 +527,10 @@ function SlideViewerInner({ data, onBack, shared = false }) {
       const { width, height } = el.getBoundingClientRect()
       if (!width || !height) return
       const natural = Math.min(width / 1920, height / 1080)
-      setStageScale(Math.min(0.78, natural))
+      // 0.667 ≈ 1280/1920 — the same ratio the inline 1280×720 iframe
+      // renders at, so pressing F for fullscreen keeps text the same
+      // physical size instead of blowing up to fill a big monitor.
+      setStageScale(Math.min(0.667, natural))
     }
     fit()
     const ro = new ResizeObserver(fit)
