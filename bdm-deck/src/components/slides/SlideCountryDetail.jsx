@@ -590,16 +590,8 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
       <div className="slide-enter" style={styles.body}>
         <div style={styles.headerRow}>
           <h2 style={styles.title}>
-            {country
-              ? <>Inside <span style={styles.titleAccent}>{country}</span></>
-              : (
-                <>
-                  Coverage across{' '}
-                  <span style={styles.titleAccent}>
-                    {region === 'all' ? 'every region' : (REGION_LABEL[region] || region)}
-                  </span>
-                </>
-              )}
+            Coverage across the globe.{' '}
+            <span style={styles.titleAccent}>Pick a region or country for detail</span>
             <span style={styles.titleTag}>
               <span style={styles.titleTagDot} aria-hidden />
               Dynamic slide
