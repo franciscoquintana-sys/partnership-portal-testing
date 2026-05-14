@@ -83,7 +83,8 @@ export default function SlideTrustedBy() {
       lineHeight: 1.1,
       color: theme.ink,
       margin: 0,
-      maxWidth: '72%',
+      maxWidth: '100%',
+      whiteSpace: 'nowrap',
     },
     titleAccent: {
       backgroundImage: theme.isLight
