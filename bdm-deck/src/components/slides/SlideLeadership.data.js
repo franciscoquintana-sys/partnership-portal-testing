@@ -73,6 +73,8 @@ export const LEADERS = [
   {
     photo: v('/sales-deck/team/juan-manuel-rebull.png'),
     name: 'Juan Manuel Rebull',
+    firstName: 'Juan Manuel',
+    lastName: 'Rebull',
     role: 'SVP of Engineering',
   },
   {

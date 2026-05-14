@@ -24,17 +24,26 @@ function PersonCard({ p, founder, style, styles }) {
   // Leadership-team cards split the name across two lines (first name on
   // top, the rest on a second line) so the grid stays uniform regardless
   // of how long someone's surname is. Founders keep a single line so the
-  // bigger photos stay paired with full inline names.
+  // bigger photos stay paired with full inline names. Compound first
+  // names (e.g., "Juan Manuel Rebull" — first name "Juan Manuel",
+  // surname "Rebull") can pass `firstName`/`lastName` explicitly on the
+  // person record to override the naive whitespace split.
   const renderName = () => {
     if (founder) return <div style={styles.name}>{p.name}</div>
-    const trimmed = (p.name || '').trim()
-    const idx = trimmed.indexOf(' ')
-    const first = idx === -1 ? trimmed : trimmed.slice(0, idx)
-    const rest = idx === -1 ? '' : trimmed.slice(idx + 1)
+    let first, rest
+    if (p.firstName || p.lastName) {
+      first = (p.firstName || '').trim()
+      rest = (p.lastName || '').trim()
+    } else {
+      const trimmed = (p.name || '').trim()
+      const idx = trimmed.indexOf(' ')
+      first = idx === -1 ? trimmed : trimmed.slice(0, idx)
+      rest = idx === -1 ? '' : trimmed.slice(idx + 1)
+    }
     return (
       <div style={styles.name}>
-        <div>{first}</div>
-        {rest ? <div>{rest}</div> : null}
+        <div style={{ whiteSpace: 'nowrap' }}>{first}</div>
+        {rest ? <div style={{ whiteSpace: 'nowrap' }}>{rest}</div> : null}
       </div>
     )
   }
