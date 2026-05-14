@@ -333,7 +333,7 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(20px, 1.8vw, 32px)',
+      fontSize: 'clamp(34px, 3.2vw, 60px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -342,6 +342,31 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
       whiteSpace: 'nowrap',
       overflow: 'hidden',
       textOverflow: 'ellipsis',
+    },
+    titleTag: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '8px',
+      marginLeft: 'clamp(12px, 1vw, 20px)',
+      padding: '6px 14px',
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'clamp(10px, 0.85vw, 14px)',
+      fontWeight: 700,
+      letterSpacing: '1.6px',
+      textTransform: 'uppercase',
+      color: theme.accent,
+      background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(62,79,224,0.18)',
+      border: `1px solid ${theme.borderAccent}`,
+      borderRadius: '100px',
+      verticalAlign: 'middle',
+    },
+    titleTagDot: {
+      width: '6px',
+      height: '6px',
+      borderRadius: '50%',
+      background: theme.accent,
+      boxShadow: '0 0 10px rgba(62,79,224,0.6)',
+      animation: 'pulse 2s infinite',
     },
     titleAccent: {
       backgroundImage: theme.isLight
@@ -513,17 +538,25 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
       position: 'absolute', inset: 0, width: '100%', height: '100%',
     },
     legend: {
-      position: 'absolute', bottom: 'clamp(10px, 1vw, 18px)', left: 0, right: 0,
+      position: 'absolute',
+      bottom: 'clamp(14px, 1.4vw, 24px)',
+      left: 'clamp(14px, 1.4vw, 24px)',
       zIndex: 2,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      display: 'flex',
+      alignItems: 'center',
       gap: 'clamp(10px, 0.9vw, 18px)',
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(10px, 0.8vw, 13px)', fontWeight: 600,
-      letterSpacing: '1.2px', textTransform: 'uppercase',
-      color: theme.inkMuted, pointerEvents: 'none',
+      fontSize: 'clamp(10px, 0.8vw, 13px)',
+      fontWeight: 600,
+      letterSpacing: '1.2px',
+      textTransform: 'uppercase',
+      color: theme.inkMuted,
+      pointerEvents: 'none',
     },
     legendBar: {
-      width: 'clamp(160px, 16vw, 280px)', height: '10px', borderRadius: '5px',
+      width: 'clamp(120px, 12vw, 200px)',
+      height: '10px',
+      borderRadius: '5px',
       background: 'linear-gradient(90deg, #EEF2FF 0%, #818CF8 50%, #1E1B4B 100%)',
     },
     stub: {
@@ -567,6 +600,10 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
                   </span>
                 </>
               )}
+            <span style={styles.titleTag}>
+              <span style={styles.titleTagDot} aria-hidden />
+              Dynamic slide
+            </span>
           </h2>
           {!country && (
             <p style={styles.subtitle}>Click any country on the map to open its market brief.</p>
