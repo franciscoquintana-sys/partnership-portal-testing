@@ -178,8 +178,30 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     topStrip: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
       gap: 'clamp(10px, 0.9vw, 16px)',
+    },
+    localCombined: {
+      gap: '10px',
+    },
+    localCombinedRows: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 'clamp(8px, 0.6vw, 12px)',
+    },
+    localCombinedRow: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '2px',
+      minWidth: 0,
+    },
+    localCombinedSub: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'clamp(9px, 0.7vw, 11px)',
+      fontWeight: 700,
+      letterSpacing: '1.2px',
+      textTransform: 'uppercase',
+      color: theme.inkMuted,
     },
     overviewCard: {
       background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.03)',
@@ -370,28 +392,42 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
                 <span style={styles.overviewValue}>{value}</span>
               </div>
             ))}
-            {localPayments.scheme && (
-              <div style={styles.overviewCard}>
-                <span style={styles.overviewLabel}>Local scheme</span>
-                <span style={styles.overviewValue}>{localPayments.scheme}</span>
-              </div>
-            )}
-            {localPayments.a2a && (
-              <div style={styles.overviewCard}>
-                <span style={styles.overviewLabel}>A2A</span>
-                <span style={styles.overviewValue}>{localPayments.a2a}</span>
-              </div>
-            )}
-            {(localPayments.apms || []).slice(0, 6).map((a, i) => {
-              const name = typeof a === 'string' ? a : (a?.name || '')
-              const type = typeof a === 'object' ? (a?.type || '') : ''
-              return (
-                <div key={`apm-${i}`} style={styles.overviewCard}>
-                  <span style={styles.overviewLabel}>{type || 'APM'}</span>
-                  <span style={styles.overviewValue}>{name}</span>
+            {(localPayments.scheme || localPayments.a2a) && (
+              <div style={{ ...styles.overviewCard, ...styles.localCombined }}>
+                <span style={styles.overviewLabel}>Local schemes</span>
+                <div style={styles.localCombinedRows}>
+                  {localPayments.scheme && (
+                    <div style={styles.localCombinedRow}>
+                      <span style={styles.localCombinedSub}>Scheme</span>
+                      <span style={styles.overviewValue}>{localPayments.scheme}</span>
+                    </div>
+                  )}
+                  {localPayments.a2a && (
+                    <div style={styles.localCombinedRow}>
+                      <span style={styles.localCombinedSub}>A2A</span>
+                      <span style={styles.overviewValue}>{localPayments.a2a}</span>
+                    </div>
+                  )}
                 </div>
-              )
-            })}
+              </div>
+            )}
+            {(localPayments.apms || []).length > 0 && (
+              <div style={{ ...styles.overviewCard, ...styles.localCombined }}>
+                <span style={styles.overviewLabel}>Relevant APMs</span>
+                <div style={styles.localCombinedRows}>
+                  {localPayments.apms.slice(0, 3).map((a, i) => {
+                    const name = typeof a === 'string' ? a : (a?.name || '')
+                    const type = typeof a === 'object' ? (a?.type || '') : ''
+                    return (
+                      <div key={`apm-${i}`} style={styles.localCombinedRow}>
+                        {type && <span style={styles.localCombinedSub}>{type}</span>}
+                        <span style={styles.overviewValue}>{name}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 
