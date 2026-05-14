@@ -517,20 +517,16 @@ function SlideViewerInner({ data, onBack, shared = false }) {
 
   // Fit the 1920x1080 stage into whatever space slideArea has. ResizeObserver
   // reruns on window resize and on fullscreen toggle so preview and
-  // presentation render identically. Cap the scale at the laptop-equivalent
-  // ratio (~0.78) so the deck looks the same in the inline iframe AND in
-  // fullscreen on a big monitor — never blown up past laptop proportions.
+  // presentation render identically. We let the stage scale up freely when
+  // there is room — fullscreen mode then renders the FULL 1920×1080
+  // composition without cropping content.
   useEffect(() => {
     const el = slideAreaRef.current
     if (!el) return
     const fit = () => {
       const { width, height } = el.getBoundingClientRect()
       if (!width || !height) return
-      const natural = Math.min(width / 1920, height / 1080)
-      // 0.667 ≈ 1280/1920 — the same ratio the inline 1280×720 iframe
-      // renders at, so pressing F for fullscreen keeps text the same
-      // physical size instead of blowing up to fill a big monitor.
-      setStageScale(Math.min(0.667, natural))
+      setStageScale(Math.min(width / 1920, height / 1080))
     }
     fit()
     const ro = new ResizeObserver(fit)
