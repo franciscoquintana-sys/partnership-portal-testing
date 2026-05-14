@@ -130,7 +130,10 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
 
   const iso = selectedCountry ? COUNTRY_ISO[selectedCountry] : null
   const overview = rich?.overview || {}
-  const overviewEntries = Object.entries(overview)
+  // Drop the "Online users" and "In-Store : Ecommerce ratio" overview
+  // cards — the user pruned them from this slide.
+  const OVERVIEW_HIDDEN = /(online users|in[\s-]store)/i
+  const overviewEntries = Object.entries(overview).filter(([k]) => !OVERVIEW_HIDDEN.test(k))
   const localPayments = rich?.local_payments || {}
   const breakdown = rich?.payment_methods_breakdown || []
   const regulation = rich?.regulation || []
