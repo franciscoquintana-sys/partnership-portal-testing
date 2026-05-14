@@ -509,7 +509,6 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       'Verticals — licensed (state-only): gambling via state monopoly (İddaa, Milli Piyango). Prohibited as payment: crypto since 2021 (legal for investing). Restricted: adult (BTK blocks), pharma online (state pharmacy monopoly).',
     ],
   }
-  }
 
   // Fallback filters for countries without a curated override.
   const MERCHANT_BOOST = new RegExp([
