@@ -72,8 +72,8 @@ export default function SlideCover({ data }) {
     wordmarkWatermark: {
       position: 'absolute',
       right: 'clamp(-40px, -1.5vw, -20px)',
-      bottom: '110px',
-      width: '620px',
+      bottom: 'clamp(60px, 7vw, 110px)',
+      width: 'clamp(320px, 34vw, 620px)',
       height: 'auto',
       opacity: 0.06,
       pointerEvents: 'none',
@@ -92,7 +92,7 @@ export default function SlideCover({ data }) {
     topRow: {
       display: 'flex',
       alignItems: 'center',
-      gap: '22px',
+      gap: 'clamp(14px, 1.2vw, 22px)',
       lineHeight: 1,
     },
     yunoLogo: {
@@ -101,7 +101,7 @@ export default function SlideCover({ data }) {
       // a 0.92-opacity logo reads as a faint blue-tinted shape. Lock
       // the cover wordmark to opacity 1 + brightness(0) on light so it
       // lands as solid black, regardless of the ambient glow tint.
-      height: '56px',
+      height: 'clamp(32px, 3vw, 56px)',
       display: 'block',
       opacity: isLight ? 1 : theme.logoOpacity,
       filter: isLight ? 'brightness(0)' : theme.logoFilter,
@@ -109,7 +109,7 @@ export default function SlideCover({ data }) {
     topCluster: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '84px',
+      gap: 'clamp(44px, 4.6vw, 84px)',
     },
     greetingBlock: {
       display: 'flex',
@@ -121,17 +121,17 @@ export default function SlideCover({ data }) {
       flexDirection: 'column',
       justifyContent: 'center',
       maxWidth: '82%',
-      gap: '40px',
+      gap: 'clamp(20px, 2.4vw, 40px)',
     },
     greeting: {
       fontFamily: 'var(--font-display)',
-      fontSize: '68px',
+      fontSize: 'clamp(38px, 4vw, 68px)',
       fontWeight: 700,
       letterSpacing: '-0.6px',
       lineHeight: 1.05,
       color: isLight ? theme.accentDeep : 'rgba(189,195,246,0.95)',
       margin: 0,
-      marginBottom: '36px',
+      marginBottom: 'clamp(20px, 2vw, 36px)',
     },
     merchantLogoWrapper: {
       display: 'flex',
@@ -139,21 +139,21 @@ export default function SlideCover({ data }) {
       gap: '20px',
     },
     merchantLogo: {
-      height: '140px',
-      maxWidth: '560px',
+      height: 'clamp(72px, 7vw, 140px)',
+      maxWidth: 'clamp(320px, 28vw, 560px)',
       objectFit: 'contain',
       display: 'block',
     },
     merchantLogoText: {
       fontFamily: 'var(--font-display)',
-      fontSize: '96px',
+      fontSize: 'clamp(48px, 5.5vw, 96px)',
       fontWeight: 700,
       color: theme.ink,
       letterSpacing: '-1.2px',
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: '120px',
+      fontSize: 'clamp(56px, 6.5vw, 120px)',
       fontWeight: 400,
       letterSpacing: '-2px',
       lineHeight: 1.02,
@@ -172,7 +172,7 @@ export default function SlideCover({ data }) {
       color: 'transparent',
     },
     subtitle: {
-      fontSize: '30px',
+      fontSize: 'clamp(20px, 1.7vw, 30px)',
       fontWeight: 400,
       lineHeight: 1.55,
       color: theme.inkSecondary,
@@ -190,7 +190,7 @@ export default function SlideCover({ data }) {
     },
     location: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '28px',
+      fontSize: 'clamp(18px, 1.6vw, 28px)',
       fontWeight: 600,
       letterSpacing: '1.4px',
       textTransform: 'uppercase',
@@ -198,7 +198,7 @@ export default function SlideCover({ data }) {
     },
     confidential: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '16px',
+      fontSize: 'clamp(12px, 0.9vw, 16px)',
       fontWeight: 500,
       letterSpacing: '1.4px',
       textTransform: 'uppercase',
@@ -254,7 +254,7 @@ export default function SlideCover({ data }) {
                           // nothing to render. Pin it to the same
                           // clamp the merchantLogo maxWidth uses; the
                           // mask scales to contain inside that box.
-                          width: '440px',
+                          width: 'clamp(240px, 22.4vw, 440px)',
                           backgroundColor: theme.accent,
                           WebkitMaskImage: `url(${data.COMPANY_LOGO})`,
                           maskImage: `url(${data.COMPANY_LOGO})`,

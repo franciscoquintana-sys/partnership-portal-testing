@@ -208,9 +208,9 @@ function PaymentsConciergeHero({ styles, theme }) {
           style={{
             ...styles.heroAiRow,
             position: 'absolute',
-            left: '14px',
-            right: '14px',
-            bottom: '14px',
+            left: 'clamp(11px, 0.95vw, 14px)',
+            right: 'clamp(11px, 0.95vw, 14px)',
+            bottom: 'clamp(10px, 0.9vw, 14px)',
             animation: 'pcAiBubble 14s ease-in-out infinite',
           }}
         >
@@ -239,9 +239,9 @@ function PaymentsConciergeHero({ styles, theme }) {
           style={{
             ...styles.heroAiRow,
             position: 'absolute',
-            left: '14px',
-            right: '14px',
-            bottom: '14px',
+            left: 'clamp(11px, 0.95vw, 14px)',
+            right: 'clamp(11px, 0.95vw, 14px)',
+            bottom: 'clamp(10px, 0.9vw, 14px)',
             animation: 'pcTyping2 14s ease-in-out infinite',
           }}
         >
@@ -273,9 +273,9 @@ function PaymentsConciergeHero({ styles, theme }) {
           style={{
             ...styles.heroAiRow,
             position: 'absolute',
-            left: '14px',
-            right: '14px',
-            bottom: '14px',
+            left: 'clamp(11px, 0.95vw, 14px)',
+            right: 'clamp(11px, 0.95vw, 14px)',
+            bottom: 'clamp(10px, 0.9vw, 14px)',
             animation: 'pcAiBubble2 14s ease-in-out infinite',
           }}
         >
@@ -306,7 +306,7 @@ export default function SlideProductSuite() {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: '24px',
+      gap: 'clamp(14px, 1.3vw, 24px)',
       minHeight: 0,
       position: 'relative',
     },
@@ -318,9 +318,9 @@ export default function SlideProductSuite() {
     aiArrowRow: {
       display: 'grid',
       gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: '26px',
-      marginTop: '140px',
-      marginBottom: '60px',
+      gap: 'clamp(14px, 1.3vw, 26px)',
+      marginTop: 'clamp(90px, 7vw, 140px)',
+      marginBottom: 'clamp(36px, 3vw, 60px)',
       pointerEvents: 'none',
     },
     aiArrow: {
@@ -332,7 +332,7 @@ export default function SlideProductSuite() {
       // Payments Concierge card instead of crossing the Reconciliation
       // card. Layout math of the surrounding flex column stays
       // unchanged — transform doesn't affect sibling positions.
-      transform: 'translateY(72px)',
+      transform: 'translateY(clamp(44px, 3.6vw, 72px))',
     },
     aiArrowSvg: {
       width: '100%',
@@ -343,13 +343,13 @@ export default function SlideProductSuite() {
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'space-between',
-      gap: '40px',
-      marginBottom: '32px',
+      gap: 'clamp(20px, 2vw, 40px)',
+      marginBottom: 'clamp(16px, 1.6vw, 32px)',
     },
     title: {
       fontFamily: 'var(--font-display)',
       // Matched to the deck's slide 2 / slide 3 title scale.
-      fontSize: '72px',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -367,11 +367,11 @@ export default function SlideProductSuite() {
       color: 'transparent',
     },
     subtitle: {
-      fontSize: '20px',
+      fontSize: 'clamp(15px, 1.12vw, 20px)',
       fontWeight: 400,
       color: theme.inkSecondary,
       lineHeight: 1.55,
-      maxWidth: '460px',
+      maxWidth: 'clamp(280px, 28vw, 460px)',
       textAlign: 'right',
     },
 
@@ -379,7 +379,7 @@ export default function SlideProductSuite() {
     // developer/coding aesthetic without competing with the title.
     monoKicker: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '14px',
+      fontSize: 'clamp(11px, 0.85vw, 14px)',
       fontWeight: 500,
       letterSpacing: '0.4px',
       color: theme.inkMuted,
@@ -401,7 +401,7 @@ export default function SlideProductSuite() {
     statsStrip: {
       display: 'grid',
       gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: '20px',
+      gap: 'clamp(12px, 1.1vw, 20px)',
     },
     statCard: {
       background: theme.isLight
@@ -411,7 +411,7 @@ export default function SlideProductSuite() {
         ? `1px solid ${theme.borderDefault}`
         : '1px solid rgba(62,79,224,0.22)',
       borderRadius: '14px',
-      padding: '28px 32px',
+      padding: 'clamp(16px, 1.5vw, 28px) clamp(18px, 1.6vw, 32px)',
       display: 'flex',
       flexDirection: 'column',
       gap: '8px',
@@ -419,7 +419,7 @@ export default function SlideProductSuite() {
     },
     statNumber: {
       fontFamily: 'var(--font-display)',
-      fontSize: '60px',
+      fontSize: 'clamp(34px, 3.2vw, 60px)',
       fontWeight: 800,
       letterSpacing: '-1px',
       lineHeight: 1.05,
@@ -429,7 +429,7 @@ export default function SlideProductSuite() {
       WebkitTextFillColor: 'transparent',
     },
     statLabel: {
-      fontSize: '13px',
+      fontSize: 'clamp(10.5px, 0.8vw, 13px)',
       fontWeight: 600,
       color: theme.inkSecondary,
       letterSpacing: '1.5px',
@@ -441,13 +441,13 @@ export default function SlideProductSuite() {
       flex: 1,
       display: 'grid',
       gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: '26px',
+      gap: 'clamp(14px, 1.3vw, 26px)',
       minHeight: 0,
     },
     column: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '14px',
+      gap: 'clamp(8px, 0.75vw, 14px)',
       minHeight: 0,
       position: 'relative',
     },
@@ -458,15 +458,15 @@ export default function SlideProductSuite() {
     pillarHead: {
       display: 'flex',
       alignItems: 'center',
-      gap: '14px',
-      padding: '18px 20px',
+      gap: 'clamp(10px, 0.9vw, 14px)',
+      padding: 'clamp(12px, 1.1vw, 18px) clamp(14px, 1.2vw, 20px)',
       borderRadius: '12px',
       position: 'relative',
       overflow: 'hidden',
     },
     pillarNumber: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '17px',
+      fontSize: 'clamp(13px, 1.05vw, 17px)',
       fontWeight: 600,
       letterSpacing: '0.5px',
       flexShrink: 0,
@@ -481,7 +481,7 @@ export default function SlideProductSuite() {
       flex: 1,
     },
     pillarName: {
-      fontSize: '15.5px',
+      fontSize: 'clamp(12px, 0.95vw, 15.5px)',
       fontWeight: 700,
       letterSpacing: '1.6px',
       textTransform: 'uppercase',
@@ -489,7 +489,7 @@ export default function SlideProductSuite() {
       lineHeight: 1.2,
     },
     pillarTagline: {
-      fontSize: '13.5px',
+      fontSize: 'clamp(10.5px, 0.82vw, 13.5px)',
       fontWeight: 500,
       letterSpacing: '0.2px',
       color: theme.inkMuted,
@@ -502,14 +502,14 @@ export default function SlideProductSuite() {
       display: 'flex',
       flexDirection: 'column',
       minHeight: 0,
-      gap: '10px',
+      gap: 'clamp(6px, 0.55vw, 10px)',
     },
     item: {
       flex: '0 0 auto',
       display: 'flex',
       alignItems: 'center',
-      gap: '16px',
-      padding: '13px 14px',
+      gap: 'clamp(12px, 1vw, 16px)',
+      padding: 'clamp(9px, 0.75vw, 13px) clamp(10px, 0.85vw, 14px)',
       borderRadius: '10px',
       background: theme.isLight ? theme.surface0 : 'rgba(255,255,255,0.02)',
       border: `1px solid ${theme.borderSubtle}`,
@@ -518,8 +518,8 @@ export default function SlideProductSuite() {
       minHeight: 0,
     },
     itemIconWrap: {
-      width: '38px',
-      height: '38px',
+      width: 'clamp(30px, 2.3vw, 38px)',
+      height: 'clamp(30px, 2.3vw, 38px)',
       borderRadius: '9px',
       display: 'flex',
       alignItems: 'center',
@@ -535,14 +535,14 @@ export default function SlideProductSuite() {
       flex: 1,
     },
     itemTitle: {
-      fontSize: '19.5px',
+      fontSize: 'clamp(15px, 1.18vw, 19.5px)',
       fontWeight: 600,
       color: theme.ink,
       letterSpacing: '-0.1px',
       lineHeight: 1.25,
     },
     itemDesc: {
-      fontSize: '15.5px',
+      fontSize: 'clamp(12.5px, 0.95vw, 15.5px)',
       fontWeight: 400,
       lineHeight: 1.45,
       color: theme.inkSecondary,
@@ -583,8 +583,8 @@ export default function SlideProductSuite() {
     heroHeader: {
       display: 'flex',
       alignItems: 'center',
-      gap: '12px',
-      padding: '11px 14px',
+      gap: 'clamp(8px, 0.7vw, 12px)',
+      padding: 'clamp(8px, 0.7vw, 11px) clamp(11px, 0.95vw, 14px)',
       borderBottom: `1px solid ${theme.borderSubtle}`,
       background: theme.isLight ? theme.surface0 : 'rgba(255,255,255,0.015)',
     },
@@ -610,17 +610,17 @@ export default function SlideProductSuite() {
       opacity: 0.85,
     },
     heroHeaderText: {
-      fontSize: '12.5px',
+      fontSize: 'clamp(10.5px, 0.78vw, 12.5px)',
       fontWeight: 600,
       color: theme.inkSecondary,
       letterSpacing: '0.1px',
     },
     heroBody: {
-      padding: '14px 14px',
+      padding: 'clamp(10px, 0.9vw, 14px) clamp(11px, 0.95vw, 14px)',
       display: 'flex',
       flexDirection: 'column',
-      gap: '10px',
-      minHeight: '150px',
+      gap: 'clamp(7px, 0.6vw, 10px)',
+      minHeight: 'clamp(100px, 9vw, 150px)',
       position: 'relative',
     },
     heroUserRow: {
@@ -631,10 +631,10 @@ export default function SlideProductSuite() {
     },
     heroUserBubble: {
       maxWidth: '88%',
-      padding: '10px 13px',
+      padding: 'clamp(7px, 0.6vw, 10px) clamp(10px, 0.85vw, 13px)',
       borderRadius: '13px 13px 4px 13px',
       background: 'linear-gradient(135deg, #3E4FE0 0%, #5967E4 100%)',
-      fontSize: '13px',
+      fontSize: 'clamp(11px, 0.85vw, 13px)',
       fontWeight: 500,
       lineHeight: 1.35,
       color: '#fff',
@@ -647,8 +647,8 @@ export default function SlideProductSuite() {
       opacity: 0,
     },
     heroAvatar: {
-      width: '28px',
-      height: '28px',
+      width: 'clamp(22px, 1.8vw, 28px)',
+      height: 'clamp(22px, 1.8vw, 28px)',
       borderRadius: '8px',
       background: 'rgba(62,79,224,0.18)',
       border: '1px solid rgba(124,137,239,0.32)',
@@ -680,11 +680,11 @@ export default function SlideProductSuite() {
       background: theme.isLight ? theme.accent : '#BDC3F6',
     },
     heroAiBubble: {
-      padding: '10px 13px',
+      padding: 'clamp(7px, 0.6vw, 10px) clamp(10px, 0.85vw, 13px)',
       borderRadius: '13px 13px 13px 4px',
       background: theme.isLight ? theme.surface1 : 'rgba(255,255,255,0.05)',
       border: `1px solid ${theme.borderDefault}`,
-      fontSize: '13px',
+      fontSize: 'clamp(11px, 0.85vw, 13px)',
       fontWeight: 400,
       lineHeight: 1.4,
       color: theme.ink,
@@ -701,15 +701,15 @@ export default function SlideProductSuite() {
     // animated chat card. Wide rectangle fills the empty bottom-left so the
     // slide silhouette stays balanced.
     pcSection: {
-      marginTop: '12px',
+      marginTop: 'clamp(6px, 0.6vw, 12px)',
       position: 'relative',
       zIndex: 1,
     },
     pcCard: {
       display: 'grid',
       gridTemplateColumns: 'minmax(260px, 1fr) minmax(340px, 1.1fr)',
-      gap: '40px',
-      padding: '24px',
+      gap: 'clamp(20px, 2vw, 40px)',
+      padding: 'clamp(16px, 1.3vw, 24px)',
       background: theme.isLight
         ? theme.cardGradientAccent
         : 'linear-gradient(135deg, rgba(124,137,239,0.10) 0%, rgba(62,79,224,0.04) 100%)',
@@ -723,7 +723,7 @@ export default function SlideProductSuite() {
     pcInfo: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '24px',
+      gap: 'clamp(14px, 1.4vw, 24px)',
     },
     pcEyebrow: {
       display: 'inline-flex',
@@ -735,7 +735,7 @@ export default function SlideProductSuite() {
       border: theme.isLight
         ? '1px solid rgba(62,79,224,0.30)'
         : '1px solid rgba(124,137,239,0.4)',
-      fontSize: '11.5px',
+      fontSize: 'clamp(9.5px, 0.7vw, 11.5px)',
       fontWeight: 700,
       letterSpacing: '1.6px',
       textTransform: 'uppercase',
@@ -751,7 +751,7 @@ export default function SlideProductSuite() {
     },
     pcTitle: {
       fontFamily: 'var(--font-display)',
-      fontSize: '36px',
+      fontSize: 'clamp(24px, 2vw, 36px)',
       fontWeight: 600,
       letterSpacing: '-0.5px',
       lineHeight: 1.08,
@@ -759,11 +759,11 @@ export default function SlideProductSuite() {
       margin: 0,
     },
     pcDescription: {
-      fontSize: '16px',
+      fontSize: 'clamp(13px, 0.98vw, 16px)',
       color: theme.inkSecondary,
       lineHeight: 1.5,
       margin: 0,
-      maxWidth: '480px',
+      maxWidth: 'clamp(280px, 28vw, 480px)',
     },
   }
 

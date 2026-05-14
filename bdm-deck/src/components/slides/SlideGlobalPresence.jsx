@@ -49,7 +49,7 @@ export default function SlideGlobalPresence() {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: '26px',
+      gap: 'clamp(14px, 1.4vw, 26px)',
       minHeight: 0,
     },
     header: {
@@ -65,7 +65,7 @@ export default function SlideGlobalPresence() {
     },
     monoKicker: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '13px',
+      fontSize: 'clamp(10px, 0.78vw, 13px)',
       fontWeight: 500,
       letterSpacing: '0.4px',
       color: theme.inkMuted,
@@ -78,13 +78,13 @@ export default function SlideGlobalPresence() {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: '72px',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
       color: theme.ink,
       margin: 0,
-      marginBottom: '28px',
+      marginBottom: 'clamp(14px, 1.5vw, 28px)',
     },
     titleAccent: {
       background: theme.isLight
@@ -94,7 +94,7 @@ export default function SlideGlobalPresence() {
       WebkitTextFillColor: 'transparent',
     },
     subtitle: {
-      fontSize: '28px',
+      fontSize: 'clamp(20px, 1.6vw, 28px)',
       fontWeight: 400,
       color: theme.inkSecondary,
       maxWidth: '780px',
@@ -103,7 +103,7 @@ export default function SlideGlobalPresence() {
     },
     statsRow: {
       display: 'flex',
-      gap: '36px',
+      gap: 'clamp(18px, 1.8vw, 36px)',
     },
     statItem: {
       display: 'flex',
@@ -112,7 +112,7 @@ export default function SlideGlobalPresence() {
     },
     statNumber: {
       fontFamily: 'var(--font-display)',
-      fontSize: '62px',
+      fontSize: 'clamp(32px, 3.2vw, 62px)',
       fontWeight: 800,
       background: `linear-gradient(135deg, ${theme.accent} 0%, ${theme.accentMid} 100%)`,
       WebkitBackgroundClip: 'text',
@@ -135,7 +135,7 @@ export default function SlideGlobalPresence() {
       flex: 1,
       display: 'grid',
       gridTemplateColumns: 'minmax(0, 1fr) minmax(220px, 22%)',
-      gap: '48px',
+      gap: 'clamp(24px, 2.4vw, 48px)',
       alignItems: 'center',
       minHeight: 0,
     },
@@ -168,8 +168,8 @@ export default function SlideGlobalPresence() {
       position: 'absolute',
       top: 0,
       left: 0,
-      width: '18px',
-      height: '18px',
+      width: 'clamp(12px, 0.95vw, 18px)',
+      height: 'clamp(12px, 0.95vw, 18px)',
       transform: 'translate(-50%, -50%)',
       borderRadius: '50%',
       background: theme.accentMid,
@@ -180,8 +180,8 @@ export default function SlideGlobalPresence() {
       position: 'absolute',
       top: 0,
       left: 0,
-      width: '40px',
-      height: '40px',
+      width: 'clamp(28px, 2.1vw, 40px)',
+      height: 'clamp(28px, 2.1vw, 40px)',
       borderRadius: '50%',
       border: `1.5px solid ${pulseBorder}`,
       animation: 'pulseRing 2.6s ease-out infinite',
@@ -192,10 +192,10 @@ export default function SlideGlobalPresence() {
     sidebar: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '20px',
+      gap: 'clamp(12px, 1.1vw, 20px)',
       alignSelf: 'stretch',
       justifyContent: 'center',
-      paddingLeft: '24px',
+      paddingLeft: 'clamp(16px, 1.2vw, 24px)',
       borderLeft: `1px solid ${theme.borderSubtle}`,
     },
     regionBlock: {

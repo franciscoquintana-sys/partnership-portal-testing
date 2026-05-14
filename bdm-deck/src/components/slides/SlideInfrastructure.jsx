@@ -412,7 +412,7 @@ export default function SlideInfrastructure({ data }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: '18px',
+      gap: 'clamp(10px, 0.9vw, 18px)',
       minHeight: 0,
     },
     title: {
@@ -420,13 +420,13 @@ export default function SlideInfrastructure({ data }) {
       // Matches slides 6/7 (GlobalPresence, Leadership) — the reference
       // for title size across the deck. Title wraps to two lines at this
       // size, which is intentional.
-      fontSize: '72px',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
       color: theme.inkStrong,
       margin: 0,
-      marginBottom: '64px',
+      marginBottom: 'clamp(32px, 3.6vw, 64px)',
       maxWidth: '100%',
     },
     titleAccent: {
@@ -442,7 +442,7 @@ export default function SlideInfrastructure({ data }) {
       flex: 1,
       display: 'grid',
       gridTemplateColumns: '2.6fr 1fr',
-      gap: '36px',
+      gap: 'clamp(20px, 1.8vw, 36px)',
       minHeight: 0,
     },
 
@@ -450,7 +450,7 @@ export default function SlideInfrastructure({ data }) {
       background: theme.cardGradientAccent,
       border: `1px solid ${theme.borderSubtle}`,
       borderRadius: '16px',
-      padding: '40px 60px',
+      padding: 'clamp(20px, 1.8vw, 40px) clamp(36px, 3vw, 60px)',
       position: 'relative',
       overflow: 'hidden',
       display: 'flex',
@@ -480,7 +480,7 @@ export default function SlideInfrastructure({ data }) {
       // Moderate horizontal runway: enough for traces to draw a visible
       // horizontal segment after the tight corner curves, without stealing
       // so much space that the outer provider pills overflow the card.
-      gap: '96px',
+      gap: 'clamp(48px, 4vw, 96px)',
       width: '100%',
       position: 'relative',
       zIndex: 2,
@@ -497,7 +497,7 @@ export default function SlideInfrastructure({ data }) {
       // of the group above/below — justify-content: space-between alone
       // would let them collapse when the card height runs short.
       justifyContent: 'space-between',
-      gap: '120px',
+      gap: 'clamp(64px, 5vw, 120px)',
     },
 
     // ---------- Category group (one of six) ----------
@@ -517,7 +517,7 @@ export default function SlideInfrastructure({ data }) {
       // box and its logos from drifting vertically as the column flexes.
       display: 'flex',
       flexDirection: 'column',
-      gap: '18px',
+      gap: 'clamp(10px, 0.9vw, 18px)',
       minWidth: 0,
     },
     // Clean inline row of 3 logos above the category box. Wraps only when
@@ -527,12 +527,12 @@ export default function SlideInfrastructure({ data }) {
       display: 'flex',
       flexWrap: 'wrap',
       alignItems: 'center',
-      rowGap: '12px',
-      columnGap: '24px',
+      rowGap: 'clamp(6px, 0.6vw, 12px)',
+      columnGap: 'clamp(14px, 1.25vw, 24px)',
       minWidth: 0,
     },
     providerPill: {
-      fontSize: '12.5px',
+      fontSize: 'clamp(10px, 0.75vw, 12.5px)',
       fontWeight: 500,
       letterSpacing: '0.2px',
       color: theme.inkMuted,
@@ -551,7 +551,7 @@ export default function SlideInfrastructure({ data }) {
     },
     categoryBox: {
       flex: '0 0 auto',
-      padding: '15px 20px',
+      padding: 'clamp(10px, 0.9vw, 15px) clamp(14px, 1.2vw, 20px)',
       background: theme.isLight ? 'rgba(62,79,224,0.06)' : 'rgba(62,79,224,0.14)',
       // Direct accent literal preserves the original 0.42 alpha on dark
       // exactly; on light theme.borderAccent is a bit softer which suits
@@ -560,13 +560,13 @@ export default function SlideInfrastructure({ data }) {
         ? `1px solid ${theme.borderAccent}`
         : '1px solid rgba(62,79,224,0.42)',
       borderRadius: '10px',
-      fontSize: '17px',
+      fontSize: 'clamp(13px, 1.05vw, 17px)',
       fontWeight: 700,
       color: theme.inkStrong,
       letterSpacing: '0.2px',
       whiteSpace: 'nowrap',
       textAlign: 'center',
-      minWidth: '215px',
+      minWidth: 'clamp(150px, 13.5vw, 215px)',
     },
 
     // ---------- Center merchant node ----------
@@ -574,7 +574,7 @@ export default function SlideInfrastructure({ data }) {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '24px 38px',
+      padding: 'clamp(14px, 1.3vw, 24px) clamp(20px, 1.8vw, 38px)',
       background: centerNodeBg,
       // Center node carries a stronger accent border on dark (the original
       // 0.55) so it reads as the focal point. Light uses the standard
@@ -584,13 +584,13 @@ export default function SlideInfrastructure({ data }) {
         : '1px solid rgba(62,79,224,0.55)',
       borderRadius: '12px',
       boxShadow: centerNodeShadow,
-      minHeight: '96px',
-      minWidth: '194px',
+      minHeight: 'clamp(64px, 5.2vw, 96px)',
+      minWidth: 'clamp(134px, 11.5vw, 194px)',
       animation: 'glow 3s ease-in-out infinite',
     },
     centerLogo: {
-      height: '50px',
-      maxWidth: '210px',
+      height: 'clamp(30px, 2.7vw, 50px)',
+      maxWidth: 'clamp(134px, 11.8vw, 210px)',
       objectFit: 'contain',
       filter: logoFilter,
       display: 'block',
@@ -599,15 +599,15 @@ export default function SlideInfrastructure({ data }) {
     // "BO" reads much smaller than a wordmark at the same height, so scale
     // up ~60% so the mark visually matches a wordmark merchant's weight.
     centerLogoTile: {
-      height: '86px',
-      maxWidth: '180px',
+      height: 'clamp(52px, 4.6vw, 86px)',
+      maxWidth: 'clamp(110px, 9.6vw, 180px)',
       objectFit: 'contain',
       filter: logoFilter,
       display: 'block',
     },
     centerText: {
       fontFamily: 'var(--font-display)',
-      fontSize: '42px',
+      fontSize: 'clamp(26px, 2.3vw, 42px)',
       fontWeight: 700,
       color: theme.inkStrong,
       letterSpacing: '-0.4px',
@@ -618,7 +618,7 @@ export default function SlideInfrastructure({ data }) {
       position: 'relative',
       display: 'flex',
       flexDirection: 'column',
-      padding: '72px 64px',
+      padding: 'clamp(40px, 3.6vw, 72px) clamp(40px, 3.6vw, 64px)',
       background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.015)',
       border: `1px solid ${theme.borderSubtle}`,
       borderRadius: '16px',
@@ -644,7 +644,7 @@ export default function SlideInfrastructure({ data }) {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'space-between',
-      gap: '44px',
+      gap: 'clamp(24px, 2.2vw, 44px)',
     },
     observationItem: {
       display: 'flex',
@@ -659,7 +659,7 @@ export default function SlideInfrastructure({ data }) {
       opacity: 0.7,
     },
     observationText: {
-      fontSize: '26px',
+      fontSize: 'clamp(17px, 1.4vw, 26px)',
       lineHeight: 1.4,
       color: theme.inkSecondary,
       margin: 0,
@@ -672,8 +672,8 @@ export default function SlideInfrastructure({ data }) {
       display: 'grid',
       gridTemplateColumns: 'auto auto 1fr',
       alignItems: 'center',
-      gap: '26px',
-      padding: '28px 32px',
+      gap: 'clamp(16px, 1.3vw, 26px)',
+      padding: 'clamp(16px, 1.4vw, 28px) clamp(20px, 1.6vw, 32px)',
       background: theme.isLight
         ? theme.bgElevated
         : 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.015) 100%)',
@@ -684,7 +684,7 @@ export default function SlideInfrastructure({ data }) {
     },
     obsIndex: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '32px',
+      fontSize: 'clamp(20px, 1.8vw, 32px)',
       fontWeight: 700,
       color: theme.isLight ? theme.accent : 'rgba(180,189,255,0.95)',
       letterSpacing: '-0.03em',
@@ -692,8 +692,8 @@ export default function SlideInfrastructure({ data }) {
       flexShrink: 0,
     },
     obsIcon: {
-      width: '42px',
-      height: '42px',
+      width: 'clamp(28px, 2.3vw, 42px)',
+      height: 'clamp(28px, 2.3vw, 42px)',
       color: theme.inkMuted,
       flexShrink: 0,
       display: 'flex',
@@ -703,18 +703,18 @@ export default function SlideInfrastructure({ data }) {
     obsBody: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '8px',
+      gap: 'clamp(4px, 0.4vw, 8px)',
       minWidth: 0,
     },
     obsTitle: {
-      fontSize: '24px',
+      fontSize: 'clamp(16px, 1.3vw, 24px)',
       fontWeight: 700,
       color: theme.ink,
       letterSpacing: '-0.2px',
       lineHeight: 1.15,
     },
     obsDesc: {
-      fontSize: '19px',
+      fontSize: 'clamp(13px, 1.05vw, 19px)',
       fontWeight: 400,
       color: theme.inkSecondary,
       lineHeight: 1.4,
@@ -725,13 +725,13 @@ export default function SlideInfrastructure({ data }) {
     statsRow: {
       display: 'grid',
       gridTemplateColumns: 'repeat(2, 1fr)',
-      gap: '22px',
+      gap: 'clamp(14px, 1.2vw, 22px)',
     },
     statCard: {
       display: 'flex',
       alignItems: 'center',
-      gap: '30px',
-      padding: '20px 36px',
+      gap: 'clamp(18px, 1.5vw, 30px)',
+      padding: 'clamp(12px, 1vw, 20px) clamp(22px, 1.9vw, 36px)',
       background: theme.cardGradientAccent,
       border: `1px solid ${theme.borderSubtle}`,
       borderRadius: '14px',
@@ -741,7 +741,7 @@ export default function SlideInfrastructure({ data }) {
     },
     statNumber: {
       fontFamily: 'var(--font-display)',
-      fontSize: '62px',
+      fontSize: 'clamp(36px, 3.3vw, 62px)',
       fontWeight: 700,
       letterSpacing: '-1.5px',
       lineHeight: 1,
@@ -754,7 +754,7 @@ export default function SlideInfrastructure({ data }) {
       flexShrink: 0,
     },
     statText: {
-      fontSize: '22px',
+      fontSize: 'clamp(16px, 1.35vw, 22px)',
       lineHeight: 1.4,
       color: theme.inkSecondary,
       fontWeight: 500,
@@ -766,8 +766,8 @@ export default function SlideInfrastructure({ data }) {
     },
     statIcon: {
       position: 'absolute',
-      right: '24px',
-      top: '20px',
+      right: 'clamp(16px, 1.4vw, 24px)',
+      top: 'clamp(14px, 1.2vw, 20px)',
       color: theme.inkFaint,
     },
   }

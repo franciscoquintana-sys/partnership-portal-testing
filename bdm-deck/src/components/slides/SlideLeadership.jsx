@@ -65,9 +65,9 @@ function StripLogo({ name, styles }) {
   const WIDE = new Set(['checkout'])
   const EXTRA_WIDE = new Set(['worldline'])
   const nudge = LOGO_BASELINE_NUDGE[name] ?? 0
-  let maxWidth = '182px'
-  if (EXTRA_WIDE.has(name)) maxWidth = '365px'
-  else if (WIDE.has(name)) maxWidth = '260px'
+  let maxWidth = 'clamp(112px, 10.4vw, 182px)'
+  if (EXTRA_WIDE.has(name)) maxWidth = 'clamp(208px, 20vw, 365px)'
+  else if (WIDE.has(name)) maxWidth = 'clamp(156px, 14.8vw, 260px)'
   return (
     <img
       className="pedigree-logo"
@@ -95,12 +95,12 @@ export default function SlideLeadership({ data }) {
       display: 'flex',
       alignItems: 'flex-end',
       justifyContent: 'space-between',
-      gap: '48px',
-      marginBottom: '64px',
+      gap: 'clamp(24px, 3vw, 48px)',
+      marginBottom: 'clamp(32px, 3.6vw, 64px)',
     },
     title: {
       fontFamily: 'var(--font-display)',
-      fontSize: '72px',
+      fontSize: 'clamp(40px, 3.8vw, 72px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
@@ -118,7 +118,7 @@ export default function SlideLeadership({ data }) {
       color: 'transparent',
     },
     tagline: {
-      fontSize: '17px',
+      fontSize: 'clamp(13px, 1.05vw, 17px)',
       lineHeight: 1.55,
       color: theme.inkSecondary,
       maxWidth: '34%',
@@ -140,7 +140,7 @@ export default function SlideLeadership({ data }) {
       // gap so Leadership Team sits between the other two with real
       // breathing room.
       justifyContent: 'space-between',
-      gap: '140px',
+      gap: 'clamp(64px, 6vw, 140px)',
       minHeight: 0,
     },
 
@@ -149,7 +149,7 @@ export default function SlideLeadership({ data }) {
       display: 'flex',
       alignItems: 'center',
       gap: '10px',
-      marginBottom: '18px',
+      marginBottom: 'clamp(10px, 1vw, 18px)',
     },
     sectionDot: {
       width: '5px',
@@ -160,7 +160,7 @@ export default function SlideLeadership({ data }) {
       flexShrink: 0,
     },
     sectionLabel: {
-      fontSize: '15.5px',
+      fontSize: 'clamp(12px, 0.95vw, 15.5px)',
       fontWeight: 700,
       letterSpacing: '1.8px',
       textTransform: 'uppercase',
@@ -179,7 +179,7 @@ export default function SlideLeadership({ data }) {
     foundersRow: {
       display: 'grid',
       gridTemplateColumns: 'repeat(14, 1fr)',
-      gap: '52px 38px',
+      gap: 'clamp(28px, 2.4vw, 52px) clamp(20px, 1.8vw, 38px)',
     },
 
     // ---------- Leadership grid ----------
@@ -190,7 +190,7 @@ export default function SlideLeadership({ data }) {
     leadersGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(14, 1fr)',
-      gap: '52px 38px',
+      gap: 'clamp(28px, 2.4vw, 52px) clamp(20px, 1.8vw, 38px)',
     },
     // Each person card spans 2 columns of the 14-col track.
     cardSpan: {
@@ -208,7 +208,7 @@ export default function SlideLeadership({ data }) {
     // ---------- Person card ----------
     card: {
       display: 'flex',
-      gap: '18px',
+      gap: 'clamp(12px, 1.1vw, 18px)',
       alignItems: 'flex-start',
       minWidth: 0,
     },
@@ -217,16 +217,16 @@ export default function SlideLeadership({ data }) {
       flexShrink: 0,
     },
     photo: {
-      width: '132px',
-      height: '132px',
+      width: 'clamp(96px, 7vw, 132px)',
+      height: 'clamp(96px, 7vw, 132px)',
       borderRadius: '50%',
       objectFit: 'cover',
       background: theme.surface1,
       display: 'block',
     },
     photoFounder: {
-      width: '168px',
-      height: '168px',
+      width: 'clamp(120px, 9vw, 168px)',
+      height: 'clamp(120px, 9vw, 168px)',
     },
     photoRing: {
       position: 'absolute',
@@ -256,7 +256,7 @@ export default function SlideLeadership({ data }) {
       flex: 1,
     },
     name: {
-      fontSize: '18.5px',
+      fontSize: 'clamp(14px, 1.15vw, 18.5px)',
       fontWeight: 700,
       color: theme.ink,
       lineHeight: 1.2,
@@ -265,13 +265,13 @@ export default function SlideLeadership({ data }) {
       hyphens: 'none',
     },
     role: {
-      fontSize: '15.5px',
+      fontSize: 'clamp(12px, 0.95vw, 15.5px)',
       fontWeight: 400,
       color: theme.inkSecondary,
       lineHeight: 1.4,
     },
     pedigreeLabel: {
-      fontSize: '14px',
+      fontSize: 'clamp(11px, 0.85vw, 14px)',
       fontWeight: 600,
       color: theme.isLight ? theme.accentDeep : 'rgba(189,195,246,0.82)',
       lineHeight: 1.4,
@@ -287,8 +287,8 @@ export default function SlideLeadership({ data }) {
     pedigreeStrip: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '22px',
-      padding: '38px 42px',
+      gap: 'clamp(14px, 1.2vw, 22px)',
+      padding: 'clamp(22px, 2.1vw, 38px) clamp(24px, 2.4vw, 42px)',
       background: theme.isLight
         ? theme.bgElevated
         : 'linear-gradient(180deg, rgba(62,79,224,0.05) 0%, rgba(62,79,224,0.02) 100%)',
@@ -301,10 +301,10 @@ export default function SlideLeadership({ data }) {
     pedigreeStripHeader: {
       display: 'flex',
       alignItems: 'center',
-      gap: '14px',
+      gap: 'clamp(10px, 0.9vw, 14px)',
     },
     pedigreeStripLabel: {
-      fontSize: '15px',
+      fontSize: 'clamp(12px, 0.95vw, 15px)',
       fontWeight: 700,
       letterSpacing: '2px',
       textTransform: 'uppercase',
@@ -313,8 +313,8 @@ export default function SlideLeadership({ data }) {
     // Small Yuno dot-grid mark as a decorative accent next to the
     // "We've been there" label. Subtle brand signature on the pedigree row.
     pedigreeMark: {
-      width: '22px',
-      height: '22px',
+      width: 'clamp(16px, 1.3vw, 22px)',
+      height: 'clamp(16px, 1.3vw, 22px)',
       opacity: theme.isLight ? 0.85 : 0.55,
       pointerEvents: 'none',
       userSelect: 'none',
@@ -324,13 +324,13 @@ export default function SlideLeadership({ data }) {
     pedigreeStripLogos: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '24px',
+      gap: 'clamp(14px, 1.3vw, 24px)',
     },
     pedigreeStripLogosRow: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      gap: '24px',
+      gap: 'clamp(12px, 1.2vw, 24px)',
       flexWrap: 'nowrap',
     },
     stripLogo: {

@@ -326,12 +326,12 @@ export default function SlideDiagnostic({ data }) {
       flex: 1.05,
       display: 'flex',
       flexDirection: 'column',
-      gap: '12px',
+      gap: 'clamp(7px, 0.65vw, 12px)',
       position: 'relative',
       // Top buffer aligns the first pain card with the "Diagnostic / Today's
       // topology" heading on the right (offset = right-column monoKicker +
       // gap + diagnosticCard padding-top).
-      paddingTop: '76px',
+      paddingTop: 'clamp(48px, 4.5vw, 76px)',
     },
     // "Analyzing stack" badge sits in the (now right-side) pains column at the
     // same vertical position as the "Diagnostic / Today's topology" heading on
@@ -339,16 +339,16 @@ export default function SlideDiagnostic({ data }) {
     // staircase indent of card 01 (now indented from the right).
     runningBadge: {
       position: 'absolute',
-      top: '76px',
-      right: '14px',
+      top: 'clamp(48px, 4.5vw, 76px)',
+      right: 'clamp(6px, 0.8vw, 14px)',
       display: 'inline-flex',
       alignItems: 'center',
       gap: '7px',
-      padding: '8px 14px',
+      padding: 'clamp(5px, 0.45vw, 8px) clamp(9px, 0.8vw, 14px)',
       background: 'rgba(251,146,60,0.12)',
       border: '1px solid rgba(251,146,60,0.38)',
       borderRadius: '100px',
-      fontSize: '11.5px',
+      fontSize: 'clamp(9px, 0.68vw, 11.5px)',
       fontWeight: 700,
       letterSpacing: '1.2px',
       textTransform: 'uppercase',
@@ -366,13 +366,13 @@ export default function SlideDiagnostic({ data }) {
     title: {
       fontFamily: 'var(--font-display)',
       // Matches slides 6/7 — deck-wide title reference size.
-      fontSize: '52px',
+      fontSize: 'clamp(28px, 2.7vw, 52px)',
       fontWeight: 500,
       letterSpacing: '-1.2px',
       lineHeight: 1.1,
       color: theme.ink,
       margin: 0,
-      marginBottom: '48px',
+      marginBottom: 'clamp(28px, 2.6vw, 48px)',
     },
     // Accent half of the slide title — matches the gradient used on Cover,
     // Product Suite, and Global Presence titles so the emphasized phrase
@@ -389,14 +389,14 @@ export default function SlideDiagnostic({ data }) {
     },
     monoKicker: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '13px',
+      fontSize: 'clamp(10px, 0.78vw, 13px)',
       fontWeight: 500,
       letterSpacing: '0.4px',
       color: theme.inkMuted,
       display: 'flex',
       alignItems: 'center',
       gap: '10px',
-      marginBottom: '10px',
+      marginBottom: 'clamp(6px, 0.6vw, 10px)',
     },
     monoKickerCaret: {
       color: theme.isLight ? theme.accent : 'rgba(124,137,239,0.9)',
@@ -411,8 +411,8 @@ export default function SlideDiagnostic({ data }) {
       display: 'grid',
       gridTemplateColumns: 'auto auto 1fr',
       alignItems: 'center',
-      gap: '28px',
-      padding: '28px 36px',
+      gap: 'clamp(18px, 1.4vw, 28px)',
+      padding: 'clamp(18px, 1.4vw, 28px) clamp(22px, 1.8vw, 36px)',
       background: theme.isLight
         ? theme.bgElevated
         : 'linear-gradient(180deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.015) 100%)',
@@ -428,7 +428,7 @@ export default function SlideDiagnostic({ data }) {
     },
     painIndex: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '36px',
+      fontSize: 'clamp(22px, 2vw, 36px)',
       fontWeight: 700,
       color: theme.isLight ? theme.accent : 'rgba(180,189,255,0.95)',
       letterSpacing: '-0.03em',
@@ -441,8 +441,8 @@ export default function SlideDiagnostic({ data }) {
     // Standalone filled-silhouette icon, no container box. Sits on the card
     // bg directly so the visual weight comes from the glyph itself.
     painIcon: {
-      width: '48px',
-      height: '48px',
+      width: 'clamp(34px, 2.7vw, 48px)',
+      height: 'clamp(34px, 2.7vw, 48px)',
       color: theme.inkMuted,
       flexShrink: 0,
       display: 'flex',
@@ -452,11 +452,11 @@ export default function SlideDiagnostic({ data }) {
     painBody: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '12px',
+      gap: 'clamp(6px, 0.6vw, 12px)',
       minWidth: 0,
     },
     painTitle: {
-      fontSize: '28px',
+      fontSize: 'clamp(18px, 1.5vw, 28px)',
       fontWeight: 700,
       color: theme.ink,
       letterSpacing: '-0.2px',
@@ -464,7 +464,7 @@ export default function SlideDiagnostic({ data }) {
       minWidth: 0,
     },
     painDesc: {
-      fontSize: '20px',
+      fontSize: 'clamp(14px, 1.1vw, 20px)',
       fontWeight: 400,
       color: theme.inkMuted,
       lineHeight: 1.45,
@@ -475,7 +475,7 @@ export default function SlideDiagnostic({ data }) {
       flex: 0.95,
       display: 'flex',
       flexDirection: 'column',
-      gap: '14px',
+      gap: 'clamp(8px, 0.8vw, 14px)',
     },
     diagnosticCard: {
       flex: 1,
@@ -484,10 +484,10 @@ export default function SlideDiagnostic({ data }) {
         : 'linear-gradient(135deg, rgba(62,79,224,0.06) 0%, rgba(0,0,0,0.6) 100%)',
       border: `1px solid ${theme.isLight ? theme.borderDefault : 'rgba(255,255,255,0.08)'}`,
       borderRadius: '14px',
-      padding: '26px',
+      padding: 'clamp(16px, 1.35vw, 26px)',
       display: 'flex',
       flexDirection: 'column',
-      gap: '18px',
+      gap: 'clamp(10px, 0.9vw, 18px)',
       backdropFilter: theme.isLight ? 'none' : 'blur(10px)',
       position: 'relative',
       overflow: 'hidden',
@@ -501,10 +501,10 @@ export default function SlideDiagnostic({ data }) {
     diagHeaderLeft: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '10px',
+      gap: 'clamp(6px, 0.5vw, 10px)',
     },
     diagLabel: {
-      fontSize: '13px',
+      fontSize: 'clamp(10px, 0.75vw, 13px)',
       fontWeight: 700,
       letterSpacing: '1.6px',
       textTransform: 'uppercase',
@@ -512,7 +512,7 @@ export default function SlideDiagnostic({ data }) {
     },
     diagTitle: {
       fontFamily: 'var(--font-display)',
-      fontSize: '30px',
+      fontSize: 'clamp(20px, 1.6vw, 30px)',
       fontWeight: 700,
       color: theme.ink,
       letterSpacing: '-0.3px',
@@ -521,11 +521,11 @@ export default function SlideDiagnostic({ data }) {
       display: 'flex',
       alignItems: 'center',
       gap: '8px',
-      padding: '9px 18px',
+      padding: 'clamp(6px, 0.5vw, 9px) clamp(12px, 1vw, 18px)',
       background: 'rgba(74,222,128,0.1)',
       border: '1px solid rgba(74,222,128,0.25)',
       borderRadius: '100px',
-      fontSize: '14px',
+      fontSize: 'clamp(10px, 0.8vw, 14px)',
       fontWeight: 700,
       letterSpacing: '1.2px',
       textTransform: 'uppercase',
@@ -552,8 +552,8 @@ export default function SlideDiagnostic({ data }) {
       display: 'inline-flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '22px 44px',
-      minHeight: '82px',
+      padding: 'clamp(12px, 1.1vw, 22px) clamp(28px, 2.3vw, 44px)',
+      minHeight: 'clamp(58px, 4.8vw, 82px)',
       background: theme.isLight
         ? 'linear-gradient(135deg, rgba(62,79,224,0.10) 0%, rgba(89,103,228,0.06) 100%)'
         : 'linear-gradient(135deg, rgba(62,79,224,0.2) 0%, rgba(89,103,228,0.15) 100%)',
@@ -564,8 +564,8 @@ export default function SlideDiagnostic({ data }) {
         : '0 0 24px rgba(62,79,224,0.3)',
     },
     merchantLogo: {
-      height: '52px',
-      maxWidth: '280px',
+      height: 'clamp(32px, 2.8vw, 52px)',
+      maxWidth: 'clamp(200px, 17vw, 280px)',
       objectFit: 'contain',
       display: 'block',
       filter: theme.invertLogos ? 'brightness(0) invert(1)' : 'brightness(0)',
@@ -573,38 +573,38 @@ export default function SlideDiagnostic({ data }) {
     // Tile-type merchant boost: compact-glyph marks render at ~160% the
     // height of wordmarks so the silhouette weight lines up.
     merchantLogoTile: {
-      height: '84px',
-      maxWidth: '170px',
+      height: 'clamp(52px, 4.5vw, 84px)',
+      maxWidth: 'clamp(120px, 10vw, 170px)',
       objectFit: 'contain',
       display: 'block',
       filter: theme.invertLogos ? 'brightness(0) invert(1)' : 'brightness(0)',
     },
     merchantNodeText: {
-      fontSize: '40px',
+      fontSize: 'clamp(26px, 2.3vw, 40px)',
       fontWeight: 700,
       color: theme.ink,
       letterSpacing: '-0.3px',
     },
     topologyLines: {
       width: '100%',
-      height: '44px',
+      height: 'clamp(28px, 2.6vw, 44px)',
       display: 'block',
-      margin: '10px 0 6px',
+      margin: 'clamp(6px, 0.5vw, 10px) 0 clamp(4px, 0.3vw, 6px)',
       pointerEvents: 'none',
     },
     pspRow: {
       display: 'grid',
       gridTemplateColumns: 'repeat(4, 1fr)',
-      gap: '10px',
+      gap: 'clamp(6px, 0.5vw, 10px)',
       width: '100%',
     },
     illustrativeNote: {
       fontFamily: 'var(--font-mono)',
-      fontSize: '10px',
+      fontSize: 'clamp(8px, 0.6vw, 10px)',
       fontWeight: 500,
       letterSpacing: '0.3px',
       color: theme.inkFaint,
-      marginTop: '10px',
+      marginTop: 'clamp(6px, 0.5vw, 10px)',
       textAlign: 'left',
       // Parent topology flex column uses alignItems:center, which would
       // otherwise collapse this div to content-width and center it.
@@ -616,25 +616,25 @@ export default function SlideDiagnostic({ data }) {
       background: theme.isLight ? theme.surface1 : 'rgba(0,0,0,0.8)',
       border: `1px solid ${theme.borderDefault}`,
       borderRadius: '10px',
-      padding: '16px 14px',
+      padding: 'clamp(10px, 0.85vw, 16px) clamp(10px, 0.8vw, 14px)',
       display: 'flex',
       flexDirection: 'column',
-      gap: '7px',
+      gap: 'clamp(4px, 0.35vw, 7px)',
       alignItems: 'center',
       textAlign: 'center',
       justifyContent: 'center',
-      minHeight: '82px',
+      minHeight: 'clamp(56px, 4.6vw, 82px)',
     },
     pspName: {
       fontFamily: 'var(--font-display)',
-      fontSize: '28px',
+      fontSize: 'clamp(17px, 1.5vw, 28px)',
       fontWeight: 700,
       color: theme.ink,
       letterSpacing: '-0.4px',
       lineHeight: 1.08,
     },
     pspRole: {
-      fontSize: '14px',
+      fontSize: 'clamp(10px, 0.78vw, 14px)',
       fontWeight: 500,
       color: theme.inkMuted,
       lineHeight: 1.3,
@@ -644,12 +644,12 @@ export default function SlideDiagnostic({ data }) {
       background: theme.isLight
         ? `linear-gradient(90deg, transparent 0%, ${theme.borderDefault} 50%, transparent 100%)`
         : 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%)',
-      margin: '6px 0',
+      margin: 'clamp(4px, 0.3vw, 6px) 0',
     },
     methodsSection: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '16px',
+      gap: 'clamp(10px, 0.85vw, 16px)',
     },
     methodsHeaderRow: {
       display: 'flex',
@@ -657,7 +657,7 @@ export default function SlideDiagnostic({ data }) {
       alignItems: 'center',
     },
     methodsLabel: {
-      fontSize: '15px',
+      fontSize: 'clamp(11px, 0.85vw, 15px)',
       fontWeight: 700,
       letterSpacing: '1.6px',
       textTransform: 'uppercase',
@@ -667,7 +667,7 @@ export default function SlideDiagnostic({ data }) {
       display: 'flex',
       alignItems: 'center',
       gap: '8px',
-      fontSize: '14px',
+      fontSize: 'clamp(11px, 0.82vw, 14px)',
       fontWeight: 600,
       color: theme.inkMuted,
     },
@@ -683,14 +683,14 @@ export default function SlideDiagnostic({ data }) {
     methodsGrid: {
       display: 'flex',
       flexWrap: 'wrap',
-      gap: '12px',
+      gap: 'clamp(8px, 0.65vw, 12px)',
     },
     methodPill: {
-      padding: '15px 20px',
+      padding: 'clamp(10px, 0.8vw, 15px) clamp(14px, 1.1vw, 20px)',
       background: theme.isLight ? 'rgba(62,79,224,0.05)' : 'rgba(124,137,239,0.06)',
       border: `1px solid ${theme.isLight ? 'rgba(62,79,224,0.20)' : 'rgba(124,137,239,0.22)'}`,
       borderRadius: '10px',
-      fontSize: '16px',
+      fontSize: 'clamp(12px, 0.95vw, 16px)',
       fontWeight: 600,
       color: theme.ink,
       letterSpacing: '0px',
@@ -710,7 +710,7 @@ export default function SlideDiagnostic({ data }) {
     capabilitiesSection: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '12px',
+      gap: 'clamp(8px, 0.7vw, 12px)',
     },
     capabilitiesHeaderRow: {
       display: 'flex',
@@ -718,7 +718,7 @@ export default function SlideDiagnostic({ data }) {
       alignItems: 'center',
     },
     capabilitiesLabel: {
-      fontSize: '15px',
+      fontSize: 'clamp(11px, 0.85vw, 15px)',
       fontWeight: 700,
       letterSpacing: '1.6px',
       textTransform: 'uppercase',
@@ -728,7 +728,7 @@ export default function SlideDiagnostic({ data }) {
       display: 'inline-flex',
       alignItems: 'center',
       gap: '14px',
-      fontSize: '11px',
+      fontSize: 'clamp(9px, 0.66vw, 11px)',
       fontWeight: 600,
       letterSpacing: '1.2px',
       textTransform: 'uppercase',
@@ -742,15 +742,15 @@ export default function SlideDiagnostic({ data }) {
     capabilitiesGrid: {
       display: 'grid',
       gridTemplateColumns: 'repeat(7, 1fr)',
-      gap: '9px',
+      gap: 'clamp(5px, 0.45vw, 9px)',
     },
     capChip: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '9px',
+      gap: 'clamp(6px, 0.55vw, 9px)',
       // Padding matches methodPill below so both chip rows share one silhouette.
-      padding: '15px 20px',
+      padding: 'clamp(10px, 0.8vw, 15px) clamp(14px, 1.1vw, 20px)',
       borderRadius: '10px',
     },
     capChipLive: {
@@ -775,7 +775,7 @@ export default function SlideDiagnostic({ data }) {
       background: theme.inkFaint,
     },
     capChipLabel: {
-      fontSize: '16px',
+      fontSize: 'clamp(12px, 0.95vw, 16px)',
       fontWeight: 600,
       letterSpacing: '0px',
       whiteSpace: 'nowrap',
