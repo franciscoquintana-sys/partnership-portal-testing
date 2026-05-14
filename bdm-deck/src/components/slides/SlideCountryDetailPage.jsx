@@ -135,6 +135,14 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
   const OVERVIEW_HIDDEN = /(online users|in[\s-]store)/i
   const overviewEntries = Object.entries(overview).filter(([k]) => !OVERVIEW_HIDDEN.test(k))
   const localPayments = rich?.local_payments || {}
+  // Filter out non-APM rails (gateways, PSPs, acquirers, aggregators) — the
+  // "Relevant APMs" card is APM-only by definition.
+  const NON_APM_TYPE = /(gateway|psp|acquirer|aggregator)/i
+  const filteredApms = (Array.isArray(localPayments.apms) ? localPayments.apms : [])
+    .filter((a) => {
+      const type = typeof a === 'object' ? (a?.type || '') : ''
+      return !NON_APM_TYPE.test(type)
+    })
   const breakdown = rich?.payment_methods_breakdown || []
   const regulation = rich?.regulation || []
   const digitalTrends = rich?.digital_trends || rich?.digitalTrends || []
@@ -178,8 +186,18 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     topStrip: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
       gap: 'clamp(10px, 0.9vw, 16px)',
+    },
+    apmsWide: {
+      // Relevant APMs needs more horizontal room than a single-stat card so
+      // up to 3 APM rows fit comfortably.
+      gridColumn: 'span 2',
+    },
+    apmsRow: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
+      gap: 'clamp(10px, 0.8vw, 16px)',
     },
     localCombined: {
       gap: '10px',
@@ -404,11 +422,11 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
                 <span style={styles.overviewValue}>{localPayments.a2a}</span>
               </div>
             )}
-            {(localPayments.apms || []).length > 0 && (
-              <div style={{ ...styles.overviewCard, ...styles.localCombined }}>
+            {filteredApms.length > 0 && (
+              <div style={{ ...styles.overviewCard, ...styles.localCombined, ...styles.apmsWide }}>
                 <span style={styles.overviewLabel}>Relevant APMs</span>
-                <div style={styles.localCombinedRows}>
-                  {localPayments.apms.slice(0, 3).map((a, i) => {
+                <div style={styles.apmsRow}>
+                  {filteredApms.slice(0, 3).map((a, i) => {
                     const name = typeof a === 'string' ? a : (a?.name || '')
                     const type = typeof a === 'object' ? (a?.type || '') : ''
                     return (
