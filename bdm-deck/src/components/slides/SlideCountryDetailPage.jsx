@@ -176,6 +176,11 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       gridTemplateColumns: `repeat(${Math.max(1, Math.min(overviewEntries.length, 4))}, minmax(0, 1fr))`,
       gap: 'clamp(10px, 0.9vw, 16px)',
     },
+    topStrip: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
+      gap: 'clamp(10px, 0.9vw, 16px)',
+    },
     overviewCard: {
       background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.03)',
       border: `1px solid ${theme.borderSubtle}`,
@@ -357,14 +362,36 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
           <h2 style={styles.name}>{selectedCountry}</h2>
         </div>
 
-        {overviewEntries.length > 0 && (
-          <div style={styles.overviewStrip}>
+        {(overviewEntries.length > 0 || localPayments.scheme || localPayments.a2a || (localPayments.apms || []).length > 0) && (
+          <div style={styles.topStrip}>
             {overviewEntries.slice(0, 8).map(([label, value]) => (
               <div key={label} style={styles.overviewCard}>
                 <span style={styles.overviewLabel}>{label}</span>
                 <span style={styles.overviewValue}>{value}</span>
               </div>
             ))}
+            {localPayments.scheme && (
+              <div style={styles.overviewCard}>
+                <span style={styles.overviewLabel}>Local scheme</span>
+                <span style={styles.overviewValue}>{localPayments.scheme}</span>
+              </div>
+            )}
+            {localPayments.a2a && (
+              <div style={styles.overviewCard}>
+                <span style={styles.overviewLabel}>A2A</span>
+                <span style={styles.overviewValue}>{localPayments.a2a}</span>
+              </div>
+            )}
+            {(localPayments.apms || []).slice(0, 6).map((a, i) => {
+              const name = typeof a === 'string' ? a : (a?.name || '')
+              const type = typeof a === 'object' ? (a?.type || '') : ''
+              return (
+                <div key={`apm-${i}`} style={styles.overviewCard}>
+                  <span style={styles.overviewLabel}>{type || 'APM'}</span>
+                  <span style={styles.overviewValue}>{name}</span>
+                </div>
+              )
+            })}
           </div>
         )}
 
@@ -383,43 +410,15 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
           </div>
 
           <div style={styles.card}>
-            <span style={styles.cardHeader}>Local Payments</span>
-            <span style={styles.cardTitle}>Scheme, A2A, APMs</span>
-            <div style={styles.localGrid}>
-              {localPayments.scheme && (
-                <div style={styles.localCell}>
-                  <span style={styles.localLabel}>Local scheme</span>
-                  <span style={styles.localValue}>{localPayments.scheme}</span>
-                </div>
-              )}
-              {localPayments.a2a && (
-                <div style={styles.localCell}>
-                  <span style={styles.localLabel}>A2A</span>
-                  <span style={styles.localValue}>{localPayments.a2a}</span>
-                </div>
-              )}
-            </div>
-            {Array.isArray(localPayments.apms) && localPayments.apms.length > 0 && (
-              <>
-                <span style={styles.localLabel}>Most important APMs</span>
-                <div style={styles.apmGrid}>
-                  {localPayments.apms.slice(0, 6).map((a, i) => {
-                    const name = typeof a === 'string' ? a : (a?.name || '')
-                    const type = typeof a === 'object' ? (a?.type || '') : ''
-                    return (
-                      <div key={i} style={styles.apmCard}>
-                        <span style={styles.apmName}>{name}</span>
-                        {type && <span style={styles.apmType}>{type}</span>}
-                      </div>
-                    )
-                  })}
-                </div>
-              </>
-            )}
+            <span style={styles.cardHeader}>Payment Mix</span>
+            <span style={styles.cardTitle}>Distribution of payments</span>
+            {breakdown.length > 0
+              ? <PieChart items={breakdown} theme={theme} />
+              : <p style={{ color: theme.inkMuted, margin: 0 }}>Breakdown not published for this market.</p>}
           </div>
         </div>
 
-        <div style={styles.grid}>
+        {regulation.length > 0 && (
           <div style={styles.card}>
             <span style={styles.cardHeader}>Regulation</span>
             <span style={styles.cardTitle}>Compliance trends</span>
@@ -432,15 +431,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
               ))}
             </ul>
           </div>
-
-          <div style={styles.card}>
-            <span style={styles.cardHeader}>Payment Mix</span>
-            <span style={styles.cardTitle}>Distribution of payments</span>
-            {breakdown.length > 0
-              ? <PieChart items={breakdown} theme={theme} />
-              : <p style={{ color: theme.inkMuted, margin: 0 }}>Breakdown not published for this market.</p>}
-          </div>
-        </div>
+        )}
       </div>
     </SlideBase>
   )
