@@ -132,6 +132,9 @@ function PaymentBreakdown({ items, theme }) {
         display: 'flex',
         flexDirection: 'column',
         gap: '5px',
+        // Spread payment-mix rows vertically so the bars don't cluster
+        // at the top with a blank strip below.
+        justifyContent: 'space-between',
         overflow: 'hidden',
       }}
     >
@@ -702,8 +705,13 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
     },
     list: {
       listStyle: 'none', padding: 0, margin: 0,
-      display: 'flex', flexDirection: 'column', gap: '4px',
+      display: 'flex', flexDirection: 'column',
+      gap: '4px',
+      flex: 1,
       minHeight: 0,
+      // Spread bullets across the card's vertical space so 3 items in a
+      // tall card don't cluster at the top and leave a blank lower half.
+      justifyContent: 'space-between',
     },
     listItem: {
       fontSize: '11.5px',
@@ -806,6 +814,11 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       flexDirection: 'column',
       gap: '4px',
       marginTop: '2px',
+      flex: 1,
+      minHeight: 0,
+      // Spread the 5 provider rows across the available vertical space
+      // so the card doesn't leave a blank strip at the bottom.
+      justifyContent: 'space-between',
     },
     partnerRow: {
       display: 'grid',
