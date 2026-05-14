@@ -297,7 +297,7 @@ export default function SlideLeadership({ data }) {
       marginTop: 'auto',
       // Lift the strip clear of the slide bottom so the second row of
       // pedigree logos never gets clipped.
-      marginBottom: '180px',
+      marginBottom: '360px',
       boxShadow: theme.cardShadow,
     },
     pedigreeStripHeader: {
