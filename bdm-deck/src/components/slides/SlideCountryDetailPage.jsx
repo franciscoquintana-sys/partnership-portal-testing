@@ -273,7 +273,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(16px, 1.4vw, 28px)',
+      gap: 'clamp(10px, 1vw, 18px)',
       minHeight: 0,
       overflowY: 'auto',
     },
@@ -282,7 +282,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       alignItems: 'center',
       gap: 'clamp(20px, 1.8vw, 36px)',
       flexShrink: 0,
-      marginBottom: 'clamp(18px, 1.8vw, 36px)',
+      marginBottom: 'clamp(10px, 1vw, 20px)',
     },
     flag: {
       width: 'clamp(72px, 6vw, 108px)',
@@ -357,10 +357,10 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(124,137,239,0.16)',
       border: `1px solid ${theme.borderAccent}`,
       borderRadius: '12px',
-      padding: 'clamp(12px, 1vw, 18px) clamp(14px, 1.2vw, 22px)',
+      padding: 'clamp(8px, 0.7vw, 14px) clamp(12px, 1vw, 18px)',
       display: 'flex',
       flexDirection: 'column',
-      gap: '6px',
+      gap: '4px',
       // Stretch to fill the row — cards distribute evenly horizontally
       // while still wrapping to a second line when they collectively need
       // more space than the row offers.
@@ -395,10 +395,10 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       background: theme.isLight ? theme.bgElevated : 'rgba(255,255,255,0.025)',
       border: `1px solid ${theme.borderSubtle}`,
       borderRadius: '14px',
-      padding: 'clamp(18px, 1.6vw, 30px)',
+      padding: 'clamp(14px, 1.2vw, 22px)',
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(10px, 0.9vw, 16px)',
+      gap: 'clamp(8px, 0.7vw, 12px)',
       minWidth: 0,
     },
     cardHeader: {
