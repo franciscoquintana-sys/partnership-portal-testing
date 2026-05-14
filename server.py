@@ -132,8 +132,13 @@ def _site_info(url: str) -> dict:
     # Google favicon is the always-available fallback. We override it
     # below with whatever higher-resolution PNG the site itself ships
     # (apple-touch icons, og:image) — much better quality than 256-px
-    # favicons.
+    # favicons. `logo_is_fallback` stays True until we find a real
+    # brand asset; if no real asset is found we drop the logo entirely
+    # so the cover falls back to the styled wordmark text (Google s2 on
+    # ccTLD-only or favicon-less inputs returns a registry tile that
+    # reads worse than the merchant name set in the deck typeface).
     logo = f"https://www.google.com/s2/favicons?domain={host}&sz=256"
+    logo_is_fallback = True
 
     label = host.split(".")[0]
     name = _brand_name_lookup(label)
@@ -298,6 +303,14 @@ def _site_info(url: str) -> dict:
         chosen = svg_href or schema_logo or header_logo or apple_href or og_href
         if chosen:
             logo = _site_urljoin(final_url, chosen)
+            logo_is_fallback = False
+
+    # No brand asset found anywhere — drop the favicon and let the
+    # cover render the styled wordmark instead. (Google s2 on
+    # ccTLD-only domains like ".as" returns a stylised registry tile
+    # that looks worse than the merchant name in our typeface.)
+    if logo_is_fallback:
+        logo = None
 
     vertical = _detect_vertical(html, name or "", host)
     return {"name": name, "logo": logo, "vertical": vertical}
