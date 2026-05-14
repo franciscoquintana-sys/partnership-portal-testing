@@ -123,57 +123,92 @@ def _site_info(url: str) -> dict:
     if not host:
         return {"name": None, "logo": None}
 
+    # Google favicon is the always-available fallback. We override it
+    # below with whatever higher-resolution PNG the site itself ships
+    # (apple-touch icons, og:image) — much better quality than 256-px
+    # favicons.
     logo = f"https://www.google.com/s2/favicons?domain={host}&sz=256"
 
-    # Name preference:
-    #   1. DuckDuckGo Instant Answer (Wikipedia-backed) for the domain label
-    #      — returns clean brand casing (e.g. "OpenAI", "Stripe").
-    #   2. Page scrape (og:site_name / application-name / <title>).
-    #   3. The label itself, capitalised.
     label = host.split(".")[0]
     name = _brand_name_lookup(label)
 
-    if not name:
-        try:
-            resp = _site_requests.get(
-                url, timeout=4, allow_redirects=True,
-                headers={"User-Agent": "Mozilla/5.0 (compatible; YunoPortal/1.0)"},
-            )
-            html = resp.text
-            for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
-                t = tag.group(0)
-                prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
-                cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
-                if prop and cont and prop.group(1).lower() in ("og:site_name", "application-name"):
-                    name = cont.group(1).strip()
-                    break
-            if not name:
-                m = _site_re.search(r"<title[^>]*>([^<]+)</title>", html, _site_re.I)
-                if m:
-                    raw = m.group(1).strip()
-                    # Trim everything after the EARLIEST separator (not just
-                    # the first one we list) so "Lotkeys - Game Top-Ups |
-                    # Gift Cards" collapses to "Lotkeys", not the whole
-                    # left-of-pipe chunk. Spaces on both sides keep us from
-                    # chopping hyphenated words like "Top-Ups".
-                    earliest = -1
-                    for sep in (" | ", " - ", " — ", " – ", " · ", ": "):
-                        i = raw.find(sep)
-                        if i >= 0 and (earliest == -1 or i < earliest):
-                            earliest = i
-                    if earliest >= 0:
-                        raw = raw[:earliest].strip()
-                    name = raw
-        except Exception:
-            pass
+    html = ""
+    final_url = url
+    try:
+        resp = _site_requests.get(
+            url, timeout=4, allow_redirects=True,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; YunoPortal/1.0)"},
+        )
+        html = resp.text
+        final_url = resp.url
+    except Exception:
+        pass
 
-    # Reject Cloudflare / bot-block holding pages — their <title> is
-    # "Just a moment..." which would otherwise end up in the greeting.
+    if not name and html:
+        for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
+            t = tag.group(0)
+            prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
+            cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
+            if prop and cont and prop.group(1).lower() in ("og:site_name", "application-name"):
+                name = cont.group(1).strip()
+                break
+        if not name:
+            m = _site_re.search(r"<title[^>]*>([^<]+)</title>", html, _site_re.I)
+            if m:
+                raw = m.group(1).strip()
+                # Trim everything after the EARLIEST separator (not just
+                # the first one we list) so "Lotkeys - Game Top-Ups |
+                # Gift Cards" collapses to "Lotkeys", not the whole
+                # left-of-pipe chunk. Spaces on both sides keep us from
+                # chopping hyphenated words like "Top-Ups".
+                earliest = -1
+                for sep in (" | ", " - ", " — ", " – ", " · ", ": "):
+                    i = raw.find(sep)
+                    if i >= 0 and (earliest == -1 or i < earliest):
+                        earliest = i
+                if earliest >= 0:
+                    raw = raw[:earliest].strip()
+                name = raw
+
     if _looks_like_bot_block(name):
         name = None
 
     if not name:
         name = label.capitalize()
+
+    # Logo preference (best → fallback):
+    #   1. Largest apple-touch-icon on the page (180×180+, usually a clean
+    #      PNG with transparency since iOS requires it).
+    #   2. og:image (typically 1200×630 branded card).
+    #   3. Google favicon (set above, always available).
+    if html:
+        best_size = 0
+        best_href = None
+        for tag in _site_re.finditer(r"<link[^>]+>", html, _site_re.I):
+            t = tag.group(0)
+            rel = _site_re.search(r'rel=["\']([^"\']+)["\']', t, _site_re.I)
+            href = _site_re.search(r'href=["\']([^"\']+)["\']', t, _site_re.I)
+            if not rel or not href:
+                continue
+            if "apple-touch-icon" not in rel.group(1).lower():
+                continue
+            size_match = _site_re.search(r'sizes=["\'](\d+)x\d+["\']', t, _site_re.I)
+            size = int(size_match.group(1)) if size_match else 180
+            if size > best_size:
+                best_size = size
+                best_href = href.group(1)
+        if best_href:
+            logo = _site_urljoin(final_url, best_href)
+        else:
+            for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
+                t = tag.group(0)
+                prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
+                cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
+                if prop and cont and prop.group(1).lower() == "og:image":
+                    candidate = _site_urljoin(final_url, cont.group(1).strip())
+                    if _site_re.search(r"\.(png|webp|svg|jpe?g)(\?|$)", candidate, _site_re.I):
+                        logo = candidate
+                        break
 
     return {"name": name, "logo": logo}
 
