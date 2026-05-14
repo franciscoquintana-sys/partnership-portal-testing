@@ -650,10 +650,16 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
     </ul>
   )
 
+  // Compact region tag shown to the right of each country in the country
+  // dropdown. MENAT collapses to "ME" per user preference; others keep
+  // their existing short label.
+  const REGION_TAG = { MENAT: 'ME', Americas: 'NA' }
+  const tagFor = (r) => REGION_TAG[r] || r
+
   const regionItems = [{ value: 'all', label: 'All regions', tag: null }]
-    .concat(DETAIL_REGIONS.map((r) => ({ value: r, label: REGION_LABEL[r] || r, tag: r })))
+    .concat(DETAIL_REGIONS.map((r) => ({ value: r, label: REGION_LABEL[r] || r, tag: tagFor(r) })))
   const countryItems = [{ value: '', label: 'All countries', tag: null }]
-    .concat(countriesForPicker.map((c) => ({ value: c.country, label: c.country, tag: c.region })))
+    .concat(countriesForPicker.map((c) => ({ value: c.country, label: c.country, tag: tagFor(c.region) })))
 
   return (
     <SlideBase section="Country Detail" slideNumber={9}>
