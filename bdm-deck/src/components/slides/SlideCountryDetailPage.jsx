@@ -293,6 +293,39 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       border: `1px solid ${theme.borderAccent}`,
       color: theme.isLight ? theme.accentDeep : '#BDC3F6',
     },
+    apmGrid: {
+      display: 'grid',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+      gap: 'clamp(8px, 0.7vw, 12px)',
+      marginTop: '4px',
+    },
+    apmCard: {
+      background: theme.isLight ? 'rgba(62,79,224,0.06)' : 'rgba(62,79,224,0.10)',
+      border: `1px solid ${theme.borderAccent}`,
+      borderRadius: '10px',
+      padding: 'clamp(8px, 0.7vw, 14px) clamp(10px, 0.9vw, 16px)',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '2px',
+      minWidth: 0,
+    },
+    apmName: {
+      fontFamily: 'var(--font-display)',
+      fontSize: 'clamp(14px, 1.15vw, 20px)',
+      fontWeight: 700,
+      color: theme.inkStrong,
+      letterSpacing: '-0.2px',
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+    },
+    apmType: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 'clamp(10px, 0.78vw, 12px)',
+      fontWeight: 600,
+      letterSpacing: '0.6px',
+      color: theme.inkMuted,
+    },
     empty: {
       flex: 1,
       display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -361,7 +394,7 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
               )}
               {localPayments.a2a && (
                 <div style={styles.localCell}>
-                  <span style={styles.localLabel}>A2A rail</span>
+                  <span style={styles.localLabel}>A2A</span>
                   <span style={styles.localValue}>{localPayments.a2a}</span>
                 </div>
               )}
@@ -369,12 +402,17 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
             {Array.isArray(localPayments.apms) && localPayments.apms.length > 0 && (
               <>
                 <span style={styles.localLabel}>Most important APMs</span>
-                <div style={styles.chipRow}>
-                  {localPayments.apms.slice(0, 8).map((a, i) => (
-                    <span key={i} style={styles.chip}>
-                      {typeof a === 'string' ? a : (a?.name || '')}
-                    </span>
-                  ))}
+                <div style={styles.apmGrid}>
+                  {localPayments.apms.slice(0, 6).map((a, i) => {
+                    const name = typeof a === 'string' ? a : (a?.name || '')
+                    const type = typeof a === 'object' ? (a?.type || '') : ''
+                    return (
+                      <div key={i} style={styles.apmCard}>
+                        <span style={styles.apmName}>{name}</span>
+                        {type && <span style={styles.apmType}>{type}</span>}
+                      </div>
+                    )
+                  })}
                 </div>
               </>
             )}
