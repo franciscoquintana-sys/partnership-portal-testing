@@ -341,9 +341,9 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     },
     cardHeader: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(10px, 0.85vw, 13px)',
+      fontSize: 'clamp(18px, 1.5vw, 26px)',
       fontWeight: 700,
-      letterSpacing: '1.6px',
+      letterSpacing: '2px',
       textTransform: 'uppercase',
       color: theme.accent,
     },
@@ -515,7 +515,6 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
         <div style={styles.grid}>
           <div style={styles.card}>
             <span style={styles.cardHeader}>Digital Trends</span>
-            <span style={styles.cardTitle}>Market signals</span>
             <ul style={styles.list}>
               {digitalTrends.slice(0, 6).map((t, i) => (
                 <li key={i} style={styles.listItem}>
@@ -528,7 +527,6 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
 
           <div style={styles.card}>
             <span style={styles.cardHeader}>Payment Mix</span>
-            <span style={styles.cardTitle}>Distribution of payments in ecommerce</span>
             {breakdown.length > 0
               ? <PaymentBreakdown items={breakdown} theme={theme} />
               : <p style={{ color: theme.inkMuted, margin: 0 }}>Breakdown not published for this market.</p>}
@@ -538,7 +536,6 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
         {regulation.length > 0 && (
           <div style={styles.card}>
             <span style={styles.cardHeader}>Regulation</span>
-            <span style={styles.cardTitle}>Compliance trends</span>
             <ul style={styles.list}>
               {regulation.slice(0, 5).map((line, i) => (
                 <li key={i} style={styles.listItem}>
