@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react'
 import SlideBase from './SlideBase'
 import { useTheme } from '../../lib/theme'
+import { COUNTRY_PROVIDERS } from '../../data/country-rich-data'
+
+// Aliases the rich-JSON country naming → COUNTRY_PROVIDERS naming.
+const PROVIDER_KEY_ALIAS = {
+  UAE: 'United Arab Emirates',
+}
 
 // Portal-aligned country → ISO-2 lookup. Used to pull the flag from
 // flagcdn.com so we get a real PNG flag, not a Unicode emoji.
@@ -220,6 +226,10 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
   const breakdown = rich?.payment_methods_breakdown || []
   const rawRegulation = rich?.regulation || []
   const rawDigitalTrends = rich?.digital_trends || rich?.digitalTrends || []
+  const providerKey = selectedCountry
+    ? (PROVIDER_KEY_ALIAS[selectedCountry] || selectedCountry)
+    : null
+  const partners = (providerKey && COUNTRY_PROVIDERS[providerKey]) || []
 
   // Digital Trends — keep entries that read as market guidance for a
   // merchant looking to *operate* in this country (cross-border / CNP /
@@ -736,6 +746,44 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
       fontSize: '19px',
       color: theme.inkMuted, textAlign: 'center', lineHeight: 1.5,
     },
+    partnersIntro: {
+      fontSize: '12.5px',
+      lineHeight: 1.45,
+      color: theme.inkSecondary,
+      margin: 0,
+    },
+    partnersTable: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '6px',
+      marginTop: '4px',
+    },
+    partnerRow: {
+      display: 'grid',
+      gridTemplateColumns: 'minmax(110px, 0.8fr) minmax(0, 1.6fr)',
+      alignItems: 'center',
+      gap: '12px',
+      padding: '7px 10px',
+      background: theme.isLight ? 'rgba(62,79,224,0.06)' : 'rgba(62,79,224,0.10)',
+      border: `1px solid ${theme.borderAccent}`,
+      borderRadius: '10px',
+    },
+    partnerName: {
+      fontFamily: 'var(--font-display)',
+      fontSize: '13.5px',
+      fontWeight: 700,
+      color: theme.inkStrong,
+      letterSpacing: '-0.2px',
+      lineHeight: 1.2,
+      wordBreak: 'break-word',
+    },
+    partnerNote: {
+      fontFamily: 'var(--font)',
+      fontSize: '11.5px',
+      fontWeight: 500,
+      color: theme.inkSecondary,
+      lineHeight: 1.35,
+    },
   }
 
   if (!selectedCountry) {
@@ -826,17 +874,46 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
           </div>
         </div>
 
-        {regulation.length > 0 && (
-          <div style={styles.card}>
-            <span style={styles.cardHeader}>Regulation</span>
-            <ul style={styles.list}>
-              {regulation.slice(0, 4).map((line, i) => (
-                <li key={i} style={styles.listItem}>
-                  <span style={styles.listBullet} aria-hidden />
-                  {line}
-                </li>
-              ))}
-            </ul>
+        {(regulation.length > 0 || partners.length > 0) && (
+          <div style={styles.grid}>
+            {regulation.length > 0 && (
+              <div style={styles.card}>
+                <span style={styles.cardHeader}>Regulation</span>
+                <ul style={styles.list}>
+                  {regulation.slice(0, 4).map((line, i) => (
+                    <li key={i} style={styles.listItem}>
+                      <span style={styles.listBullet} aria-hidden />
+                      {line}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div style={styles.card}>
+              <span style={styles.cardHeader}>Partners</span>
+              <p style={styles.partnersIntro}>
+                We have partnerships with the region&rsquo;s most relevant providers
+                (PSPs, Acquirers, APMs, Product and others), ranging from the largest
+                players to the niche ones. Thanks to our extensive footprint, we can
+                integrate any provider in less than a month and source new ones as
+                needed.
+              </p>
+              {partners.length > 0 ? (
+                <div style={styles.partnersTable}>
+                  {partners.slice(0, 5).map((p, i) => (
+                    <div key={`${p.name}-${i}`} style={styles.partnerRow}>
+                      <span style={styles.partnerName}>{p.name}</span>
+                      <span style={styles.partnerNote}>{p.relevance || p.description || ''}</span>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p style={{ ...styles.partnersIntro, color: theme.inkMuted, fontStyle: 'italic' }}>
+                  Partner roster for this market not published in the deck dataset.
+                </p>
+              )}
+            </div>
           </div>
         )}
       </div>
