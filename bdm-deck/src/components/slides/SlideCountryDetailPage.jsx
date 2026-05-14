@@ -268,33 +268,38 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     return am - bm
   })
 
+  // All sizes here are fixed pixels (no `vw`). The 1920×1080 design stage
+  // already scales uniformly to fit either the iframe or fullscreen, so
+  // letting clamp() respond to viewport width was double-scaling and
+  // pushing layout past the stage edge in fullscreen. Fixed values =
+  // identical layout in every mode.
   const styles = {
     body: {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(10px, 1vw, 18px)',
+      gap: 16,
       minHeight: 0,
       overflowY: 'auto',
     },
     titleRow: {
       display: 'flex',
       alignItems: 'center',
-      gap: 'clamp(20px, 1.8vw, 36px)',
+      gap: 28,
       flexShrink: 0,
-      marginBottom: 'clamp(10px, 1vw, 20px)',
+      marginBottom: 18,
     },
     flag: {
-      width: 'clamp(72px, 6vw, 108px)',
+      width: 96,
       height: 'auto',
-      borderRadius: '10px',
+      borderRadius: 10,
       boxShadow: '0 16px 40px rgba(0,0,0,0.35)',
       objectFit: 'cover',
       flexShrink: 0,
     },
     name: {
       fontFamily: 'var(--font-display)',
-      fontSize: 'clamp(36px, 3.4vw, 64px)',
+      fontSize: 56,
       fontWeight: 700,
       letterSpacing: '-1.2px',
       lineHeight: 1.05,
@@ -304,49 +309,42 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     overviewStrip: {
       display: 'grid',
       gridTemplateColumns: `repeat(${Math.max(1, Math.min(overviewEntries.length, 4))}, minmax(0, 1fr))`,
-      gap: 'clamp(10px, 0.9vw, 16px)',
+      gap: 14,
     },
     topStrip: {
-      // Flex wrap instead of fixed-column grid so each card sizes to its
-      // own content. Long values widen the card itself; the row simply
-      // wraps to a second line when there's no horizontal room left.
       display: 'flex',
       flexWrap: 'wrap',
-      gap: 'clamp(10px, 0.9vw, 16px)',
+      gap: 14,
     },
-    // Highlight variant for the local payments row — slightly tinted blue
-    // surface so it reads as a different section from the overview metrics.
     paymentsCard: {
       background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(124,137,239,0.16)',
       border: `1px solid ${theme.borderAccent}`,
     },
     apmsWide: {
-      // Relevant APMs holds 3 inner columns so it carries proportionally
-      // more weight than the single-stat cards next to it on the same row.
       flex: '3 1 auto',
     },
     apmsRow: {
       display: 'grid',
       gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-      gap: 'clamp(10px, 0.8vw, 16px)',
+      gap: 14,
     },
     localCombined: {
-      gap: '10px',
+      gap: 10,
     },
     localCombinedRows: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 'clamp(8px, 0.6vw, 12px)',
+      gap: 10,
     },
     localCombinedRow: {
       display: 'flex',
       flexDirection: 'column',
-      gap: '2px',
+      gap: 2,
       minWidth: 0,
     },
     localCombinedSub: {
       fontFamily: 'var(--font-mono)',
-      fontSize: 'clamp(9px, 0.7vw, 11px)',
+      fontSize: 11,
       fontWeight: 700,
       letterSpacing: '1.2px',
       textTransform: 'uppercase',
@@ -356,14 +354,11 @@ export default function SlideCountryDetailPage({ selectedCountry }) {
     overviewCard: {
       background: theme.isLight ? 'rgba(62,79,224,0.10)' : 'rgba(124,137,239,0.16)',
       border: `1px solid ${theme.borderAccent}`,
-      borderRadius: '12px',
-      padding: 'clamp(8px, 0.7vw, 14px) clamp(12px, 1vw, 18px)',
+      borderRadius: 12,
+      padding: '14px 18px',
       display: 'flex',
       flexDirection: 'column',
-      gap: '4px',
-      // Stretch to fill the row — cards distribute evenly horizontally
-      // while still wrapping to a second line when they collectively need
-      // more space than the row offers.
+      gap: 4,
       flex: '1 1 auto',
     },
     overviewLabel: {
