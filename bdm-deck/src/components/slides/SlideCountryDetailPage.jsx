@@ -948,9 +948,9 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
           </div>
         )}
 
-        <div style={styles.grid}>
+        <div style={{ ...styles.grid, marginTop: 'auto' }}>
           <div style={styles.card}>
-            <span style={styles.cardHeader}>Digital Trends</span>
+            <span style={styles.cardHeader}>🚀 Digital Trends</span>
             <ul style={styles.list}>
               {digitalTrends.slice(0, 4).map((t, i) => (
                 <li key={i} style={styles.listItem}>
@@ -962,7 +962,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
           </div>
 
           <div style={styles.card}>
-            <span style={styles.cardHeader}>Payment Mix E-commerce</span>
+            <span style={styles.cardHeader}>💳 Payment Mix E-commerce</span>
             {breakdown.length > 0
               ? <PaymentBreakdown items={breakdown} theme={theme} />
               : <p style={{ color: theme.inkMuted, margin: 0 }}>Breakdown not published for this market.</p>}
@@ -973,7 +973,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
           <div style={styles.grid}>
             {regulation.length > 0 && (
               <div style={styles.card}>
-                <span style={styles.cardHeader}>Regulation</span>
+                <span style={styles.cardHeader}>⚖️ Regulation</span>
                 <ul style={styles.list}>
                   {regulation.slice(0, 5).map((line, i) => (
                     <li key={i} style={styles.listItem}>
@@ -986,7 +986,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
             )}
 
             <div style={styles.card}>
-              <span style={styles.cardHeader}>Providers</span>
+              <span style={styles.cardHeader}>🤝 Providers</span>
               <p style={styles.partnersIntro}>
                 We have partnerships with the region&rsquo;s most relevant providers
                 (PSPs, Acquirers, APMs, Product and others), ranging from the largest
