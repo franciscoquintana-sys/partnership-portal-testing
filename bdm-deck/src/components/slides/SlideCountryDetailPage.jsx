@@ -915,21 +915,21 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
         {(localPayments.scheme || localPayments.a2a || filteredApms.length > 0) && (
           <div style={styles.topStrip}>
             {localPayments.scheme && (
-              <div style={{ ...styles.overviewCard, ...styles.paymentsCard, justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+              <div style={{ ...styles.overviewCard, ...styles.paymentsCard }}>
                 <span style={styles.overviewLabel}>Local schemes</span>
-                <span style={styles.overviewValue}>{localPayments.scheme}</span>
+                <span style={{ ...styles.overviewValue, marginTop: 'auto', marginBottom: 'auto' }}>{localPayments.scheme}</span>
               </div>
             )}
             {localPayments.a2a && (
-              <div style={{ ...styles.overviewCard, ...styles.paymentsCard, justifyContent: 'center', alignItems: 'center', textAlign: 'center' }}>
+              <div style={{ ...styles.overviewCard, ...styles.paymentsCard }}>
                 <span style={styles.overviewLabel}>A2A</span>
-                <span style={styles.overviewValue}>{localPayments.a2a}</span>
+                <span style={{ ...styles.overviewValue, marginTop: 'auto', marginBottom: 'auto' }}>{localPayments.a2a}</span>
               </div>
             )}
             {filteredApms.length > 0 && (
               <div style={{ ...styles.overviewCard, ...styles.paymentsCard, ...styles.localCombined, ...styles.apmsWide }}>
                 <span style={styles.overviewLabel}>Relevant APMs</span>
-                <div style={styles.apmsRow}>
+                <div style={{ ...styles.apmsRow, marginTop: 'auto', marginBottom: 'auto' }}>
                   {filteredApms.slice(0, 3).map((a, i) => {
                     const name = typeof a === 'string' ? a : (a?.name || '')
                     const type = typeof a === 'object' ? (a?.type || '') : ''
