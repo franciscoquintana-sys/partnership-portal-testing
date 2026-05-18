@@ -2,9 +2,10 @@ import os, json, re
 from datetime import date, timedelta
 from urllib.parse import unquote
 import pandas as pd
-from fastapi import FastAPI, Request, Form, Depends, HTTPException
+from fastapi import FastAPI, Request, Form, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth
@@ -58,7 +59,7 @@ class SPAStaticFiles(StaticFiles):
             response = await super().get_response(path, scope)
             if response.status_code == 404:
                 response = await super().get_response("index.html", scope)
-        except HTTPException as exc:
+        except StarletteHTTPException as exc:
             if exc.status_code != 404:
                 raise
             response = await super().get_response("index.html", scope)
