@@ -164,21 +164,6 @@ function PaymentBreakdown({ items, theme }) {
               >
                 {row.name}
               </div>
-              {row.detail && (
-                <div
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '10.5px',
-                    fontWeight: 600,
-                    color: theme.inkMuted,
-                    letterSpacing: '0.3px',
-                    lineHeight: 1.3,
-                    wordBreak: 'break-word',
-                  }}
-                >
-                  {row.detail}
-                </div>
-              )}
             </div>
             <div
               style={{
@@ -204,8 +189,7 @@ function PaymentBreakdown({ items, theme }) {
                   inset: 0,
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'flex-end',
-                  paddingRight: '10px',
+                  justifyContent: 'center',
                   fontFamily: 'var(--font)',
                   fontSize: '12px',
                   fontWeight: 800,
