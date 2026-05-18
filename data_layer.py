@@ -489,13 +489,11 @@ def _load_partners_sot():
         # Derive COUNTRY_ISO from COUNTRY when the SOT doesn't ship it.
         if "COUNTRY" in df.columns and "COUNTRY_ISO" not in df.columns:
             df["COUNTRY_ISO"] = df["COUNTRY"].astype(str).map(_country_name_to_iso)
-        # Derive the legacy `Live/NonLive Partner/Contract signed` field
-        # from the new boolean `CONTRACT_SIGNED` column so find_partners
-        # keeps filtering by it. TRUE → "Live", anything else → blank.
-        if "CONTRACT_SIGNED" in df.columns and "Live/NonLive Partner/Contract signed" not in df.columns:
-            df["Live/NonLive Partner/Contract signed"] = df["CONTRACT_SIGNED"].astype(str).str.strip().str.upper().map(
-                lambda v: "Live" if v in ("TRUE", "1", "YES") else ""
-            )
+        # NOTE: the new SOT's `Payment Contract Signed` column is not
+        # the same as the old `Live/NonLive Partner/Contract signed`
+        # status, so we do NOT derive the legacy live-status column from
+        # it. find_partners's `live_only` filter is now a no-op for this
+        # SOT (defensive check on column presence).
         _PARTNERS_SOT_CACHE["data"] = df
         _PARTNERS_SOT_CACHE["ts"] = now
         return df
@@ -819,7 +817,9 @@ def find_partners(country_iso=None, verticals=None, live_only=True, processing_t
     df = load_sot_data().copy()
     if len(df) == 0:
         return []
-    if live_only:
+    # The new SOT sheet doesn't carry a live/non-live partner status,
+    # so this filter is a no-op when the column isn't present.
+    if live_only and "Live/NonLive Partner/Contract signed" in df.columns:
         df = df[df["Live/NonLive Partner/Contract signed"] == "Live"]
     if country_iso:
         df = df[df["COUNTRY_ISO"] == country_iso]
