@@ -48,6 +48,7 @@ export default function SlideCTA({ data, shared = false }) {
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
   const [hovering, setHovering] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   // Theme-aware caret SVG for the sender select. Dark uses white-50,
   // light uses dark-ink-50 so the caret reads on the white field.
@@ -711,6 +712,36 @@ export default function SlideCTA({ data, shared = false }) {
               >
                 Book a Demo →
               </a>
+
+              <button
+                type="button"
+                onClick={async () => {
+                  const slug = data?.COMPANY_SLUG
+                  const deckUrl = slug
+                    ? `${window.location.origin}/m/${encodeURIComponent(slug)}`
+                    : window.location.href
+                  try {
+                    await navigator.clipboard.writeText(deckUrl)
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 2000)
+                  } catch {
+                    // Fallback: prompt so the user can copy manually if
+                    // clipboard API is blocked (e.g. iframe + no HTTPS).
+                    window.prompt('Copy this link:', deckUrl)
+                  }
+                }}
+                style={{
+                  ...styles.sendBtn,
+                  background: 'transparent',
+                  color: theme.ink,
+                  border: `1px solid ${theme.borderAccent}`,
+                  boxShadow: 'none',
+                  marginTop: 12,
+                  cursor: 'pointer',
+                }}
+              >
+                {copied ? '✓ Link copied' : 'Copy interactive deck link'}
+              </button>
             </div>
           </div>
           )}
