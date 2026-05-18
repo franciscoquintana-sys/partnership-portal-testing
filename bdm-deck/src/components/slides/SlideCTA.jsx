@@ -681,97 +681,36 @@ export default function SlideCTA({ data, shared = false }) {
 
           {!shared && (
           <div className="reveal" style={{ ...styles.right, '--reveal-delay': '0.35s' }}>
-            <form
+            <div
               className="border-beam"
               style={{ ...styles.formCard, '--beam-duration': '28s' }}
-              onSubmit={handleSend}
             >
               <div style={styles.formHeader}>
                 <span style={styles.formTitle}>Let&rsquo;s keep the conversation going.</span>
                 <span style={styles.formSubtitle}>
-                  Drop your email and we&rsquo;ll follow up this week.
+                  Book a demo to know more about Yuno platform.
                 </span>
               </div>
 
-              <div style={styles.field}>
-                <label style={styles.fieldLabel}>Sending from</label>
-                <select
-                  style={styles.senderSelect}
-                  value={selectedSDR}
-                  onChange={(e) => setSelectedSDR(e.target.value)}
-                >
-                  {SENDERS.map((sdr) => (
-                    <option key={sdr.id} value={sdr.id}>
-                      {sdr.name}
-                    </option>
-                  ))}
-                </select>
-                <span style={styles.senderEmailHint}>
-                  {SENDERS.find((s) => s.id === selectedSDR)?.email}
-                </span>
-              </div>
-
-              <div style={styles.field}>
-                <label style={styles.fieldLabel}>Your name</label>
-                <input
-                  type="text"
-                  placeholder="Jane Smith"
-                  autoComplete="name"
-                  style={{
-                    ...styles.input,
-                    borderColor:
-                      focused === 'name' ? focusBorder : theme.borderDefault,
-                    boxShadow:
-                      focused === 'name' ? focusHalo : 'none',
-                  }}
-                  value={merchantName}
-                  onChange={(e) => setMerchantName(e.target.value)}
-                  onFocus={() => setFocused('name')}
-                  onBlur={() => setFocused(null)}
-                />
-              </div>
-
-              <div style={styles.field}>
-                <label style={styles.fieldLabel}>Your email</label>
-                <input
-                  type="email"
-                  placeholder="name@company.com"
-                  autoComplete="email"
-                  style={{
-                    ...styles.input,
-                    borderColor:
-                      focused === 'email' ? focusBorder : theme.borderDefault,
-                    boxShadow:
-                      focused === 'email' ? focusHalo : 'none',
-                  }}
-                  value={merchantEmail}
-                  onChange={(e) => setMerchantEmail(e.target.value)}
-                  onFocus={() => setFocused('email')}
-                  onBlur={() => setFocused(null)}
-                />
-              </div>
-
-              {sent ? (
-                <div style={styles.successNote}>✓ Sent. We&rsquo;ll be in touch shortly.</div>
-              ) : (
-                <button
-                  type="submit"
-                  disabled={!canSend}
-                  style={{
-                    ...styles.sendBtn,
-                    ...(!canSend ? styles.sendBtnDisabled : {}),
-                    transform: hovering && canSend ? 'scale(1.02)' : 'scale(1)',
-                    boxShadow: hovering && canSend
-                      ? '0 8px 32px rgba(62,79,224,0.5)'
-                      : '0 4px 20px rgba(62,79,224,0.3)',
-                  }}
-                  onMouseEnter={() => setHovering(true)}
-                  onMouseLeave={() => setHovering(false)}
-                >
-                  {sending ? 'Sending...' : 'Send Presentation →'}
-                </button>
-              )}
-            </form>
+              <a
+                href="https://y.uno/book-a-demo"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  ...styles.sendBtn,
+                  textDecoration: 'none',
+                  textAlign: 'center',
+                  transform: hovering ? 'scale(1.02)' : 'scale(1)',
+                  boxShadow: hovering
+                    ? '0 8px 32px rgba(62,79,224,0.5)'
+                    : '0 4px 20px rgba(62,79,224,0.3)',
+                }}
+                onMouseEnter={() => setHovering(true)}
+                onMouseLeave={() => setHovering(false)}
+              >
+                Book a Demo →
+              </a>
+            </div>
           </div>
           )}
         </div>
