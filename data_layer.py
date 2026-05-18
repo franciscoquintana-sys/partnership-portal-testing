@@ -51,7 +51,8 @@ _TECH_CONTACTS_CSV_URL = (
     "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
     "/export?format=csv&gid=1537055418"
 )
-_PARTNERS_SOT_SHEET_ID = "11kdtbqu9alq3B90CYw2Uk5oxi-MHYbYW2tceHY4r_Y4"
+_PARTNERS_SOT_SHEET_ID = "1-HGbwVYJVlar3gwsIZjrIQqn1k4zjFyTgLEGROTPpcs"
+_PARTNERS_SOT_GID = "1275314943"
 _PARTNERS_SOT_CACHE = {"data": None, "ts": 0}
 # ── Google OAuth token management ─────────────────────────────────────────────
 _GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
@@ -391,34 +392,28 @@ def load_technical_contacts(provider_name: str) -> list:
     return out
 
 def _load_partners_sot():
-    """Load the Partners SOT sheet (countries, payment methods, etc.)."""
+    """Load the Partners SOT sheet (countries, payment methods, etc.).
+
+    Resolves the tab dynamically from the configured gid so a tab rename
+    upstream doesn't break the portal. Returns an empty DataFrame on any
+    auth / network / parse failure.
+    """
     now = time.time()
     if _PARTNERS_SOT_CACHE["data"] is not None and now - _PARTNERS_SOT_CACHE["ts"] < _CACHE_TTL:
         return _PARTNERS_SOT_CACHE["data"]
     token = _get_access_token()
     if not token:
-        return pd.DataFrame()
+        return _PARTNERS_SOT_CACHE["data"] if _PARTNERS_SOT_CACHE["data"] is not None else pd.DataFrame()
     try:
-        url = f"https://sheets.googleapis.com/v4/spreadsheets/{_PARTNERS_SOT_SHEET_ID}/values/Partners"
-        headers = {"Authorization": f"Bearer {token}"}
-        resp = requests.get(url, headers=headers)
-        resp.raise_for_status()
-        values = resp.json().get("values", [])
-        if len(values) < 2:
-            return pd.DataFrame()
-        hdr = values[0]
-        rows = values[1:]
-        for i, row in enumerate(rows):
-            if len(row) < len(hdr):
-                rows[i] = row + [""] * (len(hdr) - len(row))
-            elif len(row) > len(hdr):
-                rows[i] = row[:len(hdr)]
-        df = pd.DataFrame(rows, columns=hdr)
+        df = _fetch_via_sheets_api(_PARTNERS_SOT_SHEET_ID, _PARTNERS_SOT_GID, token)
+        if df is None or len(df) == 0:
+            return _PARTNERS_SOT_CACHE["data"] if _PARTNERS_SOT_CACHE["data"] is not None else pd.DataFrame()
         _PARTNERS_SOT_CACHE["data"] = df
         _PARTNERS_SOT_CACHE["ts"] = now
         return df
-    except Exception:
-        return _PARTNERS_SOT_CACHE["data"] or pd.DataFrame()
+    except Exception as e:
+        print(f"[partners_sot] load failed: {e}")
+        return _PARTNERS_SOT_CACHE["data"] if _PARTNERS_SOT_CACHE["data"] is not None else pd.DataFrame()
 
 def load_partner_countries(provider_name: str) -> dict:
     """Return unique countries grouped by region for a provider from the Partners SOT sheet."""
@@ -669,20 +664,41 @@ def load_sheet_tab_rows(spreadsheet_id, tab_name):
 _SOT_CACHE = {"data": None, "ts": 0}
 
 def load_sot_data():
+    """Source-of-truth data used by Partner Portfolio + Partners In Flight
+    filters (region / country / payment-method) and partner-detail lookups.
+
+    Now pulls from the same Google Sheet as `_load_partners_sot` so the
+    portal has a single, central SOT (used to read a local
+    `data/source_of_truth.xlsx`, kept as a last-resort fallback). The
+    `PROVIDER_CATEGORY` filter only kicks in when the column exists upstream.
+    """
     now = time.time()
     if _SOT_CACHE["data"] is not None and now - _SOT_CACHE["ts"] < _CACHE_TTL:
         return _SOT_CACHE["data"]
+    df = _load_partners_sot()
+    if df is not None and len(df) > 0:
+        if "PROVIDER_CATEGORY" in df.columns:
+            df = df[df["PROVIDER_CATEGORY"].astype(str).str.strip().str.upper().isin(
+                ["ACQUIRER", "GATEWAY", "AGREGATOR", "AGREGATOR / GATEWAY", "PAYMENT_METHOD"]
+            )].copy()
+        else:
+            df = df.copy()
+        _SOT_CACHE["data"] = df
+        _SOT_CACHE["ts"] = now
+        return df
+    # Fallback to local xlsx if the sheet is unreachable (auth missing, etc.)
     path = os.path.join(_BASE, "data", "source_of_truth.xlsx")
     try:
         df = pd.read_excel(path, sheet_name="Partners")
-        df = df[df["PROVIDER_CATEGORY"].isin(
-            ["ACQUIRER","GATEWAY","AGREGATOR","AGREGATOR / GATEWAY","PAYMENT_METHOD"]
-        )].copy()
+        if "PROVIDER_CATEGORY" in df.columns:
+            df = df[df["PROVIDER_CATEGORY"].isin(
+                ["ACQUIRER", "GATEWAY", "AGREGATOR", "AGREGATOR / GATEWAY", "PAYMENT_METHOD"]
+            )].copy()
         _SOT_CACHE["data"] = df
         _SOT_CACHE["ts"] = now
         return df
     except Exception:
-        return _SOT_CACHE["data"] or pd.DataFrame()
+        return _SOT_CACHE["data"] if _SOT_CACHE["data"] is not None else pd.DataFrame()
 
 _ISO_TO_COUNTRY = {}
 try:
