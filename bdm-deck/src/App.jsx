@@ -192,9 +192,18 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
   }
 }
 
+// Strip the Vite base path (e.g. "/sales-deck/") from the pathname so the
+// /m/:slug routes match the same way whether the deck is mounted at root
+// or vendored inside the partnerships portal.
+function pathnameInsideBase(pathname) {
+  const base = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '/')
+  if (base === '/') return pathname
+  return pathname.startsWith(base) ? pathname.slice(base.length - 1) : pathname
+}
+
 // Match /m/:slug - the merchant-facing shared link. Returns the slug or null.
 function matchMerchantRoute(pathname) {
-  const m = pathname.match(/^\/m\/([^/]+)\/?$/)
+  const m = pathnameInsideBase(pathname).match(/^\/m\/([^/]+)\/?$/)
   return m ? decodeURIComponent(m[1]) : null
 }
 
@@ -202,7 +211,7 @@ function matchMerchantRoute(pathname) {
 // Playwright renderer. Same data resolution as /m/:slug, but renders all
 // slides stacked at native 1920x1080 with no chrome and no animations.
 function matchPrintRoute(pathname) {
-  const m = pathname.match(/^\/m\/([^/]+)\/pdf\/?$/)
+  const m = pathnameInsideBase(pathname).match(/^\/m\/([^/]+)\/pdf\/?$/)
   return m ? decodeURIComponent(m[1]) : null
 }
 
