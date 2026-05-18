@@ -655,10 +655,9 @@ export default function SlideCTA({ data, shared = false }) {
               ))}
             </div>
 
-            {data?.COMPANY_SLUG && (
+            {shared ? (
               <a
-                data-download-deck
-                href={`/api/pdf/${encodeURIComponent(data.COMPANY_SLUG)}`}
+                href="https://y.uno/book-a-demo"
                 target="_blank"
                 rel="noopener noreferrer"
                 style={styles.downloadDeck}
@@ -672,12 +671,66 @@ export default function SlideCTA({ data, shared = false }) {
                 }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                  <polyline points="15 3 21 3 21 9" />
-                  <line x1="10" y1="14" x2="21" y2="3" />
+                  <path d="M8 7V3m8 4V3M3 11h18M5 5h14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" />
                 </svg>
-                <span>Open the full deck (PDF)</span>
+                <span>Book a Demo</span>
               </a>
+            ) : (
+              <button
+                type="button"
+                onClick={async () => {
+                  // Prefer the raw URL the presenter typed (e.g. "amazon.com")
+                  // so the share link's /api/site-info call has a real domain
+                  // to scrape. Fallback to the slug/name only when no input
+                  // URL was preserved.
+                  const slug = data?.INPUT_URL
+                    || data?.SLUG
+                    || data?.COMPANY_SLUG
+                    || (data?.COMPANY_NAME
+                      ? String(data.COMPANY_NAME)
+                          .toLowerCase()
+                          .replace(/[^a-z0-9]+/g, '-')
+                          .replace(/^-+|-+$/g, '')
+                      : null)
+                  const base = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '/')
+                  let deckUrl
+                  if (slug) {
+                    const params = new URLSearchParams()
+                    if (Array.isArray(data?.REGIONS) && data.REGIONS.length) {
+                      params.set('regions', data.REGIONS.join(','))
+                    }
+                    if (Array.isArray(data?.COUNTRIES) && data.COUNTRIES.length) {
+                      params.set('countries', data.COUNTRIES.join(','))
+                    }
+                    const qs = params.toString()
+                    deckUrl = `${window.location.origin}${base}m/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`
+                  } else {
+                    deckUrl = window.location.href
+                  }
+                  try {
+                    await navigator.clipboard.writeText(deckUrl)
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 2000)
+                  } catch {
+                    window.prompt('Copy this link:', deckUrl)
+                  }
+                }}
+                style={{ ...styles.downloadDeck, border: '1px solid rgba(124,137,239,0.45)' }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(62,79,224,0.18)'
+                  e.currentTarget.style.borderColor = 'rgba(124,137,239,0.75)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(62,79,224,0.08)'
+                  e.currentTarget.style.borderColor = 'rgba(124,137,239,0.45)'
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                  <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                  <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                </svg>
+                <span>{copied ? '✓ Link copied' : 'Copy interactive deck link'}</span>
+              </button>
             )}
           </div>
 
