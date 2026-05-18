@@ -717,8 +717,6 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       flexDirection: 'column',
       gap: '6px',
       minWidth: 0,
-      minHeight: 0,
-      overflow: 'hidden',
     },
     cardHeader: {
       fontFamily: 'var(--font-mono)',
@@ -841,10 +839,10 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       flexDirection: 'column',
       gap: '4px',
       marginTop: '2px',
-      // Lets the 5 rows shrink to fit when the card is short, so the
-      // last provider never clips off the bottom.
-      flex: '1 1 0',
-      minHeight: 0,
+      // Size to content (don't shrink) so all 5 partner rows always fit;
+      // the card will grow to fit them, and the regulation card stretches
+      // to match via CSS grid row.
+      flex: 'none',
     },
     partnerRow: {
       display: 'grid',
@@ -988,7 +986,11 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
             <div style={styles.card}>
               <span style={styles.cardHeader}>Providers</span>
               <p style={styles.partnersIntro}>
-                Yuno integrates the region&rsquo;s most relevant PSPs, acquirers, APMs and product partners — large to niche — in under a month.
+                We have partnerships with the region&rsquo;s most relevant providers
+                (PSPs, Acquirers, APMs, Product and others), ranging from the largest
+                players to the niche ones. Thanks to our extensive footprint, we can
+                integrate any provider in less than a month and source new ones as
+                needed.
               </p>
               <div style={styles.partnersTable}>
                 {partners.slice(0, 5).map((p, i) => (
