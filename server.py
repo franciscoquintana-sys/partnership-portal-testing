@@ -2,7 +2,7 @@ import os, json, re
 from datetime import date, timedelta
 from urllib.parse import unquote
 import pandas as pd
-from fastapi import FastAPI, Request, Form, Depends
+from fastapi import FastAPI, Request, Form, Depends, HTTPException
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -49,8 +49,18 @@ app.mount("/static", StaticFiles(directory=os.path.join(BASE, "static")), name="
 # /sales-deck/m/:slug resolve to the SPA instead of a 404.
 class SPAStaticFiles(StaticFiles):
     async def get_response(self, path, scope):
-        response = await super().get_response(path, scope)
-        if response.status_code == 404:
+        # Starlette's StaticFiles RAISES HTTPException(404) for missing
+        # paths (rather than returning a 404 response), so the
+        # `response.status_code == 404` check on its own never fires for
+        # client-side routes like /sales-deck/m/<slug>. Catch the exception
+        # and fall through to serving index.html — that's the SPA's job.
+        try:
+            response = await super().get_response(path, scope)
+            if response.status_code == 404:
+                response = await super().get_response("index.html", scope)
+        except HTTPException as exc:
+            if exc.status_code != 404:
+                raise
             response = await super().get_response("index.html", scope)
         # index.html (HTML responses) must never be cached, so new builds with
         # different fingerprinted asset filenames reach the browser on the very
