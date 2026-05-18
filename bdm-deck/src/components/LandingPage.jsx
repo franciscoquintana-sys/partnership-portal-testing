@@ -576,15 +576,25 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
         .slice(0, 8)
     : []
 
+  // The deck is generated per-business and pulls logo/name/vertical from
+  // the client's actual website, so free-text without a domain (e.g.
+  // "Acme") would produce an empty cover. Require a URL-shaped input
+  // (contains a dot, no spaces) unless the presenter picked a known
+  // merchant from the dropdown.
+  const isUrlLike = (s) => /^[^\s]+\.[^\s]+$/.test((s || '').trim())
+  const trimmedMerchant = merchant.trim()
+  const pickedFromDropdown = showDropdown && filtered.length > 0 && filtered[highlightIdx]
+  const canSubmit = !loading && (pickedFromDropdown || isUrlLike(trimmedMerchant))
+
   const handleSubmit = (e) => {
     e.preventDefault()
     if (loading) return
     const pick = filtered[highlightIdx]
     if (pick) {
       onGenerate({ name: pick.name, type: pick.type, regions, countries })
-    } else if (merchant.trim()) {
-      // Free-text fallback: assume merchant.
-      onGenerate({ name: merchant.trim(), type: 'merchant', regions, countries })
+    } else if (isUrlLike(trimmedMerchant)) {
+      // Free-text fallback: assume merchant URL.
+      onGenerate({ name: trimmedMerchant, type: 'merchant', regions, countries })
     }
   }
 
@@ -703,15 +713,15 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
           <div style={styles.regionRow}>
           <button
             type="submit"
-            disabled={!merchant.trim() || loading}
+            disabled={!canSubmit}
             style={{
               ...styles.submitButton,
-              ...((!merchant.trim() || loading) ? styles.submitButtonDisabled : {}),
+              ...(!canSubmit ? styles.submitButtonDisabled : {}),
               marginLeft: 'auto',
-              transform: hoveringBtn && merchant.trim() && !loading ? 'scale(1.03)' : 'scale(1)',
-              boxShadow: hoveringBtn && merchant.trim() && !loading
+              transform: hoveringBtn && canSubmit ? 'scale(1.03)' : 'scale(1)',
+              boxShadow: hoveringBtn && canSubmit
                 ? '0 8px 32px rgba(62,79,224,0.5), 0 0 0 1px rgba(255,255,255,0.2) inset'
-                : merchant.trim() && !loading
+                : canSubmit
                   ? '0 4px 20px rgba(62,79,224,0.3)'
                   : 'none',
             }}
