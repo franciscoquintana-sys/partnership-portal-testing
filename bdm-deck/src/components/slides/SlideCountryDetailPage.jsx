@@ -133,6 +133,7 @@ function PaymentBreakdown({ items, theme }) {
         flexDirection: 'column',
         gap: '5px',
         overflow: 'hidden',
+        justifyContent: 'space-between',
       }}
     >
       {rows.slice(0, 6).map((row, i) => {
@@ -704,6 +705,8 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       listStyle: 'none', padding: 0, margin: 0,
       display: 'flex', flexDirection: 'column', gap: '4px',
       minHeight: 0,
+      flex: '1 1 0',
+      justifyContent: 'space-between',
     },
     listItem: {
       fontSize: '11.5px',
@@ -810,6 +813,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       // last provider never clips off the bottom.
       flex: '1 1 0',
       minHeight: 0,
+      justifyContent: 'space-between',
     },
     partnerRow: {
       display: 'grid',
