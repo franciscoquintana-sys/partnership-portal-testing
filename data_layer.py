@@ -391,12 +391,88 @@ def load_technical_contacts(provider_name: str) -> list:
         })
     return out
 
+# Map the new SOT sheet's friendly column headers back to the legacy
+# SCREAMING_SNAKE_CASE names the rest of the codebase already understands.
+# Easier than touching every caller. Anything not in this map keeps its
+# original header.
+_SOT_COLUMN_RENAMES = {
+    'Partner': 'PROVIDER_NAME',
+    'Partner Category': 'PROVIDER_CATEGORY',
+    'Partner Manager': 'PARTNER_MANAGER',
+    'Payment Contract Signed': 'CONTRACT_SIGNED',
+    'Partner Minimum Volume': 'PARTNER_MIN_VOLUME',
+    'Payment Method Category': 'PAYMENT_METHOD_CATEGORY',
+    'Payment Method Type': 'PAYMENT_METHOD_TYPE',
+    'Payment Card Brand': 'CARD_BRAND',
+    'Payment Country': 'COUNTRY',
+    'Payment Region': 'REGION',
+    'Payment Processing Type': 'PROCESSING_TYPE',
+    'Payment Merchant of Record': 'MERCHANT_OF_RECORD',
+    'Payment Accepts High Risk': 'ACCEPTS_HIGH_RISK',
+    'Payment Accepts Gaming': 'ACCEPTS_GAMING',
+    'Payment Accepts Gambling': 'ACCEPTS_GAMBLING',
+    'Payment Accepts Forex': 'ACCEPTS_FOREX',
+    'Payment Accepts Crypto': 'ACCEPTS_CRYPTO',
+    'Payments Accepts Adult': 'ACCEPTS_ADULT',
+    'Payment Accept Multi Level Marketing': 'ACCEPTS_MULTI_LEVEL_MARKETING',
+    'Payment Accepts Airlines': 'ACCEPTS_AIRLINES',
+    'Payment Accepts Travel': 'ACCEPTS_TRAVEL',
+    'Payment Accepts Payment Facilitator': 'SUPPORTS_PAYFAC',
+    'Payment On Ramp Crypto': 'ON_RAMP_CRYPTO',
+    'Payment Off Ramp Crypto': 'OFF_RAMP_CRYPTO',
+    'Payment Supports Tokenization': 'SUPPORTS_TOKENIZATION',
+    'Payment has Chargebacks': 'HAS_CHARGEBACKS',
+    'Payment Supports Recurring Payments': 'SUPPORTS_RECURRING_PAYMENTS',
+    'Support Payouts': 'SUPPORTS_PAYOUTS',
+    'Payment Support External 3DS': 'SUPPORTS_AGNOSTIC_3DS',
+    'Minimum Volume USD': 'MIN_VOLUME_USD',
+}
+
+# Reverse map ISO-2 → country name uses _ISO_TO_COUNTRY (already defined
+# below). For the COUNTRY → ISO direction we build this once and look it
+# up lazily. Lowercased keys so "brazil" and "Brazil" both resolve.
+_COUNTRY_TO_ISO_CACHE = None
+
+def _country_name_to_iso(name: str) -> str:
+    """Reverse pycountry lookup (country name → ISO-2). Empty string if
+    pycountry isn't installed or the name doesn't resolve."""
+    global _COUNTRY_TO_ISO_CACHE
+    if _COUNTRY_TO_ISO_CACHE is None:
+        cache = {}
+        try:
+            import pycountry as _pyc
+            for c in _pyc.countries:
+                cache[c.name.lower()] = c.alpha_2
+                if hasattr(c, "common_name"):
+                    cache[c.common_name.lower()] = c.alpha_2
+                if hasattr(c, "official_name"):
+                    cache[c.official_name.lower()] = c.alpha_2
+            # A few overrides for SOT-style spellings.
+            cache["united states"] = "US"
+            cache["uk"] = "GB"
+            cache["united kingdom"] = "GB"
+            cache["south korea"] = "KR"
+            cache["uae"] = "AE"
+            cache["czech republic"] = "CZ"
+            cache["dominican republic"] = "DO"
+            cache["trinidad and tobago"] = "TT"
+            cache["côte d'ivoire"] = "CI"
+            cache["cote d'ivoire"] = "CI"
+            cache["ivory coast"] = "CI"
+        except Exception:
+            pass
+        _COUNTRY_TO_ISO_CACHE = cache
+    key = (name or "").strip().lower()
+    return _COUNTRY_TO_ISO_CACHE.get(key, "")
+
 def _load_partners_sot():
     """Load the Partners SOT sheet (countries, payment methods, etc.).
 
     Resolves the tab dynamically from the configured gid so a tab rename
-    upstream doesn't break the portal. Returns an empty DataFrame on any
-    auth / network / parse failure.
+    upstream doesn't break the portal. Renames the friendly headers in
+    the new SOT to the legacy SCREAMING_SNAKE_CASE names so the rest of
+    the codebase keeps working. Returns an empty DataFrame on any auth /
+    network / parse failure.
     """
     now = time.time()
     if _PARTNERS_SOT_CACHE["data"] is not None and now - _PARTNERS_SOT_CACHE["ts"] < _CACHE_TTL:
@@ -408,6 +484,18 @@ def _load_partners_sot():
         df = _fetch_via_sheets_api(_PARTNERS_SOT_SHEET_ID, _PARTNERS_SOT_GID, token)
         if df is None or len(df) == 0:
             return _PARTNERS_SOT_CACHE["data"] if _PARTNERS_SOT_CACHE["data"] is not None else pd.DataFrame()
+        # Normalise column headers → legacy names.
+        df = df.rename(columns={k: v for k, v in _SOT_COLUMN_RENAMES.items() if k in df.columns})
+        # Derive COUNTRY_ISO from COUNTRY when the SOT doesn't ship it.
+        if "COUNTRY" in df.columns and "COUNTRY_ISO" not in df.columns:
+            df["COUNTRY_ISO"] = df["COUNTRY"].astype(str).map(_country_name_to_iso)
+        # Derive the legacy `Live/NonLive Partner/Contract signed` field
+        # from the new boolean `CONTRACT_SIGNED` column so find_partners
+        # keeps filtering by it. TRUE → "Live", anything else → blank.
+        if "CONTRACT_SIGNED" in df.columns and "Live/NonLive Partner/Contract signed" not in df.columns:
+            df["Live/NonLive Partner/Contract signed"] = df["CONTRACT_SIGNED"].astype(str).str.strip().str.upper().map(
+                lambda v: "Live" if v in ("TRUE", "1", "YES") else ""
+            )
         _PARTNERS_SOT_CACHE["data"] = df
         _PARTNERS_SOT_CACHE["ts"] = now
         return df
