@@ -921,7 +921,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
           <div style={styles.card}>
             <span style={styles.cardHeader}>Digital Trends</span>
             <ul style={styles.list}>
-              {digitalTrends.slice(0, 3).map((t, i) => (
+              {digitalTrends.slice(0, 4).map((t, i) => (
                 <li key={i} style={styles.listItem}>
                   <span style={styles.listBullet} aria-hidden />
                   {typeof t === 'string' ? t : (t?.text || t?.title || '')}
@@ -944,7 +944,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
               <div style={styles.card}>
                 <span style={styles.cardHeader}>Regulation</span>
                 <ul style={styles.list}>
-                  {regulation.slice(0, 3).map((line, i) => (
+                  {regulation.slice(0, 4).map((line, i) => (
                     <li key={i} style={styles.listItem}>
                       <span style={styles.listBullet} aria-hidden />
                       {line}
