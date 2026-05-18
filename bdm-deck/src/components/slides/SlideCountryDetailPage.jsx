@@ -339,9 +339,9 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       'Data hosting — no federal mandate. State privacy laws apply (CCPA/CPRA in CA, equivalents in CO/CT/VA/UT). PCI-DSS v4.0 mandatory for card data.',
     ],
     'UAE': [
-      'MoR — Yes. MoR partners enable a foreign-seller model with no local entity. Popular path.',
+      'MoR — Limited. PSPs typically require at minimum a UAE or KSA entity for GCC operations; pure foreign-seller MoR is rare.',
       'Taxes — 5% VAT + 9% corporate tax on profits above AED 375K. No personal income tax. Excise on tobacco / sugary drinks.',
-      'Direct entry — mainland trade license OR a free-zone vehicle in ADGM / DIFC / JAFZA.',
+      'Direct entry — mainland trade license OR a free-zone vehicle in ADGM / DIFC / JAFZA. Common GCC HQ jurisdiction.',
       'Verticals — Allowed (licensed): crypto (VARA Dubai / FSRA ADGM), alcohol via licensed channels. Prohibited: gambling, adult, cannabis.',
       'Data hosting — PDPL (GDPR-aligned) federally. ADGM & DIFC have own free-zone rules. Sensitive sectoral data subject to localisation.',
     ],
@@ -479,63 +479,63 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       'Data hosting — Data Protection Act 2019 (GDPR-aligned). Cross-border with adequacy or contractual safeguards. ODPC enforces.',
     ],
     'Egypt': [
-      'MoR — Yes, common path. Direct entry is heavier.',
+      'MoR — Limited. PSPs typically prefer a local Egyptian LLC or branch. The simplified VAT regime is the lighter path than securing MoR.',
       'Taxes — 14% VAT on foreign digital services + 22.5% corporate tax.',
       'Direct entry — foreign digital sellers register via the simplified VAT regime. Direct retail / financial services typically need a domestic LLC or branch.',
       'Verticals — Allowed: limited high-risk activity. Prohibited: gambling, crypto as payment (CBE directive), adult, cannabis.',
       'Data hosting — Data Protection Law 151/2020 (GDPR-aligned). Cross-border with adequacy or licence from the Data Protection Centre.',
     ],
     'Saudi Arabia': [
-      'MoR — Yes, popular route. Many foreign sellers use this rather than incorporating.',
+      'MoR — Limited. PSPs typically require at minimum a KSA or UAE entity for GCC operations. Direct ZATCA VAT registration is often the more practical path.',
       'Taxes — 15% VAT + 20% corporate tax for foreign investors (or Zakat 2.5% for GCC-owned).',
-      'Direct entry — register with ZATCA for VAT. Direct retail / financial services need a subsidiary or branch under a MISA license.',
+      'Direct entry — register with ZATCA for VAT. Direct retail / financial services need a subsidiary or branch under a MISA license. Common GCC HQ jurisdiction.',
       'Verticals — limited. Prohibited: gambling, alcohol, adult. Crypto unregulated — SAMA cautious on merchant settlement.',
       'Data hosting — PDPL (fully enforceable Sep 2024). Sensitive-data localisation. SAMA cloud computing rules layered on top for financial services.',
     ],
     'Qatar': [
-      'MoR — Yes, the standard route for foreign sellers.',
+      'MoR — Limited. PSPs typically require a regional GCC entity (KSA/UAE) at minimum, or a local QFC vehicle. Standalone foreign-seller MoR is rare.',
       'Taxes — no VAT yet (legislated since 2018, not implemented). 10% corporate tax on foreign-source income. Excise 50–100% on tobacco / sugary drinks.',
       'Direct entry — typically need a QFC (free-zone) vehicle or a mainland Commercial Registration. QFC offers a common-law alternative.',
       'Verticals — Allowed (licensed): pharma online via MoPH-licensed pharmacies. Prohibited: gambling, alcohol-online, adult, crypto (unregulated), cannabis.',
       'Data hosting — Law No. 13 of 2016 + Qatar National Cyber Security Strategy. Sensitive financial data subject to sectoral localisation.',
     ],
     'Bahrain': [
-      'MoR — Yes, but direct is also easy — Bahrain is one of the most foreign-investor-friendly GCC jurisdictions.',
+      'MoR — Limited. PSPs typically require a regional GCC entity (KSA/UAE) at minimum. Bahrain CR is the lightest local-entity option.',
       'Taxes — 10% VAT (raised from 5% in 2022). Foreign digital providers register via simplified online regime. No personal income tax.',
-      'Direct entry — Commercial Registration (CR) or a free-zone vehicle. Light setup.',
+      'Direct entry — Commercial Registration (CR) or a free-zone vehicle. Bahrain is one of the most foreign-investor-friendly GCC jurisdictions for direct entry.',
       'Verticals — Allowed (licensed): crypto under CBB Digital Assets framework (2019 — Rain, CoinMENA registered), alcohol via licensed channels. Prohibited: gambling, adult, cannabis.',
       'Data hosting — PDPL (2018, GDPR-aligned) enforced by the Personal Data Protection Authority.',
     ],
     'Israel': [
-      'MoR — Yes, useful below the local-entity threshold.',
+      'MoR — Limited. Most foreign sellers register directly under Sec 33A; standalone MoR uncommon in this market.',
       'Taxes — 17% VAT. Foreign digital providers register under Sec 33A of the VAT Law.',
       'Direct entry — Sec 33A registration is enough for VAT. PE rules trigger Israeli corporate tax (23%).',
       'Verticals — Allowed (licensed): crypto under ISA (exchange licensing), adult, state gambling (Mifal Hapayis, Toto), prescription pharma. Prohibited: private gambling operators, cannabis (medical only).',
       'Data hosting — Privacy Protection Law (1981, regulations 2017). Cross-border with adequacy or consent. PPA enforces.',
     ],
     'Kuwait': [
-      'MoR — Yes, easier than setting up locally.',
+      'MoR — Limited. PSPs typically require a regional GCC entity (KSA/UAE) or a local Kuwaiti vehicle.',
       'Taxes — no VAT yet (politically delayed since 2018 GCC agreement). 15% corporate tax applies only to foreign businesses. No personal income tax.',
       'Direct entry — typically need a 100%-foreign-owned vehicle via KDIPA or a 51% Kuwaiti-owned WLL / LLC.',
       'Verticals — Allowed: none of the typical high-risk verticals. Prohibited: gambling (Islamic finance), alcohol, adult, crypto (unregulated), cannabis.',
       'Data hosting — Law No. 20 of 2014 (IT-focused). A comprehensive GDPR-aligned PDPL is in draft.',
     ],
     'Oman': [
-      'MoR — Yes, common path. CBO-licensed PSP partners enable the model.',
+      'MoR — Limited. PSPs typically require a regional GCC entity (KSA/UAE) or a local Omani LLC. CBO-licensed PSP partners may enable the model in some cases.',
       'Taxes — 5% VAT (introduced 2021) + excise on tobacco / sugary drinks. No personal income tax.',
       'Direct entry — Duqm Free Zone (tax breaks, 100% foreign ownership) or a mainland LLC.',
       'Verticals — Allowed (licensed): pharma online via MoH-licensed pharmacies. Prohibited: gambling, alcohol-online, adult, crypto (unregulated), cannabis.',
       'Data hosting — PDPL under Royal Decree 6/2022 (GDPR-aligned). Cross-border with adequacy or consent.',
     ],
     'Jordan': [
-      'MoR — Yes, common for foreign sellers.',
+      'MoR — Limited. PSPs typically want a Jordanian branch/LLC or a regional MENA presence (KSA/UAE).',
       'Taxes — 16% GST (VAT) + 14% corporate tax for non-financial sectors.',
       'Direct entry — a branch or LLC; foreign digital service providers register for the 16% GST.',
       'Verticals — Allowed (licensed): pharma online via JFDA-licensed pharmacies. Prohibited or restricted: gambling, adult, crypto (unregulated), cannabis.',
       'Data hosting — Data Protection Law (2023, GDPR-aligned, implementation ongoing).',
     ],
     'Turkey': [
-      'MoR — Yes, useful given currency volatility and FX rules.',
+      'MoR — Limited. PSPs typically want a Turkish entity or a regional MENA presence given FX controls and inflation rules.',
       'Taxes — 20% VAT (KDV) + 25% corporate tax. High inflation drives taksit (installment) checkout behaviour.',
       'Direct entry — foreign digital service providers register for KDV. PE rules trigger Turkish corporate tax. Rep office is common before a full subsidiary.',
       'Verticals — Allowed (state-only): gambling via state monopoly (İddaa, Milli Piyango), crypto for investing. Prohibited: crypto as payment (since 2021). Restricted: adult (BTK blocks), pharma online (state pharmacy monopoly), cannabis.',
@@ -988,11 +988,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
             <div style={styles.card}>
               <span style={styles.cardHeader}>Providers</span>
               <p style={styles.partnersIntro}>
-                We have partnerships with the region&rsquo;s most relevant providers
-                (PSPs, Acquirers, APMs, Product and others), ranging from the largest
-                players to the niche ones. Thanks to our extensive footprint, we can
-                integrate any provider in less than a month and source new ones as
-                needed.
+                Yuno integrates the region&rsquo;s most relevant PSPs, acquirers, APMs and product partners — large to niche — in under a month.
               </p>
               <div style={styles.partnersTable}>
                 {partners.slice(0, 5).map((p, i) => (
