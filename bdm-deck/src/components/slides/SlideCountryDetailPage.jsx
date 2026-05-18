@@ -220,7 +220,7 @@ function PaymentBreakdown({ items, theme }) {
   )
 }
 
-export default function SlideCountryDetailPage({ selectedCountry, merchantVertical }) {
+export default function SlideCountryDetailPage({ selectedCountry, merchantVertical, goTo, currentIndex }) {
   const theme = useTheme()
   const [rich, setRich] = useState(null)
 
@@ -592,6 +592,33 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       flexShrink: 0,
       marginBottom: 6,
     },
+    backButton: {
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: 6,
+      padding: '8px 14px',
+      borderRadius: 999,
+      border: `1px solid ${theme.borderAccent}`,
+      background: theme.isLight ? 'rgba(62,79,224,0.08)' : 'rgba(124,137,239,0.16)',
+      color: theme.inkStrong,
+      fontFamily: 'var(--font-mono)',
+      fontSize: 12,
+      fontWeight: 700,
+      letterSpacing: '0.6px',
+      textTransform: 'uppercase',
+      cursor: 'pointer',
+      flexShrink: 0,
+    },
+    footnote: {
+      fontFamily: 'var(--font-mono)',
+      fontSize: 11,
+      fontWeight: 600,
+      letterSpacing: '0.6px',
+      color: theme.inkMuted,
+      textAlign: 'center',
+      marginTop: 6,
+      flexShrink: 0,
+    },
     flag: {
       width: 68,
       height: 'auto',
@@ -879,6 +906,16 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
     <SlideBase section="Country Detail">
       <div style={styles.body}>
         <div style={styles.titleRow}>
+          {typeof goTo === 'function' && typeof currentIndex === 'number' && (
+            <button
+              type="button"
+              onClick={() => goTo(Math.max(0, currentIndex - 1))}
+              style={styles.backButton}
+              aria-label="Back to map"
+            >
+              ← Map
+            </button>
+          )}
           {iso && (
             <img
               src={`https://flagcdn.com/w320/${iso}.png`}
@@ -972,7 +1009,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
             )}
 
             <div style={styles.card}>
-              <span style={styles.cardHeader}>🤝 Providers</span>
+              <span style={styles.cardHeader}>🤝 Providers</span>{/* footnote rendered below the grid */}
               <p style={styles.partnersIntro}>
                 We have partnerships with the region&rsquo;s most relevant providers
                 (PSPs, Acquirers, APMs, Product and others), ranging from the largest
@@ -996,6 +1033,8 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
             </div>
           </div>
         )}
+
+        <div style={styles.footnote}>All monetary values in USD.</div>
       </div>
     </SlideBase>
   )
