@@ -862,13 +862,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       fontSize: '12px',
       fontWeight: 500,
       color: theme.inkSecondary,
-      lineHeight: 1.3,
-      // Cap each note to a single line with ellipsis so a long
-      // market-relevance string can't grow the row and push the 5th
-      // provider off the card.
-      whiteSpace: 'nowrap',
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
+      lineHeight: 1.35,
       minWidth: 0,
     },
   }
@@ -987,12 +981,17 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
                 needed.
               </p>
               <div style={styles.partnersTable}>
-                {partners.slice(0, 5).map((p, i) => (
-                  <div key={`${p.name}-${i}`} style={styles.partnerRow}>
-                    <span style={styles.partnerName}>{p.name}</span>
-                    <span style={styles.partnerNote}>{p.relevance || p.description || ''}</span>
-                  </div>
-                ))}
+                {partners.slice(0, 5).map((p, i) => {
+                  const note = p.relevance && p.description
+                    ? `${p.relevance}. ${p.description}.`
+                    : (p.relevance || p.description || '')
+                  return (
+                    <div key={`${p.name}-${i}`} style={styles.partnerRow}>
+                      <span style={styles.partnerName}>{p.name}</span>
+                      <span style={styles.partnerNote}>{note}</span>
+                    </div>
+                  )
+                })}
               </div>
             </div>
           </div>
