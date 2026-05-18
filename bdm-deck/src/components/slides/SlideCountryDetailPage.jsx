@@ -588,9 +588,16 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
     titleRow: {
       display: 'flex',
       alignItems: 'center',
+      justifyContent: 'space-between',
       gap: 20,
       flexShrink: 0,
       marginBottom: 6,
+    },
+    titleLeft: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 20,
+      minWidth: 0,
     },
     backButton: {
       display: 'inline-flex',
@@ -615,7 +622,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       fontWeight: 600,
       letterSpacing: '0.6px',
       color: theme.inkMuted,
-      textAlign: 'center',
+      textAlign: 'left',
       marginTop: 6,
       flexShrink: 0,
     },
@@ -906,6 +913,16 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
     <SlideBase section="Country Detail">
       <div style={styles.body}>
         <div style={styles.titleRow}>
+          <div style={styles.titleLeft}>
+            {iso && (
+              <img
+                src={`https://flagcdn.com/w320/${iso}.png`}
+                alt={`${selectedCountry} flag`}
+                style={styles.flag}
+              />
+            )}
+            <h2 style={styles.name}>{selectedCountry}</h2>
+          </div>
           {typeof goTo === 'function' && typeof currentIndex === 'number' && (
             <button
               type="button"
@@ -916,14 +933,6 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
               ← Map
             </button>
           )}
-          {iso && (
-            <img
-              src={`https://flagcdn.com/w320/${iso}.png`}
-              alt={`${selectedCountry} flag`}
-              style={styles.flag}
-            />
-          )}
-          <h2 style={styles.name}>{selectedCountry}</h2>
         </div>
 
         {overviewEntries.length > 0 && (
@@ -1034,7 +1043,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
           </div>
         )}
 
-        <div style={styles.footnote}>All monetary values in USD.</div>
+        <div style={styles.footnote}>→ All values in USD</div>
       </div>
     </SlideBase>
   )
