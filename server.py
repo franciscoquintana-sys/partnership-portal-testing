@@ -220,17 +220,18 @@ def _site_info(url: str) -> dict:
     if name:
         name = name[0].upper() + name[1:]
 
-    # Logo preference (best → fallback). Earlier = guaranteed transparent
-    # background, later = may have a solid bg:
+    # Logo preference (best → fallback). Only sources that are reliably
+    # transparent / clean are considered before the Google s2 favicon:
     #   1. SVG icon link (`<link rel="icon" type="image/svg+xml">` or
     #      `<link rel="mask-icon">`) — vector, always transparent.
     #   2. schema.org Organization "logo" — sites set this explicitly when
     #      they have a clean transparent brand asset.
-    #   3. Largest apple-touch-icon (180×180+, usually clean PNG; iOS
-    #      stopped flattening transparency in iOS 7+).
-    #   4. og:image (typically 1200×630 banner card with solid bg — last
-    #      resort, the client will alpha-key the corners).
-    #   5. Google favicon (set above, always available).
+    #   3. Header <img> with "logo"/"brand" class — usually transparent.
+    #   4. Google s2 favicon at 256px — the default `logo` set above.
+    # apple-touch-icon and og:image are intentionally NOT used: the first
+    # often ships a solid white background, and the second is typically a
+    # 1200×630 banner card with a solid backdrop. Both look worse on the
+    # deck's tinted cover than the Google favicon does.
     if html:
         # 1. SVG icon link
         svg_href = None
@@ -299,36 +300,7 @@ def _site_info(url: str) -> dict:
                     header_logo = src_val
                     break
 
-        # 4. Largest apple-touch-icon
-        best_size = 0
-        apple_href = None
-        for tag in _site_re.finditer(r"<link[^>]+>", html, _site_re.I):
-            t = tag.group(0)
-            rel = _site_re.search(r'rel=["\']([^"\']+)["\']', t, _site_re.I)
-            href = _site_re.search(r'href=["\']([^"\']+)["\']', t, _site_re.I)
-            if not rel or not href:
-                continue
-            if "apple-touch-icon" not in rel.group(1).lower():
-                continue
-            size_match = _site_re.search(r'sizes=["\'](\d+)x\d+["\']', t, _site_re.I)
-            size = int(size_match.group(1)) if size_match else 180
-            if size > best_size:
-                best_size = size
-                apple_href = href.group(1)
-
-        # 4. og:image
-        og_href = None
-        for tag in _site_re.finditer(r"<meta[^>]+>", html, _site_re.I):
-            t = tag.group(0)
-            prop = _site_re.search(r'(?:property|name)=["\']([^"\']+)["\']', t, _site_re.I)
-            cont = _site_re.search(r'content=["\']([^"\']+)["\']', t, _site_re.I)
-            if prop and cont and prop.group(1).lower() == "og:image":
-                cand = cont.group(1).strip()
-                if _site_re.search(r"\.(png|webp|svg|jpe?g)(\?|$)", cand, _site_re.I):
-                    og_href = cand
-                    break
-
-        chosen = svg_href or schema_logo or header_logo or apple_href or og_href
+        chosen = svg_href or schema_logo or header_logo
         if chosen:
             logo = _site_urljoin(final_url, chosen)
             logo_is_fallback = False
