@@ -28,6 +28,7 @@ import SlideCTA from './slides/SlideCTA'
 import { getRegionCountries } from '../data/regional-data'
 import OrbBackground from './OrbBackground'
 import { ThemeProvider, useTheme } from '../lib/theme'
+import { useAutoTranslate } from '../lib/autoTranslate'
 
 // Slugs whose deck flips to the Nova-style light surface. Everyone else
 // stays on the original dark canvas. Replit is the launch case: JP is
@@ -499,6 +500,9 @@ function SlideViewerInner({ data, onBack, shared = false }) {
   const [current, setCurrent] = useState(initialSlide)
   const [previous, setPrevious] = useState(0)
   const [direction, setDirection] = useState('next')
+  // Auto-translate the visible deck content after each slide change. The
+  // hook is a no-op when language is 'en'.
+  useAutoTranslate(data?.LANGUAGE || 'en', [current])
   const [showHint, setShowHint] = useState(true)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [stageScale, setStageScale] = useState(1)
