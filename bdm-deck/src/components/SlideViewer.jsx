@@ -563,9 +563,19 @@ function SlideViewerInner({ data, onBack, shared = false }) {
     setShowHint(false)
   }, [])
 
+  // Skip the SlideCountryDetailPage when no country is picked. The page is
+  // only meaningful with a country selection — pressing forward from the map
+  // (or back from the slide after the detail) should jump over it.
+  const isDetailPageIdx = useCallback((idx) => (
+    idx >= 0 && idx < SLIDES.length && SLIDES[idx]?.Component === SlideCountryDetailPage
+  ), [SLIDES])
+
   const next = useCallback(() => {
     setCurrent((c) => {
-      const newC = Math.min(c + 1, total - 1)
+      let newC = Math.min(c + 1, total - 1)
+      if (isDetailPageIdx(newC) && !selectedCountry) {
+        newC = Math.min(c + 2, total - 1)
+      }
       if (newC !== c) {
         setDirection('next')
         setPrevious(c)
@@ -573,11 +583,14 @@ function SlideViewerInner({ data, onBack, shared = false }) {
       return newC
     })
     setShowHint(false)
-  }, [total])
+  }, [total, isDetailPageIdx, selectedCountry])
 
   const prev = useCallback(() => {
     setCurrent((c) => {
-      const newC = Math.max(c - 1, 0)
+      let newC = Math.max(c - 1, 0)
+      if (isDetailPageIdx(newC) && !selectedCountry) {
+        newC = Math.max(c - 2, 0)
+      }
       if (newC !== c) {
         setDirection('prev')
         setPrevious(c)
@@ -585,7 +598,7 @@ function SlideViewerInner({ data, onBack, shared = false }) {
       return newC
     })
     setShowHint(false)
-  }, [])
+  }, [isDetailPageIdx, selectedCountry])
 
   // Touch swipe on the slide area. Horizontal-dominant swipe with a 60px
   // threshold flips slides; vertical-dominant gestures are left alone so

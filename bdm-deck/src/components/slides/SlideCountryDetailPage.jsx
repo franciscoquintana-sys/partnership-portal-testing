@@ -220,7 +220,7 @@ function PaymentBreakdown({ items, theme }) {
   )
 }
 
-export default function SlideCountryDetailPage({ selectedCountry, merchantVertical, goTo, currentIndex }) {
+export default function SlideCountryDetailPage({ selectedCountry, merchantVertical, goTo, currentIndex, setSelectedCountry }) {
   const theme = useTheme()
   const [rich, setRich] = useState(null)
 
@@ -904,7 +904,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
   if (!selectedCountry) {
     return (
       <SlideBase section="Country Detail">
-        <div style={styles.empty}>Pick a country on the previous slide to see its detail.</div>
+        <div style={styles.empty}>Go back to the map and pick a country to see its detail.</div>
       </SlideBase>
     )
   }
@@ -926,7 +926,13 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
           {typeof goTo === 'function' && typeof currentIndex === 'number' && (
             <button
               type="button"
-              onClick={() => goTo(Math.max(0, currentIndex - 1))}
+              onClick={() => {
+                // Clear the selected country so navigating forward from the
+                // map skips this detail slide (SlideViewer's next/prev check
+                // selectedCountry and jump over the detail when it's null).
+                if (typeof setSelectedCountry === 'function') setSelectedCountry(null)
+                goTo(Math.max(0, currentIndex - 1))
+              }}
               style={styles.backButton}
               aria-label="Back to map"
             >
