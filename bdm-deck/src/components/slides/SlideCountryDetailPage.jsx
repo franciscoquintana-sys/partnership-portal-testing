@@ -133,6 +133,8 @@ function PaymentBreakdown({ items, theme }) {
         flexDirection: 'column',
         gap: '5px',
         overflow: 'hidden',
+        // Distribute rows evenly so gaps are uniform top-to-bottom.
+        justifyContent: 'space-around',
       }}
     >
       {rows.slice(0, 6).map((row, i) => {
@@ -142,9 +144,9 @@ function PaymentBreakdown({ items, theme }) {
             key={i}
             style={{
               display: 'grid',
-              // Fixed first column so every bar starts at the same x-offset
-              // regardless of how long the method name is.
-              gridTemplateColumns: '170px 1fr auto',
+              // Fixed first AND growth columns so every bar starts AND ends
+              // at the same x-offset regardless of name/growth text length.
+              gridTemplateColumns: '170px 1fr 90px',
               alignItems: 'center',
               gap: '9px',
             }}
@@ -202,7 +204,8 @@ function PaymentBreakdown({ items, theme }) {
                   inset: 0,
                   display: 'flex',
                   alignItems: 'center',
-                  justifyContent: 'center',
+                  justifyContent: 'flex-end',
+                  paddingRight: '10px',
                   fontFamily: 'var(--font)',
                   fontSize: '12px',
                   fontWeight: 800,
