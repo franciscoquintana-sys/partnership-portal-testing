@@ -765,67 +765,6 @@ export default function SlideCTA({ data, shared = false }) {
               >
                 Book a Demo →
               </a>
-
-              <button
-                type="button"
-                onClick={async () => {
-                  // Build a shareable URL that lands the recipient directly
-                  // on this merchant's deck, skipping the "Type client URL"
-                  // onboarding screen. The merchant state lives in JS, not
-                  // the URL bar, so we have to reconstruct the link from
-                  // `data` rather than just copy window.location.
-                  // Prefer the raw URL the presenter typed (e.g. "amazon.com")
-                  // so the share link's /api/site-info call has a real domain
-                  // to scrape. Fallback to the slug/name only when no input
-                  // URL was preserved.
-                  const slug = data?.INPUT_URL
-                    || data?.SLUG
-                    || data?.COMPANY_SLUG
-                    || (data?.COMPANY_NAME
-                      ? String(data.COMPANY_NAME)
-                          .toLowerCase()
-                          .replace(/[^a-z0-9]+/g, '-')
-                          .replace(/^-+|-+$/g, '')
-                      : null)
-                  const base = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '/')
-                  let deckUrl
-                  if (slug) {
-                    const params = new URLSearchParams()
-                    if (Array.isArray(data?.REGIONS) && data.REGIONS.length) {
-                      params.set('regions', data.REGIONS.join(','))
-                    }
-                    if (Array.isArray(data?.COUNTRIES) && data.COUNTRIES.length) {
-                      params.set('countries', data.COUNTRIES.join(','))
-                    }
-                    const qs = params.toString()
-                    deckUrl = `${window.location.origin}${base}m/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`
-                  } else {
-                    // No merchant data yet — fall back to the current URL
-                    // (probably the landing page).
-                    deckUrl = window.location.href
-                  }
-                  try {
-                    await navigator.clipboard.writeText(deckUrl)
-                    setCopied(true)
-                    setTimeout(() => setCopied(false), 2000)
-                  } catch {
-                    // Fallback: prompt so the user can copy manually if
-                    // clipboard API is blocked (e.g. iframe + no HTTPS).
-                    window.prompt('Copy this link:', deckUrl)
-                  }
-                }}
-                style={{
-                  ...styles.sendBtn,
-                  background: 'transparent',
-                  color: theme.ink,
-                  border: `1px solid ${theme.borderAccent}`,
-                  boxShadow: 'none',
-                  marginTop: 12,
-                  cursor: 'pointer',
-                }}
-              >
-                {copied ? '✓ Link copied' : 'Copy interactive deck link'}
-              </button>
             </div>
           </div>
           )}
