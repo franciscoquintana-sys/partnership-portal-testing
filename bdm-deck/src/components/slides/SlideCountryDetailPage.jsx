@@ -707,9 +707,10 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       gridTemplateColumns: '1fr 1fr',
       gap: '20px',
       minHeight: 0,
-      // Don't stretch to fill remaining vertical space — let each row size to
-      // its tallest card's content. Cards in the same row stay equal height
-      // (grid default), so no card has interior whitespace.
+      // Stretch each row to fill its share of vertical space so the slide has
+      // no big empty middle. Cards in the same row stay equal height (grid
+      // default). Content inside each card distributes via space-around.
+      flex: '1 1 0',
     },
     card: {
       // Match the blue-tinted overview/payments cards at the top of the
@@ -742,6 +743,10 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       listStyle: 'none', padding: 0, margin: 0,
       display: 'flex', flexDirection: 'column', gap: '4px',
       minHeight: 0,
+      // Fill the card height so bullets distribute through the available
+      // space instead of clumping at the top with empty space below.
+      flex: '1 1 0',
+      justifyContent: 'space-around',
     },
     listItem: {
       fontSize: '13.5px',
@@ -844,10 +849,10 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
       flexDirection: 'column',
       gap: '4px',
       marginTop: '2px',
-      // Size to content (don't shrink) so all 5 partner rows always fit;
-      // the card will grow to fit them, and the regulation card stretches
-      // to match via CSS grid row.
-      flex: 'none',
+      // Fill the remaining card height so partner rows distribute evenly;
+      // overflow: visible on the card prevents clipping.
+      flex: '1 1 0',
+      justifyContent: 'space-around',
     },
     partnerRow: {
       display: 'grid',
@@ -951,7 +956,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
           </div>
         )}
 
-        <div style={{ ...styles.grid, marginTop: 'auto' }}>
+        <div style={styles.grid}>
           <div style={styles.card}>
             <span style={styles.cardHeader}>🚀 Digital Trends</span>
             <ul style={styles.list}>
