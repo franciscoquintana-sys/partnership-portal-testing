@@ -142,7 +142,9 @@ function PaymentBreakdown({ items, theme }) {
             key={i}
             style={{
               display: 'grid',
-              gridTemplateColumns: 'minmax(100px, 1.3fr) minmax(0, 3fr) auto',
+              // Fixed first column so every bar starts at the same x-offset
+              // regardless of how long the method name is.
+              gridTemplateColumns: '170px 1fr auto',
               alignItems: 'center',
               gap: '9px',
             }}
