@@ -33,9 +33,9 @@
 
   <!-- View tabs -->
   <div style="display:flex;gap:4px;border-bottom:1px solid #e2e8f0;margin-bottom:18px">
-    {% set tabs = [('country','Country Detail'),('news','Last News'),('regions','Sales Decks')] %}
+    {% set tabs = [('country','Country Detail'),('news','Last News')] %}
     {% for v, label in tabs %}
-      <a href="/insights?view={{ v }}{% if selected_region != 'all' %}&region={{ selected_region }}{% endif %}{% if v not in ['regions', 'news'] and has_market_data %}&country={{ selected }}{% endif %}" style="
+      <a href="/insights?view={{ v }}{% if selected_region != 'all' %}&region={{ selected_region }}{% endif %}{% if v != 'news' and has_market_data %}&country={{ selected }}{% endif %}" style="
         padding:10px 16px;
         font-size:13px;
         font-weight:700;
@@ -356,7 +356,7 @@
   {% endif %}
 
   {% else %}
-  <div class="card" style="padding:24px;font-size:13px;color:var(--text3)">No detailed market data available for region <strong>{{ selected_region }}</strong>. Switch to Sales Decks for portfolio-level stats.</div>
+  <div class="card" style="padding:24px;font-size:13px;color:var(--text3)">No detailed market data available for region <strong>{{ selected_region }}</strong>. Switch to a specific country or pick another region.</div>
   {% endif %}
 
   {% elif view == 'news' %}
@@ -400,11 +400,6 @@
     <div class="card" style="padding:18px;font-size:13px;color:var(--text3)">No news to display for this filter.</div>
   {% endif %}
 
-  {% elif view == 'regions' %}
-  <!-- View 3: Sales Decks -->
-  <div class="card" style="padding:0;overflow:hidden;border-radius:12px;max-width:1280px;margin:0 auto">
-    <iframe src="/sales-deck/" title="Sales Deck" style="display:block;width:100%;height:calc(100vh - 220px);min-height:560px;max-height:720px;border:0"></iframe>
-  </div>
   {% endif %}
 
 {% endblock %}

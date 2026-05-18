@@ -446,20 +446,20 @@ _FULL_NAV = [
     ("", [("home","Home")]),
     ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight"),("partners_pipeline","Partners Pipeline")]),
     ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("introduction","Partner - Merchant Intros")]),
-    ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
+    ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("sales_deck","Sales Deck"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
 ]
 NAV = {
     "partnerships": _FULL_NAV,
     "internal": [
         ("", [("home","Home")]),
         ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight"),("partners_pipeline","Partners Pipeline")]),
-        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
+        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("sales_deck","Sales Deck"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
     ],
     "partner": [
         ("", [("home","Home")]),
         ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio")]),
         ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share")]),
-        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis")]),
+        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("sales_deck","Sales Deck")]),
     ],
 }
 
@@ -9041,7 +9041,10 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
-    if view not in ("country", "news", "regions"):
+    # `regions` was the old Sales Decks tab — now its own top-level page
+    # at /sales_deck, so requests with that param fall back to Country
+    # Detail rather than dead-end.
+    if view not in ("country", "news"):
         view = "country"
     all_partners = load_partners_excel()
     raw_regions = set(p["region"] for p in all_partners if p.get("region"))
@@ -9201,6 +9204,16 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
         last_update=MARKET_ANALYSIS_LAST_UPDATE,
         embed=bool(embed),
     ))
+
+@app.get("/sales_deck", response_class=HTMLResponse)
+def sales_deck_page(request: Request):
+    role = require_auth(request)
+    if not role:
+        return RedirectResponse("/login")
+    if role not in ANY_LOGGED_IN_ROLES:
+        return RedirectResponse("/home")
+    return tr(request, "sales_deck.html", ctx(request, "sales_deck"))
+
 
 @app.get("/merch_sim", response_class=HTMLResponse)
 def merch_sim(request: Request):
