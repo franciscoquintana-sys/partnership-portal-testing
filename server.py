@@ -52,14 +52,14 @@ class SPAStaticFiles(StaticFiles):
         response = await super().get_response(path, scope)
         if response.status_code == 404:
             response = await super().get_response("index.html", scope)
-        # index.html must never be cached so new builds (with new fingerprinted
-        # asset filenames) reach the browser on the very next request.
-        # Fingerprinted /assets/* files are immutable and safe to cache forever.
-        if path in ("", "index.html") or response.status_code == 200 and not path.startswith("assets/"):
-            if path.endswith(".html") or path in ("", "index.html"):
-                response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
-                response.headers["Pragma"] = "no-cache"
-                response.headers["Expires"] = "0"
+        # index.html (HTML responses) must never be cached, so new builds with
+        # different fingerprinted asset filenames reach the browser on the very
+        # next request. Fingerprinted assets are immutable and safe forever.
+        content_type = response.headers.get("content-type", "")
+        if "text/html" in content_type:
+            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+            response.headers["Pragma"] = "no-cache"
+            response.headers["Expires"] = "0"
         elif path.startswith("assets/"):
             response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
         return response
