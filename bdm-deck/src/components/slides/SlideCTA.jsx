@@ -721,7 +721,12 @@ export default function SlideCTA({ data, shared = false }) {
                   // onboarding screen. The merchant state lives in JS, not
                   // the URL bar, so we have to reconstruct the link from
                   // `data` rather than just copy window.location.
-                  const slug = data?.SLUG
+                  // Prefer the raw URL the presenter typed (e.g. "amazon.com")
+                  // so the share link's /api/site-info call has a real domain
+                  // to scrape. Fallback to the slug/name only when no input
+                  // URL was preserved.
+                  const slug = data?.INPUT_URL
+                    || data?.SLUG
                     || data?.COMPANY_SLUG
                     || (data?.COMPANY_NAME
                       ? String(data.COMPANY_NAME)

@@ -88,6 +88,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
       COMPANY_LOGO_MONO: null,
       IS_GENERIC: isGeneric,
       REGIONS: regions, COUNTRIES: countries,
+      INPUT_URL: typed,
     }
   }
 
@@ -103,6 +104,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
       COMPANY_LOGO: partner?.logo || null,
       COMPANY_LOGO_MONO: null,
       REGIONS: regions, COUNTRIES: countries,
+      INPUT_URL: typed,
     }
   }
 
@@ -127,6 +129,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
       COMPANY_LOGO: partnerByUrl.logo,
       COMPANY_LOGO_MONO: null,
       REGIONS: regions, COUNTRIES: countries,
+      INPUT_URL: typed,
     }
   }
 
@@ -189,6 +192,11 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
     COMPANY_SLUG: slugKey || null,
     SHOW_PSP_ROLES: SHOW_PSP_ROLES_FOR.has(slugKey),
     REGIONS: regions, COUNTRIES: countries,
+    // Preserve the raw URL/name input so share links (Copy Link button)
+    // can be built with the original "amazon.com" form rather than the
+    // slugified "amazon" — without the TLD, /api/site-info can't scrape
+    // the recipient's logo + name when they open the share link.
+    INPUT_URL: typed,
   }
 }
 
