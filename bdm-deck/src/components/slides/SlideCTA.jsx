@@ -658,7 +658,8 @@ export default function SlideCTA({ data, shared = false }) {
               <a
                 data-download-deck
                 href={`/api/pdf/${encodeURIComponent(data.COMPANY_SLUG)}`}
-                download={`${data.COMPANY_SLUG}-yuno-deck.pdf`}
+                target="_blank"
+                rel="noopener noreferrer"
                 style={styles.downloadDeck}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = 'rgba(62,79,224,0.18)'
@@ -670,11 +671,11 @@ export default function SlideCTA({ data, shared = false }) {
                 }}
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                  <polyline points="15 3 21 3 21 9" />
+                  <line x1="10" y1="14" x2="21" y2="3" />
                 </svg>
-                <span>Download the full deck (PDF)</span>
+                <span>Open the full deck (PDF)</span>
               </a>
             )}
           </div>
