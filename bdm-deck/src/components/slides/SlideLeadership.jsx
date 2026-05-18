@@ -29,7 +29,11 @@ function PersonCard({ p, founder, style, styles }) {
   // surname "Rebull") can pass `firstName`/`lastName` explicitly on the
   // person record to override the naive whitespace split.
   const renderName = () => {
-    if (founder) return <div style={styles.name}>{p.name}</div>
+    // Founders default to a single line, but can opt into the two-row split
+    // by passing firstName/lastName (matches the leader rendering).
+    if (founder && !p.firstName && !p.lastName) {
+      return <div style={styles.name}>{p.name}</div>
+    }
     let first, rest
     if (p.firstName || p.lastName) {
       first = (p.firstName || '').trim()

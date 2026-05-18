@@ -22,6 +22,8 @@ export const FOUNDERS = [
   {
     photo: v('/sales-deck/team/julian-nunez.png'),
     name: 'Julián Nuñez',
+    firstName: 'Julián',
+    lastName: 'Nuñez',
     role: 'Co-founder & COO',
     pedigree: ['rappi'],
     pedigreeLabel: 'Rappi Early Employee',
@@ -57,12 +59,12 @@ export const LEADERS = [
   {
     photo: v('/sales-deck/team/briana-gargurevich.png'),
     name: 'Briana Gargurevich',
-    role: 'VP, Global Sales North America',
+    role: 'VP, Global Sales NA',
   },
   {
     photo: v('/sales-deck/team/melissa-pottenger.png'),
     name: 'Melissa Pottenger',
-    role: 'VP, Enterprise Growth North America',
+    role: 'VP, Enterprise Growth NA',
   },
   {
     photo: v('/sales-deck/team/marco-santarelli.png'),
@@ -80,20 +82,20 @@ export const LEADERS = [
   {
     photo: v('/sales-deck/team/simon-martinez.png'),
     name: 'Simon Martinez',
-    role: 'Head of AI Solutions',
+    role: 'VP of AI Solutions',
     pedigree: ['rappi'],
     pedigreeLabel: 'ex-Rappi',
   },
   {
     photo: v('/sales-deck/team/daniel-rebelo.png'),
     name: 'Daniel Rebelo',
-    role: 'Global Head of Customer Success',
+    role: 'Head of Customer Success',
     pedigree: ['worldpay', 'nuvei'],
   },
   {
     photo: v('/sales-deck/team/martin-mexia.png'),
     name: 'Martin Mexia',
-    role: 'Head of Product',
+    role: 'SVP of Product',
     pedigree: ['revolut', 'rappi'],
   },
   {
