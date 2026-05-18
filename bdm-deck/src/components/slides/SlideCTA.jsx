@@ -716,15 +716,11 @@ export default function SlideCTA({ data, shared = false }) {
               <button
                 type="button"
                 onClick={async () => {
-                  const slug = data?.COMPANY_SLUG
-                  // BASE_URL is the Vite base path (e.g. "/sales-deck/" when
-                  // vendored into the partnerships portal, or "/" when the
-                  // deck runs standalone). Building the link off it keeps
-                  // the URL valid in either deployment.
-                  const base = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '/')
-                  const deckUrl = slug
-                    ? `${window.location.origin}${base}m/${encodeURIComponent(slug)}`
-                    : window.location.href
+                  // The deck is built live on the page (company name +
+                  // regions + countries live in the URL's query params),
+                  // so the shareable link is just whatever URL the user is
+                  // currently viewing — no /m/<slug> injection.
+                  const deckUrl = window.location.href
                   try {
                     await navigator.clipboard.writeText(deckUrl)
                     setCopied(true)
