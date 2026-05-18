@@ -308,6 +308,36 @@ export default function App() {
     setMerchantData(null)
   }
 
+  // Expose a function on the iframe's window so the parent portal page can
+  // build a shareable link to the currently-generated deck. Returns null
+  // when no deck has been generated yet.
+  useEffect(() => {
+    window.getDeckShareLink = () => {
+      if (!merchantData) return null
+      const slug = merchantData.INPUT_URL
+        || merchantData.SLUG
+        || merchantData.COMPANY_SLUG
+        || (merchantData.COMPANY_NAME
+          ? String(merchantData.COMPANY_NAME)
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '')
+          : null)
+      if (!slug) return window.location.href
+      const base = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '/')
+      const params = new URLSearchParams()
+      if (Array.isArray(merchantData.REGIONS) && merchantData.REGIONS.length) {
+        params.set('regions', merchantData.REGIONS.join(','))
+      }
+      if (Array.isArray(merchantData.COUNTRIES) && merchantData.COUNTRIES.length) {
+        params.set('countries', merchantData.COUNTRIES.join(','))
+      }
+      const qs = params.toString()
+      return `${window.location.origin}${base}m/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`
+    }
+    return () => { try { delete window.getDeckShareLink } catch { /* noop */ } }
+  }, [merchantData])
+
   if (merchantData && printMode) {
     return <PrintViewer data={merchantData} />
   }
