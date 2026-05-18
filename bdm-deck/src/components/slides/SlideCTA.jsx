@@ -716,11 +716,36 @@ export default function SlideCTA({ data, shared = false }) {
               <button
                 type="button"
                 onClick={async () => {
-                  // The deck is built live on the page (company name +
-                  // regions + countries live in the URL's query params),
-                  // so the shareable link is just whatever URL the user is
-                  // currently viewing — no /m/<slug> injection.
-                  const deckUrl = window.location.href
+                  // Build a shareable URL that lands the recipient directly
+                  // on this merchant's deck, skipping the "Type client URL"
+                  // onboarding screen. The merchant state lives in JS, not
+                  // the URL bar, so we have to reconstruct the link from
+                  // `data` rather than just copy window.location.
+                  const slug = data?.SLUG
+                    || data?.COMPANY_SLUG
+                    || (data?.COMPANY_NAME
+                      ? String(data.COMPANY_NAME)
+                          .toLowerCase()
+                          .replace(/[^a-z0-9]+/g, '-')
+                          .replace(/^-+|-+$/g, '')
+                      : null)
+                  const base = (import.meta.env.BASE_URL || '/').replace(/\/+$/, '/')
+                  let deckUrl
+                  if (slug) {
+                    const params = new URLSearchParams()
+                    if (Array.isArray(data?.REGIONS) && data.REGIONS.length) {
+                      params.set('regions', data.REGIONS.join(','))
+                    }
+                    if (Array.isArray(data?.COUNTRIES) && data.COUNTRIES.length) {
+                      params.set('countries', data.COUNTRIES.join(','))
+                    }
+                    const qs = params.toString()
+                    deckUrl = `${window.location.origin}${base}m/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`
+                  } else {
+                    // No merchant data yet — fall back to the current URL
+                    // (probably the landing page).
+                    deckUrl = window.location.href
+                  }
                   try {
                     await navigator.clipboard.writeText(deckUrl)
                     setCopied(true)
