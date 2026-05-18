@@ -702,9 +702,6 @@ export default function SlideCTA({ data, shared = false }) {
                     if (Array.isArray(data?.COUNTRIES) && data.COUNTRIES.length) {
                       params.set('countries', data.COUNTRIES.join(','))
                     }
-                    if (data?.LANGUAGE && data.LANGUAGE !== 'en') {
-                      params.set('lang', data.LANGUAGE)
-                    }
                     const qs = params.toString()
                     deckUrl = `${window.location.origin}${base}m/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`
                   } else {

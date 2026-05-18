@@ -49,7 +49,7 @@ const RESERVED_MODES = {
 // 'partner' and region is one of the canonical REGIONS keys. Region
 // threads through every branch as REGION so the final region-aware slide
 // can pull the right country list.
-async function buildMerchantData(selection, regionsOverride = null, countriesOverride = null, languageOverride = null) {
+async function buildMerchantData(selection, regionsOverride = null, countriesOverride = null) {
   const typed = typeof selection === 'string'
     ? selection.trim()
     : (selection?.name || '').trim()
@@ -64,9 +64,6 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
   const countries = countriesOverride
     || (typeof selection === 'object' ? selection?.countries : null)
     || []
-  const language = languageOverride
-    || (typeof selection === 'object' ? selection?.language : null)
-    || 'en'
   if (!typed) return null
 
   // --- Bank selection: reuse Banking deck but stamp the bank's name
@@ -91,7 +88,6 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
       COMPANY_LOGO_MONO: null,
       IS_GENERIC: isGeneric,
       REGIONS: regions, COUNTRIES: countries,
-      LANGUAGE: language,
       INPUT_URL: typed,
     }
   }
@@ -108,7 +104,6 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
       COMPANY_LOGO: partner?.logo || null,
       COMPANY_LOGO_MONO: null,
       REGIONS: regions, COUNTRIES: countries,
-      LANGUAGE: language,
       INPUT_URL: typed,
     }
   }
@@ -134,7 +129,6 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
       COMPANY_LOGO: partnerByUrl.logo,
       COMPANY_LOGO_MONO: null,
       REGIONS: regions, COUNTRIES: countries,
-      LANGUAGE: language,
       INPUT_URL: typed,
     }
   }
@@ -198,7 +192,6 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
     COMPANY_SLUG: slugKey || null,
     SHOW_PSP_ROLES: SHOW_PSP_ROLES_FOR.has(slugKey),
     REGIONS: regions, COUNTRIES: countries,
-    LANGUAGE: language,
     // Preserve the raw URL/name input so share links (Copy Link button)
     // can be built with the original "amazon.com" form rather than the
     // slugified "amazon" — without the TLD, /api/site-info can't scrape
@@ -263,8 +256,7 @@ export default function App() {
       const sharedParams = new URLSearchParams(window.location.search)
       const sharedRegions = (sharedParams.get('regions') || '').split(',').filter(Boolean)
       const sharedCountries = (sharedParams.get('countries') || '').split(',').filter(Boolean)
-      const sharedLanguage = sharedParams.get('lang') || 'en'
-      buildMerchantData(printSlug, sharedRegions, sharedCountries, sharedLanguage).then((data) => {
+      buildMerchantData(printSlug, sharedRegions, sharedCountries).then((data) => {
         if (cancelled || !data) return
         setMerchantData(data)
         setPrintMode(true)
@@ -277,8 +269,7 @@ export default function App() {
     const sharedParams = new URLSearchParams(window.location.search)
     const sharedRegions = (sharedParams.get('regions') || '').split(',').filter(Boolean)
     const sharedCountries = (sharedParams.get('countries') || '').split(',').filter(Boolean)
-    const sharedLanguage = sharedParams.get('lang') || 'en'
-    buildMerchantData(slug, sharedRegions, sharedCountries, sharedLanguage).then((data) => {
+    buildMerchantData(slug, sharedRegions, sharedCountries).then((data) => {
       if (cancelled || !data) return
       setMerchantData(data)
       setSharedMode(true)

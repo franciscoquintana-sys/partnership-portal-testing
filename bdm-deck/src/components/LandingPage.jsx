@@ -490,10 +490,6 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
   const [showDropdown, setShowDropdown] = useState(false)
   const [highlightIdx, setHighlightIdx] = useState(0)
   const [hoveringBtn, setHoveringBtn] = useState(false)
-  // Output language for the generated deck. Default English. Selected
-  // language is passed to onGenerate alongside the merchant URL so the
-  // deck's auto-translator can swap visible text on first paint.
-  const [language, setLanguage] = useState('en')
   // Multi-select region + country. Both default empty — the deck only
   // surfaces region / country slides when the presenter explicitly picks
   // them. Country list is the union of every country in the selected
@@ -595,10 +591,10 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
     if (loading) return
     const pick = filtered[highlightIdx]
     if (pick) {
-      onGenerate({ name: pick.name, type: pick.type, regions, countries, language })
+      onGenerate({ name: pick.name, type: pick.type, regions, countries })
     } else if (isUrlLike(trimmedMerchant)) {
       // Free-text fallback: assume merchant URL.
-      onGenerate({ name: trimmedMerchant, type: 'merchant', regions, countries, language })
+      onGenerate({ name: trimmedMerchant, type: 'merchant', regions, countries })
     }
   }
 
@@ -715,30 +711,6 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
           </div>
 
           <div style={styles.regionRow}>
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-            data-no-translate
-            style={{
-              padding: '12px 16px',
-              borderRadius: 12,
-              border: '1px solid rgba(124,137,239,0.45)',
-              background: 'rgba(62,79,224,0.08)',
-              color: '#fff',
-              fontFamily: 'var(--font)',
-              fontSize: 14,
-              fontWeight: 600,
-              cursor: 'pointer',
-              outline: 'none',
-            }}
-          >
-            <option value="en" style={{ color: '#000' }}>🇬🇧 English</option>
-            <option value="es" style={{ color: '#000' }}>🇪🇸 Spanish</option>
-            <option value="pt" style={{ color: '#000' }}>🇧🇷 Portuguese</option>
-            <option value="fr" style={{ color: '#000' }}>🇫🇷 French</option>
-            <option value="de" style={{ color: '#000' }}>🇩🇪 German</option>
-            <option value="it" style={{ color: '#000' }}>🇮🇹 Italian</option>
-          </select>
           <button
             type="submit"
             disabled={!canSubmit}
