@@ -428,19 +428,48 @@ def sales_deck_site_info(url: str = ""):
 
 
 # ---- Sales-deck translation -------------------------------------------------
-# Translates a batch of English strings into the target language via Claude.
-# Caches by (lang, hash(text)) so repeated translations are free. The deck
-# calls this after each slide render to translate visible text in place.
+# Translates a batch of English strings into the target language via Google's
+# unofficial translate endpoint (no API key required). Each string goes
+# through one HTTP call; results are cached server-side so the second visit
+# to any slide is instant. The deck calls this after each slide render to
+# translate visible text in place.
 _TRANSLATION_CACHE: dict = {}
+_GOOGLE_TRANSLATE_URL = "https://translate.googleapis.com/translate_a/single"
 
-# Map UI language codes to natural-language names for the Claude prompt.
-_LANGUAGE_NAMES = {
-    "es": "Spanish",
-    "pt": "Portuguese (Brazilian)",
-    "fr": "French",
-    "de": "German",
-    "it": "Italian",
-}
+
+def _google_translate(text: str, target: str) -> str:
+    """Translate a single string via Google's free `translate_a/single`
+    endpoint. Returns the English original on any failure so the UI never
+    shows a missing-string error."""
+    if not text or not text.strip():
+        return text
+    try:
+        resp = _site_requests.get(
+            _GOOGLE_TRANSLATE_URL,
+            params={
+                "client": "gtx",
+                "sl": "en",
+                "tl": target,
+                "dt": "t",
+                "q": text,
+            },
+            timeout=4,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; YunoPortal/1.0)"},
+        )
+        if resp.status_code != 200:
+            return text
+        data = resp.json()
+        # Response shape: [[[translated, source, ...], ...], ...]
+        if not isinstance(data, list) or not data or not isinstance(data[0], list):
+            return text
+        parts = []
+        for chunk in data[0]:
+            if isinstance(chunk, list) and chunk and isinstance(chunk[0], str):
+                parts.append(chunk[0])
+        result = "".join(parts).strip()
+        return result or text
+    except Exception:
+        return text
 
 
 @app.post("/api/translate", response_class=JSONResponse)
@@ -453,76 +482,21 @@ async def api_translate(request: Request):
     lang = (body.get("lang") or "").lower()
     if not isinstance(texts, list) or not texts or lang in ("", "en"):
         return {"translations": texts}
-    lang_name = _LANGUAGE_NAMES.get(lang)
-    if not lang_name:
-        return {"translations": texts}
 
-    # Pull cached translations; collect the misses to send to the model.
-    cached = []
-    missing = []
-    missing_idx = []
-    for i, t in enumerate(texts):
+    out = []
+    for t in texts:
         if not isinstance(t, str):
-            cached.append(t)
+            out.append(t)
             continue
         key = (lang, t)
         if key in _TRANSLATION_CACHE:
-            cached.append(_TRANSLATION_CACHE[key])
-        else:
-            cached.append(None)
-            missing.append(t)
-            missing_idx.append(i)
+            out.append(_TRANSLATION_CACHE[key])
+            continue
+        translated = _google_translate(t, lang)
+        _TRANSLATION_CACHE[key] = translated
+        out.append(translated)
 
-    if not missing:
-        return {"translations": cached}
-
-    # Build a numbered list. Claude is instructed to keep the same number
-    # of line breaks per item and to leave proper nouns / brand names /
-    # country names / currency codes / payment-scheme names untranslated.
-    numbered = "\n".join(f"[{i + 1}] {t}" for i, t in enumerate(missing))
-    sys_prompt = (
-        f"You are a precise translator. Translate each English item into "
-        f"{lang_name}. Rules:\n"
-        f"1. Preserve the [N] index marker exactly so output items match input items.\n"
-        f"2. Keep the same number of line breaks within each item as the original.\n"
-        f"3. Do NOT translate proper nouns: company names, brand names, product "
-        f"names, country names, currency codes, payment-scheme acronyms, or URLs.\n"
-        f"4. Preserve punctuation, emojis, and any HTML tags or markdown.\n"
-        f"5. Output ONLY the translated items, one per line, in the same order."
-    )
-
-    try:
-        import anthropic  # type: ignore
-        client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
-        resp = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=4096,
-            system=sys_prompt,
-            messages=[{"role": "user", "content": numbered}],
-        )
-        out_text = "".join(
-            block.text for block in resp.content if getattr(block, "type", "") == "text"
-        )
-    except Exception as e:
-        print(f"[translate] error: {e}")
-        return {"translations": texts}
-
-    # Parse "[N] ..." lines back into a dict.
-    parsed = {}
-    for line in out_text.splitlines():
-        m = _site_re.match(r"^\s*\[(\d+)\]\s*(.*)$", line)
-        if m:
-            idx = int(m.group(1)) - 1
-            if 0 <= idx < len(missing):
-                parsed[idx] = m.group(2)
-
-    # Fill cache + assemble result.
-    for i, src in enumerate(missing):
-        translated = parsed.get(i, src)
-        _TRANSLATION_CACHE[(lang, src)] = translated
-        cached[missing_idx[i]] = translated
-
-    return {"translations": cached}
+    return {"translations": out}
 
 
 # -----------------------------------------------------------------------------
