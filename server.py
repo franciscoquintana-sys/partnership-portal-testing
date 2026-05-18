@@ -161,6 +161,27 @@ def _site_info(url: str) -> dict:
     logo = f"https://www.google.com/s2/favicons?domain={host}&sz=256"
     logo_is_fallback = True
 
+    # Brandfetch CDN: serves clean, transparent brand logos for thousands
+    # of domains. Try this first — if the brand exists in Brandfetch's
+    # index we get a much better asset than scraping or the favicon.
+    # A HEAD probe with a short timeout keeps the path fast and avoids
+    # broken-image rendering when the brand isn't indexed.
+    brandfetch_client_id = os.environ.get("BRANDFETCH_CLIENT_ID")
+    brandfetch_url = f"https://cdn.brandfetch.io/{host}"
+    if brandfetch_client_id:
+        brandfetch_url += f"?c={brandfetch_client_id}"
+    try:
+        head = _site_requests.head(
+            brandfetch_url, timeout=2, allow_redirects=True,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; YunoPortal/1.0)"},
+        )
+        ctype = head.headers.get("content-type", "").lower()
+        if head.status_code == 200 and ctype.startswith("image/"):
+            logo = brandfetch_url
+            logo_is_fallback = False
+    except Exception:
+        pass
+
     label = host.split(".")[0]
     name = _brand_name_lookup(label)
 
@@ -220,8 +241,9 @@ def _site_info(url: str) -> dict:
     if name:
         name = name[0].upper() + name[1:]
 
-    # Logo preference (best → fallback). Only sources that are reliably
-    # transparent / clean are considered before the Google s2 favicon:
+    # Logo preference (best → fallback). Brandfetch already took priority
+    # above when it had an indexed asset. If it didn't, walk the page in
+    # this order — only sources that are reliably transparent / clean:
     #   1. SVG icon link (`<link rel="icon" type="image/svg+xml">` or
     #      `<link rel="mask-icon">`) — vector, always transparent.
     #   2. schema.org Organization "logo" — sites set this explicitly when
@@ -232,7 +254,9 @@ def _site_info(url: str) -> dict:
     # often ships a solid white background, and the second is typically a
     # 1200×630 banner card with a solid backdrop. Both look worse on the
     # deck's tinted cover than the Google favicon does.
-    if html:
+    # Skip the scraping pass entirely if Brandfetch already supplied a
+    # real asset — its logos are always cleaner than what we scrape.
+    if html and logo_is_fallback:
         # 1. SVG icon link
         svg_href = None
         for tag in _site_re.finditer(r"<link[^>]+>", html, _site_re.I):
