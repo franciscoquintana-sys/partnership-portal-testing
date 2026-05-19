@@ -695,9 +695,7 @@ function SlideViewerInner({ data, onBack, shared = false }) {
               animation: `${direction === 'next' ? 'slideInRight' : 'slideInLeft'} 0.5s cubic-bezier(0.32, 0.72, 0, 1)`,
             }}
           >
-            <SlideMetaContext.Provider
-              value={SLIDES[current]?.Component === SlideCountryDetail ? null : { index: current, total }}
-            >
+            <SlideMetaContext.Provider value={{ index: current, total }}>
               <SlideComponent
                 data={data}
                 shared={shared}
