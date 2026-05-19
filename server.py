@@ -488,7 +488,8 @@ def sales_deck_partners_directory():
 
         pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
         brand = str(row.get("CARD_BRAND", "")).strip().replace("_", " ")
-        if pmt.upper() == "CARD" and brand and brand.lower() != "nan" and brand.upper() != "FALSE":
+        is_card = pmt.upper() == "CARD"
+        if is_card and brand and brand.lower() != "nan" and brand.upper() != "FALSE":
             method = brand
         elif pmt and pmt.lower() != "nan":
             method = pmt.replace("_", " ")
@@ -496,6 +497,13 @@ def sales_deck_partners_directory():
             method = None
         if method and country and country.lower() != "nan":
             bucket["country_methods"].setdefault(country, set()).add(method)
+            # When the row is a card brand, also tag this country as
+            # supporting the generic "CARD" so the methods filter can
+            # surface it without listing every individual brand. The
+            # detail view filters "CARD" out of the rendered chips so
+            # only the actual brand (Visa / Mastercard / ...) is shown.
+            if is_card:
+                bucket["country_methods"].setdefault(country, set()).add("CARD")
 
     partners = []
     for name, b in sorted(out.items(), key=lambda kv: kv[0].lower()):

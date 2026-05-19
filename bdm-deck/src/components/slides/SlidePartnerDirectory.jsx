@@ -217,7 +217,9 @@ export default function SlidePartnerDirectory() {
 
   // Filter a partner's country→methods map by the active region / country
   // / method filters so the expanded row only shows the slice the user is
-  // looking at.
+  // looking at. The generic "CARD" tag is stripped from the rendered
+  // chips — it exists only so the methods filter can match "any card
+  // brand". The actual brand (Visa, Mastercard, ...) is what shows.
   const filterCoverage = (p) => {
     const out = []
     const cm = p.country_methods || {}
@@ -225,9 +227,12 @@ export default function SlidePartnerDirectory() {
     for (const country of Object.keys(cm).sort()) {
       if (countryFilter !== 'all' && country !== countryFilter) continue
       if (regionFilter !== 'all' && cr[country] !== regionFilter) continue
-      let methods = cm[country] || []
+      let methods = (cm[country] || []).filter((m) => m !== 'CARD')
       if (methodFilter !== 'all') {
-        methods = methods.filter((m) => m === methodFilter)
+        if (!(cm[country] || []).includes(methodFilter)) continue
+        if (methodFilter !== 'CARD') {
+          methods = methods.filter((m) => m === methodFilter)
+        }
         if (methods.length === 0) continue
       }
       out.push([country, methods])
