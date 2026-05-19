@@ -84,9 +84,9 @@ const ALL_SLIDES = [
   { Component: SlideGlobalPresence, label: 'Global Presence' },
   { Component: SlideLeadership, label: 'Leadership' },
   { Component: SlideTrustedBy, label: 'Trusted By' },
-  { Component: SlidePartnerDirectory, label: 'Providers Directory' },
   { Component: SlideCountryDetail, label: 'Country Detail' },
   { Component: SlideCountryDetailPage, label: 'Country Detail Page' },
+  { Component: SlidePartnerDirectory, label: 'Providers Directory' },
   { Component: SlideCTA, label: 'CTA' },
 ]
 
