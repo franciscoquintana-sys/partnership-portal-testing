@@ -2,46 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import SlideBase from './SlideBase'
 import { useTheme } from '../../lib/theme'
 
-// Country name → ISO-2 used to build flagcdn.com flag URLs next to the
-// country labels in the expanded row. SOT serves country names in
-// UPPERCASE so the lookup keys here are uppercase to match directly.
-// Aliases (UAE / UK / USA / common variants) handled inline.
-const COUNTRY_FLAG_ISO = {
-  ARGENTINA: 'ar', AUSTRALIA: 'au', AUSTRIA: 'at', BAHRAIN: 'bh',
-  BANGLADESH: 'bd', BELGIUM: 'be', BOLIVIA: 'bo', BOTSWANA: 'bw',
-  BRAZIL: 'br', BULGARIA: 'bg', CAMBODIA: 'kh', CAMEROON: 'cm',
-  CANADA: 'ca', CHILE: 'cl', CHINA: 'cn', COLOMBIA: 'co',
-  'COSTA RICA': 'cr', "CÔTE D'IVOIRE": 'ci', "COTE D'IVOIRE": 'ci',
-  CROATIA: 'hr', CUBA: 'cu', CYPRUS: 'cy', 'CZECH REPUBLIC': 'cz',
-  DENMARK: 'dk', 'DOMINICAN REPUBLIC': 'do', ECUADOR: 'ec', EGYPT: 'eg',
-  'EL SALVADOR': 'sv', ESTONIA: 'ee', ETHIOPIA: 'et', FINLAND: 'fi',
-  FRANCE: 'fr', GERMANY: 'de', GHANA: 'gh', GREECE: 'gr',
-  GUATEMALA: 'gt', 'HONG KONG': 'hk', HONDURAS: 'hn', HUNGARY: 'hu',
-  ICELAND: 'is', INDIA: 'in', INDONESIA: 'id', IRAN: 'ir',
-  IRAQ: 'iq', IRELAND: 'ie', ISRAEL: 'il', ITALY: 'it',
-  JAMAICA: 'jm', JAPAN: 'jp', JORDAN: 'jo', KENYA: 'ke',
-  KUWAIT: 'kw', LATVIA: 'lv', LEBANON: 'lb', LITHUANIA: 'lt',
-  LUXEMBOURG: 'lu', MALAYSIA: 'my', MALTA: 'mt', MAURITIUS: 'mu',
-  MEXICO: 'mx', MOROCCO: 'ma', MOZAMBIQUE: 'mz', MYANMAR: 'mm',
-  NEPAL: 'np', NETHERLANDS: 'nl', 'NEW ZEALAND': 'nz', NICARAGUA: 'ni',
-  NIGERIA: 'ng', NORWAY: 'no', OMAN: 'om', PAKISTAN: 'pk',
-  PANAMA: 'pa', PARAGUAY: 'py', PERU: 'pe', PHILIPPINES: 'ph',
-  POLAND: 'pl', PORTUGAL: 'pt', 'PUERTO RICO': 'pr', QATAR: 'qa',
-  ROMANIA: 'ro', RUSSIA: 'ru', RWANDA: 'rw', 'SAUDI ARABIA': 'sa',
-  SENEGAL: 'sn', SERBIA: 'rs', SINGAPORE: 'sg', SLOVAKIA: 'sk',
-  SLOVENIA: 'si', 'SOUTH AFRICA': 'za', 'SOUTH KOREA': 'kr', SPAIN: 'es',
-  'SRI LANKA': 'lk', SWEDEN: 'se', SWITZERLAND: 'ch', TAIWAN: 'tw',
-  TANZANIA: 'tz', THAILAND: 'th', 'TRINIDAD AND TOBAGO': 'tt', TUNISIA: 'tn',
-  TURKEY: 'tr', UAE: 'ae', 'UNITED ARAB EMIRATES': 'ae', UGANDA: 'ug',
-  UK: 'gb', 'UNITED KINGDOM': 'gb', UKRAINE: 'ua', URUGUAY: 'uy',
-  'UNITED STATES': 'us', USA: 'us', 'U.S.A.': 'us', VENEZUELA: 've',
-  VIETNAM: 'vn', ZAMBIA: 'zm', ZIMBABWE: 'zw', ANGOLA: 'ao', ALGERIA: 'dz',
-}
-
-function flagSrc(country) {
-  const key = (country || '').trim().toUpperCase()
-  const iso = COUNTRY_FLAG_ISO[key]
-  return iso ? `https://flagcdn.com/w20/${iso}.png` : null
+// Build the flag URL from an ISO-2 code provided by the server (pycountry
+// resolves the country name → ISO server-side, so we don't have to ship
+// a hardcoded country→ISO map here and miss countries).
+function flagSrcFromIso(iso) {
+  if (!iso) return null
+  return `https://flagcdn.com/w20/${String(iso).toLowerCase()}.png`
 }
 
 // Partner directory table — mirrors the partnerships portal's Partner
@@ -223,7 +189,7 @@ export default function SlidePartnerDirectory() {
     <SlideBase section="Partner Directory">
       <div style={styles.body}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
-          <h2 style={styles.title}>Partner Directory</h2>
+          <h2 style={styles.title}>Providers Directory</h2>
         </div>
 
         <div style={styles.filterRow}>
@@ -309,7 +275,7 @@ export default function SlidePartnerDirectory() {
                                 </div>
                               ) : (
                                 rows.map(([country, methods]) => {
-                                  const flag = flagSrc(country)
+                                  const flag = flagSrcFromIso((p.country_iso || {})[country])
                                   return (
                                     <div key={country} style={styles.countryBlock}>
                                       <div style={{ ...styles.countryName, display: 'flex', alignItems: 'center', gap: 8 }}>

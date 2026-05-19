@@ -433,6 +433,8 @@ def sales_deck_site_info(url: str = ""):
 # to expand). No auth: the sales-deck SPA is publicly accessible.
 @app.get("/api/partners-directory", response_class=JSONResponse)
 def sales_deck_partners_directory():
+    from data_layer import _country_name_to_iso  # local import keeps the
+    # top of server.py uncluttered and avoids circular-import noise.
     df = _load_partners_sot()
     if df is None or len(df) == 0:
         return {"partners": []}
@@ -497,6 +499,13 @@ def sales_deck_partners_directory():
 
     partners = []
     for name, b in sorted(out.items(), key=lambda kv: kv[0].lower()):
+        # Resolve country → ISO-2 server-side via pycountry. Lower-cased
+        # for matching; lookup handles UPPERCASE SOT inputs already.
+        country_iso = {}
+        for c in b["countries"]:
+            iso = _country_name_to_iso(c)
+            if iso:
+                country_iso[c] = iso.lower()
         partners.append({
             "provider": b["provider"],
             "type": b["type"] or "—",
@@ -504,6 +513,7 @@ def sales_deck_partners_directory():
             "countries": sorted(b["countries"]),
             "country_methods": {c: sorted(ms) for c, ms in sorted(b["country_methods"].items())},
             "country_region": dict(b["country_region"]),
+            "country_iso": country_iso,
         })
 
     return {"partners": partners}
