@@ -342,7 +342,39 @@ export default function SlidePartnerDirectory() {
     <SlideBase section="Providers Directory">
       <div style={styles.body}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
-          <h2 style={styles.title}>Providers Directory</h2>
+          <h2 style={styles.title}>
+            Providers Directory
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 8,
+                marginLeft: 16,
+                padding: '6px 14px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: '1.6px',
+                textTransform: 'uppercase',
+                color: accent,
+                background: isLight ? 'rgba(62,79,224,0.10)' : 'rgba(62,79,224,0.18)',
+                border: `1px solid ${theme.borderAccent}`,
+                borderRadius: 100,
+                verticalAlign: 'middle',
+              }}
+            >
+              <span
+                style={{
+                  width: 6, height: 6, borderRadius: '50%',
+                  background: accent,
+                  boxShadow: '0 0 10px rgba(62,79,224,0.6)',
+                  animation: 'pulse 2s infinite',
+                }}
+                aria-hidden
+              />
+              Dynamic slide
+            </span>
+          </h2>
         </div>
 
         <div style={styles.filterRow}>
