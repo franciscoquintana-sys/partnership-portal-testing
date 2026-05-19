@@ -454,6 +454,11 @@ def sales_deck_partners_directory():
         name = str(row.get("PROVIDER_NAME", "")).strip()
         if not name or name.lower() == "nan":
             continue
+        # Restrict the directory to partners that appear in the
+        # Partner Portfolio list (the All-Partners sheet). SOT rows for
+        # providers not in that list are skipped.
+        if name.lower() not in name_to_type:
+            continue
         bucket = out.setdefault(name, {
             "provider": name,
             "type": "",
