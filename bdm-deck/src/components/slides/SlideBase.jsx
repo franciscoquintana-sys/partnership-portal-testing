@@ -101,11 +101,9 @@ export default function SlideBase({ section, slideNumber, children, customBg, th
           were authored for the original 9-slide cut and don't match the
           12-slide Replit deck. SlideViewer/PrintViewer paint a single
           auto-numbered overlay for Replit instead. */}
-      {slideNumber && !isLight && (
-        <div style={styles.slideNumber}>
-          {String(slideNumber).padStart(2, '0')} / 09
-        </div>
-      )}
+      {/* SlideViewer paints a single auto-numbered "current/total" badge
+          for every slide (except the Country Detail map) — so SlideBase
+          no longer renders its own hardcoded slide number here. */}
     </div>
   )
 }

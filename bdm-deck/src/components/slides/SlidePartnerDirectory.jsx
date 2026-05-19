@@ -1,6 +1,134 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import SlideBase from './SlideBase'
 import { useTheme } from '../../lib/theme'
+
+// Inline pill dropdown matching SlideCountryDetail's PillDropdown look
+// (rounded pill button, searchable list, click-outside-closes). Lighter
+// than importing the full component from SlideCountryDetail because we
+// don't need the icon support here.
+function PillFilter({ label, value, options, onChange, placeholder = 'Type to search…' }) {
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const wrapRef = useRef(null)
+  const inputRef = useRef(null)
+
+  useEffect(() => {
+    if (!open) return
+    const close = (e) => {
+      if (!wrapRef.current?.contains(e.target)) setOpen(false)
+    }
+    document.addEventListener('mousedown', close)
+    return () => document.removeEventListener('mousedown', close)
+  }, [open])
+
+  useEffect(() => {
+    if (open) {
+      setQuery('')
+      const id = requestAnimationFrame(() => inputRef.current?.focus())
+      return () => cancelAnimationFrame(id)
+    }
+  }, [open])
+
+  const filtered = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return options
+    return options.filter((o) => (o.label || '').toLowerCase().includes(q))
+  }, [options, query])
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Escape') return setOpen(false)
+    if (e.key === 'Enter' && filtered.length > 0) {
+      e.preventDefault()
+      const pick = filtered.find((o) => o.value !== 'all') || filtered[0]
+      onChange(pick.value)
+      setOpen(false)
+    }
+  }
+
+  const selectedLabel = (options.find((o) => o.value === value) || options[0])?.label || label
+
+  return (
+    <div ref={wrapRef} style={{ position: 'relative' }}>
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        data-no-translate
+        style={{
+          display: 'inline-flex', alignItems: 'center', gap: 10,
+          padding: '11.5px 18px',
+          background: 'rgba(255,255,255,0.04)',
+          border: `1px solid ${open ? 'rgba(62,79,224,0.55)' : 'rgba(255,255,255,0.12)'}`,
+          boxShadow: open ? '0 0 0 4px rgba(62,79,224,0.10)' : 'none',
+          borderRadius: 100,
+          color: 'rgba(255,255,255,0.92)',
+          fontFamily: 'var(--font)', fontSize: 13.5, fontWeight: 600,
+          letterSpacing: '0.04em', textTransform: 'uppercase',
+          cursor: 'pointer', transition: 'all 0.18s ease',
+          backdropFilter: 'blur(12px)',
+          whiteSpace: 'nowrap',
+        }}
+      >
+        <span>{selectedLabel}</span>
+        <span style={{ opacity: 0.7, transition: 'transform 0.18s ease', transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}>▾</span>
+      </button>
+      {open && (
+        <div
+          role="listbox"
+          style={{
+            position: 'absolute', top: 'calc(100% + 10px)', left: 0,
+            minWidth: 240, maxHeight: 360, overflowY: 'auto',
+            background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(28px)',
+            border: '1px solid rgba(255,255,255,0.12)',
+            borderRadius: 14, padding: 8, zIndex: 20,
+            boxShadow: '0 18px 40px rgba(0,0,0,0.5)',
+          }}
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder={placeholder}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={handleKeyDown}
+            data-no-translate
+            style={{
+              width: '100%', boxSizing: 'border-box',
+              padding: '8px 12px', marginBottom: 6,
+              background: 'rgba(255,255,255,0.06)',
+              border: '1px solid rgba(255,255,255,0.10)',
+              borderRadius: 8,
+              color: '#fff', fontFamily: 'var(--font)', fontSize: 13,
+              outline: 'none',
+            }}
+          />
+          {filtered.length === 0 ? (
+            <div style={{ padding: '10px 12px', color: 'rgba(255,255,255,0.55)', fontSize: 12 }}>No matches</div>
+          ) : (
+            filtered.map((o) => (
+              <div
+                key={o.value}
+                role="option"
+                aria-selected={o.value === value}
+                onClick={() => { onChange(o.value); setOpen(false) }}
+                style={{
+                  padding: '8px 12px', borderRadius: 8, cursor: 'pointer',
+                  color: o.value === value ? '#fff' : 'rgba(255,255,255,0.78)',
+                  background: o.value === value ? 'rgba(62,79,224,0.35)' : 'transparent',
+                  fontFamily: 'var(--font)', fontSize: 13, fontWeight: 600,
+                  letterSpacing: '0.04em', textTransform: 'uppercase',
+                }}
+                onMouseEnter={(e) => { if (o.value !== value) e.currentTarget.style.background = 'rgba(255,255,255,0.06)' }}
+                onMouseLeave={(e) => { if (o.value !== value) e.currentTarget.style.background = 'transparent' }}
+              >
+                {o.label}
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
 
 // Build the flag URL from an ISO-2 code provided by the server (pycountry
 // resolves the country name → ISO server-side, so we don't have to ship
@@ -216,22 +344,34 @@ export default function SlidePartnerDirectory() {
             data-no-translate
             style={styles.input}
           />
-          <select value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)} style={styles.select} data-no-translate>
-            <option value="all">ALL TYPES</option>
-            {typeOptions.map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
-          <select value={regionFilter} onChange={(e) => setRegionFilter(e.target.value)} style={styles.select} data-no-translate>
-            <option value="all">ALL REGIONS</option>
-            {regionOptions.map((r) => <option key={r} value={r}>{r}</option>)}
-          </select>
-          <select value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)} style={styles.select} data-no-translate>
-            <option value="all">ALL COUNTRIES</option>
-            {countryOptions.map((c) => <option key={c} value={c}>{c}</option>)}
-          </select>
-          <select value={methodFilter} onChange={(e) => setMethodFilter(e.target.value)} style={styles.select} data-no-translate>
-            <option value="all">ALL METHODS</option>
-            {methodOptions.map((m) => <option key={m} value={m}>{m}</option>)}
-          </select>
+          <PillFilter
+            label="ALL TYPES"
+            value={typeFilter}
+            onChange={setTypeFilter}
+            placeholder="Search type…"
+            options={[{ value: 'all', label: 'ALL TYPES' }, ...typeOptions.map((t) => ({ value: t, label: t }))]}
+          />
+          <PillFilter
+            label="ALL REGIONS"
+            value={regionFilter}
+            onChange={setRegionFilter}
+            placeholder="Search region…"
+            options={[{ value: 'all', label: 'ALL REGIONS' }, ...regionOptions.map((r) => ({ value: r, label: r }))]}
+          />
+          <PillFilter
+            label="ALL COUNTRIES"
+            value={countryFilter}
+            onChange={setCountryFilter}
+            placeholder="Search country…"
+            options={[{ value: 'all', label: 'ALL COUNTRIES' }, ...countryOptions.map((c) => ({ value: c, label: c }))]}
+          />
+          <PillFilter
+            label="METHODS"
+            value={methodFilter}
+            onChange={setMethodFilter}
+            placeholder="Search method…"
+            options={[{ value: 'all', label: 'METHODS' }, ...methodOptions.map((m) => ({ value: m, label: m }))]}
+          />
         </div>
 
         <div style={styles.tableWrap}>

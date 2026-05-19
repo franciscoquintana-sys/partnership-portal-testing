@@ -770,10 +770,8 @@ export default function SlideCTA({ data, shared = false }) {
           )}
         </div>
       </div>
-      {/* Hardcoded "09 / 09" reflects the original 9-slide cut. Replit
-          (light theme) renders 12 slides total, so the viewer paints
-          the canonical auto-numbered overlay instead. */}
-      {!theme.isLight && <div style={styles.slideNumber}>09 / 09</div>}
+      {/* SlideViewer paints a single dynamic current/total slide number
+          for every slide — no hardcoded "09 / 09" here anymore. */}
     </div>
   )
 }
