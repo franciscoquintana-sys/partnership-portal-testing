@@ -495,14 +495,21 @@ def sales_deck_partners_directory():
             method = pmt.replace("_", " ")
         else:
             method = None
+        # Normalise method names to UPPERCASE so case variations in the
+        # SOT (e.g. "CARD" vs "Card") never produce duplicate entries in
+        # the methods filter.
+        if method:
+            method = method.upper()
         if method and country and country.lower() != "nan":
+            # When the row is a card brand (method is a brand like
+            # "VISA"), tag the country with the brand AND a generic
+            # "CARD" so the methods filter can surface "CARD" without
+            # listing every brand. The detail view filters "CARD" out
+            # of the rendered chips, so only the actual brand shows.
+            # When the row is a card row WITHOUT a brand, method
+            # already equals "CARD" — just add it once.
             bucket["country_methods"].setdefault(country, set()).add(method)
-            # When the row is a card brand, also tag this country as
-            # supporting the generic "CARD" so the methods filter can
-            # surface it without listing every individual brand. The
-            # detail view filters "CARD" out of the rendered chips so
-            # only the actual brand (Visa / Mastercard / ...) is shown.
-            if is_card:
+            if is_card and method != "CARD":
                 bucket["country_methods"].setdefault(country, set()).add("CARD")
 
     partners = []

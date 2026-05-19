@@ -227,10 +227,13 @@ export default function SlidePartnerDirectory() {
     for (const country of Object.keys(cm).sort()) {
       if (countryFilter !== 'all' && country !== countryFilter) continue
       if (regionFilter !== 'all' && cr[country] !== regionFilter) continue
-      let methods = (cm[country] || []).filter((m) => m !== 'CARD')
+      // Strip the generic CARD tag (case-insensitive) so the detail
+      // view only ever shows real brand names — never the umbrella
+      // "CARD" label that lives in the data for filter use only.
+      let methods = (cm[country] || []).filter((m) => String(m).toUpperCase() !== 'CARD')
       if (methodFilter !== 'all') {
         if (!(cm[country] || []).includes(methodFilter)) continue
-        if (methodFilter !== 'CARD') {
+        if (String(methodFilter).toUpperCase() !== 'CARD') {
           methods = methods.filter((m) => m === methodFilter)
         }
         if (methods.length === 0) continue
