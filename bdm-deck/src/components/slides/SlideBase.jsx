@@ -98,10 +98,26 @@ export default function SlideBase({ section, slideNumber, children, customBg, th
     <div style={slideStyle}>
       <div className="slide-enter" style={styles.content}>
         <div style={styles.topBar}>
-          <span style={styles.sectionLabel}>
-            <span style={styles.sectionDot} />
-            {section}
-          </span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '14px' }}>
+            <span style={styles.sectionLabel}>
+              <span style={styles.sectionDot} />
+              {section}
+            </span>
+            {meta && (
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: '1.5px',
+                  color: isLight ? theme.inkMuted : 'rgba(255,255,255,0.55)',
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
+                {meta.index + 1} / {meta.total}
+              </span>
+            )}
+          </div>
           <img src="/sales-deck/assets/yuno-logo-white.svg" alt="Yuno" style={styles.yunoLogo} />
         </div>
         {children}
