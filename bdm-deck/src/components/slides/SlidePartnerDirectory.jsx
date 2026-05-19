@@ -201,7 +201,7 @@ export default function SlidePartnerDirectory() {
   }
 
   return (
-    <SlideBase section="Partner Directory">
+    <SlideBase section="Providers Directory">
       <div style={styles.body}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
           <h2 style={styles.title}>Providers Directory</h2>
