@@ -153,22 +153,33 @@ export default function SlidePartnerDirectory() {
 
   const styles = {
     body: { flex: 1, display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0, overflow: 'hidden' },
-    title: { fontFamily: 'var(--font-display)', fontSize: 32, fontWeight: 700, letterSpacing: '-0.6px', color: inkStrong, margin: 0 },
-    subtitle: { fontFamily: 'var(--font)', fontSize: 13, color: inkSecondary, margin: 0 },
-    filterRow: { display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center', flexShrink: 0 },
-    input: {
-      flex: '1 1 220px', minWidth: 0,
-      fontFamily: 'var(--font)', fontSize: 12, fontWeight: 500,
-      padding: '8px 12px', borderRadius: 8,
-      border: `1px solid ${cellBorder}`, background: inputBg, color: inkStrong,
-      outline: 'none',
+    title: {
+      fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 700,
+      letterSpacing: '-1px', lineHeight: 1.05, color: inkStrong, margin: 0,
     },
+    subtitle: { fontFamily: 'var(--font)', fontSize: 13, color: inkSecondary, margin: 0 },
+    // Single row: search input + four selects. No wrap; search shrinks
+    // to a compact width.
+    filterRow: { display: 'flex', flexWrap: 'nowrap', gap: 8, alignItems: 'center', flexShrink: 0 },
+    input: {
+      flex: '0 1 200px', minWidth: 0,
+      fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600,
+      padding: '8px 12px', borderRadius: 999,
+      border: `1px solid ${cellBorder}`,
+      background: isLight ? 'rgba(62,79,224,0.06)' : 'rgba(124,137,239,0.10)',
+      color: inkStrong, outline: 'none',
+    },
+    // Match the rounded-pill style of the Country Detail back button so
+    // all in-slide controls read as one set.
     select: {
-      fontFamily: 'var(--font)', fontSize: 12, fontWeight: 700,
-      padding: '8px 12px', borderRadius: 8,
-      border: `1px solid ${cellBorder}`, background: inputBg, color: inkStrong,
+      flex: '0 0 auto',
+      fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
+      padding: '8px 14px', borderRadius: 999,
+      border: `1px solid ${theme.borderAccent || cellBorder}`,
+      background: isLight ? 'rgba(62,79,224,0.08)' : 'rgba(124,137,239,0.16)',
+      color: inkStrong,
       cursor: 'pointer', outline: 'none',
-      textTransform: 'uppercase', letterSpacing: '0.04em',
+      textTransform: 'uppercase', letterSpacing: '0.6px',
     },
     tableWrap: { flex: '1 1 0', minHeight: 0, overflow: 'auto', border: `1px solid ${cellBorder}`, borderRadius: 10 },
     table: { width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font)', fontSize: 12 },

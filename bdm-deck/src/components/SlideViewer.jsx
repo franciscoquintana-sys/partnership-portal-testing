@@ -713,9 +713,9 @@ function SlideViewerInner({ data, onBack, shared = false }) {
               SlideBase + SlideCTA suppress their own numbers on light
               and we paint a single canonical "NN / TT" badge here, fed
               by the live SLIDES list so the count is always honest. */}
-          {theme.isLight && (
-            <div style={{ ...styles.stageSlideNumber, color: theme.inkFaint }}>
-              {String(current + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}
+          {SLIDES[current]?.Component !== SlideCountryDetail && (
+            <div style={{ ...styles.stageSlideNumber, color: theme.inkFaint || (theme.isLight ? '#94a3b8' : 'rgba(255,255,255,0.45)') }}>
+              {current + 1}/{total}
             </div>
           )}
         </div>
