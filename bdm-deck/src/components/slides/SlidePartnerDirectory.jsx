@@ -59,6 +59,7 @@ export default function SlidePartnerDirectory() {
   const [typeFilter, setTypeFilter] = useState('all')
   const [regionFilter, setRegionFilter] = useState('all')
   const [countryFilter, setCountryFilter] = useState('all')
+  const [methodFilter, setMethodFilter] = useState('all')
   const [expanded, setExpanded] = useState(null)
 
   useEffect(() => {
@@ -93,6 +94,13 @@ export default function SlidePartnerDirectory() {
     partners.forEach((p) => (p.countries || []).forEach((c) => s.add(c)))
     return Array.from(s).sort()
   }, [partners])
+  const methodOptions = useMemo(() => {
+    const s = new Set()
+    partners.forEach((p) => {
+      Object.values(p.country_methods || {}).forEach((ms) => (ms || []).forEach((m) => s.add(m)))
+    })
+    return Array.from(s).sort()
+  }, [partners])
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -100,13 +108,38 @@ export default function SlidePartnerDirectory() {
       if (typeFilter !== 'all' && p.type !== typeFilter) return false
       if (regionFilter !== 'all' && !(p.regions || []).includes(regionFilter)) return false
       if (countryFilter !== 'all' && !(p.countries || []).includes(countryFilter)) return false
+      if (methodFilter !== 'all') {
+        const hasMethod = Object.values(p.country_methods || {})
+          .some((ms) => (ms || []).includes(methodFilter))
+        if (!hasMethod) return false
+      }
       if (q) {
         const hay = `${p.provider} ${p.type} ${(p.regions || []).join(' ')} ${(p.countries || []).join(' ')}`.toLowerCase()
         if (!hay.includes(q)) return false
       }
       return true
     })
-  }, [partners, search, typeFilter, regionFilter, countryFilter])
+  }, [partners, search, typeFilter, regionFilter, countryFilter, methodFilter])
+
+  // Filter a partner's country→methods map by the active region / country
+  // / method filters so the expanded row only shows the slice the user is
+  // looking at.
+  const filterCoverage = (p) => {
+    const out = []
+    const cm = p.country_methods || {}
+    const cr = p.country_region || {}
+    for (const country of Object.keys(cm).sort()) {
+      if (countryFilter !== 'all' && country !== countryFilter) continue
+      if (regionFilter !== 'all' && cr[country] !== regionFilter) continue
+      let methods = cm[country] || []
+      if (methodFilter !== 'all') {
+        methods = methods.filter((m) => m === methodFilter)
+        if (methods.length === 0) continue
+      }
+      out.push([country, methods])
+    }
+    return out
+  }
 
   const inkStrong = theme.inkStrong
   const inkSecondary = theme.inkSecondary
@@ -203,6 +236,10 @@ export default function SlidePartnerDirectory() {
             <option value="all">ALL COUNTRIES</option>
             {countryOptions.map((c) => <option key={c} value={c}>{c}</option>)}
           </select>
+          <select value={methodFilter} onChange={(e) => setMethodFilter(e.target.value)} style={styles.select} data-no-translate>
+            <option value="all">ALL METHODS</option>
+            {methodOptions.map((m) => <option key={m} value={m}>{m}</option>)}
+          </select>
         </div>
 
         <div style={styles.tableWrap}>
@@ -250,41 +287,46 @@ export default function SlidePartnerDirectory() {
                           {(p.countries || []).length} markets
                         </td>
                       </tr>
-                      {isOpen && (
-                        <tr key={`${p.provider}-expand`} style={styles.expandRow}>
-                          <td colSpan={4} style={styles.expandCell}>
-                            {Object.keys(p.country_methods || {}).length === 0 ? (
-                              <div style={{ color: inkMuted }}>No payment-method data for this partner.</div>
-                            ) : (
-                              Object.entries(p.country_methods).map(([country, methods]) => {
-                                const flag = flagSrc(country)
-                                return (
-                                  <div key={country} style={styles.countryBlock}>
-                                    <div style={{ ...styles.countryName, display: 'flex', alignItems: 'center', gap: 8 }}>
-                                      {flag && (
-                                        <img
-                                          src={flag}
-                                          alt=""
-                                          width={18}
-                                          height={13}
-                                          style={{ display: 'block', borderRadius: 2, boxShadow: '0 0 0 1px rgba(0,0,0,0.08)' }}
-                                          aria-hidden
-                                        />
-                                      )}
-                                      <span>{country}</span>
+                      {isOpen && (() => {
+                        const rows = filterCoverage(p)
+                        return (
+                          <tr key={`${p.provider}-expand`} style={styles.expandRow}>
+                            <td colSpan={4} style={styles.expandCell}>
+                              {rows.length === 0 ? (
+                                <div style={{ color: inkMuted }}>
+                                  No matching country / payment-method coverage for the active filters.
+                                </div>
+                              ) : (
+                                rows.map(([country, methods]) => {
+                                  const flag = flagSrc(country)
+                                  return (
+                                    <div key={country} style={styles.countryBlock}>
+                                      <div style={{ ...styles.countryName, display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        {flag && (
+                                          <img
+                                            src={flag}
+                                            alt=""
+                                            width={18}
+                                            height={13}
+                                            style={{ display: 'block', borderRadius: 2, boxShadow: '0 0 0 1px rgba(0,0,0,0.08)' }}
+                                            aria-hidden
+                                          />
+                                        )}
+                                        <span>{country}</span>
+                                      </div>
+                                      <div style={styles.chipRow}>
+                                        {methods.map((m) => (
+                                          <span key={`${country}-${m}`} style={styles.methodChip}>{m}</span>
+                                        ))}
+                                      </div>
                                     </div>
-                                    <div style={styles.chipRow}>
-                                      {methods.map((m) => (
-                                        <span key={`${country}-${m}`} style={styles.methodChip}>{m}</span>
-                                      ))}
-                                    </div>
-                                  </div>
-                                )
-                              })
-                            )}
-                          </td>
-                        </tr>
-                      )}
+                                  )
+                                })
+                              )}
+                            </td>
+                          </tr>
+                        )
+                      })()}
                     </>
                   )
                 })}

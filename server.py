@@ -465,6 +465,8 @@ def sales_deck_partners_directory():
             "regions": set(),
             "countries": set(),
             "country_methods": {},
+            # country -> region for downstream region-filter expansion.
+            "country_region": {},
         })
 
         if not bucket["type"]:
@@ -479,6 +481,8 @@ def sales_deck_partners_directory():
         country = str(row.get("COUNTRY", "")).strip()
         if country and country.lower() != "nan":
             bucket["countries"].add(country)
+            if region and region.lower() != "nan":
+                bucket["country_region"].setdefault(country, region)
 
         pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
         brand = str(row.get("CARD_BRAND", "")).strip().replace("_", " ")
@@ -499,6 +503,7 @@ def sales_deck_partners_directory():
             "regions": sorted(b["regions"]),
             "countries": sorted(b["countries"]),
             "country_methods": {c: sorted(ms) for c, ms in sorted(b["country_methods"].items())},
+            "country_region": dict(b["country_region"]),
         })
 
     return {"partners": partners}
