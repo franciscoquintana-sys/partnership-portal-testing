@@ -138,10 +138,6 @@ export default function SlidePartnerDirectory() {
       <div style={styles.body}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
           <h2 style={styles.title}>Partner Directory</h2>
-          <p style={styles.subtitle}>
-            Every partner in Yuno's network — filter by type, region, country, or search by name.
-            Click a row to expand the country-by-country payment-method coverage.
-          </p>
         </div>
 
         <div style={styles.filterRow}>
