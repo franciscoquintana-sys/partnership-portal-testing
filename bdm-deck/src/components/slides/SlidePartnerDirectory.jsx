@@ -256,7 +256,9 @@ export default function SlidePartnerDirectory() {
     // Detail map's pill-dropdown aesthetic. Search grows to fill space.
     filterRow: { display: 'flex', flexWrap: 'nowrap', gap: 10, alignItems: 'center', flexShrink: 0 },
     input: {
-      flex: '1 1 0', minWidth: 200,
+      // Fixed compact width so the four pill filters get full breathing
+      // room on the row and don't overflow to the right.
+      flex: '0 0 200px', minWidth: 0,
       fontFamily: 'var(--font)', fontSize: 13.5, fontWeight: 500,
       padding: '11.5px 18px', borderRadius: 100,
       border: isLight
