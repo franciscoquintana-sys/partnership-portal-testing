@@ -328,7 +328,19 @@ export default function SlideCover({ data }) {
                 </p>
                 <div style={styles.merchantLogoWrapper}>
                   {data.COMPANY_LOGO ? (
-                    isLight ? (
+                    // Presenter-uploaded logos arrive as base64 data URLs.
+                    // Render them as a plain <img> so the user-chosen
+                    // image keeps its original colors / transparency —
+                    // skip the light-theme silhouette mask and the
+                    // dark-theme white-out filter both of which assume
+                    // a mono brand asset.
+                    String(data.COMPANY_LOGO).startsWith('data:') ? (
+                      <img
+                        src={data.COMPANY_LOGO}
+                        alt={data.COMPANY_NAME}
+                        style={styles.merchantLogo}
+                      />
+                    ) : isLight ? (
                       // Merchant logo assets in /public/merchants are
                       // mostly white-on-transparent (built for the dark
                       // canvas). On light they vanish into the surface.
