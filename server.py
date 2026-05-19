@@ -437,6 +437,18 @@ def sales_deck_partners_directory():
     if df is None or len(df) == 0:
         return {"partners": []}
 
+    # Partner Type comes from the "All partners" sheet (the same Google
+    # Sheet that powers the Partner Portfolio's status data) — keyed by
+    # name (case-insensitive) so the SOT's PROVIDER_NAME joins onto it.
+    try:
+        name_to_type = {
+            str(p.get("name", "")).strip().lower(): (p.get("type") or "")
+            for p in load_partners_excel()
+            if p.get("name")
+        }
+    except Exception:
+        name_to_type = {}
+
     out: dict[str, dict] = {}
     for _, row in df.iterrows():
         name = str(row.get("PROVIDER_NAME", "")).strip()
@@ -450,9 +462,10 @@ def sales_deck_partners_directory():
             "country_methods": {},
         })
 
-        ptype = str(row.get("PROVIDER_CATEGORY", "")).strip()
-        if ptype and ptype.lower() != "nan" and not bucket["type"]:
-            bucket["type"] = ptype.replace("_", " ").title()
+        if not bucket["type"]:
+            partners_type = name_to_type.get(name.lower(), "")
+            if partners_type and str(partners_type).strip().lower() != "nan":
+                bucket["type"] = str(partners_type).strip()
 
         region = str(row.get("REGION", "")).strip().replace("_", " ")
         if region and region.lower() != "nan":
@@ -477,7 +490,7 @@ def sales_deck_partners_directory():
     for name, b in sorted(out.items(), key=lambda kv: kv[0].lower()):
         partners.append({
             "provider": b["provider"],
-            "type": b["type"] or "Partner",
+            "type": b["type"] or "—",
             "regions": sorted(b["regions"]),
             "countries": sorted(b["countries"]),
             "country_methods": {c: sorted(ms) for c, ms in sorted(b["country_methods"].items())},
