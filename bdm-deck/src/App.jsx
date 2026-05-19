@@ -292,12 +292,17 @@ export default function App() {
     setResolveError(null)
     const data = await buildMerchantData(rawInput)
     setResolving(false)
-    if (data && data.COMPANY_NAME && data.COMPANY_LOGO) {
+    // Presenter-supplied logo overrides anything the SOT scrape returned,
+    // and rescues the path where the scrape couldn't find a logo at all
+    // (no auto-fetch needed because the presenter brought their own).
+    const customLogo = typeof rawInput === 'object' ? rawInput?.customLogo : null
+    if (data && data.COMPANY_NAME && (data.COMPANY_LOGO || customLogo)) {
+      if (customLogo) data.COMPANY_LOGO = customLogo
       setMerchantData(data)
       return
     }
     if (data && data.COMPANY_NAME) {
-      setResolveError(`Couldn't find a logo for ${data.COMPANY_NAME}. Try another URL.`)
+      setResolveError(`Couldn't find a logo for ${data.COMPANY_NAME}. Try another URL or upload one.`)
     } else {
       setResolveError("Couldn't resolve that URL. Try another.")
     }

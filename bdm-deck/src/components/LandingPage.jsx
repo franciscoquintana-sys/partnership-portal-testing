@@ -490,6 +490,30 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
   const [showDropdown, setShowDropdown] = useState(false)
   const [highlightIdx, setHighlightIdx] = useState(0)
   const [hoveringBtn, setHoveringBtn] = useState(false)
+  // Optional override: presenter uploads a clean logo for the cover when
+  // the auto-fetched one (Brandfetch / site scrape) looks bad. Read as
+  // a base64 data URL so it lives entirely client-side — no server
+  // upload needed and the existing pipeline treats it just like any
+  // other COMPANY_LOGO src.
+  const [customLogo, setCustomLogo] = useState(null)
+  const [customLogoName, setCustomLogoName] = useState('')
+  const fileInputRef = useRef(null)
+  const handleLogoUpload = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!/^image\//.test(file.type)) {
+      // Silently ignore non-image uploads.
+      e.target.value = ''
+      return
+    }
+    const reader = new FileReader()
+    reader.onload = () => {
+      setCustomLogo(reader.result)
+      setCustomLogoName(file.name)
+    }
+    reader.readAsDataURL(file)
+    e.target.value = ''
+  }
   // Multi-select region + country. Both default empty — the deck only
   // surfaces region / country slides when the presenter explicitly picks
   // them. Country list is the union of every country in the selected
@@ -591,10 +615,10 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
     if (loading) return
     const pick = filtered[highlightIdx]
     if (pick) {
-      onGenerate({ name: pick.name, type: pick.type, regions, countries })
+      onGenerate({ name: pick.name, type: pick.type, regions, countries, customLogo })
     } else if (isUrlLike(trimmedMerchant)) {
       // Free-text fallback: assume merchant URL.
-      onGenerate({ name: trimmedMerchant, type: 'merchant', regions, countries })
+      onGenerate({ name: trimmedMerchant, type: 'merchant', regions, countries, customLogo })
     }
   }
 
@@ -746,6 +770,66 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
               {loading ? 'Fetching name and logo…' : errorMessage}
             </div>
           )}
+
+          {/* Optional logo upload — only useful when the auto-fetched
+              logo looks wrong. Click → file picker; selected image
+              becomes the cover-slide logo for this session. */}
+          <div
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              gap: 12, marginTop: 10, flexWrap: 'wrap',
+              fontSize: 12, color: 'rgba(255,255,255,0.6)',
+            }}
+          >
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleLogoUpload}
+              style={{ display: 'none' }}
+            />
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              style={{
+                fontFamily: 'var(--font)',
+                fontSize: 12, fontWeight: 600,
+                padding: '7px 14px', borderRadius: 100,
+                background: 'rgba(124,137,239,0.16)',
+                border: '1px solid rgba(124,137,239,0.45)',
+                color: '#fff', cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {customLogo ? 'Replace logo' : 'Upload logo (optional)'}
+            </button>
+            {customLogo && (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                <img
+                  src={customLogo}
+                  alt="Custom logo preview"
+                  style={{ height: 22, maxWidth: 80, objectFit: 'contain', borderRadius: 4, background: 'rgba(255,255,255,0.06)', padding: 2 }}
+                />
+                <span style={{ maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {customLogoName}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => { setCustomLogo(null); setCustomLogoName('') }}
+                  style={{
+                    fontFamily: 'var(--font)',
+                    fontSize: 11, fontWeight: 600,
+                    padding: '4px 10px', borderRadius: 100,
+                    background: 'transparent',
+                    border: '1px solid rgba(255,255,255,0.18)',
+                    color: 'rgba(255,255,255,0.7)', cursor: 'pointer',
+                  }}
+                >
+                  Remove
+                </button>
+              </span>
+            )}
+          </div>
         </form>
       </div>
 
