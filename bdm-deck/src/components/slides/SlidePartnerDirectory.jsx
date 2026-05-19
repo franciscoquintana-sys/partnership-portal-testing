@@ -124,28 +124,43 @@ export default function SlidePartnerDirectory() {
       letterSpacing: '-1px', lineHeight: 1.05, color: inkStrong, margin: 0,
     },
     subtitle: { fontFamily: 'var(--font)', fontSize: 13, color: inkSecondary, margin: 0 },
-    // Single row: search input + four selects. No wrap; search shrinks
-    // to a compact width.
-    filterRow: { display: 'flex', flexWrap: 'nowrap', gap: 8, alignItems: 'center', flexShrink: 0 },
+    // Single row: search input + four selects, matching the Country
+    // Detail map's pill-dropdown aesthetic. Search grows to fill space.
+    filterRow: { display: 'flex', flexWrap: 'nowrap', gap: 10, alignItems: 'center', flexShrink: 0 },
     input: {
-      flex: '0 1 200px', minWidth: 0,
-      fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 600,
-      padding: '8px 12px', borderRadius: 999,
-      border: `1px solid ${cellBorder}`,
-      background: isLight ? 'rgba(62,79,224,0.06)' : 'rgba(124,137,239,0.10)',
+      flex: '1 1 0', minWidth: 200,
+      fontFamily: 'var(--font)', fontSize: 13.5, fontWeight: 500,
+      padding: '11.5px 18px', borderRadius: 100,
+      border: isLight
+        ? '1px solid rgba(15,23,42,0.12)'
+        : '1px solid rgba(255,255,255,0.12)',
+      background: isLight ? 'rgba(15,23,42,0.04)' : 'rgba(255,255,255,0.04)',
       color: inkStrong, outline: 'none',
+      transition: 'all 0.18s ease',
+      backdropFilter: 'blur(12px)',
     },
-    // Match the rounded-pill style of the Country Detail back button so
-    // all in-slide controls read as one set.
+    // Mirrors the pill dropdowns on the Country Detail map (icon + label
+    // + caret). Native <select> can't render an icon inline reliably, but
+    // the spacing / colors / pill radius / glow match.
     select: {
       flex: '0 0 auto',
-      fontFamily: 'var(--font-mono)', fontSize: 11, fontWeight: 700,
-      padding: '8px 14px', borderRadius: 999,
-      border: `1px solid ${theme.borderAccent || cellBorder}`,
-      background: isLight ? 'rgba(62,79,224,0.08)' : 'rgba(124,137,239,0.16)',
+      fontFamily: 'var(--font)', fontSize: 13.5, fontWeight: 600,
+      padding: '11.5px 18px 11.5px 18px',
+      borderRadius: 100,
+      border: isLight
+        ? '1px solid rgba(15,23,42,0.12)'
+        : '1px solid rgba(255,255,255,0.12)',
+      background: isLight ? 'rgba(15,23,42,0.04)' : 'rgba(255,255,255,0.04)',
       color: inkStrong,
       cursor: 'pointer', outline: 'none',
-      textTransform: 'uppercase', letterSpacing: '0.6px',
+      textTransform: 'uppercase', letterSpacing: '0.06em',
+      transition: 'all 0.18s ease',
+      backdropFilter: 'blur(12px)',
+      appearance: 'none', WebkitAppearance: 'none', MozAppearance: 'none',
+      paddingRight: 36,
+      backgroundImage: `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='${isLight ? '%230f172a' : '%23ffffff'}' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>")`,
+      backgroundRepeat: 'no-repeat',
+      backgroundPosition: 'right 14px center',
     },
     tableWrap: { flex: '1 1 0', minHeight: 0, overflow: 'auto', border: `1px solid ${cellBorder}`, borderRadius: 10 },
     table: { width: '100%', borderCollapse: 'collapse', fontFamily: 'var(--font)', fontSize: 12 },
