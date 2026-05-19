@@ -106,14 +106,28 @@ export default function SlideBase({ section, slideNumber, children, customBg, th
         </div>
         {children}
       </div>
-      {/* SlideBase renders its own slide number only on the dark deck.
-          The hardcoded values (slideNumber={2}, slideNumber={6}, etc.)
-          were authored for the original 9-slide cut and don't match the
-          12-slide Replit deck. SlideViewer/PrintViewer paint a single
-          auto-numbered overlay for Replit instead. */}
-      {/* SlideViewer paints a single auto-numbered "current/total" badge
-          for every slide (except the Country Detail map) — so SlideBase
-          no longer renders its own hardcoded slide number here. */}
+      {/* Dynamic current/total tag, fed from SlideViewer via context.
+          Pinned bottom-left of the stage so every slide shows it in the
+          same place. Suppressed when the context value is null. */}
+      {meta && (
+        <div
+          style={{
+            position: 'absolute',
+            bottom: 'clamp(18px, 2.4%, 40px)',
+            left: 'clamp(36px, 4.8%, 90px)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: 12,
+            fontWeight: 700,
+            letterSpacing: '1.5px',
+            color: isLight ? theme.inkMuted : 'rgba(255,255,255,0.55)',
+            fontVariantNumeric: 'tabular-nums',
+            pointerEvents: 'none',
+            zIndex: 4,
+          }}
+        >
+          {meta.index + 1} / {meta.total}
+        </div>
+      )}
     </div>
   )
 }
