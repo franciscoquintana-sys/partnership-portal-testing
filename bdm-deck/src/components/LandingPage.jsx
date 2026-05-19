@@ -734,50 +734,13 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
             )}
           </div>
 
-          <div style={styles.regionRow}>
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            style={{
-              ...styles.submitButton,
-              ...(!canSubmit ? styles.submitButtonDisabled : {}),
-              marginLeft: 'auto',
-              transform: hoveringBtn && canSubmit ? 'scale(1.03)' : 'scale(1)',
-              boxShadow: hoveringBtn && canSubmit
-                ? '0 8px 32px rgba(62,79,224,0.5), 0 0 0 1px rgba(255,255,255,0.2) inset'
-                : canSubmit
-                  ? '0 4px 20px rgba(62,79,224,0.3)'
-                  : 'none',
-            }}
-            onMouseEnter={() => setHoveringBtn(true)}
-            onMouseLeave={() => setHoveringBtn(false)}
-          >
-            {loading ? 'Loading…' : "Let's start →"}
-          </button>
-          </div>
-          {(loading || errorMessage) && (
-            <div
-              role="status"
-              aria-live="polite"
-              style={{
-                fontSize: '12.5px',
-                color: errorMessage ? '#FCA5A5' : 'rgba(255,255,255,0.6)',
-                textAlign: 'center',
-                marginTop: '4px',
-                animation: 'fadeIn 0.25s ease-out',
-              }}
-            >
-              {loading ? 'Fetching name and logo…' : errorMessage}
-            </div>
-          )}
-
-          {/* Optional logo upload — only useful when the auto-fetched
-              logo looks wrong. Click → file picker; selected image
-              becomes the cover-slide logo for this session. */}
+          {/* Optional logo upload — sits right below the URL input so
+              the presenter can attach a clean logo before generating the
+              deck. Skipped silently if they leave it untouched. */}
           <div
             style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              gap: 12, marginTop: 10, flexWrap: 'wrap',
+              gap: 12, marginTop: 6, flexWrap: 'wrap',
               fontSize: 12, color: 'rgba(255,255,255,0.6)',
             }}
           >
@@ -830,6 +793,43 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
               </span>
             )}
           </div>
+
+          <div style={styles.regionRow}>
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            style={{
+              ...styles.submitButton,
+              ...(!canSubmit ? styles.submitButtonDisabled : {}),
+              marginLeft: 'auto',
+              transform: hoveringBtn && canSubmit ? 'scale(1.03)' : 'scale(1)',
+              boxShadow: hoveringBtn && canSubmit
+                ? '0 8px 32px rgba(62,79,224,0.5), 0 0 0 1px rgba(255,255,255,0.2) inset'
+                : canSubmit
+                  ? '0 4px 20px rgba(62,79,224,0.3)'
+                  : 'none',
+            }}
+            onMouseEnter={() => setHoveringBtn(true)}
+            onMouseLeave={() => setHoveringBtn(false)}
+          >
+            {loading ? 'Loading…' : "Let's start →"}
+          </button>
+          </div>
+          {(loading || errorMessage) && (
+            <div
+              role="status"
+              aria-live="polite"
+              style={{
+                fontSize: '12.5px',
+                color: errorMessage ? '#FCA5A5' : 'rgba(255,255,255,0.6)',
+                textAlign: 'center',
+                marginTop: '4px',
+                animation: 'fadeIn 0.25s ease-out',
+              }}
+            >
+              {loading ? 'Fetching name and logo…' : errorMessage}
+            </div>
+          )}
         </form>
       </div>
 
