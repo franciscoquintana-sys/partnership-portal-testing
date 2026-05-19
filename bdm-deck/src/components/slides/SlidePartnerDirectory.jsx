@@ -345,7 +345,7 @@ export default function SlidePartnerDirectory() {
         <div style={styles.filterRow}>
           <input
             type="text"
-            placeholder="Search provider / type / region / country…"
+            placeholder="Search..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             data-no-translate
