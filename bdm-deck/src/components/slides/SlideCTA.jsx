@@ -150,15 +150,17 @@ export default function SlideCTA({ data, shared = false }) {
       justifyContent: 'space-between',
       alignItems: 'center',
     },
+    // Match SlideBase's section pill + Yuno logo sizing so the closing
+    // CTA slide reads as part of the same set, not a smaller cousin.
     sectionLabel: {
       display: 'inline-flex',
       alignItems: 'center',
-      gap: '10px',
-      padding: '7px 16px',
+      gap: '14px',
+      padding: '12px 24px',
       background: theme.sectionLabelBg,
       border: `1px solid ${theme.sectionLabelBorder}`,
       borderRadius: '100px',
-      fontSize: '9px',
+      fontSize: '16px',
       fontWeight: 700,
       letterSpacing: '1.8px',
       textTransform: 'uppercase',
@@ -169,10 +171,10 @@ export default function SlideCTA({ data, shared = false }) {
       width: '5px',
       height: '5px',
       borderRadius: '50%',
-      background: 'linear-gradient(135deg, #3E4FE0 0%, #BDC3F6 100%)',
+      background: theme.accent,
     },
     yunoLogo: {
-      height: '19px',
+      height: '30.5px',
       opacity: theme.logoOpacity,
       filter: theme.logoFilter,
     },
