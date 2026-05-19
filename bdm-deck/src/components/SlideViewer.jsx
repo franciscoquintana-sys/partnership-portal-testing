@@ -25,6 +25,7 @@ import SlideCountryConnections from './slides/SlideCountryConnections'
 import SlideCountryDetail from './slides/SlideCountryDetail'
 import SlideCountryDetailPage from './slides/SlideCountryDetailPage'
 import SlidePartnerDirectory from './slides/SlidePartnerDirectory'
+import { SlideMetaContext } from './slides/SlideBase'
 import SlideCTA from './slides/SlideCTA'
 import { getRegionCountries } from '../data/regional-data'
 import OrbBackground from './OrbBackground'
@@ -694,30 +695,22 @@ function SlideViewerInner({ data, onBack, shared = false }) {
               animation: `${direction === 'next' ? 'slideInRight' : 'slideInLeft'} 0.5s cubic-bezier(0.32, 0.72, 0, 1)`,
             }}
           >
-            <SlideComponent
-              data={data}
-              shared={shared}
-              goTo={goTo}
-              currentIndex={current}
-              totalSlides={total}
-              selectedCountry={selectedCountry}
-              setSelectedCountry={setSelectedCountry}
-              merchantVertical={data?.COMPANY_VERTICAL || 'general'}
-              {...(slideProps || {})}
-            />
+            <SlideMetaContext.Provider
+              value={SLIDES[current]?.Component === SlideCountryDetail ? null : { index: current, total }}
+            >
+              <SlideComponent
+                data={data}
+                shared={shared}
+                goTo={goTo}
+                currentIndex={current}
+                totalSlides={total}
+                selectedCountry={selectedCountry}
+                setSelectedCountry={setSelectedCountry}
+                merchantVertical={data?.COMPANY_VERTICAL || 'general'}
+                {...(slideProps || {})}
+              />
+            </SlideMetaContext.Provider>
           </div>
-
-          {/* Replit auto-numbering. The deck filters in two extra slides
-              (Going Global, Why Yuno) on top of the shared base, so the
-              hardcoded "/ 09" markers from the original cut don't fit.
-              SlideBase + SlideCTA suppress their own numbers on light
-              and we paint a single canonical "NN / TT" badge here, fed
-              by the live SLIDES list so the count is always honest. */}
-          {SLIDES[current]?.Component !== SlideCountryDetail && (
-            <div style={{ ...styles.stageSlideNumber, color: theme.inkFaint || (theme.isLight ? '#94a3b8' : 'rgba(255,255,255,0.45)') }}>
-              {current + 1}/{total}
-            </div>
-          )}
         </div>
 
         {showHint && !needsRotate && (

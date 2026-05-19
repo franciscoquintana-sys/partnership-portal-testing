@@ -1,4 +1,10 @@
+import { createContext, useContext } from 'react'
 import { useTheme } from '../../lib/theme'
+
+// Lets SlideViewer pipe the dynamic current/total slide index into every
+// slide via context, so SlideBase can render the slide tag next to the
+// section pill without touching every individual slide component.
+export const SlideMetaContext = createContext(null)
 
 // Per-slide chrome shared by every deck slide: section pill (top-left),
 // Yuno wordmark (top-right), inner padding, optional slide number.
@@ -14,6 +20,10 @@ export default function SlideBase({ section, slideNumber, children, customBg, th
   const theme = useTheme()
   // `theme` prop still supported for explicit override (legacy callers).
   const isLight = themeOverride === 'light' || (!themeOverride && theme.isLight)
+  // Read the dynamic slide index injected by SlideViewer; rendered next
+  // to the section pill so the deck always shows "X / TOTAL" at a glance.
+  // `null` (e.g. on the Country Detail map) suppresses the tag entirely.
+  const meta = useContext(SlideMetaContext)
 
   const styles = {
     slide: {
@@ -88,10 +98,26 @@ export default function SlideBase({ section, slideNumber, children, customBg, th
     <div style={slideStyle}>
       <div className="slide-enter" style={styles.content}>
         <div style={styles.topBar}>
-          <span style={styles.sectionLabel}>
-            <span style={styles.sectionDot} />
-            {section}
-          </span>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '14px' }}>
+            <span style={styles.sectionLabel}>
+              <span style={styles.sectionDot} />
+              {section}
+            </span>
+            {meta && (
+              <span
+                style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 13,
+                  fontWeight: 700,
+                  letterSpacing: '1.5px',
+                  color: isLight ? theme.inkMuted : 'rgba(255,255,255,0.55)',
+                  fontVariantNumeric: 'tabular-nums',
+                }}
+              >
+                {meta.index + 1} / {meta.total}
+              </span>
+            )}
+          </div>
           <img src="/sales-deck/assets/yuno-logo-white.svg" alt="Yuno" style={styles.yunoLogo} />
         </div>
         {children}
