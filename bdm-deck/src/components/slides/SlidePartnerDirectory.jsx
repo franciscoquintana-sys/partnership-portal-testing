@@ -148,7 +148,7 @@ export default function SlidePartnerDirectory() {
     },
     tr: { background: cellBg, borderBottom: `1px solid ${cellBorder}`, cursor: 'pointer' },
     td: { padding: '10px 14px', color: inkSecondary, verticalAlign: 'top' },
-    providerCell: { fontWeight: 700, color: inkStrong },
+    providerCell: { fontWeight: 700, color: inkStrong, textTransform: 'uppercase', letterSpacing: '0.04em' },
     chipRow: { display: 'flex', flexWrap: 'wrap', gap: 4 },
     chip: {
       fontFamily: 'var(--font-mono)', fontSize: 10, fontWeight: 700,
@@ -185,7 +185,7 @@ export default function SlidePartnerDirectory() {
         <div style={styles.filterRow}>
           <input
             type="text"
-            placeholder="Search partner / type / region / country…"
+            placeholder="Search provider / type / region / country…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             data-no-translate
@@ -216,7 +216,7 @@ export default function SlidePartnerDirectory() {
             <table style={styles.table}>
               <thead>
                 <tr>
-                  <th style={styles.th}>Partner</th>
+                  <th style={styles.th}>Provider</th>
                   <th style={styles.th}>Type</th>
                   <th style={styles.th}>Regions</th>
                   <th style={styles.th}>Countries</th>
