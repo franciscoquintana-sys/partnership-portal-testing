@@ -459,6 +459,36 @@ def _country_name_to_iso(name: str) -> str:
             cache["côte d'ivoire"] = "CI"
             cache["cote d'ivoire"] = "CI"
             cache["ivory coast"] = "CI"
+            # Recent pycountry releases switched Turkey's name to the
+            # official "Türkiye", which doesn't match the SOT's plain
+            # "TURKEY". Explicit override keeps the flag resolving.
+            cache["turkey"] = "TR"
+            cache["türkiye"] = "TR"
+            cache["turkiye"] = "TR"
+            # Other common ISO/name divergences the SOT can ship.
+            cache["russia"] = "RU"
+            cache["taiwan"] = "TW"
+            cache["vietnam"] = "VN"
+            cache["viet nam"] = "VN"
+            cache["iran"] = "IR"
+            cache["syria"] = "SY"
+            cache["laos"] = "LA"
+            cache["macao"] = "MO"
+            cache["macau"] = "MO"
+            cache["palestine"] = "PS"
+            cache["brunei"] = "BN"
+            cache["cape verde"] = "CV"
+            cache["cabo verde"] = "CV"
+            cache["congo"] = "CG"
+            cache["dr congo"] = "CD"
+            cache["democratic republic of the congo"] = "CD"
+            cache["republic of the congo"] = "CG"
+            cache["tanzania"] = "TZ"
+            cache["bolivia"] = "BO"
+            cache["venezuela"] = "VE"
+            cache["myanmar"] = "MM"
+            cache["burma"] = "MM"
+            cache["north korea"] = "KP"
         except Exception:
             pass
         _COUNTRY_TO_ISO_CACHE = cache
