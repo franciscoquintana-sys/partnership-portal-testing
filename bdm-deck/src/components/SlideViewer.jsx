@@ -24,6 +24,7 @@ import SlideCountryMarket from './slides/SlideCountryMarket'
 import SlideCountryConnections from './slides/SlideCountryConnections'
 import SlideCountryDetail from './slides/SlideCountryDetail'
 import SlideCountryDetailPage from './slides/SlideCountryDetailPage'
+import SlidePartnerDirectory from './slides/SlidePartnerDirectory'
 import SlideCTA from './slides/SlideCTA'
 import { getRegionCountries } from '../data/regional-data'
 import OrbBackground from './OrbBackground'
@@ -82,6 +83,7 @@ const ALL_SLIDES = [
   { Component: SlideGlobalPresence, label: 'Global Presence' },
   { Component: SlideLeadership, label: 'Leadership' },
   { Component: SlideTrustedBy, label: 'Trusted By' },
+  { Component: SlidePartnerDirectory, label: 'Partner Directory' },
   { Component: SlideCountryDetail, label: 'Country Detail' },
   { Component: SlideCountryDetailPage, label: 'Country Detail Page' },
   { Component: SlideCTA, label: 'CTA' },

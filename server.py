@@ -427,6 +427,65 @@ def sales_deck_site_info(url: str = ""):
     return _site_info(url)
 
 
+# Sales-deck partner directory — flat JSON list of every partner in the
+# SOT grouped by PROVIDER_NAME, with type / regions / countries / methods
+# attached. Powers the in-deck partner-directory slide (filters + click
+# to expand). No auth: the sales-deck SPA is publicly accessible.
+@app.get("/api/partners-directory", response_class=JSONResponse)
+def sales_deck_partners_directory():
+    df = _load_partners_sot()
+    if df is None or len(df) == 0:
+        return {"partners": []}
+
+    out: dict[str, dict] = {}
+    for _, row in df.iterrows():
+        name = str(row.get("PROVIDER_NAME", "")).strip()
+        if not name or name.lower() == "nan":
+            continue
+        bucket = out.setdefault(name, {
+            "provider": name,
+            "type": "",
+            "regions": set(),
+            "countries": set(),
+            "country_methods": {},
+        })
+
+        ptype = str(row.get("PROVIDER_CATEGORY", "")).strip()
+        if ptype and ptype.lower() != "nan" and not bucket["type"]:
+            bucket["type"] = ptype.replace("_", " ").title()
+
+        region = str(row.get("REGION", "")).strip().replace("_", " ")
+        if region and region.lower() != "nan":
+            bucket["regions"].add(region)
+
+        country = str(row.get("COUNTRY", "")).strip()
+        if country and country.lower() != "nan":
+            bucket["countries"].add(country)
+
+        pmt = str(row.get("PAYMENT_METHOD_TYPE", "")).strip()
+        brand = str(row.get("CARD_BRAND", "")).strip().replace("_", " ")
+        if pmt.upper() == "CARD" and brand and brand.lower() != "nan" and brand.upper() != "FALSE":
+            method = brand
+        elif pmt and pmt.lower() != "nan":
+            method = pmt.replace("_", " ")
+        else:
+            method = None
+        if method and country and country.lower() != "nan":
+            bucket["country_methods"].setdefault(country, set()).add(method)
+
+    partners = []
+    for name, b in sorted(out.items(), key=lambda kv: kv[0].lower()):
+        partners.append({
+            "provider": b["provider"],
+            "type": b["type"] or "Partner",
+            "regions": sorted(b["regions"]),
+            "countries": sorted(b["countries"]),
+            "country_methods": {c: sorted(ms) for c, ms in sorted(b["country_methods"].items())},
+        })
+
+    return {"partners": partners}
+
+
 # -----------------------------------------------------------------------------
 
 templates = Jinja2Templates(directory=os.path.join(BASE, "templates"))
