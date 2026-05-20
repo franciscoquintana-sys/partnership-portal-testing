@@ -7,16 +7,9 @@ import SlideWhyPlatformPartner from './slides/SlideWhyPlatformPartner'
 import SlideBeyondOrchestration from './slides/SlideBeyondOrchestration'
 import SlideValueLevers from './slides/SlideValueLevers'
 import SlideWhiteLabelPromise from './slides/SlideWhiteLabelPromise'
-import SlideInfrastructure from './slides/SlideInfrastructure'
 import SlideDiagnostic from './slides/SlideDiagnostic'
-import SlideYunoSolve from './slides/SlideYunoSolve'
 import SlideReplitGoingGlobal from './slides/SlideReplitGoingGlobal'
 import SlideReplitBenefits from './slides/SlideReplitBenefits'
-import SlideDashboard from './slides/SlideDashboard'
-import SlideProductSuite from './slides/SlideProductSuite'
-import SlideGlobalPresence from './slides/SlideGlobalPresence'
-import SlideLeadership from './slides/SlideLeadership'
-import SlideTrustedBy from './slides/SlideTrustedBy'
 import SlideRegionTierMap from './slides/SlideRegionTierMap'
 import SlideRegionEcommerceMap from './slides/SlideRegionEcommerceMap'
 import SlideRegionPMsMap from './slides/SlideRegionPMsMap'
@@ -67,8 +60,6 @@ const ALL_SLIDES = [
   { Component: SlideBeyondOrchestration, label: 'Beyond Orchestration', onlyForGenericBanking: true },
   { Component: SlideValueLevers, label: 'Value Levers', onlyForGenericBanking: true },
   { Component: SlideWhiteLabelPromise, label: 'White-label Promise', onlyForGenericBanking: true },
-  { Component: SlideInfrastructure, label: 'Infrastructure' },
-  { Component: SlideYunoSolve, label: 'The Solve', skipForModes: ['banking'] },
   // Replit-only setup + emphasis pair. The deck goes from JP straight to
   // Replit's CEO, so we run two custom slides after the generic Solve:
   //   1) Going Global frames what Replit is trying to do (grow paying
@@ -79,11 +70,6 @@ const ALL_SLIDES = [
   // Other merchants skip both entirely.
   { Component: SlideReplitGoingGlobal, label: 'Going Global', onlyForSlugs: ['replit'] },
   { Component: SlideReplitBenefits, label: 'Why Yuno', onlyForSlugs: ['replit'] },
-  { Component: SlideProductSuite, label: 'Product Suite' },
-  { Component: SlideDashboard, label: 'Dashboard' },
-  { Component: SlideGlobalPresence, label: 'Global Presence' },
-  { Component: SlideLeadership, label: 'Leadership' },
-  { Component: SlideTrustedBy, label: 'Trusted By' },
   { Component: SlideCountryDetail, label: 'Country Detail' },
   { Component: SlideCountryDetailPage, label: 'Country Detail Page' },
   { Component: SlidePartnerDirectory, label: 'Providers Directory' },
@@ -129,28 +115,12 @@ function buildSlides(mode, { isGenericBanking = false, slug = null, regions = []
     if (s.onlyForSlugs && !s.onlyForSlugs.includes(slug)) return false
     return true
   })
-  // Splice the regional/country block in right after Global Presence so
-  // the deck reads: ...Global Presence → Region 1 → Country A brief →
-  // Country A coverage → Country B... → Region 2 → ... → Leadership.
-  const gpIdx = filtered.findIndex((s) => s.Component === SlideGlobalPresence)
-  if (gpIdx !== -1) {
+  // Splice the regional/country block in right after the Cover.
+  const coverIdx = filtered.findIndex((s) => s.Component === SlideCover)
+  if (coverIdx !== -1) {
     const block = buildRegionalBlock(regions, countries)
     if (block.length > 0) {
-      filtered.splice(gpIdx + 1, 0, ...block)
-    }
-  }
-  // Replit storyline reorder: Going Global (frames the problem of
-  // reaching paying users globally) lands BEFORE The Solve (Yuno's
-  // platform answer), so the deck reads diagnose → frame → solve →
-  // Replit-specific benefits. Default order keeps The Solve first
-  // for every other merchant.
-  if (slug === 'replit') {
-    const i = filtered.findIndex((s) => s.Component === SlideYunoSolve)
-    const j = filtered.findIndex((s) => s.Component === SlideReplitGoingGlobal)
-    if (i !== -1 && j !== -1) {
-      const swapped = filtered.slice()
-      ;[swapped[i], swapped[j]] = [swapped[j], swapped[i]]
-      return swapped
+      filtered.splice(coverIdx + 1, 0, ...block)
     }
   }
   return filtered
