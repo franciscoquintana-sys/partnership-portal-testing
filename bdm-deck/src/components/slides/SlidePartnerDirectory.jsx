@@ -259,7 +259,7 @@ export default function SlidePartnerDirectory() {
       fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 700,
       letterSpacing: '-1px', lineHeight: 1.05, color: inkStrong, margin: 0,
     },
-    subtitle: { fontFamily: 'var(--font)', fontSize: 17, lineHeight: 1.5, color: inkSecondary, margin: 0, maxWidth: 1280 },
+    subtitle: { fontFamily: 'var(--font)', fontSize: 24, lineHeight: 1.45, color: inkSecondary, margin: 0, maxWidth: 'none' },
     // Single row: search input + four selects, matching the Country
     // Detail map's pill-dropdown aesthetic. Search grows to fill space.
     filterRow: { display: 'flex', flexWrap: 'nowrap', gap: 10, alignItems: 'center', flexShrink: 0 },
