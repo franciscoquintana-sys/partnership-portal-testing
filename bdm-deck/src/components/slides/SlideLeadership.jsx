@@ -17,15 +17,15 @@ function SectionHeader({ children, beamDelay = 0, styles }) {
 }
 
 function PersonCard({ p, founder, style, styles }) {
-  // Leadership team now visually matches founders — same big photo and the
-  // blue gradient ring — only the name layout (single line for founders,
+  // Leadership team now visually matches founders â€” same big photo and the
+  // blue gradient ring â€” only the name layout (single line for founders,
   // two lines for the team) differs between the two sections.
   const photoStyle = { ...styles.photo, ...styles.photoFounder }
   // Leadership-team cards split the name across two lines (first name on
   // top, the rest on a second line) so the grid stays uniform regardless
   // of how long someone's surname is. Founders keep a single line so the
   // bigger photos stay paired with full inline names. Compound first
-  // names (e.g., "Juan Manuel Rebull" — first name "Juan Manuel",
+  // names (e.g., "Juan Manuel Rebull" â€” first name "Juan Manuel",
   // surname "Rebull") can pass `firstName`/`lastName` explicitly on the
   // person record to override the naive whitespace split.
   const renderName = () => {
@@ -71,7 +71,7 @@ function PersonCard({ p, founder, style, styles }) {
 function StripLogo({ name, styles }) {
   const scale = LOGO_SCALES[name] ?? 1
   const h = `clamp(${24 * scale}px, ${2.3 * scale}vw, ${40 * scale}px)`
-  // Wide wordmarks hit the maxWidth cap before reaching natural height —
+  // Wide wordmarks hit the maxWidth cap before reaching natural height â€”
   // they need a relaxed cap so they read at the same optical size as
   // the others. Worldline's canvas is 9.85:1 (very flat), so it sits in
   // the extra-wide tier with an even higher cap.
@@ -84,7 +84,7 @@ function StripLogo({ name, styles }) {
   return (
     <img
       className="pedigree-logo"
-      src={`/sales-deck/company-logos/${name}.png`}
+      src={`/connections-deck/company-logos/${name}.png`}
       alt={name}
       style={{
         ...styles.stripLogo,
@@ -151,7 +151,7 @@ export default function SlideLeadership({ data }) {
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      // Flow Founders → Leadership Team → "We've been there" naturally
+      // Flow Founders â†’ Leadership Team â†’ "We've been there" naturally
       // from the top with a compact gap, so the pedigree strip sits in
       // the upper-middle of the slide instead of being pinned to the
       // bottom where its second logo row gets clipped.
@@ -199,9 +199,9 @@ export default function SlideLeadership({ data }) {
     },
 
     // ---------- Leadership grid ----------
-    // 14 virtual columns, each card spans 2. 13 leaders ⇒ row 1 has 7 cards
-    // (cols 1–14, fills the row), row 2 has 6 cards shifted to start at col 2
-    // (cols 2–13) leaving col 1 + col 14 as half-column gutters — the shorter
+    // 14 virtual columns, each card spans 2. 13 leaders â‡’ row 1 has 7 cards
+    // (cols 1â€“14, fills the row), row 2 has 6 cards shifted to start at col 2
+    // (cols 2â€“13) leaving col 1 + col 14 as half-column gutters â€” the shorter
     // row stays visually centered without changing per-card width.
     leadersGrid: {
       display: 'grid',
@@ -310,7 +310,7 @@ export default function SlideLeadership({ data }) {
         : 'linear-gradient(180deg, rgba(62,79,224,0.05) 0%, rgba(62,79,224,0.02) 100%)',
       border: `1px solid ${theme.isLight ? theme.borderDefault : 'rgba(62,79,224,0.12)'}`,
       borderRadius: '14px',
-      // No marginTop:auto / translateY anymore — the body now flows
+      // No marginTop:auto / translateY anymore â€” the body now flows
       // top-down with flex-start, so the pedigree strip naturally lands
       // right after Leadership Team and stays within the slide bounds.
       boxShadow: theme.cardShadow,
@@ -354,8 +354,8 @@ export default function SlideLeadership({ data }) {
       objectFit: 'contain',
       opacity: theme.isLight ? 0.88 : 0.78,
       // Pedigree logos arrive as black-on-transparent (or white-on-transparent)
-      // PNGs; force them to a single tone matched to the surface — white on
-      // dark, black on light — so the row reads as a unified silhouette set.
+      // PNGs; force them to a single tone matched to the surface â€” white on
+      // dark, black on light â€” so the row reads as a unified silhouette set.
       filter: theme.invertLogos ? 'brightness(0) invert(1)' : 'brightness(0)',
       flex: '0 1 auto',
       minWidth: 0,
@@ -414,7 +414,7 @@ export default function SlideLeadership({ data }) {
 
         <div className="reveal" style={{ ...styles.pedigreeStrip, '--reveal-delay': '1.1s' }}>
           <div style={styles.pedigreeStripHeader}>
-            <img src="/sales-deck/assets/yuno-mark-white.svg" alt="" style={styles.pedigreeMark} aria-hidden />
+            <img src="/connections-deck/assets/yuno-mark-white.svg" alt="" style={styles.pedigreeMark} aria-hidden />
             <div style={styles.pedigreeStripLabel}>We&rsquo;ve been there.</div>
           </div>
           <div style={styles.pedigreeStripLogos}>

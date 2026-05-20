@@ -26,7 +26,7 @@ const GREETING_OVERRIDES = {
 }
 
 // Slugs whose Diagnostic topology should render the small role subtitle
-// (e.g. "Japan · acquirer") under each PSP name. The deck hides it by
+// (e.g. "Japan Â· acquirer") under each PSP name. The deck hides it by
 // default because role labels were inconsistent across merchants;
 // listed merchants opt back in when the role text is curated and
 // adds context the audience needs.
@@ -36,7 +36,7 @@ const SHOW_PSP_ROLES_FOR = new Set([
   'replit',
 ])
 
-// Reserved slug → dedicated deck data (not stored in Supabase). Right
+// Reserved slug â†’ dedicated deck data (not stored in Supabase). Right
 // now just "banking" for the Banking vertical pitch; the deck branches
 // on MODE='banking' per slide.
 const RESERVED_MODES = {
@@ -78,7 +78,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
     // resolved) gets the "Your Bank" placeholder everywhere a bank logo
     // would normally sit, instead of stamping "Banking" as a name.
     // IS_GENERIC also unlocks the banking-only Market Context and Value
-    // Levers slides that lead the deck — those are scoped to the
+    // Levers slides that lead the deck â€” those are scoped to the
     // generic vertical pitch, not specific bank decks.
     const isGeneric = !bank
     return {
@@ -150,7 +150,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
   if (!content && slugKey && RESEARCHED[slugKey]) content = RESEARCHED[slugKey]
   if (!content) content = defaultData
 
-  // URL input — when the typed string looks like a domain or URL, ask the
+  // URL input â€” when the typed string looks like a domain or URL, ask the
   // portal to scrape the live site for a name + PNG logo. Best-effort; on
   // network/parse failure we fall back to the domain-derived name so the
   // cover never shows the raw URL string in the greeting.
@@ -174,7 +174,7 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
         scrapedVertical = j?.vertical || null
       }
     } catch (_) {
-      // ignore — fall through to defaults
+      // ignore â€” fall through to defaults
     }
   }
 
@@ -194,13 +194,13 @@ async function buildMerchantData(selection, regionsOverride = null, countriesOve
     REGIONS: regions, COUNTRIES: countries,
     // Preserve the raw URL/name input so share links (Copy Link button)
     // can be built with the original "amazon.com" form rather than the
-    // slugified "amazon" — without the TLD, /api/site-info can't scrape
+    // slugified "amazon" â€” without the TLD, /api/site-info can't scrape
     // the recipient's logo + name when they open the share link.
     INPUT_URL: typed,
   }
 }
 
-// Strip the Vite base path (e.g. "/sales-deck/") from the pathname so the
+// Strip the Vite base path (e.g. "/connections-deck/") from the pathname so the
 // /m/:slug routes match the same way whether the deck is mounted at root
 // or vendored inside the partnerships portal.
 function pathnameInsideBase(pathname) {
@@ -215,7 +215,7 @@ function matchMerchantRoute(pathname) {
   return m ? decodeURIComponent(m[1]) : null
 }
 
-// Match /m/:slug/pdf — the PDF capture surface used by the server-side
+// Match /m/:slug/pdf â€” the PDF capture surface used by the server-side
 // Playwright renderer. Same data resolution as /m/:slug, but renders all
 // slides stacked at native 1920x1080 with no chrome and no animations.
 function matchPrintRoute(pathname) {
@@ -227,22 +227,22 @@ export default function App() {
   const [merchantData, setMerchantData] = useState(null)
   const [sharedMode, setSharedMode] = useState(false)
   const [printMode, setPrintMode] = useState(false)
-  // Loading + error gate for the landing-page → deck transition. The deck
+  // Loading + error gate for the landing-page â†’ deck transition. The deck
   // only advances past the intro once both a name and a PNG logo have been
   // resolved for the typed URL; otherwise the user stays on the landing
   // page and sees the reason.
   const [resolving, setResolving] = useState(false)
   const [resolveError, setResolveError] = useState(null)
 
-  // On first render, check the URL. `/m/:slug` → go straight to the deck
+  // On first render, check the URL. `/m/:slug` â†’ go straight to the deck
   // without the landing page, and hide the internal "send deck" form.
-  // `/m/:slug/pdf` → render PrintViewer instead, and signal readiness to
+  // `/m/:slug/pdf` â†’ render PrintViewer instead, and signal readiness to
   // the Playwright capturer via `window.__PDF_READY__`.
   useEffect(() => {
     const path = window.location.pathname
     const printSlug = matchPrintRoute(path)
     if (printSlug) {
-      // Flag <html> for the print stylesheet — html/body/#root use
+      // Flag <html> for the print stylesheet â€” html/body/#root use
       // height:100% + overflow:hidden by default, which clips everything
       // past slide 1 and produces a single-page PDF. The CSS hook flips
       // those to height:auto + overflow:visible so the stacked slides

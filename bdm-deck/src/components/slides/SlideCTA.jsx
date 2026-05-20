@@ -3,8 +3,8 @@ import { buildEmail } from '../../data/email-template'
 import { useTheme } from '../../lib/theme'
 
 const SENDERS = [
-  { id: 'german', name: 'Germán Tatis', email: 'german.tatis@y.uno', initials: 'GT' },
-  { id: 'samuel-carreno', name: 'Samuel Carreño', email: 'samuel.carreno@y.uno', initials: 'SC' },
+  { id: 'german', name: 'GermÃ¡n Tatis', email: 'german.tatis@y.uno', initials: 'GT' },
+  { id: 'samuel-carreno', name: 'Samuel CarreÃ±o', email: 'samuel.carreno@y.uno', initials: 'SC' },
   { id: 'daniela', name: 'Daniela Reyes', email: 'daniela.reyes@y.uno', initials: 'DR' },
   { id: 'mauricio', name: 'Mauricio Schwartzmann', email: 'ms@y.uno', initials: 'MS' },
   { id: 'martin', name: 'Martin Mexia', email: 'm@y.uno', initials: 'MM' },
@@ -25,7 +25,7 @@ const CC_RECIPIENTS = [
 ]
 
 // Per-sender CC override. When the selected sender's id is a key here,
-// the email goes out CC'd to this list instead of CC_RECIPIENTS — used
+// the email goes out CC'd to this list instead of CC_RECIPIENTS â€” used
 // when a specific sender wants their own escalation chain in the loop
 // rather than the default SDR cc roster.
 const CC_OVERRIDES_BY_SENDER = {
@@ -121,7 +121,7 @@ export default function SlideCTA({ data, shared = false }) {
       transform: 'rotate(-20deg)',
       borderRadius: '80px',
     },
-    // Closing brand wordmark — sits in the lower-right as a "signed by Yuno"
+    // Closing brand wordmark â€” sits in the lower-right as a "signed by Yuno"
     // moment on the final slide. Opposite the slide counter (lower-left) so
     // they balance without stacking. Higher opacity than the cover/solution
     // watermarks because this is the brand sign-off, not atmospheric accent.
@@ -566,7 +566,7 @@ export default function SlideCTA({ data, shared = false }) {
     }
   }
 
-  // Focus styling tokens for inputs — accent border + faint accent halo.
+  // Focus styling tokens for inputs â€” accent border + faint accent halo.
   const focusBorder = theme.accent
   const focusHalo = theme.isLight
     ? '0 0 0 4px rgba(62,79,224,0.12)'
@@ -586,7 +586,7 @@ export default function SlideCTA({ data, shared = false }) {
             <span style={styles.sectionDot} />
             Next Steps
           </span>
-          <img src="/sales-deck/assets/yuno-logo-white.svg" alt="Yuno" style={styles.yunoLogo} />
+          <img src="/connections-deck/assets/yuno-logo-white.svg" alt="Yuno" style={styles.yunoLogo} />
         </div>
 
         <div
@@ -634,9 +634,9 @@ export default function SlideCTA({ data, shared = false }) {
             <div className="stagger" style={{ ...styles.stats, '--stagger-base': '0.42s', '--stagger-step': '0.08s' }}>
               {(data?.MODE === 'banking'
                 ? [
-                    { n: '+8pp', l: 'inDrive · auth uplift' },
-                    { n: '27',   l: 'Rappi · APMs in 12 months' },
-                    { n: '21',   l: 'McDonald’s · countries on 1 dashboard' },
+                    { n: '+8pp', l: 'inDrive Â· auth uplift' },
+                    { n: '27',   l: 'Rappi Â· APMs in 12 months' },
+                    { n: '21',   l: 'McDonaldâ€™s Â· countries on 1 dashboard' },
                   ]
                 : data?.MODE === 'partner'
                 ? [
@@ -645,7 +645,7 @@ export default function SlideCTA({ data, shared = false }) {
                     { n: 'Weeks',  l: 'to activate, not months' },
                   ]
                 : [
-                    { n: '+3–8%', l: 'authorization uplift' },
+                    { n: '+3â€“8%', l: 'authorization uplift' },
                     { n: '25%+',  l: 'declines recovered' },
                     { n: 'Weeks', l: 'to launch markets' },
                   ]
@@ -731,7 +731,7 @@ export default function SlideCTA({ data, shared = false }) {
                   <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
                   <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
                 </svg>
-                <span>{copied ? '✓ Link copied' : 'Copy interactive deck link'}</span>
+                <span>{copied ? 'âœ“ Link copied' : 'Copy interactive deck link'}</span>
               </button>
             )}
           </div>
@@ -765,7 +765,7 @@ export default function SlideCTA({ data, shared = false }) {
                 onMouseEnter={() => setHovering(true)}
                 onMouseLeave={() => setHovering(false)}
               >
-                Book a Demo →
+                Book a Demo â†’
               </a>
             </div>
           </div>
@@ -773,7 +773,7 @@ export default function SlideCTA({ data, shared = false }) {
         </div>
       </div>
       {/* SlideViewer paints a single dynamic current/total slide number
-          for every slide — no hardcoded "09 / 09" here anymore. */}
+          for every slide â€” no hardcoded "09 / 09" here anymore. */}
     </div>
   )
 }

@@ -25,7 +25,7 @@ const TIER_BAR_COLOR = {
 export default function SlideRegionEcommerceMap({ region }) {
   const theme = useTheme()
   const allCountries = getRegionCountries(region)
-  // T1 + T2 only — the source slide title is explicitly "T1 and T2".
+  // T1 + T2 only â€” the source slide title is explicitly "T1 and T2".
   // T3 and high-risk markets are surfaced on the tier-overview slide.
   const focusCountries = allCountries
     .filter((c) => {
@@ -177,7 +177,7 @@ export default function SlideRegionEcommerceMap({ region }) {
     },
   }
 
-  function MetricRow({ Icon, value, fallback = '—' }) {
+  function MetricRow({ Icon, value, fallback = 'â€”' }) {
     return (
       <div style={styles.metricRow}>
         <Icon size={18} weight="fill" style={styles.metricIcon} aria-hidden />
@@ -193,7 +193,7 @@ export default function SlideRegionEcommerceMap({ region }) {
       <div style={{ ...styles.callout, borderLeftColor: TIER_BAR_COLOR[tier] }}>
         <div style={styles.calloutHeader}>
           <span style={styles.calloutName}>{country}</span>
-          <span style={styles.calloutFlag} aria-hidden>{COUNTRY_FLAG[country] || '🏳️'}</span>
+          <span style={styles.calloutFlag} aria-hidden>{COUNTRY_FLAG[country] || 'ðŸ³ï¸'}</span>
         </div>
         <MetricRow Icon={UsersThree} value={m?.population} />
         <MetricRow Icon={DeviceMobile} value={m ? `SP: ${m.sp} | I: ${m.i}` : null} />
@@ -236,7 +236,7 @@ export default function SlideRegionEcommerceMap({ region }) {
           </div>
 
           <div style={styles.mapBox}>
-            <img src="/sales-deck/world-map.svg" alt="" style={styles.mapImage} />
+            <img src="/connections-deck/world-map.svg" alt="" style={styles.mapImage} />
             {focusCountries.map((c) => {
               const coord = getCountryCoords(c.country)
               if (!coord) return null

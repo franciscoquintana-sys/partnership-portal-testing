@@ -13,7 +13,7 @@ const LAVENDER_BASE =
 // matching the pedigree strip pattern in SlideLeadership.
 const MERCHANTS = [
   { name: 'Whop',          slug: 'whop',           style: { fontWeight: 700, letterSpacing: '4px', textTransform: 'uppercase', fontSize: '0.9em' } },
-  { name: 'McDonald’s',    slug: 'mcdonalds',      style: { fontWeight: 800, letterSpacing: '-0.5px' } },
+  { name: 'McDonaldâ€™s',    slug: 'mcdonalds',      style: { fontWeight: 800, letterSpacing: '-0.5px' } },
   { name: 'Uber',          slug: 'uber',           style: { fontWeight: 800, letterSpacing: '-0.4px' } },
   { name: 'Crypto.com',    slug: 'crypto-com',     style: { fontWeight: 700, letterSpacing: '-0.4px', fontSize: '0.88em' } },
   { name: 'Samsung',       slug: 'samsung',        style: { fontWeight: 800, letterSpacing: '-0.3px' } },
@@ -24,7 +24,7 @@ const MERCHANTS = [
   { name: 'NetEase Games', slug: 'netease-games',  style: { fontWeight: 700, letterSpacing: '-0.2px', fontSize: '0.88em' } },
 ]
 
-// `imgStyle` per-investor overrides the default investorImg sizing —
+// `imgStyle` per-investor overrides the default investorImg sizing â€”
 // stacked logos (icon-on-top wordmarks) need a taller cap to read at the
 // same optical weight as the single-line wordmarks.
 const INVESTORS = [
@@ -37,14 +37,14 @@ const INVESTORS = [
 ]
 
 // Logo with text fallback. onError fires when /trusted/<slug>.png 404s,
-// flipping to the styled text wordmark — same behaviour as the rest of
+// flipping to the styled text wordmark â€” same behaviour as the rest of
 // the deck for missing merchant logos.
 function LogoOrText({ slug, ext = 'png', name, style, imgStyle, imgStyleOverride, textStyle }) {
   const [failed, setFailed] = useState(false)
   if (failed) return <span style={{ ...textStyle, ...style }}>{name}</span>
   return (
     <img
-      src={`/sales-deck/trusted/${slug}.${ext}`}
+      src={`/connections-deck/trusted/${slug}.${ext}`}
       alt={name}
       style={{ ...imgStyle, ...imgStyleOverride }}
       onError={() => setFailed(true)}
@@ -193,7 +193,7 @@ export default function SlideTrustedBy() {
     },
 
     // ---------- Investor section ----------
-    // flexShrink: 0 keeps it visible — without it the merchant grid above
+    // flexShrink: 0 keeps it visible â€” without it the merchant grid above
     // squeezes the strip off-stage on shorter viewports.
     investorSection: {
       flexShrink: 0,

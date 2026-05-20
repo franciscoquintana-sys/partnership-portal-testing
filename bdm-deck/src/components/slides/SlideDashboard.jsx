@@ -24,7 +24,7 @@ import BeamRule from '../BeamRule'
 import { useTheme } from '../../lib/theme'
 
 // Live "merchant view" of dashboard.y.uno. Reproduces the Smart
-// Routing screen as faithfully as possible: a single central "−"
+// Routing screen as faithfully as possible: a single central "âˆ’"
 // node forks via two 50% pills into the Stripe and dLocal entries,
 // then each PSP cascades into a stage-2 PSP via curved beziers
 // that hug the inter-card gap. Boxes never animate; the wiring
@@ -98,7 +98,7 @@ function PspCard({ pspKey, statuses, cardRef, rowRefs, styles }) {
 // SVG circuit. Every trace is a smooth horizontal-bias bezier so the
 // network reads as routed wiring rather than block diagrams. A bright
 // beam slides along each path on a stagger so you can see traffic
-// flowing condition → split → PSP → stage-2 PSP without any of the
+// flowing condition â†’ split â†’ PSP â†’ stage-2 PSP without any of the
 // boxes themselves moving.
 function RoutingCircuit({ paths, styles, theme }) {
   if (!paths.length) return null
@@ -122,7 +122,7 @@ function RoutingCircuit({ paths, styles, theme }) {
       </defs>
       {paths.map((d, i) => {
         // Faster cadence + bigger beam segment so the motion reads
-        // even on the short Stripe→Nuvei / dLocal→Xendit hops where
+        // even on the short Stripeâ†’Nuvei / dLocalâ†’Xendit hops where
         // the previous 20-pt beam was sliding through too fast to be
         // noticeable.
         const dur = 2.4 + (i % 4) * 0.3
@@ -256,7 +256,7 @@ export default function SlideDashboard() {
     },
     monoKickerCaret: { color: theme.accent },
 
-    // Two-column body — text panel takes ~46% so "How does it work?"
+    // Two-column body â€” text panel takes ~46% so "How does it work?"
     // and the bullet copy breathe; dashboard takes ~54% on the right,
     // small enough that the wiring stays the hero, big enough that the
     // PSP cards remain legible at projector distance.
@@ -399,7 +399,7 @@ export default function SlideDashboard() {
 
     // Dark-mode surface so the dashboard reads as part of the deck
     // instead of a light interruption between two dark slides. Layout
-    // stays identical — only the palette flips on light.
+    // stays identical â€” only the palette flips on light.
     surface: {
       flex: 1,
       background: surfaceBg,
@@ -583,7 +583,7 @@ export default function SlideDashboard() {
       fontWeight: 700,
     },
 
-    // Middle column — purely visual gap; the central minus node and the
+    // Middle column â€” purely visual gap; the central minus node and the
     // two 50% labels are absolute-positioned overlays inside the canvas.
     midCol: { position: 'relative', minWidth: 0 },
 
@@ -690,8 +690,8 @@ export default function SlideDashboard() {
       alignItems: 'center',
       gap: '6px,',
     },
-    // Active forward route — solid Yuno-blue circle with a right caret.
-    // Terminal route — outlined dark circle with a "−" minus glyph.
+    // Active forward route â€” solid Yuno-blue circle with a right caret.
+    // Terminal route â€” outlined dark circle with a "âˆ’" minus glyph.
     statusOutActive: {
       width: '13.5px',
       height: '13.5px',
@@ -724,7 +724,7 @@ export default function SlideDashboard() {
       const cb = cont.getBoundingClientRect()
       if (!cb.width || !cb.height) return
       // SlideViewer wraps every slide in a transform: scale() to fit the
-      // 1920×1080 stage into the viewport. getBoundingClientRect returns
+      // 1920Ã—1080 stage into the viewport. getBoundingClientRect returns
       // POST-transform pixels; SVG paths and absolute-positioned overlays
       // use the canvas's INTRINSIC (pre-transform) pixel space. Without
       // this correction every measured coord is multiplied by the stage
@@ -760,7 +760,7 @@ export default function SlideDashboard() {
       const nodeY = (stripe.cy + dlocal.cy) / 2
       setNodePos({ x: nodeX, y: nodeY })
 
-      // Each fork lands at the SUCCEEDED row of the target PSP — that
+      // Each fork lands at the SUCCEEDED row of the target PSP â€” that
       // is where the routing arrow naturally enters the card in the
       // reference UI, not the geometric center.
       const stripeRow0 = rel(stripeRows[0].current) || { cy: stripe.cy, left: stripe.left }
@@ -776,7 +776,7 @@ export default function SlideDashboard() {
 
       // 50% pill positions sit on the curve at t=0.5. With the control
       // handles above, the midpoint of a horizontal-bias cubic bezier
-      // equals the linear midpoint between endpoints — so we can place
+      // equals the linear midpoint between endpoints â€” so we can place
       // the pills at simple (x_avg, y_avg) and they land on the trace.
       const topForkStart = { x: nodeX + 14, y: nodeY }
       const topForkEnd = { x: stripeRow0.left, y: stripeRow0.cy }
@@ -787,7 +787,7 @@ export default function SlideDashboard() {
         bottom: { x: (botForkStart.x + botForkEnd.x) / 2, y: (botForkStart.y + botForkEnd.y) / 2 },
       })
 
-      // Stage-2 row connections: source row right edge → dest row left
+      // Stage-2 row connections: source row right edge â†’ dest row left
       // edge. Measured per row so the curve always touches the actual
       // status row, not a guessed offset.
       const rowEdge = (rowRef, side) => {
@@ -797,23 +797,23 @@ export default function SlideDashboard() {
       }
 
       const next = []
-      // Conditions trunk → central node (single straight horizontal hop)
+      // Conditions trunk â†’ central node (single straight horizontal hop)
       next.push(`M ${conds.right} ${nodeY} L ${nodeX - 14} ${nodeY}`)
-      // Central node → Stripe Succeeded row entry
+      // Central node â†’ Stripe Succeeded row entry
       next.push(curve(topForkStart.x, topForkStart.y, topForkEnd.x, topForkEnd.y))
-      // Central node → dLocal Succeeded row entry
+      // Central node â†’ dLocal Succeeded row entry
       next.push(curve(botForkStart.x, botForkStart.y, botForkEnd.x, botForkEnd.y))
 
       // Stage-2 cascade story:
-      //   - Stripe Succeeded → Nuvei Succeeded (the happy-path trace)
-      //   - Stripe Error     → Nuvei Succeeded (the cascade-retry
-      //     trace — "Stripe errored, we retried on Nuvei and it
+      //   - Stripe Succeeded â†’ Nuvei Succeeded (the happy-path trace)
+      //   - Stripe Error     â†’ Nuvei Succeeded (the cascade-retry
+      //     trace â€” "Stripe errored, we retried on Nuvei and it
       //     succeeded"). This second trace rises sharply from the
       //     bottom of the Stripe card and converges on the same
       //     Nuvei Succeeded entry point as the happy-path trace, so
       //     the merge reads visually.
-      // The previous Error → Error horizontal connector was
-      // intentionally removed — it muddied the cascade story by
+      // The previous Error â†’ Error horizontal connector was
+      // intentionally removed â€” it muddied the cascade story by
       // suggesting errors stay terminal, when the slide narrative is
       // that errors trigger a successful retry on the next PSP.
       const ss = rowEdge(stripeRows[0], 'right')
@@ -821,11 +821,11 @@ export default function SlideDashboard() {
       if (ss && ns) next.push(curve(ss.x, ss.y, ns.x, ns.y))
       const se = rowEdge(stripeRows[2], 'right')
       if (se && ns) next.push(curve(se.x, se.y, ns.x, ns.y))
-      // dLocal Succeeded → Xendit Succeeded
+      // dLocal Succeeded â†’ Xendit Succeeded
       const as = rowEdge(dlocalRows[0], 'right')
       const xs = rowEdge(xenditRows[0], 'left')
       if (as && xs) next.push(curve(as.x, as.y, xs.x, xs.y))
-      // dLocal All other declines → Xendit Declined
+      // dLocal All other declines â†’ Xendit Declined
       const ad = rowEdge(dlocalRows[2], 'right')
       const xd = rowEdge(xenditRows[1], 'left')
       if (ad && xd) next.push(curve(ad.x, ad.y, xd.x, xd.y))
@@ -847,7 +847,7 @@ export default function SlideDashboard() {
         </h2>
 
         <div style={styles.mainRow}>
-          {/* LEFT — explanatory text */}
+          {/* LEFT â€” explanatory text */}
           <div style={styles.textPanel}>
             <span style={styles.textKicker}>
               <Sparkle size={13} weight="fill" />
@@ -872,7 +872,7 @@ export default function SlideDashboard() {
             </ul>
           </div>
 
-          {/* RIGHT — browser-framed dashboard mockup */}
+          {/* RIGHT â€” browser-framed dashboard mockup */}
           <div className="reveal border-beam" style={{ ...styles.browser, '--beam-duration': '20s', '--reveal-delay': '0.15s' }}>
             <div style={styles.browserChrome}>
               <div style={styles.trafficLights}>
@@ -886,7 +886,7 @@ export default function SlideDashboard() {
             <div style={styles.surface}>
               <div style={styles.surfaceHeader}>
                 <div style={styles.surfaceHeaderLeft}>
-                  <img src="/sales-deck/assets/yuno-mark-white.svg" alt="Yuno" style={styles.yunoMark} />
+                  <img src="/connections-deck/assets/yuno-mark-white.svg" alt="Yuno" style={styles.yunoMark} />
                   <div style={styles.routeName}>
                     Route name:
                     <span style={styles.routeNameValue}>Card network</span>

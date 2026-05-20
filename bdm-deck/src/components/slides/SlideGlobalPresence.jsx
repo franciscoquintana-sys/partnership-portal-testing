@@ -4,7 +4,7 @@ import offices from '../../data/offices.generated.json'
 import { useTheme } from '../../lib/theme'
 
 // Office list grouped by region for the sidebar. Labels on the map itself
-// are omitted per the Plaid/Mercury pattern — dense clusters like London/
+// are omitted per the Plaid/Mercury pattern â€” dense clusters like London/
 // Paris/Madrid can't be labeled in place without leader lines, and the
 // sidebar reads faster at presentation distance.
 const REGIONS = [
@@ -25,12 +25,12 @@ export default function SlideGlobalPresence() {
 
   // Map coastline stroke. On dark, full white reads against the orb
   // gradient. On light, we want the continents to read as a soft neutral
-  // wash against the white surface — borderStrong gives ~0.20 ink, the
+  // wash against the white surface â€” borderStrong gives ~0.20 ink, the
   // same weight as the dark version's 0.78 white once you account for
   // contrast. The world-map.svg uses currentColor for its strokes/fills,
   // so this single value drives both coastlines and any continent fill.
   // Light: full-strength Yuno brand blue. world-map.svg strokes off
-  // currentColor (asset edited from "#FFFFFF" → "currentColor"). Soft
+  // currentColor (asset edited from "#FFFFFF" â†’ "currentColor"). Soft
   // tints like accentSoft (#7C89EF) and the original low-alpha dark ink
   // were both reading as nearly-invisible against #F8F9FC, so we sit
   // on the brand accent at full opacity. Pin pulse rings stack on top
@@ -129,7 +129,7 @@ export default function SlideGlobalPresence() {
       letterSpacing: '1.8px',
       marginTop: '8px',
     },
-    // Map + sidebar list. No container border, no rounded bg, no shadow — the
+    // Map + sidebar list. No container border, no rounded bg, no shadow â€” the
     // map floats on the slide canvas. Plaid / Mercury pattern.
     mapRow: {
       flex: 1,
@@ -251,7 +251,7 @@ export default function SlideGlobalPresence() {
               // canvas always reads white). Light theme can't override
               // that via CSS color because the SVG, loaded through an
               // <img>, lives in its own document. Render as a masked
-              // div instead — alpha from the SVG strokes clips a solid
+              // div instead â€” alpha from the SVG strokes clips a solid
               // theme.accent fill so the continents render in Yuno
               // blue without touching the asset.
               <div
@@ -270,7 +270,7 @@ export default function SlideGlobalPresence() {
                 }}
               />
             ) : (
-              <img src="/sales-deck/world-map.svg" alt="" style={styles.mapImage} />
+              <img src="/connections-deck/world-map.svg" alt="" style={styles.mapImage} />
             )}
             {offices.map((o, i) => (
               <div

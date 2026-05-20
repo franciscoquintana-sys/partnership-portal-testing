@@ -1,7 +1,7 @@
-// Provider → logo URL map. Logos render in the SlideCountryConnections
+// Provider â†’ logo URL map. Logos render in the SlideCountryConnections
 // "Most Relevant" column. Two-tier lookup:
 //   1. Local file under /public/company-logos/ or /public/logos/providers/
-//      (preferred — no external dependency, no rate limit).
+//      (preferred â€” no external dependency, no rate limit).
 //   2. Clearbit Logo API by company domain
 //      (https://logo.clearbit.com/<domain>?size=128) as fallback.
 // When both fail, the slide renders the provider's name as a styled
@@ -13,23 +13,23 @@
 // /company-logos/ and /logos/providers/ stay as backstops for marks
 // the brand kit doesn't ship yet.
 const LOCAL_LOGO = {
-  Adyen: '/sales-deck/logos/psp/psp_adyen.png',
-  Stripe: '/sales-deck/logos/psp/psp_stripe.png',
-  Fiserv: '/sales-deck/logos/psp/psp_fiserv.png',
-  'Mercado Pago': '/sales-deck/logos/psp/psp_mercadopago.png',
-  PayPal: '/sales-deck/logos/psp/psp_paypal.png',
-  Worldpay: '/sales-deck/logos/psp/psp_worldpay.png',
+  Adyen: '/connections-deck/logos/psp/psp_adyen.png',
+  Stripe: '/connections-deck/logos/psp/psp_stripe.png',
+  Fiserv: '/connections-deck/logos/psp/psp_fiserv.png',
+  'Mercado Pago': '/connections-deck/logos/psp/psp_mercadopago.png',
+  PayPal: '/connections-deck/logos/psp/psp_paypal.png',
+  Worldpay: '/connections-deck/logos/psp/psp_worldpay.png',
   // Brand kit only ships JPG for Checkout.com (no alpha, breaks the
   // silhouette filter), so keep the legacy PNG from /company-logos/.
-  'Checkout.com': '/sales-deck/company-logos/checkout.png',
-  dLocal: '/sales-deck/company-logos/dlocal.png',
-  Nuvei: '/sales-deck/company-logos/nuvei.png',
-  Worldline: '/sales-deck/company-logos/worldline.png',
-  Prosa: '/sales-deck/logos/providers/prosa.png',
-  Izipay: '/sales-deck/logos/providers/izipay.png',
-  Trustly: '/sales-deck/logos/providers/trustly.png',
-  Redeban: '/sales-deck/logos/providers/redeban.png',
-  Visanet: '/sales-deck/logos/providers/visanet.png',
+  'Checkout.com': '/connections-deck/company-logos/checkout.png',
+  dLocal: '/connections-deck/company-logos/dlocal.png',
+  Nuvei: '/connections-deck/company-logos/nuvei.png',
+  Worldline: '/connections-deck/company-logos/worldline.png',
+  Prosa: '/connections-deck/logos/providers/prosa.png',
+  Izipay: '/connections-deck/logos/providers/izipay.png',
+  Trustly: '/connections-deck/logos/providers/trustly.png',
+  Redeban: '/connections-deck/logos/providers/redeban.png',
+  Visanet: '/connections-deck/logos/providers/visanet.png',
 }
 
 // Public web domain per provider for Clearbit Logo API lookup. Limited
@@ -75,7 +75,7 @@ const PROVIDER_DOMAIN = {
   'Mercado Pago': 'mercadopago.com',
   'EBANX': 'ebanx.com',
   'PicPay': 'picpay.com',
-  'Itaú': 'itau.com.br',
+  'ItaÃº': 'itau.com.br',
   'Vindi': 'vindi.com.br',
   'PayU': 'payu.com',
   'Wompi': 'wompi.co',
@@ -109,7 +109,7 @@ const DDG_ICON_BASE = 'https://icons.duckduckgo.com/ip3'
 //
 // Strategy: prefer local white-silhouette assets (consistent rendering,
 // no external dependency), then Clearbit (global brands), then drop the
-// favicon paths — favicons at table scale rendered as tiny illegible
+// favicon paths â€” favicons at table scale rendered as tiny illegible
 // blobs in QA, so the wordmark pill is the cleaner fallback.
 export function getProviderLogoSources(name) {
   if (!name) return []
@@ -162,7 +162,7 @@ export const PROVIDER_BRAND_COLOR = {
   'Mercado Pago': '#00B1EA',
   'EBANX': '#1F4FFF',
   'PicPay': '#21C25E',
-  'Itaú': '#EC7000',
+  'ItaÃº': '#EC7000',
   'Vindi': '#FF7A00',
   'PayU': '#A6CE39',
   'Wompi': '#FFDC00',
@@ -195,7 +195,7 @@ export function getProviderLogo(name) {
   return sources[0]?.url || null
 }
 
-// Payment-method → local logo path. Used by SlideRegionPMsMap to render
+// Payment-method â†’ local logo path. Used by SlideRegionPMsMap to render
 // each country's Local Scheme / Local A2A / APM row as a real brand
 // mark instead of plain text. Files live in /public/logos/pm/ and are
 // the curated Yuno brand-kit assets (PNG with alpha so the
@@ -205,47 +205,47 @@ const PM_LOGO = {
   'JCB': null,
   'Carnet': null,
   // Local A2A
-  'Pix': '/sales-deck/logos/pm/pm_pix.png',
-  'UPI': '/sales-deck/logos/pm/pm_upi.png',
-  'QRIS': '/sales-deck/logos/pm/pm_qris.svg',
-  'PayNow': '/sales-deck/logos/pm/pm_paynow.png',
-  'PromptPay': '/sales-deck/logos/pm/pm_promptpay.png',
-  'Bizum': '/sales-deck/logos/pm/pm_bizum.png',
+  'Pix': '/connections-deck/logos/pm/pm_pix.png',
+  'UPI': '/connections-deck/logos/pm/pm_upi.png',
+  'QRIS': '/connections-deck/logos/pm/pm_qris.svg',
+  'PayNow': '/connections-deck/logos/pm/pm_paynow.png',
+  'PromptPay': '/connections-deck/logos/pm/pm_promptpay.png',
+  'Bizum': '/connections-deck/logos/pm/pm_bizum.png',
   // APMs / wallets
-  'Klarna': '/sales-deck/logos/pm/pm_klarna.png',
-  'GCash': '/sales-deck/logos/pm/pm_gcash.png',
-  'GrabPay': '/sales-deck/logos/pm/pm_grabpay.png',
-  'OVO': '/sales-deck/logos/pm/pm_ovo.png',
-  'Dana': '/sales-deck/logos/pm/pm_dana.png',
-  'ShopeePay': '/sales-deck/logos/pm/pm_shopeepay.png',
-  'KakaoPay': '/sales-deck/logos/pm/pm_kakaopay.png',
-  'Naver Pay': '/sales-deck/logos/pm/pm_naverpay.png',
-  'Paytm': '/sales-deck/logos/pm/pm_paytm.png',
-  'PayPal': '/sales-deck/logos/pm/pm_paypal.png',
-  'Apple Pay': '/sales-deck/logos/pm/pm_applepay.png',
-  'Google Pay': '/sales-deck/logos/pm/pm_googlepay.png',
-  'Maya': '/sales-deck/logos/pm/pm_maya.png',
-  'TrueMoney': '/sales-deck/logos/pm/pm_truemoney.png',
-  'Rabbit LINE Pay': '/sales-deck/logos/pm/pm_rabbitline.png',
-  'Alipay': '/sales-deck/logos/pm/pm_alipay.png',
+  'Klarna': '/connections-deck/logos/pm/pm_klarna.png',
+  'GCash': '/connections-deck/logos/pm/pm_gcash.png',
+  'GrabPay': '/connections-deck/logos/pm/pm_grabpay.png',
+  'OVO': '/connections-deck/logos/pm/pm_ovo.png',
+  'Dana': '/connections-deck/logos/pm/pm_dana.png',
+  'ShopeePay': '/connections-deck/logos/pm/pm_shopeepay.png',
+  'KakaoPay': '/connections-deck/logos/pm/pm_kakaopay.png',
+  'Naver Pay': '/connections-deck/logos/pm/pm_naverpay.png',
+  'Paytm': '/connections-deck/logos/pm/pm_paytm.png',
+  'PayPal': '/connections-deck/logos/pm/pm_paypal.png',
+  'Apple Pay': '/connections-deck/logos/pm/pm_applepay.png',
+  'Google Pay': '/connections-deck/logos/pm/pm_googlepay.png',
+  'Maya': '/connections-deck/logos/pm/pm_maya.png',
+  'TrueMoney': '/connections-deck/logos/pm/pm_truemoney.png',
+  'Rabbit LINE Pay': '/connections-deck/logos/pm/pm_rabbitline.png',
+  'Alipay': '/connections-deck/logos/pm/pm_alipay.png',
   'OXXO Pay': null,    // brand kit JPG only, breaks silhouette filter
-  'Swish': '/sales-deck/logos/pm/pm_swish.svg',
-  'MB Way': '/sales-deck/logos/pm/pm_mbway.png',
-  'TWINT': '/sales-deck/logos/pm/pm_twint.png',
-  "Touch'n Go": '/sales-deck/logos/pm/pm_touchngo.svg',
-  'MoMo': '/sales-deck/logos/pm/pm_momo.png',
-  'Easypaisa': '/sales-deck/logos/pm/pm_easypaisa.png',
-  'bKash': '/sales-deck/logos/pm/pm_bkash.png',
-  'Cash App': '/sales-deck/logos/pm/pm_cashapp.png',
+  'Swish': '/connections-deck/logos/pm/pm_swish.svg',
+  'MB Way': '/connections-deck/logos/pm/pm_mbway.png',
+  'TWINT': '/connections-deck/logos/pm/pm_twint.png',
+  "Touch'n Go": '/connections-deck/logos/pm/pm_touchngo.svg',
+  'MoMo': '/connections-deck/logos/pm/pm_momo.png',
+  'Easypaisa': '/connections-deck/logos/pm/pm_easypaisa.png',
+  'bKash': '/connections-deck/logos/pm/pm_bkash.png',
+  'Cash App': '/connections-deck/logos/pm/pm_cashapp.png',
   // Card schemes
-  'Mastercard': '/sales-deck/logos/pm/pm_mastercard.svg',
-  'Visa': '/sales-deck/logos/pm/pm_visa.png',
-  'Amex': '/sales-deck/logos/pm/pm_amex.png',
-  'American Express': '/sales-deck/logos/pm/pm_amex.png',
-  'Discover': '/sales-deck/logos/pm/pm_discover.png',
+  'Mastercard': '/connections-deck/logos/pm/pm_mastercard.svg',
+  'Visa': '/connections-deck/logos/pm/pm_visa.png',
+  'Amex': '/connections-deck/logos/pm/pm_amex.png',
+  'American Express': '/connections-deck/logos/pm/pm_amex.png',
+  'Discover': '/connections-deck/logos/pm/pm_discover.png',
   // Reuse PSP-shape brand marks where a logo also doubles as a PM/APM
   // (Mercado Pago = wallet in Argentina, GCash etc. already covered above).
-  'Mercado Pago': '/sales-deck/logos/psp/psp_mercadopago.png',
+  'Mercado Pago': '/connections-deck/logos/psp/psp_mercadopago.png',
 }
 
 export function getPmLogo(name) {

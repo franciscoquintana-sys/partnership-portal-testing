@@ -102,7 +102,7 @@ export default function SlideBase({ section, slideNumber, children, customBg, th
             <span style={styles.sectionDot} />
             {section}
           </span>
-          <img src="/sales-deck/assets/yuno-logo-white.svg" alt="Yuno" style={styles.yunoLogo} />
+          <img src="/connections-deck/assets/yuno-logo-white.svg" alt="Yuno" style={styles.yunoLogo} />
         </div>
         {children}
       </div>

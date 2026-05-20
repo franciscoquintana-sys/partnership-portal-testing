@@ -4,7 +4,7 @@
 
 // Cache-busting version for team photos. Files in /public are served
 // at fixed paths, so browsers and Railway's CDN cache them indefinitely
-// — a byte-level change to /team/justo-benetti.png won't reach users
+// â€” a byte-level change to /team/justo-benetti.png won't reach users
 // until the URL changes. Bump this whenever build-team-photos.mjs
 // regenerates any headshot.
 export const TEAM_PHOTO_VERSION = '2026-04-24-5'
@@ -13,17 +13,17 @@ const v = (url) => `${url}?v=${TEAM_PHOTO_VERSION}`
 // Tier 1 - Founders (emphasized with accent ring + slightly larger photo)
 export const FOUNDERS = [
   {
-    photo: v('/sales-deck/team/juan-pablo-ortega.png'),
+    photo: v('/connections-deck/team/juan-pablo-ortega.png'),
     name: 'Juan Pablo Ortega',
     role: 'Co-founder & CEO',
     pedigree: ['rappi'],
     pedigreeLabel: 'Founder of Rappi',
   },
   {
-    photo: v('/sales-deck/team/julian-nunez.png'),
-    name: 'Julián Nuñez',
-    firstName: 'Julián',
-    lastName: 'Nuñez',
+    photo: v('/connections-deck/team/julian-nunez.png'),
+    name: 'JuliÃ¡n NuÃ±ez',
+    firstName: 'JuliÃ¡n',
+    lastName: 'NuÃ±ez',
     role: 'Co-founder & COO',
     pedigree: ['rappi'],
     pedigreeLabel: 'Rappi Early Employee',
@@ -33,80 +33,80 @@ export const FOUNDERS = [
 // Tier 2 - Leadership (C-suite, GMs, heads of function, including merchant-facing heads)
 export const LEADERS = [
   {
-    photo: v('/sales-deck/team/justo-benetti.png'),
+    photo: v('/connections-deck/team/justo-benetti.png'),
     name: 'Justo Benetti',
     role: 'Chief Revenue Officer',
     pedigree: ['dlocal', 'worldpay'],
   },
   {
-    photo: v('/sales-deck/team/mauricio-schwartzmann.png'),
+    photo: v('/connections-deck/team/mauricio-schwartzmann.png'),
     name: 'Mau Schwartzmann',
     role: 'Chief Banking & FI Officer',
     pedigree: ['mastercard', 'rappi'],
   },
   {
-    photo: v('/sales-deck/team/chee-beh.png'),
+    photo: v('/connections-deck/team/chee-beh.png'),
     name: 'Chee Beh',
     role: 'General Manager, APAC',
     pedigree: ['jpmorgan', 'uber'],
   },
   {
-    photo: v('/sales-deck/team/walter-campos.png'),
+    photo: v('/connections-deck/team/walter-campos.png'),
     name: 'Walter Campos',
     role: 'General Manager, LatAm',
-    pedigreeLabel: 'MercadoPago · Cielo',
+    pedigreeLabel: 'MercadoPago Â· Cielo',
   },
   {
-    photo: v('/sales-deck/team/briana-gargurevich.png'),
+    photo: v('/connections-deck/team/briana-gargurevich.png'),
     name: 'Briana Gargurevich',
     role: 'VP, Global Sales NA',
   },
   {
-    photo: v('/sales-deck/team/melissa-pottenger.png'),
+    photo: v('/connections-deck/team/melissa-pottenger.png'),
     name: 'Melissa Pottenger',
     role: 'VP, Enterprise Growth NA',
   },
   {
-    photo: v('/sales-deck/team/marco-santarelli.png'),
+    photo: v('/connections-deck/team/marco-santarelli.png'),
     name: 'Marco Santarelli',
     role: 'VP of Engineering',
     pedigreeLabel: '12+ yrs fintech',
   },
   {
-    photo: v('/sales-deck/team/juan-manuel-rebull.png'),
+    photo: v('/connections-deck/team/juan-manuel-rebull.png'),
     name: 'Juan Manuel Rebull',
     firstName: 'Juan Manuel',
     lastName: 'Rebull',
     role: 'SVP of Engineering',
   },
   {
-    photo: v('/sales-deck/team/simon-martinez.png'),
+    photo: v('/connections-deck/team/simon-martinez.png'),
     name: 'Simon Martinez',
     role: 'VP of AI Solutions',
     pedigree: ['rappi'],
     pedigreeLabel: 'ex-Rappi',
   },
   {
-    photo: v('/sales-deck/team/daniel-rebelo.png'),
+    photo: v('/connections-deck/team/daniel-rebelo.png'),
     name: 'Daniel Rebelo',
     role: 'Head of Customer Success',
     pedigree: ['worldpay', 'nuvei'],
   },
   {
-    photo: v('/sales-deck/team/martin-mexia.png'),
+    photo: v('/connections-deck/team/martin-mexia.png'),
     name: 'Martin Mexia',
     role: 'SVP of Product',
     pedigree: ['revolut', 'rappi'],
   },
   {
-    photo: v('/sales-deck/team/christo-papadopoulos.png'),
+    photo: v('/connections-deck/team/christo-papadopoulos.png'),
     name: 'Christo Papadopoulos',
     role: 'Head of Data',
     pedigree: ['paypal'],
     pedigreeLabel: 'PayPal (Settle)',
   },
   {
-    photo: v('/sales-deck/team/daniela-reyes.png'),
+    photo: v('/connections-deck/team/daniela-reyes.png'),
     name: 'Daniela Reyes',
     role: 'Global Head of Partnerships',
     pedigree: ['adyen'],

@@ -45,16 +45,16 @@ ANY_LOGGED_IN_ROLES = {"partnerships", "internal"}
 
 app.mount("/static", StaticFiles(directory=os.path.join(BASE, "static")), name="static")
 
-# Vendored BDM sales deck (React SPA built by Vite under base /sales-deck/).
+# Vendored BDM sales deck (React SPA built by Vite under base /connections-deck/).
 # SPAStaticFiles falls back to index.html on 404 so client-side routes like
-# /sales-deck/m/:slug resolve to the SPA instead of a 404.
+# /connections-deck/m/:slug resolve to the SPA instead of a 404.
 class SPAStaticFiles(StaticFiles):
     async def get_response(self, path, scope):
         # Starlette's StaticFiles RAISES HTTPException(404) for missing
         # paths (rather than returning a 404 response), so the
         # `response.status_code == 404` check on its own never fires for
-        # client-side routes like /sales-deck/m/<slug>. Catch the exception
-        # and fall through to serving index.html — that's the SPA's job.
+        # client-side routes like /connections-deck/m/<slug>. Catch the exception
+        # and fall through to serving index.html â€” that's the SPA's job.
         try:
             response = await super().get_response(path, scope)
             if response.status_code == 404:
@@ -78,7 +78,7 @@ class SPAStaticFiles(StaticFiles):
 _SALES_DECK_DIST = os.path.join(BASE, "bdm-deck", "dist")
 if os.path.isdir(_SALES_DECK_DIST):
     app.mount(
-        "/sales-deck",
+        "/connections-deck",
         SPAStaticFiles(directory=_SALES_DECK_DIST, html=True),
         name="sales-deck",
     )
@@ -114,7 +114,7 @@ def _brand_name_lookup(label: str):
     Instant Answer API (Wikipedia-backed). Free, no auth. Returns the
     canonical heading when the label matches a known company, else None.
 
-    DuckDuckGo returns Wikipedia article titles verbatim — so a label
+    DuckDuckGo returns Wikipedia article titles verbatim â€” so a label
     like "as" resolves to ".as" (the Anguilla ccTLD article). Strip
     any leading dot so the brand name reads naturally on the cover.
     """
@@ -152,7 +152,7 @@ def _site_info(url: str) -> dict:
 
     # Google favicon is the always-available fallback. We override it
     # below with whatever higher-resolution PNG the site itself ships
-    # (apple-touch icons, og:image) — much better quality than 256-px
+    # (apple-touch icons, og:image) â€” much better quality than 256-px
     # favicons. `logo_is_fallback` stays True until we find a real
     # brand asset; if no real asset is found we drop the logo entirely
     # so the cover falls back to the styled wordmark text (Google s2 on
@@ -162,7 +162,7 @@ def _site_info(url: str) -> dict:
     logo_is_fallback = True
 
     # Brandfetch CDN: serves clean, transparent brand logos for thousands
-    # of domains. Try this first — if the brand exists in Brandfetch's
+    # of domains. Try this first â€” if the brand exists in Brandfetch's
     # index we get a much better asset than scraping or the favicon.
     # A HEAD probe with a short timeout keeps the path fast and avoids
     # broken-image rendering when the brand isn't indexed.
@@ -215,7 +215,7 @@ def _site_info(url: str) -> dict:
                 # left-of-pipe chunk. Spaces on both sides keep us from
                 # chopping hyphenated words like "Top-Ups".
                 earliest = -1
-                for sep in (" | ", " - ", " — ", " – ", " · ", ": "):
+                for sep in (" | ", " - ", " â€” ", " â€“ ", " Â· ", ": "):
                     i = raw.find(sep)
                     if i >= 0 and (earliest == -1 or i < earliest):
                         earliest = i
@@ -231,31 +231,31 @@ def _site_info(url: str) -> dict:
 
     # Strip any leading punctuation (".", whitespace) that may have come
     # back from the brand lookup or HTML title (e.g., ".as" ccTLD article,
-    # "·Brand" centre-dot prefixes).
-    name = (name or "").lstrip(". ·•—–-").strip() or label.capitalize()
+    # "Â·Brand" centre-dot prefixes).
+    name = (name or "").lstrip(". Â·â€¢â€”â€“-").strip() or label.capitalize()
 
     # Always start the merchant name with an uppercase first letter so the
     # cover greeting reads cleanly ("Hello As team!" rather than "Hello as
-    # team!"). Only touch the first character — preserves intentional inner
+    # team!"). Only touch the first character â€” preserves intentional inner
     # casing like "iyzico", "EBANX", "PayU", "dLocal", "iDEAL".
     if name:
         name = name[0].upper() + name[1:]
 
-    # Logo preference (best → fallback). Brandfetch already took priority
+    # Logo preference (best â†’ fallback). Brandfetch already took priority
     # above when it had an indexed asset. If it didn't, walk the page in
-    # this order — only sources that are reliably transparent / clean:
+    # this order â€” only sources that are reliably transparent / clean:
     #   1. SVG icon link (`<link rel="icon" type="image/svg+xml">` or
-    #      `<link rel="mask-icon">`) — vector, always transparent.
-    #   2. schema.org Organization "logo" — sites set this explicitly when
+    #      `<link rel="mask-icon">`) â€” vector, always transparent.
+    #   2. schema.org Organization "logo" â€” sites set this explicitly when
     #      they have a clean transparent brand asset.
-    #   3. Header <img> with "logo"/"brand" class — usually transparent.
-    #   4. Google s2 favicon at 256px — the default `logo` set above.
+    #   3. Header <img> with "logo"/"brand" class â€” usually transparent.
+    #   4. Google s2 favicon at 256px â€” the default `logo` set above.
     # apple-touch-icon and og:image are intentionally NOT used: the first
     # often ships a solid white background, and the second is typically a
-    # 1200×630 banner card with a solid backdrop. Both look worse on the
+    # 1200Ã—630 banner card with a solid backdrop. Both look worse on the
     # deck's tinted cover than the Google favicon does.
     # Skip the scraping pass entirely if Brandfetch already supplied a
-    # real asset — its logos are always cleaner than what we scrape.
+    # real asset â€” its logos are always cleaner than what we scrape.
     if html and logo_is_fallback:
         # 1. SVG icon link
         svg_href = None
@@ -294,7 +294,7 @@ def _site_info(url: str) -> dict:
                 if schema_logo:
                     break
 
-        # 3. Header <img> with "logo" in class/id/alt — sites almost always
+        # 3. Header <img> with "logo" in class/id/alt â€” sites almost always
         #    ship these as transparent PNG/SVG. Look only inside the first
         #    <header>...</header> block so we don't grab article thumbnails.
         header_logo = None
@@ -330,7 +330,7 @@ def _site_info(url: str) -> dict:
             logo_is_fallback = False
 
     # When the only source is the Google s2 favicon (no brand asset
-    # scraped), keep it for real domains — amazon.com / x.com etc. that
+    # scraped), keep it for real domains â€” amazon.com / x.com etc. that
     # bot-block our scrape still have perfectly fine s2 favicons. Only
     # drop it when the host itself looks like a non-domain (a bare TLD
     # such as ".as", or a single label with no dot at all). On those
@@ -348,7 +348,7 @@ def _site_info(url: str) -> dict:
 # Keyword bag per vertical. Scored against the scraped HTML (lowercased
 # title + meta + first chunk of body text). The vertical with the most
 # keyword hits wins; minimum 2 hits otherwise we return "general".
-# Order in the dict is the tiebreak preference order — more specific
+# Order in the dict is the tiebreak preference order â€” more specific
 # verticals first.
 _VERTICAL_KEYWORDS = {
     "digital_goods": [
@@ -402,7 +402,7 @@ def _detect_vertical(html: str, name: str, host: str) -> str:
     if not html:
         return "general"
     low = html.lower()
-    # Only consider the head + first body chunk — keeps noise from
+    # Only consider the head + first body chunk â€” keeps noise from
     # footer/legal text out of the scoring.
     blob = low[:20000]
     label_blob = (name + " " + host).lower()
@@ -427,7 +427,7 @@ def sales_deck_site_info(url: str = ""):
     return _site_info(url)
 
 
-# Sales-deck partner directory — flat JSON list of every partner in the
+# Sales-deck partner directory â€” flat JSON list of every partner in the
 # SOT grouped by PROVIDER_NAME, with type / regions / countries / methods
 # attached. Powers the in-deck partner-directory slide (filters + click
 # to expand). No auth: the sales-deck SPA is publicly accessible.
@@ -440,7 +440,7 @@ def sales_deck_partners_directory():
         return {"partners": []}
 
     # Partner Type comes from the "All partners" sheet (the same Google
-    # Sheet that powers the Partner Portfolio's status data) — keyed by
+    # Sheet that powers the Partner Portfolio's status data) â€” keyed by
     # name (case-insensitive) so the SOT's PROVIDER_NAME joins onto it.
     try:
         name_to_type = {
@@ -507,14 +507,14 @@ def sales_deck_partners_directory():
             # listing every brand. The detail view filters "CARD" out
             # of the rendered chips, so only the actual brand shows.
             # When the row is a card row WITHOUT a brand, method
-            # already equals "CARD" — just add it once.
+            # already equals "CARD" â€” just add it once.
             bucket["country_methods"].setdefault(country, set()).add(method)
             if is_card and method != "CARD":
                 bucket["country_methods"].setdefault(country, set()).add("CARD")
 
     partners = []
     for name, b in sorted(out.items(), key=lambda kv: kv[0].lower()):
-        # Resolve country → ISO-2 server-side via pycountry. Lower-cased
+        # Resolve country â†’ ISO-2 server-side via pycountry. Lower-cased
         # for matching; lookup handles UPPERCASE SOT inputs already.
         country_iso = {}
         for c in b["countries"]:
@@ -523,7 +523,7 @@ def sales_deck_partners_directory():
                 country_iso[c] = iso.lower()
         partners.append({
             "provider": b["provider"],
-            "type": b["type"] or "—",
+            "type": b["type"] or "â€”",
             "regions": sorted(b["regions"]),
             "countries": sorted(b["countries"]),
             "country_methods": {c: sorted(ms) for c, ms in sorted(b["country_methods"].items())},
@@ -1060,7 +1060,7 @@ def mission(request: Request):
         cov_region_to_methods=cov["cov_region_to_methods"],
     ))
 
-# ── Partners Pipeline board ──────────────────────────────────────────────────
+# â”€â”€ Partners Pipeline board â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Region kanban with year/quarter filters. Starts empty; users add cards
 # manually via "+ Partner". Every change persists.
 PIPELINE_REGION_COLUMNS = [
@@ -1154,7 +1154,7 @@ def _save_partner_pipeline(data):
     except Exception as e:
         print(f"[partner_pipeline] JSON save failed: {e}")
 
-# Module-level init/load is deferred — DATA_DIR and _db_conn are defined
+# Module-level init/load is deferred â€” DATA_DIR and _db_conn are defined
 # further down. PARTNER_PIPELINE is bound to a placeholder list here and
 # re-bound below the leads init block where the dependencies exist.
 PARTNER_PIPELINE: list = []
@@ -1325,7 +1325,7 @@ _INTRO_FIELDS = {
 }
 
 # Persist intros to Postgres when DATABASE_URL is set (Railway auto-injects this
-# when a Postgres service is linked). Otherwise fall back to a JSON file — on the
+# when a Postgres service is linked). Otherwise fall back to a JSON file â€” on the
 # mounted /data volume if available, else repo root (fine for local dev).
 DATA_DIR = os.environ.get("DATA_DIR") or ("/data" if os.path.isdir("/data") else BASE)
 os.makedirs(DATA_DIR, exist_ok=True)
@@ -1416,7 +1416,7 @@ def _save_intros(data):
 _db_init()
 INTROS = _load_intros()
 
-# ── Form-response sync (Google Sheet → kanban) ───────────────────────────────
+# â”€â”€ Form-response sync (Google Sheet â†’ kanban) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 FORM_RESPONSES_SHEET_ID = "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
 PARTNER_PM_SHEET_ID = "12lOJ_1wrAbzKZB_EBF_meWygAE3Ieo20kKM6HtuqXaw"
 PARTNER_PM_SHEET_GID = "1597186279"
@@ -1427,7 +1427,7 @@ _FLOW_TO_COLUMN = {
     "contact a partner - price quotation for an opportunity": "request-pricing",
 }
 
-# Form header (case-insensitive substring) → intro field. transaction_type
+# Form header (case-insensitive substring) â†’ intro field. transaction_type
 # is intentionally absent: the user dropped it from the form-derived cards.
 _FORM_FIELD_ALIASES = [
     ("merchant",              ["name of the client", "name of the merchant", "merchant name", "merchant", "client name", "company name", "company"]),
@@ -1498,7 +1498,7 @@ _PARTNER_PM_TTL = 600  # 10 min
 
 
 def _build_partner_pm_map():
-    """Read the partner→PM mapping from the dedicated Google sheet.
+    """Read the partnerâ†’PM mapping from the dedicated Google sheet.
 
     Returns a dict keyed by partner name (lowercased + stripped).
     """
@@ -1577,13 +1577,13 @@ def _flow_value(row):
 def sync_form_responses():
     """Pull form-sheet rows that aren't already on the board and create intro cards.
 
-    Dedup is done against form_row_key values stored on existing intros — so any
+    Dedup is done against form_row_key values stored on existing intros â€” so any
     row that isn't represented by a card on the board (regardless of how old it
     is) gets imported on the next sync.
     """
     existing_keys = {i.get("form_row_key") for i in INTROS if i.get("form_row_key")}
 
-    # Build partner-name → manager lookup from the dedicated PM sheet so cards
+    # Build partner-name â†’ manager lookup from the dedicated PM sheet so cards
     # inherit the right PM for each partner.
     try:
         partner_to_manager = _build_partner_pm_map()
@@ -1611,7 +1611,7 @@ def sync_form_responses():
     skipped_unknown_flow = 0
     skipped_already = 0
 
-    # Tab 1: Contact a Partner — column depends on partnership flow
+    # Tab 1: Contact a Partner â€” column depends on partnership flow
     rows1 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Contact a Partner")
     for idx, row in enumerate(rows1):
         key = _row_form_key("contact_a_partner", row, idx)
@@ -1631,7 +1631,7 @@ def sync_form_responses():
         _fill_pm(fields)
         new_intros.append(_make_intro_from_row(fields, column, key))
 
-    # Tab 2: Client - Partner Direct → in-negotiations
+    # Tab 2: Client - Partner Direct â†’ in-negotiations
     rows2 = load_sheet_tab_rows(FORM_RESPONSES_SHEET_ID, "Client - Partner Direct")
     for idx, row in enumerate(rows2):
         key = _row_form_key("client_partner_direct", row, idx)
@@ -1861,7 +1861,7 @@ async def api_intros_delete(request: Request):
 _db_init_partner_pipeline()
 PARTNER_PIPELINE = _load_partner_pipeline()
 
-# ── Access log: append every successful login as a row in the Google Sheet ───
+# â”€â”€ Access log: append every successful login as a row in the Google Sheet â”€â”€â”€
 # Sheet 1DHSU... tab "Portal Tracker" (looked up by name on first call).
 ACCESS_LOG_SHEET_ID = "1DHSU-1zHksVJaI059ChEBeGqZCOc7tAehHknL1a1mRI"
 ACCESS_LOG_TAB = "Portal Tracker"
@@ -1897,7 +1897,7 @@ def _resolve_access_log_tab(token):
 
 def _ensure_access_log_headers(token, tab):
     """Write the header row in A1:F1 if the sheet is empty. Idempotent
-    per process — only checks once per process lifetime."""
+    per process â€” only checks once per process lifetime."""
     if _ACCESS_LOG_HEADERS_OK["done"]:
         return
     try:
@@ -2102,7 +2102,7 @@ ECOMMERCE_DEVELOPMENT_INDEX = {
     "Paraguay": 30, "Ecuador": 32, "Dominican Republic": 35, "Guatemala": 30,
     "Honduras": 26, "Nicaragua": 25, "Venezuela": 24, "Iraq": 22, "Cambodia": 28,
     "Myanmar": 22, "Nepal": 26, "Tanzania": 24, "Uganda": 22, "Ethiopia": 20,
-    "Senegal": 25, "Côte d'Ivoire": 26, "Cameroon": 22, "Angola": 22,
+    "Senegal": 25, "CÃ´te d'Ivoire": 26, "Cameroon": 22, "Angola": 22,
     "Mozambique": 20, "Zimbabwe": 19, "Mauritius": 45, "Rwanda": 28, "Zambia": 22,
     "Botswana": 32, "Lebanon": 38, "Iceland": 85,
 }
@@ -2154,20 +2154,20 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Pine Labs", "type": "Acquirer"},
         ],
         "regulation": [
-            "The Reserve Bank of India (RBI) is the central bank and regulates all payments. To collect money on behalf of merchants you need a Payment Aggregator (PA) license. Orchestration platforms like Yuno don't hold funds, so they don't need a PA — but they can only route transactions through PSPs and acquirers that DO hold one.",
+            "The Reserve Bank of India (RBI) is the central bank and regulates all payments. To collect money on behalf of merchants you need a Payment Aggregator (PA) license. Orchestration platforms like Yuno don't hold funds, so they don't need a PA â€” but they can only route transactions through PSPs and acquirers that DO hold one.",
             "All payment data (card numbers, transaction details, customer info) must be stored on servers physically located in India. No copies outside the country, even for backup. Your PSP partners need an India region in their cloud.",
-            "Merchant of Record (MoR) — meaning a foreign company sells to Indian customers in its own name and handles tax/refunds — is allowed but needs a special cross-border PA (PA-CB) license, OR a partnership with a licensed Indian PA. Without one of these, you can't legally settle INR to merchants.",
-            "Since 2022, raw card numbers can't be stored anywhere in the payment chain. Instead, the card networks (Visa, Mastercard, RuPay) issue 'tokens' — fake numbers that work only at one merchant. This is RBI's response to large-scale card data leaks.",
+            "Merchant of Record (MoR) â€” meaning a foreign company sells to Indian customers in its own name and handles tax/refunds â€” is allowed but needs a special cross-border PA (PA-CB) license, OR a partnership with a licensed Indian PA. Without one of these, you can't legally settle INR to merchants.",
+            "Since 2022, raw card numbers can't be stored anywhere in the payment chain. Instead, the card networks (Visa, Mastercard, RuPay) issue 'tokens' â€” fake numbers that work only at one merchant. This is RBI's response to large-scale card data leaks.",
             "Taxes: GST (India's VAT, 18%) applies to all payment service fees. On top of that, ecommerce platforms must withhold 1% TDS (income tax) on payouts to sellers under Section 194-O.",
-            "For recurring charges (subscriptions, EMI), the customer signs an e-mandate. Below ₹15,000 (~$180) it auto-charges; above that, the bank texts the customer to re-authenticate every single time. This kills high-ticket subscriptions if not architected around it.",
+            "For recurring charges (subscriptions, EMI), the customer signs an e-mandate. Below â‚¹15,000 (~$180) it auto-charges; above that, the bank texts the customer to re-authenticate every single time. This kills high-ticket subscriptions if not architected around it.",
         ],
         "digital_trends": [
-            "India is mobile-first to an extreme: cheap data (post-Jio in 2016) put smartphones in 800M+ hands, so over 70% of ecommerce happens on phones — and almost always inside apps, not browsers. Web checkout flows underperform here.",
-            "UPI is a free, instant bank-to-bank transfer rail run by NPCI (a non-profit owned by Indian banks). It works by scanning a QR or sending to a virtual ID — no card needed. It now drives ~65% of online payments and is still growing 18% per year, making it the default way Indians pay online and offline.",
-            "Quick commerce — 10 to 30 minute grocery and essentials delivery via apps like Blinkit (Zomato), Zepto, Swiggy Instamart and BigBasket Now — is exploding (+50% YoY). Dense cities + cheap labor + dark stores make it economically viable here in a way it isn't in most markets.",
-            "ONDC (Open Network for Digital Commerce) is a government-backed open protocol — think 'email but for ecommerce'. Any buyer app can discover any seller on the network, breaking Amazon and Flipkart's stranglehold. It's still early but small sellers and food delivery are adopting fast.",
+            "India is mobile-first to an extreme: cheap data (post-Jio in 2016) put smartphones in 800M+ hands, so over 70% of ecommerce happens on phones â€” and almost always inside apps, not browsers. Web checkout flows underperform here.",
+            "UPI is a free, instant bank-to-bank transfer rail run by NPCI (a non-profit owned by Indian banks). It works by scanning a QR or sending to a virtual ID â€” no card needed. It now drives ~65% of online payments and is still growing 18% per year, making it the default way Indians pay online and offline.",
+            "Quick commerce â€” 10 to 30 minute grocery and essentials delivery via apps like Blinkit (Zomato), Zepto, Swiggy Instamart and BigBasket Now â€” is exploding (+50% YoY). Dense cities + cheap labor + dark stores make it economically viable here in a way it isn't in most markets.",
+            "ONDC (Open Network for Digital Commerce) is a government-backed open protocol â€” think 'email but for ecommerce'. Any buyer app can discover any seller on the network, breaking Amazon and Flipkart's stranglehold. It's still early but small sellers and food delivery are adopting fast.",
             "India is segmented into Metro / Tier 1 / Tier 2 / Tier 3 cities by population and income. Most new buyer growth now comes from Tier 2 and Tier 3, where customers shop in their regional language (Hindi, Tamil, Telugu, etc.) and prefer Cash on Delivery and UPI over cards.",
-            "WhatsApp has 500M+ Indian users — the dominant messaging app. Through Meta's partnership with JioMart and the WhatsApp Business API, brands can let customers browse a catalog, chat with support and pay (via UPI) without ever leaving the chat. This is becoming a serious sales channel.",
+            "WhatsApp has 500M+ Indian users â€” the dominant messaging app. Through Meta's partnership with JioMart and the WhatsApp Business API, brands can let customers browse a catalog, chat with support and pay (via UPI) without ever leaving the chat. This is becoming a serious sales channel.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -2205,30 +2205,30 @@ COUNTRY_DETAIL_RICH = {
                     {"name": "Hipercard / Amex","share":  2.0, "type": "international"},
                 ]},
             {"name": "A2A", "detail": "PIX", "share": 35, "growth": "+40% YoY"},
-            {"name": "Boleto Bancário", "share": 10, "growth": "-15% YoY"},
+            {"name": "Boleto BancÃ¡rio", "share": 10, "growth": "-15% YoY"},
             {"name": "Debit Cards", "share": 8, "growth": "flat",
                 "schemes": [
                     {"name": "Visa Debit",       "share": 3.5, "type": "international"},
                     {"name": "Mastercard Debit", "share": 2.5, "type": "international"},
-                    {"name": "Elo Débito",       "share": 2.0, "type": "local"}
+                    {"name": "Elo DÃ©bito",       "share": 2.0, "type": "local"}
                 ]},
             {"name": "Wallets", "detail": "Mercado Pago, PicPay", "share": 7, "growth": "+8% YoY"},
             {"name": "BNPL / Installments on card", "share": 4, "growth": "+6% YoY"},
         ],
         "regulation": [
-            "The Banco Central do Brasil (BACEN) regulates all payment institutions. Wallets and acquirers need an IP (Instituição de Pagamento) license — there are specific sub-categories (emissor de moeda eletrônica, credenciador, iniciador, emissor de instrumento pós-pago).",
+            "The Banco Central do Brasil (BACEN) regulates all payment institutions. Wallets and acquirers need an IP (InstituiÃ§Ã£o de Pagamento) license â€” there are specific sub-categories (emissor de moeda eletrÃ´nica, credenciador, iniciador, emissor de instrumento pÃ³s-pago).",
             "PIX is the real-time payment rail owned and run by BACEN. Every bank with more than 500K active customers must support PIX. It's free for consumers and used in ~35% of ecommerce already.",
             "LGPD (Brazil's GDPR equivalent) applies since 2020. Data processing requires legal basis; payment data is considered sensitive. Enforcement by ANPD is active, with fines up to 2% of Brazilian revenue.",
-            "Installment payments (parcelamento sem juros) are a cultural default. Merchants advertise prices in 3–12 interest-free installments; the acquirer advances the full amount and takes the credit risk on the card issuer.",
-            "Taxes on digital services are layered: ISS (municipal service tax, 2–5%), PIS/COFINS (federal, ~9.25%), and IOF (tax on foreign-exchange transactions, typically 0.38%). Merchants of Record must navigate all three.",
+            "Installment payments (parcelamento sem juros) are a cultural default. Merchants advertise prices in 3â€“12 interest-free installments; the acquirer advances the full amount and takes the credit risk on the card issuer.",
+            "Taxes on digital services are layered: ISS (municipal service tax, 2â€“5%), PIS/COFINS (federal, ~9.25%), and IOF (tax on foreign-exchange transactions, typically 0.38%). Merchants of Record must navigate all three.",
             "Open Finance (Fase 4) requires banks and fintechs to expose APIs for payment initiation and account aggregation. This is creating new 'initiator' business models that bypass card rails entirely.",
         ],
         "digital_trends": [
-            "PIX has reshaped the payment stack in four years — from launch in Nov 2020 to now ~35% of ecommerce and over 40B transactions/year. Growth is still ~40% YoY with recurring PIX (pix automático) rolling out in 2025.",
+            "PIX has reshaped the payment stack in four years â€” from launch in Nov 2020 to now ~35% of ecommerce and over 40B transactions/year. Growth is still ~40% YoY with recurring PIX (pix automÃ¡tico) rolling out in 2025.",
             "Installment credit is the dominant purchasing habit: ~70% of credit card spend is split into 2+ installments. This supports high-ticket ecommerce (appliances, electronics) that would be impossible elsewhere.",
-            "Super-apps dominate the wallet layer: Mercado Pago, Nubank, PicPay, and iFood all bundle payments, credit, investments, and commerce. Merchants integrating a wallet typically pick 2–3 of these plus PIX.",
+            "Super-apps dominate the wallet layer: Mercado Pago, Nubank, PicPay, and iFood all bundle payments, credit, investments, and commerce. Merchants integrating a wallet typically pick 2â€“3 of these plus PIX.",
             "Nubank (150M+ customers across LatAm) is proving that digital-only banks can scale to incumbent size. Their payment rails and credit scoring are being licensed to merchants directly via Nu Business.",
-            "Cross-border commerce into Brazil is friction-heavy — BACEN FX licensing, IOF tax, and Boleto/PIX integration requirements. This is why international brands partner with local PSPs (Ebanx, Pagsmile, dLocal) rather than going direct.",
+            "Cross-border commerce into Brazil is friction-heavy â€” BACEN FX licensing, IOF tax, and Boleto/PIX integration requirements. This is why international brands partner with local PSPs (Ebanx, Pagsmile, dLocal) rather than going direct.",
             "Influencer and social commerce via Instagram and TikTok is a major acquisition channel; 'link na bio' checkouts through Mercado Pago, Hotmart, and direct PIX are standard for creators and SMBs.",
         ],
         "yuno_coverage": {
@@ -2270,28 +2270,28 @@ COUNTRY_DETAIL_RICH = {
                 "schemes": [
                     {"name": "Visa Debit",       "share": 15, "type": "international"},
                     {"name": "Mastercard Debit", "share":  5, "type": "international"},
-                    {"name": "Carnet Débito",    "share":  2.0, "type": "local"}
+                    {"name": "Carnet DÃ©bito",    "share":  2.0, "type": "local"}
                 ]},
             {"name": "Cash", "detail": "OXXO, 7-Eleven", "share": 19, "growth": "-10% YoY"},
             {"name": "A2A", "detail": "SPEI, CoDi", "share": 18, "growth": "+25% YoY"},
             {"name": "Wallets", "detail": "Mercado Pago, PayPal", "share": 11, "growth": "+20% YoY"},
-            {"name": "BNPL", "detail": "Kueski, Mercado Crédito", "share": 4, "growth": "+35% YoY"},
+            {"name": "BNPL", "detail": "Kueski, Mercado CrÃ©dito", "share": 4, "growth": "+35% YoY"},
         ],
         "regulation": [
             "CNBV (banking regulator) and Banxico (central bank) share authority. The 2018 Fintech Law defined two licenses: IFPE (e-money) for wallets and ITF (crowdfunding) for lending platforms. Over 80 IFPEs have been authorized.",
             "Mexico Fintech Law 2.0 is expected October 2026. The refresh is tightening PSP/wallet capital requirements, redefining 'payment initiator' roles, and introducing clearer Open Finance obligations.",
             "Merchants of Record must register for SAT (tax authority) and withhold IVA (VAT 16%) at point of sale. Digital services from foreign providers also trigger a 16% IVA that the PSP often collects on behalf of the SAT.",
-            "OXXO Pay (cash voucher accepted at 22K+ OXXO stores) is still the de facto onboarding rail for the ~40% of Mexicans without a card. Settlement is 24–72 hours to merchant; it's a non-negotiable in Mexican checkouts.",
-            "CoDi (Banxico's instant QR A2A rail) was launched in 2019 but adoption has been slow — being revamped with CoDi 2.0 pushed to Q3 2026 with merchant incentives and interop with Dimo wallet-to-wallet.",
+            "OXXO Pay (cash voucher accepted at 22K+ OXXO stores) is still the de facto onboarding rail for the ~40% of Mexicans without a card. Settlement is 24â€“72 hours to merchant; it's a non-negotiable in Mexican checkouts.",
+            "CoDi (Banxico's instant QR A2A rail) was launched in 2019 but adoption has been slow â€” being revamped with CoDi 2.0 pushed to Q3 2026 with merchant incentives and interop with Dimo wallet-to-wallet.",
             "Remittances are ~4% of GDP and mostly via the US corridor. Wallets like Mercado Pago and Bitso are eating into traditional remittance share, including stablecoin-rail USDC settlement.",
         ],
         "digital_trends": [
             "Mexico is a cash-heavy but rapidly digitizing market. OXXO Pay still drives ~19% of online payments but is losing 10% YoY as wallets and SPEI scale.",
-            "Nearshoring is driving B2B payment innovation. US companies relocating supply chain to Mexico need cross-border settlement and invoice financing — Kueski, Konfío, and Clara are the main fintech players.",
-            "Mercado Pago (Mercado Libre ecosystem) processes over 30% of all Mexican ecommerce payments. They offer embedded credit, installments, wallet, and acquiring — effectively a full-stack PSP.",
+            "Nearshoring is driving B2B payment innovation. US companies relocating supply chain to Mexico need cross-border settlement and invoice financing â€” Kueski, KonfÃ­o, and Clara are the main fintech players.",
+            "Mercado Pago (Mercado Libre ecosystem) processes over 30% of all Mexican ecommerce payments. They offer embedded credit, installments, wallet, and acquiring â€” effectively a full-stack PSP.",
             "Spotify, Netflix, Uber, and other subscription brands rely heavily on card-on-file + backup OXXO. Failed recurring charges due to card churn are a major ops cost; smart-retry orchestration is a priority.",
             "Cross-border ecommerce (buying from US/China/EU) is ~30% of total Mexican ecommerce spend. Merchants of Record and local APM integration are essential for Shein, Temu, Amazon, etc.",
-            "The BNPL wave (Kueski Pay, Atrato, Mercado Crédito) is concentrated in travel, electronics, and apparel. Credit approval uses alt-data since only ~40% of Mexicans have formal credit history.",
+            "The BNPL wave (Kueski Pay, Atrato, Mercado CrÃ©dito) is concentrated in travel, electronics, and apparel. Credit approval uses alt-data since only ~40% of Mexicans have formal credit history.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -2339,20 +2339,20 @@ COUNTRY_DETAIL_RICH = {
             {"name": "BNPL", "share": 6, "growth": "+25% YoY"},
         ],
         "regulation": [
-            "Superintendencia Financiera de Colombia (SFC) regulates payment and e-money companies under Decree 1692/2020. A SEDPE license (Sociedad Especializada en Depósitos y Pagos Electrónicos) is needed to hold customer funds.",
-            "Bre-B is the new instant-payment rail launched by Banco de la República in 2025, modeled on PIX. Participation is mandatory for banks and SEDPEs above certain volume thresholds, with interop required by 2026.",
-            "PSE (Pagos Seguros en Línea), owned by ACH Colombia, is the incumbent A2A rail for ecommerce. Most banks are integrated. Settlement is same-day with tokenized authentication at the issuer bank.",
-            "VAT (IVA) at 19% applies to most digital services; foreign providers must register for IVA on services sold to Colombian consumers. Retención en la fuente (withholding tax) applies on payouts to Colombian merchants.",
+            "Superintendencia Financiera de Colombia (SFC) regulates payment and e-money companies under Decree 1692/2020. A SEDPE license (Sociedad Especializada en DepÃ³sitos y Pagos ElectrÃ³nicos) is needed to hold customer funds.",
+            "Bre-B is the new instant-payment rail launched by Banco de la RepÃºblica in 2025, modeled on PIX. Participation is mandatory for banks and SEDPEs above certain volume thresholds, with interop required by 2026.",
+            "PSE (Pagos Seguros en LÃ­nea), owned by ACH Colombia, is the incumbent A2A rail for ecommerce. Most banks are integrated. Settlement is same-day with tokenized authentication at the issuer bank.",
+            "VAT (IVA) at 19% applies to most digital services; foreign providers must register for IVA on services sold to Colombian consumers. RetenciÃ³n en la fuente (withholding tax) applies on payouts to Colombian merchants.",
             "Financial inclusion is a national priority. Daviplata (Banco Davivienda) and Nequi (Grupo Bancolombia) have 20M+ users each; both started as basic wallets and now offer credit, investments, and remittances.",
             "Data protection under Ley 1581/2012 requires explicit consent and SIC (Superintendencia de Industria y Comercio) registration of databases. Cross-border data transfer requires adequacy or contractual safeguards.",
         ],
         "digital_trends": [
             "Colombia is the wallet-adoption leader in the Andean region. Nequi and Daviplata each have 20M+ users and are accepted at most major retailers, supermarkets, and billers.",
-            "Bre-B rollout in 2025 is expected to repeat the PIX effect — bringing instant A2A payments to ecommerce and social commerce. Early integrators (Rappi, Mercado Libre) have already added it to checkout.",
+            "Bre-B rollout in 2025 is expected to repeat the PIX effect â€” bringing instant A2A payments to ecommerce and social commerce. Early integrators (Rappi, Mercado Libre) have already added it to checkout.",
             "Cash-based payments (Efecty, Baloto) still matter for unbanked segments but are declining ~8% per year as wallets grow. Merchants that drop cash too fast lose ~15% of checkout conversion.",
             "Rappi (Colombian unicorn) is the dominant super-app in LatAm outside Brazil. RappiPay (their fintech arm) now offers cards, credit, and PSP services bundled with delivery.",
             "Open Finance framework is in regulatory consultation; industry expects mandatory APIs for payment initiation and data aggregation by 2027. Local fintechs (Truora, Finmaq) are already building on top.",
-            "Cross-border ecommerce is huge: US and China ship in via Aerovía/Olympic courier networks. Payments usually settle in USD via international cards or CrediBanco acquiring, with FX happening at the PSP level.",
+            "Cross-border ecommerce is huge: US and China ship in via AerovÃ­a/Olympic courier networks. Payments usually settle in USD via international cards or CrediBanco acquiring, with FX happening at the PSP level.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -2376,9 +2376,9 @@ COUNTRY_DETAIL_RICH = {
             "a2a":     "Transferencias 3.0 / DEBIN",
             "apms":    [
                 {"name": "Mercado Pago","type": "Wallet"},
-                {"name": "Ualá",        "type": "Wallet"},
+                {"name": "UalÃ¡",        "type": "Wallet"},
                 {"name": "Rapipago",    "type": "Cash voucher"},
-                {"name": "PagoFácil",   "type": "Cash voucher"},
+                {"name": "PagoFÃ¡cil",   "type": "Cash voucher"},
             ],
         },
         "payment_methods_breakdown": [
@@ -2389,30 +2389,30 @@ COUNTRY_DETAIL_RICH = {
                     {"name": "Amex",       "share":  3.0, "type": "international"},
                     {"name": "Cabal",      "share":  2.0, "type": "local"},
                 ]},
-            {"name": "Wallets", "detail": "Mercado Pago, Ualá", "share": 22, "growth": "+35% YoY"},
+            {"name": "Wallets", "detail": "Mercado Pago, UalÃ¡", "share": 22, "growth": "+35% YoY"},
             {"name": "Debit Cards", "share": 18, "growth": "flat",
                 "schemes": [
-                    {"name": "Cabal Débito", "share": 2.7, "type": "local"},
+                    {"name": "Cabal DÃ©bito", "share": 2.7, "type": "local"},
                     {"name": "Visa Debit", "share": 8.4, "type": "international"},
                     {"name": "Mastercard Debit", "share": 6.9, "type": "international"},
                 ]},
-            {"name": "Cash", "detail": "Rapipago, PagoFácil", "share": 10, "growth": "-12% YoY"},
+            {"name": "Cash", "detail": "Rapipago, PagoFÃ¡cil", "share": 10, "growth": "-12% YoY"},
             {"name": "A2A", "detail": "Transferencias 3.0", "share": 10, "growth": "+28% YoY"},
             {"name": "BNPL / cuotas", "share": 5, "growth": "+8% YoY"},
         ],
         "regulation": [
-            "BCRA (Banco Central de la República Argentina) regulates payment service providers (PSPCR) — the license needed to hold customer funds as a wallet or aggregator. All PSPCRs must segregate client funds 100% in regulated instruments.",
+            "BCRA (Banco Central de la RepÃºblica Argentina) regulates payment service providers (PSPCR) â€” the license needed to hold customer funds as a wallet or aggregator. All PSPCRs must segregate client funds 100% in regulated instruments.",
             "Argentina operates with multiple exchange rates (official, MEP, CCL, blue) and strict capital controls. Cross-border USD settlement for merchants requires BCRA authorization and often routes through Uruguay or Miami.",
-            "Transferencias 3.0 is the BCRA-run instant-payment interop rail launched 2021. It connects all banks and wallets with QR interoperability and real-time settlement. It's the backbone of the Mercado Pago/Ualá ecosystem.",
-            "AFIP (tax authority) imposes gross-income withholding (IIBB, ~3–5% per province), VAT (21%), and PAIS tax (30% on FX operations for imports). PSPs typically handle withholdings on behalf of merchants.",
-            "Cuotas sin interés (interest-free installments, subsidized by banks and merchants) is culturally non-negotiable. Ahora 12, Ahora 24, and promotional plans drive ~70% of ecommerce credit card spend.",
+            "Transferencias 3.0 is the BCRA-run instant-payment interop rail launched 2021. It connects all banks and wallets with QR interoperability and real-time settlement. It's the backbone of the Mercado Pago/UalÃ¡ ecosystem.",
+            "AFIP (tax authority) imposes gross-income withholding (IIBB, ~3â€“5% per province), VAT (21%), and PAIS tax (30% on FX operations for imports). PSPs typically handle withholdings on behalf of merchants.",
+            "Cuotas sin interÃ©s (interest-free installments, subsidized by banks and merchants) is culturally non-negotiable. Ahora 12, Ahora 24, and promotional plans drive ~70% of ecommerce credit card spend.",
             "Crypto is legal but not tender; adoption is high as a USD-hedge. Argentina has the highest per-capita stablecoin usage in LatAm. Exchanges must register with UIF (AML authority) and report large transactions.",
         ],
         "digital_trends": [
             "Mercado Pago (ML Argentina) is the dominant wallet with ~50% of ecommerce payments flowing through it. Installment and QR at physical retail is cannibalizing debit card rails.",
-            "Ualá (3rd largest fintech in LatAm) grew from a prepaid card to a full neobank. 8M+ users, majority under 35. They're aggressive on no-fee instant transfers and crypto trading.",
+            "UalÃ¡ (3rd largest fintech in LatAm) grew from a prepaid card to a full neobank. 8M+ users, majority under 35. They're aggressive on no-fee instant transfers and crypto trading.",
             "Hyperinflation (>100% annual) is pushing consumers toward stablecoins (USDT, USDC) for savings. Wallets like Lemon and Buenbit are normalizing crypto-to-peso conversion at checkout.",
-            "Cross-border and SaaS subscriptions suffer from the PAIS tax (30% on FX). Merchants offering local peso pricing + local acquiring avoid the premium and convert 2–3x better.",
+            "Cross-border and SaaS subscriptions suffer from the PAIS tax (30% on FX). Merchants offering local peso pricing + local acquiring avoid the premium and convert 2â€“3x better.",
             "Mobile commerce is ~70% of total ecommerce; Android dominates. WhatsApp Business API is a common checkout channel for SMBs, often settling via Mercado Pago link.",
             "Social commerce via Instagram and TikTok is huge given FX constraints pushing consumers to direct-from-brand purchases over marketplaces. Influencer-linked MP checkouts are the default.",
         ],
@@ -2435,7 +2435,7 @@ COUNTRY_DETAIL_RICH = {
         },
         "local_payments": {
             "scheme":  "N/A",
-            "a2a":     "TEF (Transferencia Electrónica de Fondos)",
+            "a2a":     "TEF (Transferencia ElectrÃ³nica de Fondos)",
             "apms":    [
                 {"name": "WebPay Plus","type": "A2A / Card redirect"},
                 {"name": "Mach",       "type": "Wallet"},
@@ -2462,7 +2462,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Cash", "detail": "Servipag", "share": 4, "growth": "-10% YoY"},
         ],
         "regulation": [
-            "CMF (Comisión para el Mercado Financiero) regulates banks, PSPs, and fintechs. The 2023 Fintech Law (Ley 21.521 / LMSF) created six new license types including payment initiators, wallet issuers, and crowdfunding platforms.",
+            "CMF (ComisiÃ³n para el Mercado Financiero) regulates banks, PSPs, and fintechs. The 2023 Fintech Law (Ley 21.521 / LMSF) created six new license types including payment initiators, wallet issuers, and crowdfunding platforms.",
             "Open Finance is being implemented in phases under the LMSF. By mid-2026, banks and wallets must expose APIs for account aggregation and payment initiation with customer consent.",
             "Transbank (owned by Chilean banks) historically monopolized card acquiring. New acquirers (Getnet, Kushki, Flow) now compete, but Transbank still processes ~70% of physical-world card volume.",
             "VAT (IVA) at 19% applies; foreign digital service providers must register under Ley 21.210 and collect IVA on B2C sales. Over 500 international platforms (Netflix, Spotify, etc.) are registered.",
@@ -2470,12 +2470,12 @@ COUNTRY_DETAIL_RICH = {
             "Crypto is legal and CMF has granted licenses under LMSF. Chilean exchanges (Buda, CryptoMarket) are consolidated; stablecoin payments are permitted but not common at merchant checkout yet.",
         ],
         "digital_trends": [
-            "Chile has the highest internet penetration (92%) and card-ownership rate in LatAm. Card-not-present fraud is also higher — 3DS is universally required and Tokens on file are standard.",
+            "Chile has the highest internet penetration (92%) and card-ownership rate in LatAm. Card-not-present fraud is also higher â€” 3DS is universally required and Tokens on file are standard.",
             "WebPay Plus is the incumbent ecommerce gateway; more than 80% of Chilean merchants use it. Challenger gateways (Flow, Khipu, Fintoc) are growing in the SMB and subscription segments.",
             "Mach (Bci-owned wallet) reached 3M+ users by offering instant A2A, QR payments, and Visa prepaid. Fpay (Falabella ecosystem) and Copec Pay are the retail-backed alternatives.",
-            "Chilean consumers are frequent cross-border shoppers — Aliexpress, Amazon, and US retailers represent 20%+ of total ecommerce. Dollar settlement and low-FX cards (Global66, Tenpo) are popular.",
-            "Retail super-apps (Falabella, Cencosud, Ripley) dominate large-ticket ecommerce and offer private-label credit cards with aggressive installment plans (3-sin-interés) funded by the retailer.",
-            "The 2023 Fintech Law has triggered a wave of new entrants — 200+ fintechs now regulated under CMF. Expect consolidation and M&A as smaller payment initiators look for scale.",
+            "Chilean consumers are frequent cross-border shoppers â€” Aliexpress, Amazon, and US retailers represent 20%+ of total ecommerce. Dollar settlement and low-FX cards (Global66, Tenpo) are popular.",
+            "Retail super-apps (Falabella, Cencosud, Ripley) dominate large-ticket ecommerce and offer private-label credit cards with aggressive installment plans (3-sin-interÃ©s) funded by the retailer.",
+            "The 2023 Fintech Law has triggered a wave of new entrants â€” 200+ fintechs now regulated under CMF. Expect consolidation and M&A as smaller payment initiators look for scale.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -2523,19 +2523,19 @@ COUNTRY_DETAIL_RICH = {
             {"name": "BNPL", "share": 5, "growth": "+40% YoY"},
         ],
         "regulation": [
-            "SBS (Superintendencia de Banca, Seguros y AFP) and BCRP (Banco Central de Reserva del Perú) co-regulate the payment ecosystem. E-money issuers need an EEDE license (Empresa Emisora de Dinero Electrónico).",
-            "Decreto Legislativo 1478 (2020) modernized the fintech framework. The 2022 BCRP mandate required interoperability between wallets — this is what made Yape and Plin work together at checkout.",
-            "Yape (BCP ecosystem) has 15M+ users — nearly half of Peru's adult population. Plin (Interbank/BBVA/Scotiabank) has ~11M. Since interop, any QR generated in one wallet is payable from the other.",
-            "VAT (IGV) at 18% applies to all digital services. Foreign providers must register with SUNAT (tax authority) and collect IGV on B2C transactions — enforcement tightened significantly in 2025.",
-            "Peru's Open Banking framework (consultation draft 2025) is expected to take effect in 2026. It targets payment initiation and account data sharing with consumer consent — similar to Colombia's Bre-B model.",
+            "SBS (Superintendencia de Banca, Seguros y AFP) and BCRP (Banco Central de Reserva del PerÃº) co-regulate the payment ecosystem. E-money issuers need an EEDE license (Empresa Emisora de Dinero ElectrÃ³nico).",
+            "Decreto Legislativo 1478 (2020) modernized the fintech framework. The 2022 BCRP mandate required interoperability between wallets â€” this is what made Yape and Plin work together at checkout.",
+            "Yape (BCP ecosystem) has 15M+ users â€” nearly half of Peru's adult population. Plin (Interbank/BBVA/Scotiabank) has ~11M. Since interop, any QR generated in one wallet is payable from the other.",
+            "VAT (IGV) at 18% applies to all digital services. Foreign providers must register with SUNAT (tax authority) and collect IGV on B2C transactions â€” enforcement tightened significantly in 2025.",
+            "Peru's Open Banking framework (consultation draft 2025) is expected to take effect in 2026. It targets payment initiation and account data sharing with consumer consent â€” similar to Colombia's Bre-B model.",
             "Cash payments via PagoEfectivo and KasNet are still ~15% of ecommerce, driven by the unbanked segment (~30% of adults). Most merchants offer cash as a mandatory fallback alongside cards and wallets.",
         ],
         "digital_trends": [
             "Yape and Plin interoperability has driven Peru from cash-heavy to wallet-first at SMB retail. QR payments are now common at street markets, taxis, and small restaurants.",
-            "BCP (Peru's largest bank) uses Yape as a customer acquisition and cross-sell engine — credit, savings, and insurance are all pitched inside the wallet. This is a defensive moat against fintech entrants.",
+            "BCP (Peru's largest bank) uses Yape as a customer acquisition and cross-sell engine â€” credit, savings, and insurance are all pitched inside the wallet. This is a defensive moat against fintech entrants.",
             "Remittances to Peru are ~$4B/year, mostly from US (Peruvians in Florida, NY). Wallets are eating into Western Union and MoneyGram share via stablecoin on/off-ramps (Bitso, Lemon).",
             "Large-ticket ecommerce (electronics, travel) runs on credit cards with installment plans from Niubiz-enabled acquirers. Lower-ticket ecommerce (food delivery, subscriptions) runs on wallets + cash.",
-            "Mobile internet penetration is skewed — 4G coverage is strong in Lima/Arequipa but thin in Andes/Amazon regions. This is why super-apps (Rappi, PedidosYa) focus mainly on coastal cities.",
+            "Mobile internet penetration is skewed â€” 4G coverage is strong in Lima/Arequipa but thin in Andes/Amazon regions. This is why super-apps (Rappi, PedidosYa) focus mainly on coastal cities.",
             "The BNPL sector is young but growing ~40% YoY. Kushki and Niubiz both launched installment flows through acquirer rails; standalone BNPLs are less developed than in Mexico or Brazil.",
         ],
         "yuno_coverage": {
@@ -2584,20 +2584,20 @@ COUNTRY_DETAIL_RICH = {
             {"name": "BNPL", "share": 4, "growth": "+18% YoY"},
         ],
         "regulation": [
-            "Ecuador is fully dollarized — USD is legal tender since 2000. This removes FX risk for merchants but makes the country unusually sensitive to US monetary policy.",
-            "SB (Superintendencia de Bancos) regulates traditional banking. JPRMF (Junta de Política y Regulación Monetaria y Financiera) oversees e-money and payment services.",
-            "The draft Ley Fintech (under congressional review in 2025) would create dedicated licenses for PSPs, wallets, and crowdfunding — expected effective 2026/27.",
+            "Ecuador is fully dollarized â€” USD is legal tender since 2000. This removes FX risk for merchants but makes the country unusually sensitive to US monetary policy.",
+            "SB (Superintendencia de Bancos) regulates traditional banking. JPRMF (Junta de PolÃ­tica y RegulaciÃ³n Monetaria y Financiera) oversees e-money and payment services.",
+            "The draft Ley Fintech (under congressional review in 2025) would create dedicated licenses for PSPs, wallets, and crowdfunding â€” expected effective 2026/27.",
             "VAT (IVA) at 15% applies; foreign digital service providers must register with SRI and collect IVA. Resolution NAC-DGERCGC20 governs cross-border digital services.",
-            "BCE (Banco Central) runs the SPI (Sistema de Pagos Interbancario) for A2A and SINCE for check clearing. There is no real-time 24/7 rail yet — most transfers are T+0 batch-settled.",
-            "Data protection under LOPDP (Ley Orgánica de Protección de Datos Personales, 2021) aligns with GDPR principles; the authority is SPDP.",
+            "BCE (Banco Central) runs the SPI (Sistema de Pagos Interbancario) for A2A and SINCE for check clearing. There is no real-time 24/7 rail yet â€” most transfers are T+0 batch-settled.",
+            "Data protection under LOPDP (Ley OrgÃ¡nica de ProtecciÃ³n de Datos Personales, 2021) aligns with GDPR principles; the authority is SPDP.",
         ],
         "digital_trends": [
             "PayPhone is the clear wallet leader with 4M+ users and merchant acceptance at supermarkets, pharmacies, and SMBs. They recently launched crypto on/off-ramps via Panda.",
             "Ecommerce is concentrated in Quito and Guayaquil; the rest of the country skews cash-on-delivery. Last-mile logistics is a frequent blocker for merchant expansion.",
             "Remittances are ~5% of GDP (mostly from US and Spain). Wallets and fintechs (PayPhone, Kushki) are growing share vs traditional operators.",
-            "Dollarization means fewer FX and stablecoin use cases than neighbors — crypto adoption exists but at much smaller scale than Argentina or Venezuela.",
+            "Dollarization means fewer FX and stablecoin use cases than neighbors â€” crypto adoption exists but at much smaller scale than Argentina or Venezuela.",
             "Super-apps are underdeveloped; Rappi and Uber Eats dominate delivery but don't yet operate broader commerce or fintech services locally.",
-            "Banks are moving aggressively into QR and instant transfers (Produbanco's Billetera Móvil, Pichincha's Deuna app) to pre-empt fintech entrants.",
+            "Banks are moving aggressively into QR and instant transfers (Produbanco's Billetera MÃ³vil, Pichincha's Deuna app) to pre-empt fintech entrants.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -2644,19 +2644,19 @@ COUNTRY_DETAIL_RICH = {
             {"name": "BNPL / Other", "share": 2, "growth": "+10% YoY"},
         ],
         "regulation": [
-            "ASFI (Autoridad de Supervisión del Sistema Financiero) is the primary regulator. BCB (Banco Central de Bolivia) runs payment rails and FX policy.",
-            "Ley 393 de Servicios Financieros (2013) is the foundational framework. EEDE (Empresas Especializadas en Dinero Electrónico) is the license for e-money wallets.",
-            "Multiple exchange rate system and USD shortage make cross-border settlement slow; merchants often use informal 'bolsín' FX or stablecoin workarounds.",
-            "VAT (IVA) at 13% applies; digital services from abroad are subject to IT withholding under Resolución Normativa 102200000024.",
+            "ASFI (Autoridad de SupervisiÃ³n del Sistema Financiero) is the primary regulator. BCB (Banco Central de Bolivia) runs payment rails and FX policy.",
+            "Ley 393 de Servicios Financieros (2013) is the foundational framework. EEDE (Empresas Especializadas en Dinero ElectrÃ³nico) is the license for e-money wallets.",
+            "Multiple exchange rate system and USD shortage make cross-border settlement slow; merchants often use informal 'bolsÃ­n' FX or stablecoin workarounds.",
+            "VAT (IVA) at 13% applies; digital services from abroad are subject to IT withholding under ResoluciÃ³n Normativa 102200000024.",
             "Tigo Money has >2M users and is the dominant mobile-wallet rail, leveraging Millicom's telco footprint. Acceptance is strongest in Santa Cruz and La Paz.",
             "BCB is piloting QR interoperability between banks and EEDEs with mandated enrollment by 2026, similar to Peru's Yape/Plin model.",
         ],
         "digital_trends": [
             "Bolivia is cash-first but digitizing fast in urban centers. QR Simple (BCB's interop initiative) is poised to be the main inflection point for digital payments.",
             "Stablecoin usage (mostly USDT) is growing as a USD-access workaround given BCB's FX restrictions. Binance P2P is widely used despite no formal exchange licensing.",
-            "Social commerce via WhatsApp and Facebook is very common — SMBs often use Tigo Money QR or Tuyo for payment, not formal ecommerce platforms.",
-            "Cross-border merchants struggle with Bolivian settlement — most partner with Uruguay or Peru-based regional PSPs to reach Bolivian consumers.",
-            "Banco BISA, Banco Mercantil, and Banco Unión have the largest acquiring footprint. PSPs (Kushki, Pagosnet) are starting to build alternatives for online-only merchants.",
+            "Social commerce via WhatsApp and Facebook is very common â€” SMBs often use Tigo Money QR or Tuyo for payment, not formal ecommerce platforms.",
+            "Cross-border merchants struggle with Bolivian settlement â€” most partner with Uruguay or Peru-based regional PSPs to reach Bolivian consumers.",
+            "Banco BISA, Banco Mercantil, and Banco UniÃ³n have the largest acquiring footprint. PSPs (Kushki, Pagosnet) are starting to build alternatives for online-only merchants.",
             "Low card penetration (~20% adults) means any merchant that doesn't offer Tigo Money or QR is locking out most of the digital-active population.",
         ],
         "yuno_coverage": {
@@ -2696,7 +2696,7 @@ COUNTRY_DETAIL_RICH = {
                 ]},
             {"name": "Debit Cards", "share": 22, "growth": "+3% YoY",
                 "schemes": [
-                    {"name": "Cabal Débito", "share": 2.2, "type": "local"},
+                    {"name": "Cabal DÃ©bito", "share": 2.2, "type": "local"},
                     {"name": "Visa Debit", "share": 10.9, "type": "international"},
                     {"name": "Mastercard Debit", "share": 8.9, "type": "international"},
                 ]},
@@ -2706,20 +2706,20 @@ COUNTRY_DETAIL_RICH = {
             {"name": "BNPL", "share": 4, "growth": "+20% YoY"},
         ],
         "regulation": [
-            "BCP (Banco Central del Paraguay) regulates banking, PSPs, and electronic money. EMPE (Entidades de Medios de Pago Electrónico) is the license for wallets and aggregators.",
-            "Ley de Servicios de Pago Móvil (2014) was one of the earliest mobile-money frameworks in LatAm — it opened the door for Tigo Money and Billetera Personal.",
+            "BCP (Banco Central del Paraguay) regulates banking, PSPs, and electronic money. EMPE (Entidades de Medios de Pago ElectrÃ³nico) is the license for wallets and aggregators.",
+            "Ley de Servicios de Pago MÃ³vil (2014) was one of the earliest mobile-money frameworks in LatAm â€” it opened the door for Tigo Money and Billetera Personal.",
             "VAT (IVA) at 10% applies; most digital services provided by foreign companies are subject to a simplified withholding regime introduced in 2020.",
             "SIPAP (Sistema de Pagos Paraguay) runs RTGS and same-day ACH. BCP is piloting SIPAP instant (real-time) with mandated participation by 2026.",
-            "Paraguay hosts Ciudad del Este (triple-frontier with Brazil/Argentina) — a major cross-border retail hub where US-dollar pricing and crypto (USDT) are increasingly common.",
+            "Paraguay hosts Ciudad del Este (triple-frontier with Brazil/Argentina) â€” a major cross-border retail hub where US-dollar pricing and crypto (USDT) are increasingly common.",
             "Free-trade zones (Fenix, Cateriac) attract fintech and PSP back-office ops thanks to low tax rates and flexible labor law.",
         ],
         "digital_trends": [
             "Mobile wallets (Billetera Personal, Tigo Money, Claro Pay) account for ~40% of digital transactions in rural areas where banking is thin.",
-            "Paraguay has the cheapest electricity in LatAm (Itaipú hydro) which has attracted large-scale crypto mining. This has also driven stablecoin availability and P2P exchange activity.",
+            "Paraguay has the cheapest electricity in LatAm (ItaipÃº hydro) which has attracted large-scale crypto mining. This has also driven stablecoin availability and P2P exchange activity.",
             "Cross-border purchasing in Ciudad del Este is a major economic engine; PSPs that handle multi-currency settlement (PYG, BRL, ARS, USD) are preferred by retailers.",
             "Pagopar is the dominant domestic ecommerce gateway, integrated with most Paraguayan acquirers and SIPAP. Social commerce via WhatsApp often settles via Pagopar link.",
-            "Youth-skewed demographics (median age ~27) drive rapid adoption of ride-hailing, delivery, and streaming. MUV and Bolt compete with Uber in Asunción.",
-            "Paraguayan banks (Itaú, Banco Nacional de Fomento, Ueno) are investing in digital; neobanks (Ueno, Zeta) are gaining share in SMB and youth segments.",
+            "Youth-skewed demographics (median age ~27) drive rapid adoption of ride-hailing, delivery, and streaming. MUV and Bolt compete with Uber in AsunciÃ³n.",
+            "Paraguayan banks (ItaÃº, Banco Nacional de Fomento, Ueno) are investing in digital; neobanks (Ueno, Zeta) are gaining share in SMB and youth segments.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -2740,9 +2740,9 @@ COUNTRY_DETAIL_RICH = {
         },
         "local_payments": {
             "scheme":  "N/A",
-            "a2a":     "Pago Móvil BCV",
+            "a2a":     "Pago MÃ³vil BCV",
             "apms":    [
-                {"name": "Pago Móvil",  "type": "A2A (phone-based)"},
+                {"name": "Pago MÃ³vil",  "type": "A2A (phone-based)"},
                 {"name": "Zinli",       "type": "Multi-currency wallet"},
                 {"name": "Reserve",     "type": "USD stablecoin wallet"},
                 {"name": "Bigpay",      "type": "Wallet"},
@@ -2755,7 +2755,7 @@ COUNTRY_DETAIL_RICH = {
                     {"name": "Visa Debit", "share": 11.0, "type": "international"},
                     {"name": "Mastercard Debit", "share": 8.0, "type": "international"}
                 ]},
-            {"name": "A2A", "detail": "Pago Móvil", "share": 18, "growth": "+18% YoY"},
+            {"name": "A2A", "detail": "Pago MÃ³vil", "share": 18, "growth": "+18% YoY"},
             {"name": "Wallets", "detail": "Zinli, Reserve", "share": 18, "growth": "+35% YoY"},
             {"name": "Credit Cards", "share": 15, "growth": "-5% YoY",
                 "schemes": [
@@ -2769,15 +2769,15 @@ COUNTRY_DETAIL_RICH = {
             "SUDEBAN (Superintendencia de Bancos) and BCV (Banco Central de Venezuela) co-regulate. Hyperinflation has driven a de facto dual-currency economy (VES + USD) despite official VES-only tender.",
             "US and EU sanctions restrict international card rails; Visa and Mastercard process Venezuelan transactions through limited corridors. Many international merchants don't accept VES-issued cards.",
             "SUNACRIP was the crypto regulator (dissolved 2023 in corruption scandal). Crypto and stablecoins are legal de facto but operate with minimal oversight. USDT is widely used for savings and remittances.",
-            "Pago Móvil is the BCV-run instant A2A rail — phone-number based, free, and present on every Venezuelan bank. It dominates domestic digital payments at ~18% share.",
+            "Pago MÃ³vil is the BCV-run instant A2A rail â€” phone-number based, free, and present on every Venezuelan bank. It dominates domestic digital payments at ~18% share.",
             "Remittances are >$4B/year (mostly from Colombia, US, Spain). Wallets (Zinli, Reserve) and crypto rails have replaced banks as the main remittance channel.",
-            "Tax policy is erratic — ISLR (income tax) and IVA (VAT 16%) exist but enforcement is patchy. Foreign ecommerce merchants often bypass local tax registration entirely.",
+            "Tax policy is erratic â€” ISLR (income tax) and IVA (VAT 16%) exist but enforcement is patchy. Foreign ecommerce merchants often bypass local tax registration entirely.",
         ],
         "digital_trends": [
-            "Venezuela has the highest per-capita stablecoin (USDT) adoption in LatAm — a direct response to hyperinflation. Reserve, Zinli, and Binance P2P are the dominant rails.",
-            "Ecommerce is unusually high as a % of total retail because in-person USD acceptance is complicated — online checkouts handle dual-currency pricing and stablecoin settlement cleaner.",
-            "Pago Móvil is ubiquitous for small transactions; QR + phone-number transfer replaces cash in most urban areas.",
-            "International subscriptions (Netflix, Spotify, Microsoft 365) are paid via overseas family members' cards, third-party gift-card sites, or crypto on-ramps — direct Venezuelan card rails often fail.",
+            "Venezuela has the highest per-capita stablecoin (USDT) adoption in LatAm â€” a direct response to hyperinflation. Reserve, Zinli, and Binance P2P are the dominant rails.",
+            "Ecommerce is unusually high as a % of total retail because in-person USD acceptance is complicated â€” online checkouts handle dual-currency pricing and stablecoin settlement cleaner.",
+            "Pago MÃ³vil is ubiquitous for small transactions; QR + phone-number transfer replaces cash in most urban areas.",
+            "International subscriptions (Netflix, Spotify, Microsoft 365) are paid via overseas family members' cards, third-party gift-card sites, or crypto on-ramps â€” direct Venezuelan card rails often fail.",
             "Mercado Libre withdrew from Venezuela in 2017. Amazon and other global marketplaces don't officially ship; consumers use courier-forwarders (Tealca, Liberty Express) with US addresses.",
             "Local super-apps are underdeveloped; Pedidos Ya and Yummy dominate delivery but operate narrowly in Caracas, Valencia, and Maracaibo.",
         ],
@@ -2800,9 +2800,9 @@ COUNTRY_DETAIL_RICH = {
         },
         "local_payments": {
             "scheme":  "N/A",
-            "a2a":     "SINPE Móvil",
+            "a2a":     "SINPE MÃ³vil",
             "apms":    [
-                {"name": "SINPE Móvil","type": "A2A (phone-based)"},
+                {"name": "SINPE MÃ³vil","type": "A2A (phone-based)"},
                 {"name": "Kash",       "type": "Wallet"},
                 {"name": "Tilopay",    "type": "Gateway"},
                 {"name": "Pago Tic",   "type": "Gateway"},
@@ -2821,25 +2821,25 @@ COUNTRY_DETAIL_RICH = {
                     {"name": "Visa Debit", "share": 15.4, "type": "international"},
                     {"name": "Mastercard Debit", "share": 11.2, "type": "international"}
                 ]},
-            {"name": "A2A", "detail": "SINPE Móvil", "share": 20, "growth": "+30% YoY"},
+            {"name": "A2A", "detail": "SINPE MÃ³vil", "share": 20, "growth": "+30% YoY"},
             {"name": "Wallets", "share": 8, "growth": "+20% YoY"},
             {"name": "Cash", "share": 5, "growth": "-15% YoY"},
             {"name": "BNPL", "share": 4, "growth": "+22% YoY"},
         ],
         "regulation": [
-            "SUGEF (Superintendencia General de Entidades Financieras) regulates banks; CONASSIF (Consejo Nacional de Supervisión) oversees payments and insurance.",
-            "BCCR (Banco Central de Costa Rica) operates SINPE — the RTGS and instant-payment rail. SINPE Móvil (phone-number A2A) has reached ~70% adult adoption since 2015.",
+            "SUGEF (Superintendencia General de Entidades Financieras) regulates banks; CONASSIF (Consejo Nacional de SupervisiÃ³n) oversees payments and insurance.",
+            "BCCR (Banco Central de Costa Rica) operates SINPE â€” the RTGS and instant-payment rail. SINPE MÃ³vil (phone-number A2A) has reached ~70% adult adoption since 2015.",
             "Ley del Sistema Financiero Nacional para la Vivienda and Ley de Servicios de Pago (in draft) are modernizing the PSP framework. A formal PSP license is expected by 2027.",
             "VAT (IVA) at 13% applies to all digital services; foreign B2C providers must register under Ley 9635 and collect/remit via SENDA.",
             "Strong tech-services economy (nearshoring for US): US card acceptance and USD settlement are common for B2B invoicing.",
             "LGPD-style data protection (Ley 8968) predates GDPR but is aligned in spirit. PRODHAB is the enforcement authority.",
         ],
         "digital_trends": [
-            "SINPE Móvil is the clear differentiator — instant phone-to-phone A2A free for consumers, accepted at most retailers, taxis, and restaurants. It drives ~20% of ecommerce already.",
-            "Costa Rica has the highest banking penetration in Central America (~80% adults) — cash is already a minority payment method and declining 15% YoY.",
+            "SINPE MÃ³vil is the clear differentiator â€” instant phone-to-phone A2A free for consumers, accepted at most retailers, taxis, and restaurants. It drives ~20% of ecommerce already.",
+            "Costa Rica has the highest banking penetration in Central America (~80% adults) â€” cash is already a minority payment method and declining 15% YoY.",
             "BAC Credomatic is the regional payment giant (operates across Central America under the same brand). Their acquiring rails dominate physical and online.",
-            "Nearshoring has brought Amazon, Microsoft, Intel, HP, and many US SaaS companies to Costa Rica — driving B2B payment sophistication and USD corridor volume.",
-            "Kash and other wallet entrants are positioning for SME merchant acquiring and BNPL — still early but growth rates are high.",
+            "Nearshoring has brought Amazon, Microsoft, Intel, HP, and many US SaaS companies to Costa Rica â€” driving B2B payment sophistication and USD corridor volume.",
+            "Kash and other wallet entrants are positioning for SME merchant acquiring and BNPL â€” still early but growth rates are high.",
             "Cross-border ecommerce from the US is strong; consumers frequently use courier-forwarders or direct Amazon shipping, paying via Visa/Mastercard credit cards.",
         ],
         "yuno_coverage": {
@@ -2890,7 +2890,7 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "SIB (Superintendencia de Bancos) and BCRD (Banco Central) co-regulate. Ley Monetaria y Financiera (Ley 183-02) is the foundational framework.",
             "Reglamento sobre Servicios de Pago (2024) formalized e-money and payment service provider licenses. PSPs now need explicit BCRD authorization.",
-            "tPago (Banreservas) has 3M+ users and is accepted by most retailers and utility billers — comparable to SINPE Móvil's role in Costa Rica.",
+            "tPago (Banreservas) has 3M+ users and is accepted by most retailers and utility billers â€” comparable to SINPE MÃ³vil's role in Costa Rica.",
             "VAT (ITBIS) at 18% applies; foreign digital services registered through DGII. Tax enforcement tightened significantly post-2022 with ITBIS on streaming services.",
             "Remittances >$10B/year (largest in Central America-Caribbean), mostly from US corridors. Multiple wallets and stablecoin rails compete with traditional MTOs.",
             "Tourism-driven economy means POS acquiring is sophisticated; Visa and Mastercard acceptance at hotels and restaurants is near-universal.",
@@ -2898,9 +2898,9 @@ COUNTRY_DETAIL_RICH = {
         "digital_trends": [
             "tPago is the dominant wallet, leveraging Banreservas' footprint. Accepted at grocery chains (La Sirena, Jumbo), pharmacies, and most utility billers.",
             "AZUL and Cardnet are the main card acquirers. Their ecommerce gateways handle most online card volume in the country.",
-            "Remittance corridors (US, Spain) are being disrupted by fintechs — Remitly, Wise, and Lemon/Bitso-style stablecoin rails are growing fast.",
+            "Remittance corridors (US, Spain) are being disrupted by fintechs â€” Remitly, Wise, and Lemon/Bitso-style stablecoin rails are growing fast.",
             "Tourism drives USD-denominated revenue for hotels, resorts, and vacation rentals; multi-currency settlement is a differentiator for PSPs.",
-            "Banreservas (state bank) also runs digital products beyond tPago — Subagente Banreservas enables corner stores to act as banking agents.",
+            "Banreservas (state bank) also runs digital products beyond tPago â€” Subagente Banreservas enables corner stores to act as banking agents.",
             "BNPL entrants (Kueski launched DR operations, Cashea) are targeting mid-income segments; credit card penetration is moderate (~35% adults).",
         ],
         "yuno_coverage": {
@@ -2922,7 +2922,7 @@ COUNTRY_DETAIL_RICH = {
         },
         "local_payments": {
             "scheme":  "Clave",
-            "a2a":     "Yappy / ACH-Panamá",
+            "a2a":     "Yappy / ACH-PanamÃ¡",
             "apms":    [
                 {"name": "Yappy",        "type": "A2A / wallet"},
                 {"name": "Nequi Panama", "type": "Wallet"},
@@ -2945,24 +2945,24 @@ COUNTRY_DETAIL_RICH = {
                     {"name": "Mastercard Debit", "share": 5.9, "type": "international"},
                 ]},
             {"name": "Wallets", "detail": "Yappy, Nequi PA", "share": 15, "growth": "+28% YoY"},
-            {"name": "A2A", "detail": "ACH-Panamá", "share": 10, "growth": "+18% YoY"},
+            {"name": "A2A", "detail": "ACH-PanamÃ¡", "share": 10, "growth": "+18% YoY"},
             {"name": "Cash", "share": 10, "growth": "-10% YoY"},
             {"name": "BNPL", "share": 5, "growth": "+22% YoY"},
         ],
         "regulation": [
-            "SBP (Superintendencia de Bancos de Panamá) regulates the banking and payments sector. Panama's currency is the Balboa (PAB) pegged 1:1 to USD; USD is legal tender alongside PAB.",
-            "Ley 35 of 2024 created a modern fintech framework — PSP, e-money, and payment-initiator licenses issued by SBP. Capital requirements are meaningful (~$500K minimum).",
-            "Panama is on the FATF grey list for AML; enhanced KYC and source-of-funds requirements apply to PSPs. Getting off the list is a political priority — expect tighter controls, not looser.",
-            "Yappy (Banco General) is the dominant A2A wallet with 2M+ users — similar role to Costa Rica's SINPE Móvil. Interop with other banks is being mandated.",
-            "Tax regime is territorial — only Panama-sourced income is taxed. This is favorable for PSPs with cross-border revenue structures but under pressure from OECD.",
-            "Zona Libre de Colón is one of the world's largest free zones; many regional distribution and payment operations HQ there.",
+            "SBP (Superintendencia de Bancos de PanamÃ¡) regulates the banking and payments sector. Panama's currency is the Balboa (PAB) pegged 1:1 to USD; USD is legal tender alongside PAB.",
+            "Ley 35 of 2024 created a modern fintech framework â€” PSP, e-money, and payment-initiator licenses issued by SBP. Capital requirements are meaningful (~$500K minimum).",
+            "Panama is on the FATF grey list for AML; enhanced KYC and source-of-funds requirements apply to PSPs. Getting off the list is a political priority â€” expect tighter controls, not looser.",
+            "Yappy (Banco General) is the dominant A2A wallet with 2M+ users â€” similar role to Costa Rica's SINPE MÃ³vil. Interop with other banks is being mandated.",
+            "Tax regime is territorial â€” only Panama-sourced income is taxed. This is favorable for PSPs with cross-border revenue structures but under pressure from OECD.",
+            "Zona Libre de ColÃ³n is one of the world's largest free zones; many regional distribution and payment operations HQ there.",
         ],
         "digital_trends": [
-            "Panama is dollarized and has the highest credit card penetration in Central America — urban segments behave more like Puerto Rico than Nicaragua.",
-            "Yappy drives most instant A2A — accepted at most retailers, taxis, and smaller merchants. Banking apps (Banistmo, Credicorp Bank) have their own QR and transfer features.",
-            "Crypto ecosystem is relatively active — Panama passed a crypto framework in 2023 (though partially vetoed). OTC desks and stablecoin rails are common.",
+            "Panama is dollarized and has the highest credit card penetration in Central America â€” urban segments behave more like Puerto Rico than Nicaragua.",
+            "Yappy drives most instant A2A â€” accepted at most retailers, taxis, and smaller merchants. Banking apps (Banistmo, Credicorp Bank) have their own QR and transfer features.",
+            "Crypto ecosystem is relatively active â€” Panama passed a crypto framework in 2023 (though partially vetoed). OTC desks and stablecoin rails are common.",
             "Regional shopping and logistics hub: Panama residents and foreign buyers use Miami-forwarder addresses for US ecommerce, settling via international cards.",
-            "Nequi launched Panama operations in 2024 (first international expansion from Colombia) — positioning for youth and digital-native segments.",
+            "Nequi launched Panama operations in 2024 (first international expansion from Colombia) â€” positioning for youth and digital-native segments.",
             "Cross-border B2B payments are a core use case given Panama's role as a regional HQ hub and free-zone trade center.",
         ],
         "yuno_coverage": {
@@ -3010,18 +3010,18 @@ COUNTRY_DETAIL_RICH = {
             {"name": "BNPL / Other", "share": 5, "growth": "+20% YoY"},
         ],
         "regulation": [
-            "SIB (Superintendencia de Bancos) and Banguat (Banco de Guatemala) co-regulate. A fintech-specific law is still in draft — most PSPs operate under banking agent or e-money sub-regulations.",
-            "Remittances are ~20% of GDP — the largest in Central America as % of GDP. Wallets and fintechs are increasingly competing with Western Union, MoneyGram, and bank rails.",
-            "Tigo Money (Millicom) has the broadest mobile-money footprint; regulated as an emisor de dinero electrónico under banking supervision.",
+            "SIB (Superintendencia de Bancos) and Banguat (Banco de Guatemala) co-regulate. A fintech-specific law is still in draft â€” most PSPs operate under banking agent or e-money sub-regulations.",
+            "Remittances are ~20% of GDP â€” the largest in Central America as % of GDP. Wallets and fintechs are increasingly competing with Western Union, MoneyGram, and bank rails.",
+            "Tigo Money (Millicom) has the broadest mobile-money footprint; regulated as an emisor de dinero electrÃ³nico under banking supervision.",
             "VAT (IVA) at 12% applies; foreign digital service providers must register with SAT. Enforcement has been loose historically but tightened in 2024.",
-            "Guatemala has the largest cash economy in Central America — ~35% of transactions are still cash, and >50% of adults are unbanked or underbanked.",
-            "Ley Bitcoin pending in congress — would follow El Salvador's model, though unlikely to make BTC legal tender. Stablecoin frameworks are more likely.",
+            "Guatemala has the largest cash economy in Central America â€” ~35% of transactions are still cash, and >50% of adults are unbanked or underbanked.",
+            "Ley Bitcoin pending in congress â€” would follow El Salvador's model, though unlikely to make BTC legal tender. Stablecoin frameworks are more likely.",
         ],
         "digital_trends": [
-            "Remittances drive the digital wallet market — families receiving US dollars are the main user base for Tigo Money and competitors.",
+            "Remittances drive the digital wallet market â€” families receiving US dollars are the main user base for Tigo Money and competitors.",
             "Ecommerce is concentrated in Guatemala City and Antigua; rural markets remain heavily cash-based due to banking infrastructure gaps.",
             "Banco Industrial (Guatemala's largest bank) dominates acquiring via Visanet Guatemala. Their ecommerce gateway handles most card-not-present volume.",
-            "Social commerce via WhatsApp Business and Facebook Marketplace is huge for SMBs — often settling via Tigo Money or bank transfer outside formal payment rails.",
+            "Social commerce via WhatsApp Business and Facebook Marketplace is huge for SMBs â€” often settling via Tigo Money or bank transfer outside formal payment rails.",
             "Digital banking entrants (Banco G&T Continental, Banco Industrial's Zigi) are building app-first offerings to compete for youth segments.",
             "Stablecoin corridors (Bitso, Lemon, El Dorado) are gaining share on remittances, especially among younger remitters in US cities.",
         ],
@@ -3073,17 +3073,17 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "SSF (Superintendencia del Sistema Financiero) regulates banks and PSPs. El Salvador is fully dollarized (since 2001) and Bitcoin has been legal tender since September 2021.",
             "Ley Bitcoin (2021) made BTC legal tender alongside USD. Every business must accept BTC if technically capable. Chivo Wallet (government-issued) was the rollout mechanism.",
-            "Ley de Emisión de Activos Digitales (2023) created a framework for digital-asset services providers (PSAV). El Salvador is courting Bitcoin-native businesses (Bitcoin Freedom Visa).",
-            "BCR (Banco Central de Reserva) runs Transfer365 — the instant A2A rail between banks. Interop with Chivo Wallet is mandated.",
-            "Remittances are ~24% of GDP (mostly US). Bitcoin/stablecoin rails have captured 3–5% of remittance volume; traditional MTOs still dominate.",
+            "Ley de EmisiÃ³n de Activos Digitales (2023) created a framework for digital-asset services providers (PSAV). El Salvador is courting Bitcoin-native businesses (Bitcoin Freedom Visa).",
+            "BCR (Banco Central de Reserva) runs Transfer365 â€” the instant A2A rail between banks. Interop with Chivo Wallet is mandated.",
+            "Remittances are ~24% of GDP (mostly US). Bitcoin/stablecoin rails have captured 3â€“5% of remittance volume; traditional MTOs still dominate.",
             "Tax regime: IVA (VAT) at 13%, income tax up to 30%. Bitcoin transactions are exempt from capital gains tax per Ley Bitcoin.",
         ],
         "digital_trends": [
-            "El Salvador is the global test-bed for Bitcoin at the retail level. Adoption was heavy in 2021–22 but has plateaued — usage is concentrated in tourism corridors and remittances.",
+            "El Salvador is the global test-bed for Bitcoin at the retail level. Adoption was heavy in 2021â€“22 but has plateaued â€” usage is concentrated in tourism corridors and remittances.",
             "Chivo Wallet (state-issued) was the initial distribution mechanism. Adoption has since shifted to private wallets like Strike, Muun, and Blink.",
             "Nearshoring + Bitcoin-friendly branding is attracting B2B tech investment. Tether announced HQ move to El Salvador in 2025.",
-            "N1co is the leading private fintech — wallet, Visa card, and merchant acquiring. It's positioned as the domestic alternative to Chivo.",
-            "Small ecommerce market but high growth rate — driven by cross-border shopping from US (courier forwarders) and growing domestic online retail.",
+            "N1co is the leading private fintech â€” wallet, Visa card, and merchant acquiring. It's positioned as the domestic alternative to Chivo.",
+            "Small ecommerce market but high growth rate â€” driven by cross-border shopping from US (courier forwarders) and growing domestic online retail.",
             "Dollarization removes FX risk but ties El Salvador to US rates; local financing remains expensive despite Bitcoin narrative.",
         ],
         "yuno_coverage": {
@@ -3131,19 +3131,19 @@ COUNTRY_DETAIL_RICH = {
             {"name": "BNPL / Other", "share": 4, "growth": "+18% YoY"},
         ],
         "regulation": [
-            "CNBS (Comisión Nacional de Bancos y Seguros) regulates the financial sector. BCH (Banco Central de Honduras) operates monetary and payment rails.",
-            "Circular CNBS 003/2013 established the e-money framework. Tigo Money operates under this regime as an Emisor de Dinero Electrónico.",
-            "Cash is still dominant (~32%) — banking penetration is ~35% of adults. Wallets are growing fastest in urban San Pedro Sula and Tegucigalpa.",
+            "CNBS (ComisiÃ³n Nacional de Bancos y Seguros) regulates the financial sector. BCH (Banco Central de Honduras) operates monetary and payment rails.",
+            "Circular CNBS 003/2013 established the e-money framework. Tigo Money operates under this regime as an Emisor de Dinero ElectrÃ³nico.",
+            "Cash is still dominant (~32%) â€” banking penetration is ~35% of adults. Wallets are growing fastest in urban San Pedro Sula and Tegucigalpa.",
             "Remittances are ~27% of GDP (mostly from US). BAC Credomatic and Ficohsa dominate the traditional remittance-payout infrastructure.",
             "VAT (ISV) at 15% applies to most goods and services. Foreign digital providers' tax compliance is less rigorously enforced than in Mexico or Costa Rica.",
             "Crypto is legal but not widely regulated. Ley de Activos Virtuales pending in congress since 2023.",
         ],
         "digital_trends": [
-            "Mobile penetration outpaces fixed internet — digital payments are mobile-first, mostly via wallets and USSD.",
+            "Mobile penetration outpaces fixed internet â€” digital payments are mobile-first, mostly via wallets and USSD.",
             "Remittance-tied wallets drive most digital growth; Tigo Money is the volume leader.",
-            "Ecommerce is nascent — Amazon and Shein capture the aspirational segment via US-forwarded delivery and card checkout.",
+            "Ecommerce is nascent â€” Amazon and Shein capture the aspirational segment via US-forwarded delivery and card checkout.",
             "BNPL is early-stage; some regional entrants (Kueski) have explored Honduran expansion but none dominate yet.",
-            "Banks are digitizing (Ficohsa app, BAC Digital) but fintech competition is limited — no homegrown neobank has scaled above 500K users.",
+            "Banks are digitizing (Ficohsa app, BAC Digital) but fintech competition is limited â€” no homegrown neobank has scaled above 500K users.",
             "Social commerce via WhatsApp Business is huge among SMBs; most settle via bank transfer or Tigo Money.",
         ],
         "yuno_coverage": {
@@ -3200,8 +3200,8 @@ COUNTRY_DETAIL_RICH = {
         ],
         "digital_trends": [
             "Nicaragua has the lowest ecommerce penetration in Central America; growth is concentrated in Managua and Granada.",
-            "International acceptance issues (sanctions-linked banking restrictions) complicate cross-border merchants — some global APMs skip Nicaragua entirely.",
-            "Wallets (Tica Pay, Banpro Móvil) are growing from a low base, mostly in urban and utility-payment use cases.",
+            "International acceptance issues (sanctions-linked banking restrictions) complicate cross-border merchants â€” some global APMs skip Nicaragua entirely.",
+            "Wallets (Tica Pay, Banpro MÃ³vil) are growing from a low base, mostly in urban and utility-payment use cases.",
             "Diaspora-driven remittance inflows keep wallet and card volumes alive even as the formal economy struggles.",
             "Social commerce via Facebook and WhatsApp is common; many transactions never touch formal digital rails.",
             "Expect slow digital growth until political-economic conditions stabilize; most fintech investment bypasses Nicaragua for Costa Rica or Panama.",
@@ -3225,9 +3225,9 @@ COUNTRY_DETAIL_RICH = {
         },
         "local_payments": {
             "scheme":  "RED",
-            "a2a":     "Transfermóvil",
+            "a2a":     "TransfermÃ³vil",
             "apms":    [
-                {"name": "Transfermóvil","type": "Mobile A2A / bill pay"},
+                {"name": "TransfermÃ³vil","type": "Mobile A2A / bill pay"},
                 {"name": "Enzona",      "type": "Wallet"},
                 {"name": "Multicaja",   "type": "Cash voucher"},
                 {"name": "BPA Virtual", "type": "Online banking"},
@@ -3235,7 +3235,7 @@ COUNTRY_DETAIL_RICH = {
         },
         "payment_methods_breakdown": [
             {"name": "Cash", "share": 55, "growth": "-3% YoY"},
-            {"name": "A2A", "detail": "Transfermóvil", "share": 20, "growth": "+18% YoY"},
+            {"name": "A2A", "detail": "TransfermÃ³vil", "share": 20, "growth": "+18% YoY"},
             {"name": "Credit Cards", "share": 3.8, "growth": "flat",
                 "schemes": [
                     {"name": "Visa", "share": 2.5, "type": "international"},
@@ -3251,20 +3251,20 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Other", "share": 2, "growth": "flat"},
         ],
         "regulation": [
-            "BCC (Banco Central de Cuba) and MFP (Ministerio de Finanzas y Precios) regulate the financial system. Cuba operates on a state-bank model — very limited private-sector PSPs.",
+            "BCC (Banco Central de Cuba) and MFP (Ministerio de Finanzas y Precios) regulate the financial system. Cuba operates on a state-bank model â€” very limited private-sector PSPs.",
             "US embargo blocks most Visa/Mastercard issuance and acquiring. AIS/OFAC restrictions complicate international-card acceptance at Cuban merchants.",
             "The 2021 monetary unification eliminated the dual-currency system (CUC + CUP); now only CUP (Cuban Peso) and USD are used (USD in MLC stores / tourist zones).",
-            "Transfermóvil (run by ETECSA, the state telco) is the dominant digital-payment rail — used for bills, mobile top-ups, and increasingly P2P.",
+            "TransfermÃ³vil (run by ETECSA, the state telco) is the dominant digital-payment rail â€” used for bills, mobile top-ups, and increasingly P2P.",
             "Crypto was officially recognized in 2022 (Resolution 215); BCC licenses crypto service providers. Adoption is limited but growing as a sanctions workaround.",
             "Taxes: IVA is absent; instead, ONAT administers transaction taxes on formal payments. The parallel/informal economy is huge.",
         ],
         "digital_trends": [
-            "Cuba is the most cash-dominant market in LatAm — ~55% of digital-related transactions still settle in cash.",
-            "Transfermóvil has grown rapidly since 2018 — it works on feature phones via USSD, which matters given smartphone affordability.",
+            "Cuba is the most cash-dominant market in LatAm â€” ~55% of digital-related transactions still settle in cash.",
+            "TransfermÃ³vil has grown rapidly since 2018 â€” it works on feature phones via USSD, which matters given smartphone affordability.",
             "Remittances via Miami-corridor (Western Union halted in 2020; Fincimex and Western Union partially restored 2023) are politically sensitive and volatile.",
-            "Stablecoin (USDT, USDC) usage is rising as a USD-access workaround — mostly through informal OTC rather than licensed exchanges.",
+            "Stablecoin (USDT, USDC) usage is rising as a USD-access workaround â€” mostly through informal OTC rather than licensed exchanges.",
             "Tourism is the main FX source; hotels and MLC stores accept international cards, but most of Cuba is off-grid for foreign card acceptance.",
-            "Ecommerce is tiny and concentrated in Havana; self-employed cuentapropistas use WhatsApp-based checkout with Transfermóvil as payment rail.",
+            "Ecommerce is tiny and concentrated in Havana; self-employed cuentapropistas use WhatsApp-based checkout with TransfermÃ³vil as payment rail.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -3285,9 +3285,9 @@ COUNTRY_DETAIL_RICH = {
         },
         "local_payments": {
             "scheme":  "ATH",
-            "a2a":     "ATH Móvil",
+            "a2a":     "ATH MÃ³vil",
             "apms":    [
-                {"name": "ATH Móvil",   "type": "A2A / wallet"},
+                {"name": "ATH MÃ³vil",   "type": "A2A / wallet"},
                 {"name": "Venmo",       "type": "Wallet"},
                 {"name": "Square Cash", "type": "Wallet"},
                 {"name": "PayPal",      "type": "Wallet"},
@@ -3307,7 +3307,7 @@ COUNTRY_DETAIL_RICH = {
                     {"name": "Visa Debit", "share": 11.6, "type": "international"},
                     {"name": "Mastercard Debit", "share": 9.4, "type": "international"},
                 ]},
-            {"name": "A2A", "detail": "ATH Móvil", "share": 15, "growth": "+22% YoY"},
+            {"name": "A2A", "detail": "ATH MÃ³vil", "share": 15, "growth": "+22% YoY"},
             {"name": "Wallets", "detail": "Venmo, PayPal", "share": 10, "growth": "+18% YoY"},
             {"name": "Cash", "share": 3, "growth": "-10% YoY"},
             {"name": "BNPL", "share": 2, "growth": "+30% YoY"},
@@ -3315,17 +3315,17 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "Puerto Rico is a US territory; US federal regulators (OCC, FDIC, CFPB) apply. OCIF (Oficina del Comisionado de Instituciones Financieras) is the local regulator.",
             "Act 60 (formerly Acts 20/22) offers tax incentives for fintechs and crypto/digital-asset companies; many US crypto firms have domiciled here.",
-            "US banking and card rails apply — Visa, Mastercard, Discover, and Amex are treated identically to US mainland. No cross-border friction with the US.",
-            "ATH Móvil (Evertec-run) is the dominant A2A wallet — 1.5M+ users, accepted at most SMBs and many chains. It's the Puerto Rican answer to Venmo/Zelle.",
+            "US banking and card rails apply â€” Visa, Mastercard, Discover, and Amex are treated identically to US mainland. No cross-border friction with the US.",
+            "ATH MÃ³vil (Evertec-run) is the dominant A2A wallet â€” 1.5M+ users, accepted at most SMBs and many chains. It's the Puerto Rican answer to Venmo/Zelle.",
             "Evertec (NYSE:EVTC) is the dominant acquirer and processor for Puerto Rico and much of the Caribbean. They handle most card volume.",
             "USD is the only currency; no FX risk for US-based merchants selling to PR consumers.",
         ],
         "digital_trends": [
-            "Puerto Rico behaves as a US payments market — credit/debit cards dominate, consumer behavior is closer to Miami than to San Juan of 20 years ago.",
-            "ATH Móvil is the differentiator vs mainland US: it preceded Zelle and has deeper merchant acceptance than Venmo does on the mainland.",
-            "Hurricanes and infrastructure resilience are ongoing concerns — payments systems need offline/degraded-mode capability.",
+            "Puerto Rico behaves as a US payments market â€” credit/debit cards dominate, consumer behavior is closer to Miami than to San Juan of 20 years ago.",
+            "ATH MÃ³vil is the differentiator vs mainland US: it preceded Zelle and has deeper merchant acceptance than Venmo does on the mainland.",
+            "Hurricanes and infrastructure resilience are ongoing concerns â€” payments systems need offline/degraded-mode capability.",
             "Crypto/fintech residency incentives (Act 60) have brought many US entrepreneurs; local ecommerce and payment innovation is a by-product.",
-            "Cross-border ecommerce from mainland US (Amazon Prime, Target, Walmart) is the default — local retailers compete primarily on fresh/grocery and large-ticket items.",
+            "Cross-border ecommerce from mainland US (Amazon Prime, Target, Walmart) is the default â€” local retailers compete primarily on fresh/grocery and large-ticket items.",
             "Banks (Banco Popular, FirstBank, Oriental) are digitizing aggressively, and both Stripe and Square are fully active in the territory.",
         ],
         "yuno_coverage": {
@@ -3374,19 +3374,19 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "BOJ (Bank of Jamaica) regulates banks, e-money issuers, and payment service providers. Its Electronic Retail Payment Services Regulations (2023) govern the PSP space.",
-            "Jamaica launched JAM-DEX in 2022 — a retail CBDC issued by BOJ. Lynk (NCB) is the main consumer wallet for JAM-DEX. Adoption has been slower than hoped.",
-            "Remittances are ~23% of GDP — mostly from US, UK, and Canada. Wallets and traditional MTOs compete; BOJ has been pushing low-cost digital corridors.",
-            "Data Protection Act (2020, effective 2023) aligns with GDPR — registration with the Information Commissioner and DPO requirements apply.",
+            "Jamaica launched JAM-DEX in 2022 â€” a retail CBDC issued by BOJ. Lynk (NCB) is the main consumer wallet for JAM-DEX. Adoption has been slower than hoped.",
+            "Remittances are ~23% of GDP â€” mostly from US, UK, and Canada. Wallets and traditional MTOs compete; BOJ has been pushing low-cost digital corridors.",
+            "Data Protection Act (2020, effective 2023) aligns with GDPR â€” registration with the Information Commissioner and DPO requirements apply.",
             "GCT (General Consumption Tax) at 15% applies. Jamaica is actively pursuing digital-service tax collection from foreign providers.",
-            "Jamaican dollar (JMD) is floating but volatile — merchants often price in USD for tourism and B2B segments.",
+            "Jamaican dollar (JMD) is floating but volatile â€” merchants often price in USD for tourism and B2B segments.",
         ],
         "digital_trends": [
-            "JAM-DEX (CBDC) rollout is a flagship project but adoption has lagged expectations — consumers still prefer traditional wallets and cards.",
-            "Lynk (NCB Financial Group) is the most active wallet — QR payments at supermarkets, pharmacies, and transport.",
-            "Tourism drives a substantial share of payment volume — resort zones accept USD, cards, and increasingly mobile wallets like Apple Pay.",
-            "Remittance corridors are a focal point for fintech innovation — Wise, Remitly, and regional players like Paymaster compete on FX.",
+            "JAM-DEX (CBDC) rollout is a flagship project but adoption has lagged expectations â€” consumers still prefer traditional wallets and cards.",
+            "Lynk (NCB Financial Group) is the most active wallet â€” QR payments at supermarkets, pharmacies, and transport.",
+            "Tourism drives a substantial share of payment volume â€” resort zones accept USD, cards, and increasingly mobile wallets like Apple Pay.",
+            "Remittance corridors are a focal point for fintech innovation â€” Wise, Remitly, and regional players like Paymaster compete on FX.",
             "Ecommerce is small but growing fast; cross-border shopping from US is the default for apparel, electronics, and consumer goods.",
-            "Credit card penetration is ~30% adults — cash and debit still dominate outside Kingston and tourist zones.",
+            "Credit card penetration is ~30% adults â€” cash and debit still dominate outside Kingston and tourist zones.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -3436,17 +3436,17 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "CBTT (Central Bank of Trinidad and Tobago) regulates banking and payments. Its Payment Service Providers regulations (2020) govern PSP licensing.",
             "FSA (Financial Services Act) and E-Money Issuer Order (2020) define the regulatory regime for wallets and stored-value instruments.",
-            "LINX (owned by Infolink — a consortium of major banks) dominates domestic debit and ATM rails. International cards (Visa, Mastercard) run in parallel.",
+            "LINX (owned by Infolink â€” a consortium of major banks) dominates domestic debit and ATM rails. International cards (Visa, Mastercard) run in parallel.",
             "VAT at 12.5% applies; foreign digital service providers must register with BIR (Board of Inland Revenue) under the e-services amendment.",
             "Data Protection Act (2011) is partially proclaimed; full enforcement has been delayed multiple times but a broader update is expected by 2026.",
             "TT is an energy-exporting economy (oil, gas, petrochemicals); B2B USD flows are large, and many merchants price in USD for international segments.",
         ],
         "digital_trends": [
-            "LINX is culturally entrenched — most Trinidadians carry a LINX debit card and expect it at checkout. International cards are a premium/travel tier.",
-            "WiPay is the leading domestic PSP — operates across several Caribbean markets (Jamaica, Barbados, Guyana) with a single integration.",
+            "LINX is culturally entrenched â€” most Trinidadians carry a LINX debit card and expect it at checkout. International cards are a premium/travel tier.",
+            "WiPay is the leading domestic PSP â€” operates across several Caribbean markets (Jamaica, Barbados, Guyana) with a single integration.",
             "Ecommerce growth is strongest in specialty retail and tourism; grocery and essentials remain mostly in-store.",
             "Remittance corridors to TT are smaller than neighbours but still meaningful for Guyanese and Venezuelan communities.",
-            "Digital banking entrants are limited — CBTT has been cautious on fintech licensing compared to BOJ (Jamaica) or CBB (Bahamas).",
+            "Digital banking entrants are limited â€” CBTT has been cautious on fintech licensing compared to BOJ (Jamaica) or CBB (Bahamas).",
             "Cross-border ecommerce from US via courier-forwarders (Swift, Carib Express) is a major consumption channel for imported goods.",
         ],
         "yuno_coverage": {
@@ -3501,16 +3501,16 @@ COUNTRY_DETAIL_RICH = {
             "FedNow launched in July 2023 as the Fed's 24/7 instant-payment rail. Adoption by smaller banks is accelerating; TCH's RTP has been live since 2017 with broader coverage.",
             "The Durbin Amendment caps debit interchange for banks >$10B in assets. A pending Durbin 2.0 (routing-choice for credit) has been on-and-off in Congress.",
             "PCI-DSS v4.0 is the mandatory card-data security standard. 3DS2 is strongly encouraged but not mandated (unlike PSD2 SCA in EU). Fraud liability shifts apply from EMV.",
-            "BNPL regulation tightened in 2024 — CFPB now treats BNPL as credit card-equivalent (Regulation Z applies). Disclosure, dispute, and refund rules are stricter.",
+            "BNPL regulation tightened in 2024 â€” CFPB now treats BNPL as credit card-equivalent (Regulation Z applies). Disclosure, dispute, and refund rules are stricter.",
             "Stablecoin legislation (GENIUS Act variants) is working through Congress. If enacted, it would create a federal framework separate from state money-transmitter laws.",
         ],
         "digital_trends": [
             "US ecommerce is a mature ~$1.25T market growing ~8% annually. Amazon alone captures ~40% of online retail; Walmart and Target are the fastest-growing challengers.",
             "Credit card rewards culture keeps card share disproportionately high (~38%). Interchange subsidizes points and cash-back programs.",
             "Zelle (bank-owned consortium) has displaced Venmo for many P2P flows because it settles bank-to-bank with no wallet float. FedNow is expected to accelerate this further.",
-            "BNPL is mainstreaming — Klarna, Affirm, Afterpay, and PayPal Pay Later are at checkout for most major retailers. Klarna IPO'd in 2025.",
+            "BNPL is mainstreaming â€” Klarna, Affirm, Afterpay, and PayPal Pay Later are at checkout for most major retailers. Klarna IPO'd in 2025.",
             "Apple Pay and Google Pay drive the majority of NFC tap-to-pay; contactless POS coverage is now >90% of new terminals.",
-            "Open Banking under CFPB's Section 1033 Rule (finalized Oct 2024) mandates consumer-authorized data sharing across banks — expect major changes by 2026–27.",
+            "Open Banking under CFPB's Section 1033 Rule (finalized Oct 2024) mandates consumer-authorized data sharing across banks â€” expect major changes by 2026â€“27.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -3563,16 +3563,16 @@ COUNTRY_DETAIL_RICH = {
             "OSFI regulates banks at the federal level. FCAC oversees consumer protection. FINTRAC (AML) enforces PCMLTFA compliance for MSBs and PSPs.",
             "The Retail Payment Activities Act (RPAA, 2023) requires PSPs to register with Bank of Canada by Sep 2024 and meet risk-management standards.",
             "Interac is jointly owned by major Canadian banks and dominates both debit (in-person + online) and instant P2P via e-Transfer. It's the default Canadian payment behavior.",
-            "Real-Time Rail (RTR) is being built by Payments Canada — repeatedly delayed, now expected H2 2026. It will eventually replace or augment Interac e-Transfer for RTGS.",
-            "Open Banking legislation (Consumer-Driven Banking Act) was introduced in 2024 Budget; implementation is phased through 2026–27.",
-            "GST/HST at 5–15% (federal + provincial) applies to digital services. Foreign providers must register under the simplified GST/HST regime if annual CAD sales exceed $30K.",
+            "Real-Time Rail (RTR) is being built by Payments Canada â€” repeatedly delayed, now expected H2 2026. It will eventually replace or augment Interac e-Transfer for RTGS.",
+            "Open Banking legislation (Consumer-Driven Banking Act) was introduced in 2024 Budget; implementation is phased through 2026â€“27.",
+            "GST/HST at 5â€“15% (federal + provincial) applies to digital services. Foreign providers must register under the simplified GST/HST regime if annual CAD sales exceed $30K.",
         ],
         "digital_trends": [
-            "Canada has one of the highest credit card usage rates globally (~50% of payments) — driven by strong rewards and travel points culture.",
-            "Interac e-Transfer is the domestic P2P standard — virtually every Canadian bank account supports it. Acceptance at merchants for bill-pay is universal.",
+            "Canada has one of the highest credit card usage rates globally (~50% of payments) â€” driven by strong rewards and travel points culture.",
+            "Interac e-Transfer is the domestic P2P standard â€” virtually every Canadian bank account supports it. Acceptance at merchants for bill-pay is universal.",
             "Shopify is headquartered in Ottawa; Shop Pay is particularly strong in Canadian ecommerce checkout flows and one-click purchase.",
-            "Cross-border ecommerce to US is significant — Canadian consumers frequently buy from Amazon.com, Etsy, and eBay in USD with FX-friendly cards (Wealthsimple, RBC Avion).",
-            "Cash has collapsed to ~2% of payments — one of the lowest in the developed world. COVID-era contactless adoption never reversed.",
+            "Cross-border ecommerce to US is significant â€” Canadian consumers frequently buy from Amazon.com, Etsy, and eBay in USD with FX-friendly cards (Wealthsimple, RBC Avion).",
+            "Cash has collapsed to ~2% of payments â€” one of the lowest in the developed world. COVID-era contactless adoption never reversed.",
             "Rogers Bank, Tangerine, and Simplii Financial are the main digital challenger banks. Wealthsimple is the largest neobank with 2M+ users.",
         ],
         "yuno_coverage": {
@@ -3624,18 +3624,18 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "CBUAE (Central Bank of the UAE) is the primary regulator. Federal Decree No. 6 of 2025 consolidated regulation of banks, PSPs, and insurers; compliance deadline is September 16, 2026.",
             "ADGM (Abu Dhabi Global Market) and DIFC (Dubai International Financial Centre) are common-law free zones with separate fintech and crypto regulatory frameworks.",
-            "VARA (Virtual Assets Regulatory Authority) oversees crypto and digital assets in Dubai. Enforcement has been active — KuCoin halted 2026, 19 firms sanctioned 2025.",
-            "Aani (instant payment rail launched 2023) is mandatory for banks — moving to real-time retail transfers, QR interop, and request-to-pay.",
+            "VARA (Virtual Assets Regulatory Authority) oversees crypto and digital assets in Dubai. Enforcement has been active â€” KuCoin halted 2026, 19 firms sanctioned 2025.",
+            "Aani (instant payment rail launched 2023) is mandatory for banks â€” moving to real-time retail transfers, QR interop, and request-to-pay.",
             "VAT at 5% (lowest in the OECD); Excise Tax on tobacco, sugary drinks, etc. No personal income tax. Corporate tax at 9% introduced 2023 on profits above AED 375K.",
             "Data protection under Federal Decree-Law 45/2021 (PDPL) aligns with GDPR. Free zones (DIFC, ADGM) maintain their own data laws.",
         ],
         "digital_trends": [
             "UAE has the world's highest smartphone penetration and near-universal internet. Card and wallet acceptance is ubiquitous in Dubai and Abu Dhabi.",
             "Tabby (now unicorn) and Cashew lead BNPL; usage is common across fashion, electronics, and travel. Tamara (Saudi-HQ) also operates in UAE.",
-            "UAE is a major cross-border shopping corridor — Arab, Indian, and Asian consumers buy from the UAE; UAE residents buy from US, China, and UK.",
-            "Apple Pay adoption is the highest in MENA — Dubai Metro, retail chains, and SMBs universally accept it.",
-            "Dubai is a global crypto hub despite VARA enforcement — licensed exchanges (Binance MENA, Bybit, BitOasis) are concentrated here.",
-            "Saudi Vision 2030 and UAE's fintech strategy are driving aggressive B2B innovation — embedded finance, SME lending, and treasury tools are all well-funded sectors.",
+            "UAE is a major cross-border shopping corridor â€” Arab, Indian, and Asian consumers buy from the UAE; UAE residents buy from US, China, and UK.",
+            "Apple Pay adoption is the highest in MENA â€” Dubai Metro, retail chains, and SMBs universally accept it.",
+            "Dubai is a global crypto hub despite VARA enforcement â€” licensed exchanges (Binance MENA, Bybit, BitOasis) are concentrated here.",
+            "Saudi Vision 2030 and UAE's fintech strategy are driving aggressive B2B innovation â€” embedded finance, SME lending, and treasury tools are all well-funded sectors.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -3685,18 +3685,18 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "SAMA (Saudi Central Bank) regulates banks, PSPs, and insurance. The Fintech Saudi initiative and Vision 2030 drive sector investment.",
-            "mada is SAMA's mandatory domestic scheme — every Saudi-issued debit card is mada-branded and must support the local switch. International co-badging with Visa/MC is standard.",
+            "mada is SAMA's mandatory domestic scheme â€” every Saudi-issued debit card is mada-branded and must support the local switch. International co-badging with Visa/MC is standard.",
             "Saudi Open Banking Program launched 2022; Phase 2 (payment initiation) went live 2024. SAMA is driving fintech access to bank APIs on a phased mandate.",
             "VAT at 15% applies universally. Corporate tax for foreign investors is 20%. Zakat applies to Saudi/GCC-owned businesses instead of corporate tax.",
             "PDPL (Personal Data Protection Law) became fully enforceable in September 2024; SDAIA is the authority. Data localization applies to sensitive personal data.",
-            "sarie is SAMA's 24/7 instant payment rail (launched 2021) — free for P2P, real-time settlement, and mandatory bank participation.",
+            "sarie is SAMA's 24/7 instant payment rail (launched 2021) â€” free for P2P, real-time settlement, and mandatory bank participation.",
         ],
         "digital_trends": [
             "Saudi Arabia is transitioning from cash-heavy to digital-first at pace. Cash share has dropped from ~40% pre-COVID to <10% in urban centers.",
-            "Tamara (Saudi unicorn) is the largest BNPL in the region — $800M+ revenue in 2025. Tabby (UAE) is the #2 competitor.",
+            "Tamara (Saudi unicorn) is the largest BNPL in the region â€” $800M+ revenue in 2025. Tabby (UAE) is the #2 competitor.",
             "STC Pay (owned by STC, Saudi Telecom) is the largest wallet with 15M+ users. urpay (Tawuniya) is growing. Apple Pay has over 15M regular users.",
             "Vision 2030 has funneled ~$20B into fintech, with NEOM, tourism, and entertainment creating new payment corridors (Riyadh Season, Expo 2030).",
-            "Cross-border ecommerce is huge — Saudis are among the top per-capita spenders on Shein, Amazon.com, and Aliexpress. Multi-currency acquiring is essential.",
+            "Cross-border ecommerce is huge â€” Saudis are among the top per-capita spenders on Shein, Amazon.com, and Aliexpress. Multi-currency acquiring is essential.",
             "Open Banking is ahead of most emerging markets; expect payment initiation and subscription VRPs to dominate the next growth cycle.",
         ],
         "yuno_coverage": {
@@ -3748,15 +3748,15 @@ COUNTRY_DETAIL_RICH = {
             "Bank of Israel regulates banking and payment services. CMISA (Capital Markets, Insurance and Savings Authority) regulates non-bank PSPs and wallets.",
             "The Payment Services Law (2019, effective 2020) harmonized PSP licensing and aligned Israel with PSD2-like standards. Open Banking rollout is phased through 2026.",
             "Isracard, CAL, and Max are the dominant domestic card processors/networks; international cards co-exist, but Isracard-issued cards are everywhere in Israel.",
-            "Credit card use is unusually high (~55%) — Israelis heavily use installment payments (tashlumim), comparable to Brazil's parcelamento culture.",
+            "Credit card use is unusually high (~55%) â€” Israelis heavily use installment payments (tashlumim), comparable to Brazil's parcelamento culture.",
             "VAT at 17% applies; foreign digital service providers must register under Sec 33A of the VAT Law. Enforcement is active.",
             "Israel's AML regime is robust (FATF-compliant); financial technology oversight includes crypto, with the ISA licensing exchanges.",
         ],
         "digital_trends": [
-            "Bit (Poalim) and PayBox (Discount Bank) are wallet leaders — P2P transfers, QR at POS, and split-bill features drive daily use.",
-            "Installment culture keeps credit cards dominant; merchants commonly offer 3–12 interest-free installments as a checkout incentive.",
-            "Israel's tech scene means fintech adoption is early-majority for most new products — Apple Pay, Google Pay, and wallet-to-card linking spread fast.",
-            "Cross-border ecommerce is significant — Amazon, Aliexpress, and SHEIN are major; USD and EUR acquiring is common.",
+            "Bit (Poalim) and PayBox (Discount Bank) are wallet leaders â€” P2P transfers, QR at POS, and split-bill features drive daily use.",
+            "Installment culture keeps credit cards dominant; merchants commonly offer 3â€“12 interest-free installments as a checkout incentive.",
+            "Israel's tech scene means fintech adoption is early-majority for most new products â€” Apple Pay, Google Pay, and wallet-to-card linking spread fast.",
+            "Cross-border ecommerce is significant â€” Amazon, Aliexpress, and SHEIN are major; USD and EUR acquiring is common.",
             "Real-time payments (instant RTGS) are moving forward under Bank of Israel's Zahav upgrade; consumer-facing rails are still banking-app based.",
             "Crypto regulation is stricter than UAE but exchanges operate openly under ISA supervision; stablecoins are used for B2B and cross-border.",
         ],
@@ -3807,9 +3807,9 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "CBRT (Central Bank) and BDDK (Banking Regulation and Supervision Agency) co-regulate. PSPs and e-money institutions operate under Law 6493 (2013).",
-            "BKM (Bankalararası Kart Merkezi) is the bank-owned interbank card center and runs Troy, BKM Express, and the TROY domestic scheme.",
-            "High inflation (>60% recent years) drives unusual payment behavior — Turks heavily use credit-card taksit (installments), typically 3–12 months interest-free.",
-            "FAST (Fon Aktarım Sistemi, 2021) is CBRT's instant payment rail — operates 24/7, has overtaken traditional EFT for retail transfers.",
+            "BKM (BankalararasÄ± Kart Merkezi) is the bank-owned interbank card center and runs Troy, BKM Express, and the TROY domestic scheme.",
+            "High inflation (>60% recent years) drives unusual payment behavior â€” Turks heavily use credit-card taksit (installments), typically 3â€“12 months interest-free.",
+            "FAST (Fon AktarÄ±m Sistemi, 2021) is CBRT's instant payment rail â€” operates 24/7, has overtaken traditional EFT for retail transfers.",
             "Crypto was banned as a payment method in 2021 but remains legal for investing; Turkey is a top-5 global crypto-active market by volume. Stablecoin USDT is widely used.",
             "Data protection under KVKK (Law 6698) predates GDPR. Cross-border transfers require Data Protection Authority approval absent adequacy.",
         ],
@@ -3817,9 +3817,9 @@ COUNTRY_DETAIL_RICH = {
             "Turkey has one of the highest credit-card penetration rates in emerging markets (~2 cards per adult). Taksit culture shapes consumer behavior.",
             "iyzico (Turkish unicorn, acquired by PayU then relaunched) is the dominant ecommerce gateway. Papara is the leading fintech wallet with 20M+ users.",
             "Trendyol (Alibaba-backed) and Hepsiburada dominate marketplace ecommerce. Both have proprietary wallets and installment products.",
-            "BNPL usage is growing fast on top of the existing taksit infrastructure — products like Tikla Al, Lydians, and Enpara's BNPL are expanding.",
-            "Cross-border ecommerce from Turkey into MENA and EU is a major B2B flow — Turkish manufacturers selling to Gulf/Europe via B2B platforms.",
-            "Inflation and FX volatility have driven stablecoin adoption — CBDC (Digital Lira) pilots are in advanced stages at CBRT.",
+            "BNPL usage is growing fast on top of the existing taksit infrastructure â€” products like Tikla Al, Lydians, and Enpara's BNPL are expanding.",
+            "Cross-border ecommerce from Turkey into MENA and EU is a major B2B flow â€” Turkish manufacturers selling to Gulf/Europe via B2B platforms.",
+            "Inflation and FX volatility have driven stablecoin adoption â€” CBDC (Digital Lira) pilots are in advanced stages at CBRT.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -3868,18 +3868,18 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "QCB (Qatar Central Bank) regulates banks, payment services, and insurance. Its 2022 strategic plan modernized PSP licensing and introduced the Digital Payments Sandbox.",
             "NAPS is the QCB-owned domestic network mandated on Qatari-issued cards; co-badging with Visa/Mastercard is standard.",
-            "Fawran (launched 2023) is Qatar's real-time payments rail — free P2P, QR, and request-to-pay. Adoption grew rapidly post World Cup 2022.",
-            "VAT has been legislatively ready since 2018 but not yet implemented; excise tax at 50–100% applies to tobacco, sugary drinks, etc.",
+            "Fawran (launched 2023) is Qatar's real-time payments rail â€” free P2P, QR, and request-to-pay. Adoption grew rapidly post World Cup 2022.",
+            "VAT has been legislatively ready since 2018 but not yet implemented; excise tax at 50â€“100% applies to tobacco, sugary drinks, etc.",
             "Data protection under Law No. 13 of 2016 predates GDPR but has been reinforced via Qatar National Cyber Security Strategy.",
             "Qatar Financial Centre (QFC) is a separate common-law jurisdiction with its own fintech licensing (QFCRA) similar to DIFC or ADGM.",
         ],
         "digital_trends": [
-            "World Cup 2022 accelerated Qatar's digital payment infrastructure — contactless, Apple Pay, and QR penetration jumped dramatically.",
+            "World Cup 2022 accelerated Qatar's digital payment infrastructure â€” contactless, Apple Pay, and QR penetration jumped dramatically.",
             "Qatar has the highest per-capita ecommerce spend in MENA (small population + high income). Luxury retail, travel, and electronics dominate.",
             "QPay and CWallet drive most wallet usage; expatriate workforce relies heavily on Ooredoo Money and Vodafone Cash for remittance-receipt.",
-            "Cross-border ecommerce is huge — Qataris buy from UAE/US/UK at high per-transaction value. Multi-currency acquiring is important.",
-            "BNPL is early but growing fast — Tabby and Tamara both operate in Qatar. Regulation under QCB's consumer-credit framework is expected 2026.",
-            "Crypto is legal but limited — QFCRA licenses digital-asset platforms under a narrow framework; retail crypto trading is not encouraged.",
+            "Cross-border ecommerce is huge â€” Qataris buy from UAE/US/UK at high per-transaction value. Multi-currency acquiring is important.",
+            "BNPL is early but growing fast â€” Tabby and Tamara both operate in Qatar. Regulation under QCB's consumer-credit framework is expected 2026.",
+            "Crypto is legal but limited â€” QFCRA licenses digital-asset platforms under a narrow framework; retail crypto trading is not encouraged.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -3929,16 +3929,16 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "CBK (Central Bank of Kuwait) regulates banks and PSPs. Instructions on Electronic Payments (2018, updated 2023) define PSP and e-money licensing.",
-            "KNET is a bank consortium running the dominant domestic card scheme — nearly 100% of Kuwaiti debit cards are KNET-branded.",
+            "KNET is a bank consortium running the dominant domestic card scheme â€” nearly 100% of Kuwaiti debit cards are KNET-branded.",
             "No VAT implemented yet (politically delayed since 2018 GCC agreement); corporate tax applies only to foreign businesses.",
             "Kuwait Vision 2035 drives fintech investment; Regulatory Sandbox at CBK has licensed many entrants including Tap Payments and Myzoi.",
-            "Data protection under Law No. 20 of 2014 (IT-focused) rather than a comprehensive PDPL — broader GDPR-aligned law in draft.",
+            "Data protection under Law No. 20 of 2014 (IT-focused) rather than a comprehensive PDPL â€” broader GDPR-aligned law in draft.",
             "AML/CFT framework (Law 106 of 2013) is FATF-compliant. Financial Intelligence Unit (KFIU) oversees compliance.",
         ],
         "digital_trends": [
-            "KNET is culturally entrenched — ecommerce checkouts always include a KNET 'direct debit' redirect option; international cards are secondary.",
+            "KNET is culturally entrenched â€” ecommerce checkouts always include a KNET 'direct debit' redirect option; international cards are secondary.",
             "Tap Payments (Kuwait origin, now regional) serves as the primary gateway for SMBs and mid-market ecommerce.",
-            "MyFatoorah and Hesabe drive subscription billing and recurring payment use cases — especially for education and SaaS.",
+            "MyFatoorah and Hesabe drive subscription billing and recurring payment use cases â€” especially for education and SaaS.",
             "Cross-border shopping to UAE and Saudi is common; Kuwaiti cards work seamlessly across GCC.",
             "BNPL (Tabby, Tamara) is scaling quickly though from a smaller base than UAE/Saudi.",
             "CBDC research is ongoing at CBK but no retail pilot has been announced.",
@@ -3989,17 +3989,17 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "CBB (Central Bank of Bahrain) is the primary regulator; Bahrain has one of the most progressive GCC fintech frameworks with the Regulatory Sandbox launched 2017.",
-            "Open Banking (PSD2-style) was mandated by CBB in 2018 — Bahrain was the first GCC country to do so. Full API access is live across all banks.",
+            "Open Banking (PSD2-style) was mandated by CBB in 2018 â€” Bahrain was the first GCC country to do so. Full API access is live across all banks.",
             "VAT at 10% (increased from 5% in 2022). Foreign digital service providers must register via a simplified online regime.",
-            "BENEFIT (bank consortium) runs the domestic payment switch — BenefitPay, Fawri, and Fawri+ cover POS, A2A, and QR.",
+            "BENEFIT (bank consortium) runs the domestic payment switch â€” BenefitPay, Fawri, and Fawri+ cover POS, A2A, and QR.",
             "Crypto is licensed through CBB's Digital Assets framework (2019); Bahrain hosts several regional crypto exchanges (Rain, CoinMENA).",
             "Data protection under PDPL (2018) is GDPR-aligned; the Personal Data Protection Authority enforces.",
         ],
         "digital_trends": [
-            "Bahrain punches above its weight in fintech — home of Bahrain Fintech Bay and progressive sandbox programs. Many regional fintechs test here first.",
-            "BenefitPay has 60%+ adult adoption — QR and P2P payments are everyday behavior at most retailers and SMBs.",
-            "Cross-border with Saudi Arabia (causeway access) creates a dual-market dynamic — many Saudis shop/work in Bahrain.",
-            "Cash has collapsed to <10% of payments — one of the fastest digital transitions in MENA.",
+            "Bahrain punches above its weight in fintech â€” home of Bahrain Fintech Bay and progressive sandbox programs. Many regional fintechs test here first.",
+            "BenefitPay has 60%+ adult adoption â€” QR and P2P payments are everyday behavior at most retailers and SMBs.",
+            "Cross-border with Saudi Arabia (causeway access) creates a dual-market dynamic â€” many Saudis shop/work in Bahrain.",
+            "Cash has collapsed to <10% of payments â€” one of the fastest digital transitions in MENA.",
             "Fintech licensing and Open Banking have attracted regional PSPs (Tap, PayTabs) to headquarter operations in Bahrain.",
             "Tourism (Formula 1, GCC visitors) supports strong POS acquiring infrastructure and multi-currency acceptance.",
         ],
@@ -4050,14 +4050,14 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "CBO (Central Bank of Oman) regulates banks and PSPs. PSP Regulatory Framework (2020) defines licensing for e-money and payment services.",
             "VAT at 5% (introduced 2021). Excise tax on tobacco, sugary drinks applies. No personal income tax (planned but postponed).",
-            "Thawani is the Oman Fintech Sandbox's flagship graduate — now a major wallet and merchant acquirer licensed by CBO.",
+            "Thawani is the Oman Fintech Sandbox's flagship graduate â€” now a major wallet and merchant acquirer licensed by CBO.",
             "Open Banking framework was issued by CBO in 2023; phased rollout with APIs mandated through 2026.",
             "Oman Vision 2040 drives diversification away from oil; fintech is a priority sector with tax breaks in Duqm Free Zone.",
             "Data protection under Royal Decree 6/2022 (PDPL) aligns with GDPR; Ministry of Transport, Communications and IT is the authority.",
         ],
         "digital_trends": [
             "Oman's digital transformation is steady but slightly behind UAE/Saudi. Cash is still ~12% of transactions but dropping.",
-            "Thawani dominates wallet activity with broad SMB acceptance — government pushed it as part of digital government services.",
+            "Thawani dominates wallet activity with broad SMB acceptance â€” government pushed it as part of digital government services.",
             "OmanNet debit cards are ubiquitous; most domestic ecommerce supports the OmanNet redirect option alongside Visa/Mastercard.",
             "Cross-border shopping skews UAE (via Dubai) and India (remittances). Multi-currency acquiring valuable for retailers.",
             "Apple Pay adoption is rising; deal between CBO and Apple in 2024 expanded issuing bank support.",
@@ -4109,18 +4109,18 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "CBJ (Central Bank of Jordan) regulates banks and PSPs. Electronic Transactions and Electronic Money regulations define licensing.",
-            "JoPACC (Jordan Payments and Clearing Company) runs the domestic rails — CliQ (instant transfer), JoMoPay (mobile money), and eFAWATEERcom (bill pay).",
+            "JoPACC (Jordan Payments and Clearing Company) runs the domestic rails â€” CliQ (instant transfer), JoMoPay (mobile money), and eFAWATEERcom (bill pay).",
             "CliQ launched 2020 as the instant-transfer rail; free for consumers and mandatory for banks. Adoption growing rapidly.",
             "VAT (GST) at 16% applies; enforcement on foreign digital service providers is moderate.",
             "Fintech regulatory sandbox (FRS) at CBJ has licensed multiple entrants; supportive stance on fintech innovation.",
             "Data protection law (2023) aligns broadly with GDPR; implementation ongoing.",
         ],
         "digital_trends": [
-            "Jordan is a digital-fintech laboratory for the Levant — JoPACC's rails are increasingly adopted by smaller markets like Iraq and Lebanon.",
+            "Jordan is a digital-fintech laboratory for the Levant â€” JoPACC's rails are increasingly adopted by smaller markets like Iraq and Lebanon.",
             "Remittances are ~10% of GDP; Saudi and UAE corridors dominate. Fintechs and stablecoin rails competing with traditional MTOs.",
-            "Cash is still ~30% of transactions — banking inclusion is ~50% of adults. CliQ is the main lever for digitization.",
-            "Ecommerce is young but growing fast — Amazon (via UAE), Jumia, and local players like Mumzworld serve the market.",
-            "Cross-border with Gulf is significant — Jordanians working in Saudi/UAE drive major inflows.",
+            "Cash is still ~30% of transactions â€” banking inclusion is ~50% of adults. CliQ is the main lever for digitization.",
+            "Ecommerce is young but growing fast â€” Amazon (via UAE), Jumia, and local players like Mumzworld serve the market.",
+            "Cross-border with Gulf is significant â€” Jordanians working in Saudi/UAE drive major inflows.",
             "Fintech ecosystem has strong regulatory support but limited domestic capital; most successful startups expand regionally or relocate.",
         ],
         "yuno_coverage": {
@@ -4168,16 +4168,16 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Crypto / USDT", "share": 5, "growth": "+50% YoY"},
         ],
         "regulation": [
-            "BDL (Banque du Liban) is the central bank — but Lebanon's banking sector has been in systemic crisis since 2019. Most ATMs and card networks are constrained.",
+            "BDL (Banque du Liban) is the central bank â€” but Lebanon's banking sector has been in systemic crisis since 2019. Most ATMs and card networks are constrained.",
             "De facto dual-currency economy (LBP + USD) with multiple exchange rates. Since 2023, most commerce prices in USD.",
             "Crypto/stablecoin adoption is among the highest globally as a dollarization and capital-controls workaround. USDT on Tron rails is dominant.",
             "VAT at 11% applies (in LBP); USD-denominated transactions are semi-formally taxed. Compliance is loose.",
-            "OMT (Online Money Transfer) and Whish Money are the dominant remittance and P2P operators — both operate outside traditional banking rails.",
+            "OMT (Online Money Transfer) and Whish Money are the dominant remittance and P2P operators â€” both operate outside traditional banking rails.",
             "No formal fintech licensing framework; most digital wallets operate under BDL's Basic Circular 69 (e-money).",
         ],
         "digital_trends": [
             "Lebanon is a dollarized cash economy with ~50% of transactions in USD cash. Card usage has collapsed since 2019 banking crisis.",
-            "Stablecoins (USDT) are widely used for savings and cross-border — Lebanon has one of the world's highest per-capita USDT wallet counts.",
+            "Stablecoins (USDT) are widely used for savings and cross-border â€” Lebanon has one of the world's highest per-capita USDT wallet counts.",
             "Whish Money and OMT dominate digital transfers. Both accept and dispense cash USD.",
             "Ecommerce is small and tourism-dependent; international acceptance issues mean many cross-border purchases route via family abroad.",
             "Diaspora (estimated 15M+ globally) drives remittance flows 2-3x the domestic economy.",
@@ -4225,16 +4225,16 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "CBI (Central Bank of Iraq) regulates banks and payment services. Banking Law 94/2004 is the primary framework; PSP regulation modernized in 2020s.",
-            "Qi Card (International Smart Card — ISC) and KI Card (Kurdistan) are the dominant payroll/prepaid cards — government salaries load there.",
+            "Qi Card (International Smart Card â€” ISC) and KI Card (Kurdistan) are the dominant payroll/prepaid cards â€” government salaries load there.",
             "Banking penetration is ~20% of adults; cash remains dominant for ~55% of all transactions.",
             "VAT is not yet implemented (politically delayed). Customs duties and excise taxes apply.",
-            "Iraq's banking is split by region — Erbil (Kurdistan) operates semi-autonomously with different payment rails and banking sector dynamics.",
+            "Iraq's banking is split by region â€” Erbil (Kurdistan) operates semi-autonomously with different payment rails and banking sector dynamics.",
             "USD is widely used alongside IQD; most large transactions settle in USD cash.",
         ],
         "digital_trends": [
-            "Cash remains king — one of the most cash-intensive economies in the region. Government payroll digitization via Qi Card has pushed ~10M people into digital.",
-            "Zain Cash is the largest mobile money operator — 10M+ users, backed by telco Zain. Accepted for bill pay and P2P transfers nationwide.",
-            "Ecommerce growth is rapid from a tiny base — Miswag, Talabat, and Uber Eats dominate urban delivery.",
+            "Cash remains king â€” one of the most cash-intensive economies in the region. Government payroll digitization via Qi Card has pushed ~10M people into digital.",
+            "Zain Cash is the largest mobile money operator â€” 10M+ users, backed by telco Zain. Accepted for bill pay and P2P transfers nationwide.",
+            "Ecommerce growth is rapid from a tiny base â€” Miswag, Talabat, and Uber Eats dominate urban delivery.",
             "Cross-border remittances are large (from Gulf, Turkey, Jordan); both traditional MTOs and crypto rails (USDT P2P) are heavily used.",
             "Security and political instability remain headwinds for payment infrastructure; Erbil has better banking access than Baghdad.",
             "CBI and government are pushing digitization through Qi Card's broader acceptance and agent-banking networks.",
@@ -4280,19 +4280,19 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Credit / Other", "share": 1, "growth": "flat"},
         ],
         "regulation": [
-            "CBI (Central Bank of Iran) regulates all banking and payments. Shaparak is the national payment switch — all POS and ecommerce card transactions route through it.",
+            "CBI (Central Bank of Iran) regulates all banking and payments. Shaparak is the national payment switch â€” all POS and ecommerce card transactions route through it.",
             "US and EU sanctions isolate Iran from Visa, Mastercard, and international card networks. Iranian-issued cards work domestically but not abroad.",
-            "Fintech sector has grown despite sanctions — Zarinpal, IDPay, and IranKish PSPs dominate domestic ecommerce.",
+            "Fintech sector has grown despite sanctions â€” Zarinpal, IDPay, and IranKish PSPs dominate domestic ecommerce.",
             "Crypto is widely used as a sanctions and inflation hedge; CBI has historically fluctuated between banning and permitting crypto mining/trading.",
             "VAT at 9% applies. Digital service tax and e-invoice requirements are increasingly enforced.",
             "Data protection is loosely defined; most internet infrastructure is filtered, affecting how fintechs deploy services.",
         ],
         "digital_trends": [
-            "Iran has the highest ecommerce market in MENA by volume (population-driven) despite sanctions — Digikala is the Amazon equivalent with massive share.",
-            "Shaparak handles nearly 100% of card transactions — efficient and ubiquitous within the country but disconnected from global networks.",
+            "Iran has the highest ecommerce market in MENA by volume (population-driven) despite sanctions â€” Digikala is the Amazon equivalent with massive share.",
+            "Shaparak handles nearly 100% of card transactions â€” efficient and ubiquitous within the country but disconnected from global networks.",
             "Crypto adoption is very high; USDT on Tron is the most common stablecoin used for cross-border.",
-            "Cross-border payments are bottlenecked — international merchants cannot accept Iranian cards; consumers route via friends/family abroad or crypto.",
-            "Domestic fintech is vibrant — Digikala Pay, Snapp, Tapsi, and major banking apps serve a mobile-first population.",
+            "Cross-border payments are bottlenecked â€” international merchants cannot accept Iranian cards; consumers route via friends/family abroad or crypto.",
+            "Domestic fintech is vibrant â€” Digikala Pay, Snapp, Tapsi, and major banking apps serve a mobile-first population.",
             "Sanctions relief (if ever) would unlock massive ecommerce growth; current state is a bubble world of ~$12B disconnected from global rails.",
         ],
         "yuno_coverage": {
@@ -4314,7 +4314,7 @@ COUNTRY_DETAIL_RICH = {
         },
         "local_payments": {
             "scheme":  "N/A",
-            "a2a":     "Transferencias instantáneas (BCU)",
+            "a2a":     "Transferencias instantÃ¡neas (BCU)",
             "apms":    [
                 {"name": "Redpagos",  "type": "Cash voucher"},
                 {"name": "Abitab",    "type": "Cash voucher"},
@@ -4332,7 +4332,7 @@ COUNTRY_DETAIL_RICH = {
                 ]},
             {"name": "Debit Cards", "share": 30, "growth": "+6% YoY",
                 "schemes": [
-                    {"name": "OCA Débito", "share": 3.6, "type": "local"},
+                    {"name": "OCA DÃ©bito", "share": 3.6, "type": "local"},
                     {"name": "Visa Debit", "share": 14.5, "type": "international"},
                     {"name": "Mastercard Debit", "share": 11.9, "type": "international"},
                 ]},
@@ -4342,19 +4342,19 @@ COUNTRY_DETAIL_RICH = {
             {"name": "BNPL", "share": 4, "growth": "+15% YoY"},
         ],
         "regulation": [
-            "BCU (Banco Central del Uruguay) regulates all payment institutions. Wallets and e-money issuers require an IEDE (Institución Emisora de Dinero Electrónico) license with segregated client funds.",
+            "BCU (Banco Central del Uruguay) regulates all payment institutions. Wallets and e-money issuers require an IEDE (InstituciÃ³n Emisora de Dinero ElectrÃ³nico) license with segregated client funds.",
             "Uruguay's financial inclusion law (Ley 19.210, 2014) mandated electronic payments for salary, pensions, and tax. This drove one of the fastest cash-to-card transitions in LatAm.",
             "Tax compliance is tight: IVA at 22%, IRPF (personal income tax) and IRAE (corporate tax) apply. Foreign digital service providers register through a simplified e-commerce regime.",
-            "Free Trade Zones (Zonamerica, WTC) host many regional HQs — Uruguay is often used as a LatAm hub by global fintechs and PSPs because of stable currency and legal environment.",
+            "Free Trade Zones (Zonamerica, WTC) host many regional HQs â€” Uruguay is often used as a LatAm hub by global fintechs and PSPs because of stable currency and legal environment.",
             "Data protection (Ley 18.331) aligns with GDPR; Uruguay is on the EU adequacy list, which makes it a preferred LatAm location for data processing and cross-border data flows.",
             "BCU is piloting a Digital Peso (e-Peso) with select banks; formal launch expected 2027. This would be one of the first LatAm retail CBDCs in production.",
         ],
         "digital_trends": [
             "Uruguay is the most banked LatAm country (95%+ adult bank account ownership). This makes card and bank-transfer rails dominant over cash vouchers.",
             "Mercado Pago and dLocal are both Uruguayan unicorns. dLocal IPO'd on NASDAQ in 2021; their cross-border rails are used by Amazon, Microsoft, Google, and Shopify for LatAm+EMEA settlement.",
-            "Retail super-apps are less developed than Brazil/Argentina — Uruguayan consumers favor cards and bank apps. Prex (prepaid Visa) and Peso (QR wallet) are the main fintech entrants.",
+            "Retail super-apps are less developed than Brazil/Argentina â€” Uruguayan consumers favor cards and bank apps. Prex (prepaid Visa) and Peso (QR wallet) are the main fintech entrants.",
             "Cross-border ecommerce is relatively small (~$400M) due to high import duties and courier costs. Most digital spend is domestic subscriptions, travel, and marketplaces.",
-            "Free-zone PSP operations allow regional HQ structures — Yuno, dLocal, EBANX, and PagSeguro all have teams in Uruguay leveraging the legal and tax stability.",
+            "Free-zone PSP operations allow regional HQ structures â€” Yuno, dLocal, EBANX, and PagSeguro all have teams in Uruguay leveraging the legal and tax stability.",
             "BCU e-Peso pilots and Open Banking consultation are running in parallel; Uruguay is a test-bed for LatAm regulators and often ships reforms before Argentina or Brazil.",
         ],
         "yuno_coverage": {
@@ -4406,19 +4406,19 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "MAS (Monetary Authority of Singapore) is the unified financial regulator. The Payment Services Act 2019 (amended 2021) covers account issuance, domestic transfers, cross-border, merchant acquisition, e-money, and digital payment tokens.",
-            "MPI (Major Payment Institution) license is required for PSPs above thresholds — most international PSPs (Stripe, Adyen, Checkout.com, Worldpay) hold MPI licenses.",
-            "PayNow is the instant-payment interoperability layer linking all Singapore banks, major wallets, and non-bank FIs — phone-number and NRIC-based transfers.",
+            "MPI (Major Payment Institution) license is required for PSPs above thresholds â€” most international PSPs (Stripe, Adyen, Checkout.com, Worldpay) hold MPI licenses.",
+            "PayNow is the instant-payment interoperability layer linking all Singapore banks, major wallets, and non-bank FIs â€” phone-number and NRIC-based transfers.",
             "GST at 9% applies; overseas vendor registration applies to digital services. Singapore signed API-based cross-border transfer corridors with India (UPI-PayNow), Thailand (PromptPay), and Malaysia (DuitNow).",
-            "Stablecoin regulation (2023) requires 100% backing in HQLA and same-day redemption — one of the most stringent frameworks globally. Licensed issuers include StraitsX (XSGD).",
+            "Stablecoin regulation (2023) requires 100% backing in HQLA and same-day redemption â€” one of the most stringent frameworks globally. Licensed issuers include StraitsX (XSGD).",
             "MAS's Project Orchid CBDC pilot and Project Guardian tokenization trials are positioning Singapore as a global digital-asset hub.",
         ],
         "digital_trends": [
-            "Singapore is one of the world's most mature digital payment markets — credit cards dominate (~50%) due to rewards culture, with PayNow leading A2A growth.",
-            "PayNow is the everyday P2P rail — bank accounts linked to phone numbers settle in seconds. Cross-border PayNow-UPI and PayNow-PromptPay corridors launched 2023/24.",
+            "Singapore is one of the world's most mature digital payment markets â€” credit cards dominate (~50%) due to rewards culture, with PayNow leading A2A growth.",
+            "PayNow is the everyday P2P rail â€” bank accounts linked to phone numbers settle in seconds. Cross-border PayNow-UPI and PayNow-PromptPay corridors launched 2023/24.",
             "Grab (Singapore-HQ unicorn) dominates ride-hailing, food, and payments across SEA. GrabPay is accepted nationwide; GrabFin offers credit and insurance.",
-            "MAS-licensed digital banks (Trust Bank, GXS, Maribank, ANEXT) launched 2022 — targeting SMEs and youth segments.",
-            "Singapore is a global PSP hub — Stripe, Checkout.com, Airwallex, and Rapyd all have significant operations here.",
-            "Cross-border subscription commerce is large — Singaporeans buy from US, Japan, and Europe at high per-transaction value; multi-currency acquiring is standard.",
+            "MAS-licensed digital banks (Trust Bank, GXS, Maribank, ANEXT) launched 2022 â€” targeting SMEs and youth segments.",
+            "Singapore is a global PSP hub â€” Stripe, Checkout.com, Airwallex, and Rapyd all have significant operations here.",
+            "Cross-border subscription commerce is large â€” Singaporeans buy from US, Japan, and Europe at high per-transaction value; multi-currency acquiring is standard.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -4465,19 +4465,19 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "PBOC (People's Bank of China) regulates banking and payments. SAFE (State Administration of Foreign Exchange) controls cross-border FX. CAC (Cyberspace Administration) oversees data.",
-            "The Non-Bank Payment Service Regulations (2024) tightened oversight of Alipay, WeChat Pay, and other PSPs — especially around merchant categorization and interest on prepaid balances.",
-            "International card acceptance (Visa, Mastercard) is legal but limited — most merchants default to UnionPay or QR wallets. VisaPay-style cross-border gateways (WeChat Pay HK) are emerging.",
+            "The Non-Bank Payment Service Regulations (2024) tightened oversight of Alipay, WeChat Pay, and other PSPs â€” especially around merchant categorization and interest on prepaid balances.",
+            "International card acceptance (Visa, Mastercard) is legal but limited â€” most merchants default to UnionPay or QR wallets. VisaPay-style cross-border gateways (WeChat Pay HK) are emerging.",
             "PIPL (Personal Information Protection Law, 2021) is GDPR-like with strict cross-border transfer rules. Data localization requirements apply to financial data.",
             "e-CNY (Digital Yuan) pilots span 20+ cities with 260M+ users. Formal rollout continues; commercial banks serve as distributors.",
             "Cross-border ecommerce into China runs on specific rails: Bonded Warehouse (BBC) or Direct Mail (BC). Only registered cross-border ecommerce platforms can integrate directly.",
         ],
         "digital_trends": [
-            "China is the world's largest and most digital payment market — Alipay (1B+ users) and WeChat Pay (1B+ users) dominate with ~68% combined share.",
+            "China is the world's largest and most digital payment market â€” Alipay (1B+ users) and WeChat Pay (1B+ users) dominate with ~68% combined share.",
             "Cross-border merchants entering China almost always partner with Alipay Global, WeChat Pay HK, or UnionPay-linked gateways; direct Visa/Mastercard acceptance is edge-case.",
-            "Super-app commerce (Taobao, Douyin/TikTok, Meituan, Pinduoduo) integrates checkout inside content — users rarely leave the app. Payments are wallet-native.",
-            "Livestream commerce (via Taobao Live, Douyin) is >$700B annually — a payment flow dominated by Alipay and WeChat Pay.",
+            "Super-app commerce (Taobao, Douyin/TikTok, Meituan, Pinduoduo) integrates checkout inside content â€” users rarely leave the app. Payments are wallet-native.",
+            "Livestream commerce (via Taobao Live, Douyin) is >$700B annually â€” a payment flow dominated by Alipay and WeChat Pay.",
             "e-CNY adoption is growing but slowly at consumer level; major use cases remain B2B, government payments, and cross-border pilots.",
-            "Hong Kong and Macau are separate payment jurisdictions despite China sovereignty — Alipay HK, WeChat Pay HK, and FPS operate under HKMA rules.",
+            "Hong Kong and Macau are separate payment jurisdictions despite China sovereignty â€” Alipay HK, WeChat Pay HK, and FPS operate under HKMA rules.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -4527,17 +4527,17 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "FSA (Financial Services Agency) regulates banks, PSPs, and crypto. Payment Services Act and Funds Settlement Act govern e-money and prepaid instruments.",
-            "Japan has one of the most fragmented wallet markets — PayPay (SoftBank/Yahoo) is now clearly largest but LINE Pay, Rakuten Pay, d-barai, au PAY, and Merpay all have meaningful share.",
-            "JCB is Japan's international scheme — issued worldwide but most concentrated domestically. JCB-Visa-Mastercard co-badging is rare.",
+            "Japan has one of the most fragmented wallet markets â€” PayPay (SoftBank/Yahoo) is now clearly largest but LINE Pay, Rakuten Pay, d-barai, au PAY, and Merpay all have meaningful share.",
+            "JCB is Japan's international scheme â€” issued worldwide but most concentrated domestically. JCB-Visa-Mastercard co-badging is rare.",
             "Consumption tax at 10% applies; reduced rate (8%) for food and some essentials. Invoice-based e-receipts mandatory from 2023.",
             "Apple Pay integrates with local schemes: Suica (transit), iD (docomo), QUICPay (contactless). This is uniquely complex vs Western markets.",
             "Personal Information Protection Act (APPI, amended 2022) aligns closely with GDPR; cross-border transfers require adequacy or specific consent.",
         ],
         "digital_trends": [
-            "Japan is a credit-card-heavy market (~55%) — highest in Asia. Rewards, points (dポイント, PayPay points, 楽天ポイント) drive heavy usage.",
-            "Konbini cash payment (10% of ecommerce) remains culturally entrenched — customers print a slip, pay cash at 7-Eleven. Declining but slowly.",
-            "QR code payments exploded post-2018 — PayPay went from zero to 55M+ users via aggressive cashback campaigns.",
-            "Rakuten ecosystem is a super-app without the name — Rakuten Card, Rakuten Pay, Rakuten Bank, Rakuten Ichiba all interlock with points.",
+            "Japan is a credit-card-heavy market (~55%) â€” highest in Asia. Rewards, points (dãƒã‚¤ãƒ³ãƒˆ, PayPay points, æ¥½å¤©ãƒã‚¤ãƒ³ãƒˆ) drive heavy usage.",
+            "Konbini cash payment (10% of ecommerce) remains culturally entrenched â€” customers print a slip, pay cash at 7-Eleven. Declining but slowly.",
+            "QR code payments exploded post-2018 â€” PayPay went from zero to 55M+ users via aggressive cashback campaigns.",
+            "Rakuten ecosystem is a super-app without the name â€” Rakuten Card, Rakuten Pay, Rakuten Bank, Rakuten Ichiba all interlock with points.",
             "Cross-border ecommerce into Japan has payment-method expectations (Konbini, JCB) that Western PSPs often underestimate.",
             "Digital yen (CBDC) pilots are ongoing but BOJ remains cautious; no commercial launch announced.",
         ],
@@ -4589,17 +4589,17 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "FSC (Financial Services Commission) and FSS (Financial Supervisory Service) regulate banks, PSPs, and fintech. Electronic Financial Transactions Act governs PSP licensing.",
-            "KakaoPay and Naver Pay are super-app wallets — Kakao and Naver dominate Korean internet and extend that into payments, loans, insurance.",
+            "KakaoPay and Naver Pay are super-app wallets â€” Kakao and Naver dominate Korean internet and extend that into payments, loans, insurance.",
             "Samsung Pay (integrated in Samsung phones) is the NFC standard domestically; works both with magnetic-stripe emulation (MST) and EMV contactless.",
             "Personal Information Protection Act (PIPA) aligns with GDPR. Cross-border transfers strictly controlled.",
-            "South Korea has strict KYC — 본인인증 (identity verification) via mobile carrier or government ID is mandatory for most online payments.",
+            "South Korea has strict KYC â€” ë³¸ì¸ì¸ì¦ (identity verification) via mobile carrier or government ID is mandatory for most online payments.",
             "Crypto is highly regulated under the Special Reporting Act (VASPs must register); only won-denominated fiat on-ramps are allowed.",
         ],
         "digital_trends": [
             "South Korea has one of the highest ecommerce penetration rates globally (30% of retail). Coupang is the dominant local player.",
-            "Credit card usage is extraordinarily high (~60%) — tax incentives for card payments (year-end tax credit) drive behavior.",
+            "Credit card usage is extraordinarily high (~60%) â€” tax incentives for card payments (year-end tax credit) drive behavior.",
             "KakaoBank (fintech neobank) has >23M users and offers loans, investments, and cards inside Kakao's messaging app.",
-            "Cross-border into Korea has strict payment preferences — KakaoPay, Naver Pay, and local-brand card preferences matter. International PSPs often struggle.",
+            "Cross-border into Korea has strict payment preferences â€” KakaoPay, Naver Pay, and local-brand card preferences matter. International PSPs often struggle.",
             "Toss has become a dominant super-app, offering banking, stock trading, insurance, and payments under one roof.",
             "Real-time payments (Zeniths 24/7) already deliver instant bank transfer; consumer-facing rails use wallet UX on top.",
         ],
@@ -4651,19 +4651,19 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "HKMA (Hong Kong Monetary Authority) regulates banks and payment services. SVF (Stored Value Facility) licenses cover wallets and prepaid cards.",
-            "FPS (Faster Payment System, 2018) is the instant-payment rail linking all banks and major SVFs — free for consumers, phone-number addressable.",
-            "Mainland cross-border services (AlipayHK, WeChat Pay HK) enable HK residents to pay at merchants in mainland China — a major corridor.",
-            "Virtual Banks (8 licensed since 2020) include ZA Bank, Mox, livi, WeLab Bank — mobile-only, deposit-competitive.",
+            "FPS (Faster Payment System, 2018) is the instant-payment rail linking all banks and major SVFs â€” free for consumers, phone-number addressable.",
+            "Mainland cross-border services (AlipayHK, WeChat Pay HK) enable HK residents to pay at merchants in mainland China â€” a major corridor.",
+            "Virtual Banks (8 licensed since 2020) include ZA Bank, Mox, livi, WeLab Bank â€” mobile-only, deposit-competitive.",
             "HKMA's Project mBridge multi-CBDC platform (HK/China/Thailand/UAE) is one of the world's most advanced cross-border CBDC pilots.",
             "No sales tax or VAT; data protection under PDPO aligns partially with GDPR but not as strict.",
         ],
         "digital_trends": [
-            "Octopus (transit + retail stored value) is culturally entrenched — nearly every HK resident uses it daily. Now accepts NFC via smartphone apps.",
-            "PayMe (HSBC) and AlipayHK drive most wallet usage — FPS interop means cross-wallet transfers are instant.",
-            "Hong Kong is a global retail hub for luxury and electronics — tourism payment flows (Alipay, WeChat Pay, UnionPay) are critical for large retailers.",
+            "Octopus (transit + retail stored value) is culturally entrenched â€” nearly every HK resident uses it daily. Now accepts NFC via smartphone apps.",
+            "PayMe (HSBC) and AlipayHK drive most wallet usage â€” FPS interop means cross-wallet transfers are instant.",
+            "Hong Kong is a global retail hub for luxury and electronics â€” tourism payment flows (Alipay, WeChat Pay, UnionPay) are critical for large retailers.",
             "Cross-border with mainland China is a core PSP use case; multi-currency settlement (HKD/RMB/USD) is standard.",
-            "Virtual banks compete aggressively on deposit rates and lending — Mox grew to 500K+ customers in under 4 years.",
-            "Crypto is being positioned (since 2023) as a regulated hub — HK has explicit retail crypto licenses and is attracting firms moving from US/EU.",
+            "Virtual banks compete aggressively on deposit rates and lending â€” Mox grew to 500K+ customers in under 4 years.",
+            "Crypto is being positioned (since 2023) as a regulated hub â€” HK has explicit retail crypto licenses and is attracting firms moving from US/EU.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -4713,17 +4713,17 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "FSC (Financial Supervisory Commission) regulates financial services. Electronic Payment Act and Electronic Stored Value Card Act cover PSPs and wallets.",
-            "LINE Pay is the dominant wallet — LINE (messaging app) is nearly universal in Taiwan and extends into payments, shopping, and insurance.",
-            "Taiwan Pay is the bank-consortium QR rail (launched 2017) — interop across 38 member banks and growing retail acceptance.",
+            "LINE Pay is the dominant wallet â€” LINE (messaging app) is nearly universal in Taiwan and extends into payments, shopping, and insurance.",
+            "Taiwan Pay is the bank-consortium QR rail (launched 2017) â€” interop across 38 member banks and growing retail acceptance.",
             "Personal Data Protection Act aligns broadly with GDPR; cross-border transfer requires safeguards.",
             "Business tax (5% VAT-equivalent) applies; e-invoice requirements are strict and digitized.",
-            "Cross-border with mainland China is sensitive politically — Alipay/WeChat Pay presence is more limited than in HK or Macau.",
+            "Cross-border with mainland China is sensitive politically â€” Alipay/WeChat Pay presence is more limited than in HK or Macau.",
         ],
         "digital_trends": [
             "Credit card dominance (~50%) reflects rewards and cashback culture; 7-Eleven / FamilyMart cash payments (~12%) remain as a long tail.",
             "LINE Pay's integration with LINE messaging makes P2P transfer and split-bill culturally default.",
-            "Taiwan has the world's densest convenience store network (>13K stores in 24M population) — convenience-store cash and pickup remain strong.",
-            "Large cross-border shopping into Japan and US — Taiwanese consumers buy from Amazon, Rakuten, and Shopee at high volume.",
+            "Taiwan has the world's densest convenience store network (>13K stores in 24M population) â€” convenience-store cash and pickup remain strong.",
+            "Large cross-border shopping into Japan and US â€” Taiwanese consumers buy from Amazon, Rakuten, and Shopee at high volume.",
             "Fintech regulatory sandbox has licensed digital banks (Line Bank Taiwan, Next Bank, Rakuten Bank).",
             "Crypto is regulated (FSC oversight); Taiwan has a strong local exchange (MaiCoin, BitoPro) ecosystem and several stablecoin use cases in B2B.",
         ],
@@ -4783,10 +4783,10 @@ COUNTRY_DETAIL_RICH = {
             "Islamic finance is a significant sub-sector (~40% of banking); Islamic-compliant payment products (Shariah-compliant wallets) are available.",
         ],
         "digital_trends": [
-            "Touch 'n Go is the dominant wallet — >25M users — leveraging its transit-card legacy (toll, MRT) and now accepting A2A and QR.",
+            "Touch 'n Go is the dominant wallet â€” >25M users â€” leveraging its transit-card legacy (toll, MRT) and now accepting A2A and QR.",
             "DuitNow QR has unified the previously fragmented QR market (each wallet had its own); now any wallet can scan any DuitNow QR.",
             "Grab is headquartered in Singapore but Malaysia is its origin market; GrabPay has deep penetration alongside TNG.",
-            "Malaysia is a major cross-border corridor — ASEAN, China, and India all flow through. Multi-currency acquiring is essential.",
+            "Malaysia is a major cross-border corridor â€” ASEAN, China, and India all flow through. Multi-currency acquiring is essential.",
             "BNPL (Atome, SPayLater, Grab PayLater) has grown from zero to ~5% in 3 years; BNM regulatory framework now applies.",
             "Islamic ecommerce (halal marketplaces, Ramadan shopping cycles) creates unique payment timing patterns.",
         ],
@@ -4838,17 +4838,17 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "BOT (Bank of Thailand) regulates banks and payment services. Payment Systems Act 2017 covers PSP licensing and e-money.",
-            "PromptPay (ITMX-run) is one of SEA's most successful instant payment rails — free for consumers, phone/ID-number addressable, 7B+ transactions/year.",
+            "PromptPay (ITMX-run) is one of SEA's most successful instant payment rails â€” free for consumers, phone/ID-number addressable, 7B+ transactions/year.",
             "Cross-border PromptPay-PayNow (Singapore) and PromptPay-DuitNow (Malaysia) enable low-cost retail cross-border transfers.",
-            "BOT approved 3 virtual banks in 2026 (go-live mid-2026) — SCB-KakaoBank, Krungthai-Gulf, and ACM Consortium.",
+            "BOT approved 3 virtual banks in 2026 (go-live mid-2026) â€” SCB-KakaoBank, Krungthai-Gulf, and ACM Consortium.",
             "VAT at 7% applies. E-Tax and e-Withholding integration via Revenue Department is mandatory for PSPs above thresholds.",
             "PDPA (2022 full enforcement) aligns with GDPR; local appointed representatives required for foreign data controllers.",
         ],
         "digital_trends": [
-            "PromptPay usage is culturally default — QR at street vendors, restaurants, taxis. A2A is 40% of payments, one of the highest globally.",
-            "TrueMoney (CP Group) is the largest wallet — 30M+ users — leveraging 7-Eleven (CP subsidiary) as cash-in/out network.",
+            "PromptPay usage is culturally default â€” QR at street vendors, restaurants, taxis. A2A is 40% of payments, one of the highest globally.",
+            "TrueMoney (CP Group) is the largest wallet â€” 30M+ users â€” leveraging 7-Eleven (CP subsidiary) as cash-in/out network.",
             "LINE Pay (via LINE messenger) and ShopeePay (via Shopee marketplace) are the super-app wallet entrants.",
-            "Cross-border ecommerce from Thailand into SEA is significant — Thai consumers shop on Taobao/Alibaba as well as regional marketplaces.",
+            "Cross-border ecommerce from Thailand into SEA is significant â€” Thai consumers shop on Taobao/Alibaba as well as regional marketplaces.",
             "Tourism (second-largest sector post-pandemic) drives USD/EUR/CNY card acceptance at hotels and malls.",
             "Crypto is regulated (SEC licenses); Bitkub is the largest local exchange. Stablecoin payments for e-commerce are still niche.",
         ],
@@ -4901,18 +4901,18 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "BI (Bank Indonesia) and OJK (Financial Services Authority) co-regulate. BI oversees payment systems; OJK regulates non-bank financial services and fintech lending.",
             "PJP (Penyedia Jasa Pembayaran) license issued by BI is the main PSP authorization. PTP (Penyelenggara Transfer Dana) covers remittance.",
-            "BI-FAST (launched 2021) is the real-time payment rail — 24/7, low-cost (~IDR 2.5K / transfer), supports QR-Cross Border.",
+            "BI-FAST (launched 2021) is the real-time payment rail â€” 24/7, low-cost (~IDR 2.5K / transfer), supports QR-Cross Border.",
             "QRIS (QR Indonesian Standard, BI-run) unified all wallet QR codes; every merchant QR can be scanned by any wallet. Mandatory since 2020.",
             "VAT at 11% (rose from 10% in 2022); foreign digital service providers must register via OSS system.",
             "PDP Law (2022, enforcement 2024) aligns with GDPR; cross-border data transfer requires consent or contractual safeguards.",
         ],
         "digital_trends": [
-            "Wallets dominate (~35%) — OVO (Grab), GoPay (Gojek/GoTo), DANA (Emtek/Ant Group), ShopeePay (Sea Group) each have 50M+ users.",
-            "QRIS is the unifying rail — a single QR code on the merchant is payable from any licensed wallet. Game-changer for SMB acceptance.",
-            "BI-FAST instant transfers are challenging wallet dominance — consumers increasingly use bank apps for transfer at near-zero fee.",
-            "COD (Cash on Delivery) still matters for lower-income and rural segments — Shopee, Tokopedia, Lazada all support COD.",
-            "Gojek/GoTo ecosystem integrates ride, food, grocery, and payments — GoPay is the default for hundreds of millions of transactions monthly.",
-            "Cross-border flows to/from China are huge — TikTok Shop, Shopee, Lazada all have Chinese-origin inventory; USDT and UnionPay rails matter for merchants.",
+            "Wallets dominate (~35%) â€” OVO (Grab), GoPay (Gojek/GoTo), DANA (Emtek/Ant Group), ShopeePay (Sea Group) each have 50M+ users.",
+            "QRIS is the unifying rail â€” a single QR code on the merchant is payable from any licensed wallet. Game-changer for SMB acceptance.",
+            "BI-FAST instant transfers are challenging wallet dominance â€” consumers increasingly use bank apps for transfer at near-zero fee.",
+            "COD (Cash on Delivery) still matters for lower-income and rural segments â€” Shopee, Tokopedia, Lazada all support COD.",
+            "Gojek/GoTo ecosystem integrates ride, food, grocery, and payments â€” GoPay is the default for hundreds of millions of transactions monthly.",
+            "Cross-border flows to/from China are huge â€” TikTok Shop, Shopee, Lazada all have Chinese-origin inventory; USDT and UnionPay rails matter for merchants.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -4963,18 +4963,18 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "BSP (Bangko Sentral ng Pilipinas) regulates banks and non-bank PSPs. EMI (Electronic Money Issuer) license is required for wallets.",
             "InstaPay (real-time, lower-value) and PESONet (batch, higher-value) are the domestic A2A rails. QR Ph (2021) unifies QR across wallets and banks.",
-            "GCash (Globe Telecom/Ant/Bow Wave) has 80M+ users — the dominant wallet. Maya (PLDT/Voyager) is #2 with ~50M users.",
+            "GCash (Globe Telecom/Ant/Bow Wave) has 80M+ users â€” the dominant wallet. Maya (PLDT/Voyager) is #2 with ~50M users.",
             "VAT at 12% applies; digital service tax of 12% on foreign non-resident providers effective 2024.",
             "Data Privacy Act (2012, updated IRRs) aligns with GDPR principles; NPC is the authority.",
-            "Remittances are ~10% of GDP (OFW corridors — Gulf, US, HK, Singapore). Fintech corridors (Remitly, Instarem, GCash) competing with banks.",
+            "Remittances are ~10% of GDP (OFW corridors â€” Gulf, US, HK, Singapore). Fintech corridors (Remitly, Instarem, GCash) competing with banks.",
         ],
         "digital_trends": [
-            "GCash is the dominant digital payment — QR at retail, P2P, bills, loans, insurance. Accepted at virtually every SMB in Metro Manila.",
+            "GCash is the dominant digital payment â€” QR at retail, P2P, bills, loans, insurance. Accepted at virtually every SMB in Metro Manila.",
             "COD remains ~20% because of low card penetration and trust gaps; Shopee, Lazada, TikTok Shop all support COD.",
             "BNPL (GCash PayLater, Maya Credit, Akulaku, BillEase) is among the fastest-growing in SEA.",
-            "Digital banks (Tonik, GoTyme, Maya Bank, Union Digital, UnoBank) launched 2022 — targeting unbanked and SME segments.",
-            "Remittance corridors drive fintech volume — USD/AED/HKD inflows to PHP via wallets like GCash have largely replaced Western Union for younger senders.",
-            "Crypto (licensed under BSP VASP rules) is large — Coins.ph is the native leader; play-to-earn gaming (Axie) was a major on-ramp.",
+            "Digital banks (Tonik, GoTyme, Maya Bank, Union Digital, UnoBank) launched 2022 â€” targeting unbanked and SME segments.",
+            "Remittance corridors drive fintech volume â€” USD/AED/HKD inflows to PHP via wallets like GCash have largely replaced Western Union for younger senders.",
+            "Crypto (licensed under BSP VASP rules) is large â€” Coins.ph is the native leader; play-to-earn gaming (Axie) was a major on-ramp.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -5027,14 +5027,14 @@ COUNTRY_DETAIL_RICH = {
             "Napas (National Payment Corporation of Vietnam) operates the interbank switch and Napas 247 real-time rail. Growing rapidly post-2020.",
             "VAT at 10% applies; digital service tax of 5% on foreign providers effective 2022.",
             "Personal Data Protection Decree (2023) aligns with GDPR; cross-border transfer requires impact assessment and regulator approval.",
-            "MoMo is the dominant wallet with 30M+ users — unicorn status and expanding into credit, insurance, investment.",
+            "MoMo is the dominant wallet with 30M+ users â€” unicorn status and expanding into credit, insurance, investment.",
             "COD was historically 60%+ of ecommerce in Vietnam but has dropped to ~18% as wallets and A2A have scaled.",
         ],
         "digital_trends": [
-            "Vietnam's ecommerce is growing 18% annually — among the fastest in SEA. Shopee, Lazada, Tiki, and TikTok Shop are the main marketplaces.",
-            "Wallets are dominant (~32%) — MoMo, ZaloPay (VNG), and VNPay together handle most ecommerce checkout.",
-            "Napas 247 instant transfer is eating into wallet share — banks increasingly offer free real-time transfers via mobile apps.",
-            "Cross-border with China is massive — Alibaba, Pinduoduo, and Aliexpress ship extensively to Vietnamese consumers; USD/CNY pricing + wallet-based checkout.",
+            "Vietnam's ecommerce is growing 18% annually â€” among the fastest in SEA. Shopee, Lazada, Tiki, and TikTok Shop are the main marketplaces.",
+            "Wallets are dominant (~32%) â€” MoMo, ZaloPay (VNG), and VNPay together handle most ecommerce checkout.",
+            "Napas 247 instant transfer is eating into wallet share â€” banks increasingly offer free real-time transfers via mobile apps.",
+            "Cross-border with China is massive â€” Alibaba, Pinduoduo, and Aliexpress ship extensively to Vietnamese consumers; USD/CNY pricing + wallet-based checkout.",
             "VND is relatively stable (managed float); crypto is legally restricted but P2P trading via Binance and stablecoin use is common.",
             "Digital banking entrants (Timo, Cake, TNEX) are gaining traction but remain smaller than wallet incumbents.",
         ],
@@ -5087,19 +5087,19 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "RBA (Reserve Bank of Australia) oversees payment systems. ASIC regulates financial services. APRA supervises banks; AUSTRAC enforces AML.",
-            "NPP (New Payments Platform) is the real-time rail launched 2018 — PayTo (merchant-initiated) extends it with standing-authority payments.",
+            "NPP (New Payments Platform) is the real-time rail launched 2018 â€” PayTo (merchant-initiated) extends it with standing-authority payments.",
             "eftpos is the domestic debit scheme; 2022 merger with BPAY/NPP created Australian Payments Plus (AP+) consolidating rails.",
             "GST at 10% applies; digital goods and services from overseas are within scope (netflix tax).",
-            "Consumer Data Right (CDR) is Australia's open banking/open data framework — mandating data portability.",
+            "Consumer Data Right (CDR) is Australia's open banking/open data framework â€” mandating data portability.",
             "Payment Licensing Reform (introduced 2024) will replace the purchased-payment facility regime with a modern PSP license regime.",
         ],
         "digital_trends": [
-            "Australia led the world on BNPL adoption — Afterpay (Square/Block), Zip, and Klarna are culturally mainstream.",
+            "Australia led the world on BNPL adoption â€” Afterpay (Square/Block), Zip, and Klarna are culturally mainstream.",
             "Contactless payment adoption is >95% of card transactions; tap-to-pay is default.",
-            "NPP and PayTo are rapidly replacing direct debit for subscriptions and recurring — higher customer control, fewer failed payments.",
+            "NPP and PayTo are rapidly replacing direct debit for subscriptions and recurring â€” higher customer control, fewer failed payments.",
             "eftpos is the cheapest debit option for merchants; ongoing 'least-cost routing' mandates force acquirers to offer it.",
-            "Cross-border ecommerce is significant — Australians buy extensively from US, UK, China; AUD is widely supported internationally.",
-            "Digital banks (Judo, Up, Volt, 86 400 — later acquired by NAB) have consolidated; the 'neobank' wave has matured into traditional banks adopting digital-first UX.",
+            "Cross-border ecommerce is significant â€” Australians buy extensively from US, UK, China; AUD is widely supported internationally.",
+            "Digital banks (Judo, Up, Volt, 86 400 â€” later acquired by NAB) have consolidated; the 'neobank' wave has matured into traditional banks adopting digital-first UX.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -5150,17 +5150,17 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "RBNZ (Reserve Bank of New Zealand) regulates banks; FMA supervises conduct; Commerce Commission oversees competition in retail payments.",
             "The Retail Payment System Act 2022 gave the Commerce Commission authority to set interchange caps and merchant service fee rules.",
-            "Open banking is being built via API Centre (Payments NZ) — Phase 1 (payment initiation) launched 2024 for major banks.",
+            "Open banking is being built via API Centre (Payments NZ) â€” Phase 1 (payment initiation) launched 2024 for major banks.",
             "GST at 15% applies; foreign digital service providers must register through the GST online regime.",
             "Eftpos NZ cards typically have no interchange (flat fee for merchant), historically making card costs very low.",
             "Privacy Act 2020 aligns broadly with GDPR but has fewer enforcement teeth; Privacy Commissioner is the authority.",
         ],
         "digital_trends": [
-            "Eftpos NZ is unique — unlike Australia's eftpos, NZ's is largely free for merchants, which historically suppressed contactless adoption (extra fees on contactless).",
+            "Eftpos NZ is unique â€” unlike Australia's eftpos, NZ's is largely free for merchants, which historically suppressed contactless adoption (extra fees on contactless).",
             "Contactless adoption has accelerated post-COVID; interchange caps introduced in 2022 reduced the cost gap.",
-            "Cross-border ecommerce from Australia, US, and China is substantial — per-capita spending on international ecommerce is high.",
+            "Cross-border ecommerce from Australia, US, and China is substantial â€” per-capita spending on international ecommerce is high.",
             "BNPL (Afterpay, Laybuy, Zip) is widespread; Afterpay originated across the Tasman and dominates.",
-            "Major banks (ANZ, ASB, BNZ, Westpac) collectively control most retail banking — fintech disruption is slow.",
+            "Major banks (ANZ, ASB, BNZ, Westpac) collectively control most retail banking â€” fintech disruption is slow.",
             "Cryptoasset Disclosures framework proposed 2024; regulated environment for digital-asset service providers.",
         ],
         "yuno_coverage": {
@@ -5210,19 +5210,19 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "Bangladesh Bank is the central bank and primary regulator. PSO (Payment System Operator) and PSP (Payment Service Provider) licenses cover wallets and gateways.",
-            "bKash (BRAC Bank/Ant Group/IFC) is the dominant mobile money with 70M+ registered users — regulated as a PSP.",
+            "bKash (BRAC Bank/Ant Group/IFC) is the dominant mobile money with 70M+ registered users â€” regulated as a PSP.",
             "Nagad (Bangladesh Post Office joint venture) is the #2 competitor; growing rapidly with aggressive rates.",
             "VAT at 15% applies; digital service VAT for foreign providers enforced since 2022.",
             "Data Protection Act is in draft; Digital Security Act regulates some online activity.",
-            "Remittances are ~7% of GDP — primarily from Gulf countries. Fintech remittance (through bKash, Nagad) competing with traditional MTOs and banks.",
+            "Remittances are ~7% of GDP â€” primarily from Gulf countries. Fintech remittance (through bKash, Nagad) competing with traditional MTOs and banks.",
         ],
         "digital_trends": [
-            "Mobile financial services (MFS) dominate — bKash alone has >70M users. Even pure-cash users receive payments through these rails.",
+            "Mobile financial services (MFS) dominate â€” bKash alone has >70M users. Even pure-cash users receive payments through these rails.",
             "Cash on delivery remains ~25% of ecommerce due to trust and banking gaps; declining as wallet-based checkout grows.",
             "Cross-border ecommerce is heavily India/China; Daraz (Alibaba), Evaly, and local retailers compete.",
-            "Remittance inflows drive wallet adoption — OFW salary is often routed directly to bKash/Nagad accounts in Bangladesh.",
+            "Remittance inflows drive wallet adoption â€” OFW salary is often routed directly to bKash/Nagad accounts in Bangladesh.",
             "Bangladesh has been one of the fastest-growing ecommerce markets globally from a low base (~22% CAGR).",
-            "Digital banking license framework introduced 2023 — three licenses granted in 2024.",
+            "Digital banking license framework introduced 2023 â€” three licenses granted in 2024.",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -5272,18 +5272,18 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "SBP (State Bank of Pakistan) regulates banks and payment services. EMI (Electronic Money Institution) license is the main fintech authorization.",
-            "Raast (launched 2021) is the SBP-run instant payment rail — free for consumers; Phase 2 (merchant payments) rolled out 2022.",
-            "PayPak is the domestic card scheme launched 2016 — all Pakistani-issued debit cards co-badge PayPak + Visa/Mastercard.",
+            "Raast (launched 2021) is the SBP-run instant payment rail â€” free for consumers; Phase 2 (merchant payments) rolled out 2022.",
+            "PayPak is the domestic card scheme launched 2016 â€” all Pakistani-issued debit cards co-badge PayPak + Visa/Mastercard.",
             "GST at 18% applies; digital services tax on foreign providers applied since 2022.",
             "Personal Data Protection Bill in draft (expected 2026); currently data protection is patchwork.",
             "Remittances are ~10% of GDP (Gulf, US, UK). Wallets and banks compete; stablecoin rails (Binance P2P) are common in informal sector.",
         ],
         "digital_trends": [
-            "Easypaisa (Telenor) and JazzCash (Mobilink/VEON) dominate mobile money — collectively 80M+ users.",
-            "Raast rollout is driving A2A adoption rapidly — merchants accept QR Raast with minimal fees compared to card rails.",
+            "Easypaisa (Telenor) and JazzCash (Mobilink/VEON) dominate mobile money â€” collectively 80M+ users.",
+            "Raast rollout is driving A2A adoption rapidly â€” merchants accept QR Raast with minimal fees compared to card rails.",
             "COD is still significant (~28%) due to low card penetration (~15% adults) and banking gaps.",
-            "Ecommerce is growing ~20% YoY from a small base — Daraz (Alibaba), Foodpanda, Bykea, and local retailers compete.",
-            "Cross-border from China is large — Shein, Temu, and Aliexpress ship extensively; UnionPay accepted at limited merchants.",
+            "Ecommerce is growing ~20% YoY from a small base â€” Daraz (Alibaba), Foodpanda, Bykea, and local retailers compete.",
+            "Cross-border from China is large â€” Shein, Temu, and Aliexpress ship extensively; UnionPay accepted at limited merchants.",
             "FX and capital controls complicate international payments; many freelance/tech workers use USDT to receive foreign earnings.",
         ],
         "yuno_coverage": {
@@ -5340,9 +5340,9 @@ COUNTRY_DETAIL_RICH = {
             "FX restrictions limit international transfers; merchants often face delays on USD settlement.",
         ],
         "digital_trends": [
-            "Sri Lanka is recovering from severe 2022 economic crisis — digital payment growth accelerated during the crisis as cash alternatives.",
+            "Sri Lanka is recovering from severe 2022 economic crisis â€” digital payment growth accelerated during the crisis as cash alternatives.",
             "LankaPay rails drive most domestic ecommerce and bill payment. CEFTS instant transfers are free to consumers.",
-            "Wallets (FriMi — Nations Trust; Genie — Dialog Finance) are growing in urban Colombo and Kandy.",
+            "Wallets (FriMi â€” Nations Trust; Genie â€” Dialog Finance) are growing in urban Colombo and Kandy.",
             "Remittances (~7% of GDP, mostly Gulf) support wallet usage; banks dominate formal corridors.",
             "Cross-border ecommerce is constrained by FX controls; US/India are main corridors for imports.",
             "Crypto is banned as payment but peer-to-peer trading via Binance and LocalBitcoins is common informally.",
@@ -5397,15 +5397,15 @@ COUNTRY_DETAIL_RICH = {
             "NCHL (Nepal Clearing House) operates the interbank clearing; FonePay and Connect IPS are the dominant A2A rails.",
             "eSewa (first Nepali wallet, now IME Group) and Khalti are the #1 and #2 wallets. Both integrated with FonePay QR.",
             "VAT at 13% applies; digital service tax enforced since 2023 on foreign providers.",
-            "Data protection is governed by Individual Privacy Act 2018 — comprehensive but enforcement is light.",
-            "Remittances are ~25% of GDP — one of the highest in the world. Saudi, Qatar, UAE, Malaysia are main corridors.",
+            "Data protection is governed by Individual Privacy Act 2018 â€” comprehensive but enforcement is light.",
+            "Remittances are ~25% of GDP â€” one of the highest in the world. Saudi, Qatar, UAE, Malaysia are main corridors.",
         ],
         "digital_trends": [
-            "Nepal has leapfrogged cards — wallets and QR dominate urban digital payments. eSewa and Khalti are part of daily life in Kathmandu.",
+            "Nepal has leapfrogged cards â€” wallets and QR dominate urban digital payments. eSewa and Khalti are part of daily life in Kathmandu.",
             "FonePay QR is the interop standard; any wallet can scan any FonePay QR at merchant.",
-            "Remittance corridors drive huge digital volume — Saudi Arabia and Qatar inflows route directly to wallets.",
+            "Remittance corridors drive huge digital volume â€” Saudi Arabia and Qatar inflows route directly to wallets.",
             "Cross-border with India dominates (open border); Indian UPI-Nepal interop was piloted 2024.",
-            "Banks are digitizing fast — Nabil Bank, NIC Asia, Global IME have modern mobile apps.",
+            "Banks are digitizing fast â€” Nabil Bank, NIC Asia, Global IME have modern mobile apps.",
             "Crypto is banned, but VPN-based Binance P2P access is common.",
         ],
         "yuno_coverage": {
@@ -5455,16 +5455,16 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "NBC (National Bank of Cambodia) regulates banks and payment services. PSI and PSO licenses govern fintech and payment operators.",
-            "Bakong (launched 2020) is one of the world's first hybrid retail CBDCs — blockchain-based interbank rail + consumer wallet. ~10M+ users.",
-            "Cambodia is a dollarized economy — ~80% of transactions are USD rather than KHR. NBC has been pushing de-dollarization via Bakong.",
+            "Bakong (launched 2020) is one of the world's first hybrid retail CBDCs â€” blockchain-based interbank rail + consumer wallet. ~10M+ users.",
+            "Cambodia is a dollarized economy â€” ~80% of transactions are USD rather than KHR. NBC has been pushing de-dollarization via Bakong.",
             "VAT at 10% applies; digital service tax on foreign providers applied 2023.",
             "Personal Data Protection Law in draft; currently protected under general consumer law.",
-            "Cross-border Bakong-PromptPay (Thailand) corridor launched 2024 — early ASEAN retail CBDC bridge.",
+            "Cross-border Bakong-PromptPay (Thailand) corridor launched 2024 â€” early ASEAN retail CBDC bridge.",
         ],
         "digital_trends": [
-            "Bakong adoption has grown rapidly — interoperability across all Cambodian banks and wallets drives QR usage.",
-            "ABA Pay (dominant commercial wallet, ABA Bank) has 3M+ users — competing with Wing for merchant acceptance.",
-            "USD cash is still ~30% of payments — especially in tourism and higher-value retail.",
+            "Bakong adoption has grown rapidly â€” interoperability across all Cambodian banks and wallets drives QR usage.",
+            "ABA Pay (dominant commercial wallet, ABA Bank) has 3M+ users â€” competing with Wing for merchant acceptance.",
+            "USD cash is still ~30% of payments â€” especially in tourism and higher-value retail.",
             "Chinese cross-border ecommerce (Shein, Temu) reaches Cambodia heavily; UnionPay acceptance is reasonable at major retailers.",
             "Remittances from Thailand (Cambodian migrant workers) flow through Bakong-PromptPay; fast and cheap.",
             "Crypto is unregulated but growing; Cambodia hosts some crypto-friendly banking relationships.",
@@ -5516,18 +5516,18 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "FCA (Financial Conduct Authority) supervises conduct; BoE / PRA supervises prudential. PSR (Payment Systems Regulator) oversees payment schemes.",
-            "The UK's Open Banking regime (CMA 9 order) mandated APIs for 9 largest banks — expanded via the SS&I Data Bill to Open Finance.",
-            "Confirmation of Payee (CoP) is mandatory for interbank transfers — reduces APP fraud. FCA-imposed APP fraud reimbursement came in Oct 2024.",
+            "The UK's Open Banking regime (CMA 9 order) mandated APIs for 9 largest banks â€” expanded via the SS&I Data Bill to Open Finance.",
+            "Confirmation of Payee (CoP) is mandatory for interbank transfers â€” reduces APP fraud. FCA-imposed APP fraud reimbursement came in Oct 2024.",
             "VAT at 20% applies; low-value consignment relief ended post-Brexit. EU OSS replaced by domestic VAT for imports.",
             "PSD2 transposed as domestic law post-Brexit; divergence is expected as the UK pursues its own fintech agenda via the Data (Use and Access) Bill.",
-            "Faster Payments (near-RT) will be modernised via the New Payments Architecture (NPA) — indefinitely delayed but targeting late 2020s.",
+            "Faster Payments (near-RT) will be modernised via the New Payments Architecture (NPA) â€” indefinitely delayed but targeting late 2020s.",
         ],
         "digital_trends": [
             "UK is one of the most card-heavy markets in Europe (~68% card share combined). Contactless tap-to-pay is universal in retail.",
-            "Open Banking APIs are mature — over 13M active users; payment initiation (PIS) is growing in bill pay, charity, gov payments.",
+            "Open Banking APIs are mature â€” over 13M active users; payment initiation (PIS) is growing in bill pay, charity, gov payments.",
             "BNPL (Klarna, Clearpay, PayPal Pay in 3) are mainstream; FCA regulation expected 2026.",
             "Revolut (UK-HQ, now banking license) is the largest European neobank with 50M+ users globally.",
-            "Cross-border with EU has Brexit-induced friction — VAT, customs, and data-flow contracts add complexity for both directions.",
+            "Cross-border with EU has Brexit-induced friction â€” VAT, customs, and data-flow contracts add complexity for both directions.",
             "CBDC (Digital Pound) is in design phase at BoE/HMT; no firm launch date, but consultation is advanced.",
         ],
         "yuno_coverage": {
@@ -5579,18 +5579,18 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "BaFin regulates banks, PSPs, and crypto asset service providers. Bundesbank handles payment rails and monetary policy.",
-            "PayPal is unusually dominant in Germany (~28% share) — a legacy of slow card/wallet adoption and strong trust in the brand.",
+            "PayPal is unusually dominant in Germany (~28% share) â€” a legacy of slow card/wallet adoption and strong trust in the brand.",
             "Invoice-based post-delivery payment (Kauf auf Rechnung) is culturally entrenched; ~10% of ecommerce still settles this way.",
             "SEPA Instant is mandatory for banks (2024+). giropay was phased out in favor of SEPA Instant + request-to-pay flows.",
             "VAT at 19% (reduced 7% for some goods). EU OSS applies for cross-border B2C. Invoice format is strictly regulated (e-Invoice mandates from 2025).",
             "German data protection (BDSG) is one of the strictest in EU; GDPR interpretation by BfDI is notably rigorous.",
         ],
         "digital_trends": [
-            "PayPal is the most dominant wallet in any major European market — trusted, accepted everywhere, and the default consumer preference.",
-            "Klarna 'Pay Later' and Kauf auf Rechnung culture intersect — BNPL was essentially pre-invented in Germany via invoice-based payments.",
+            "PayPal is the most dominant wallet in any major European market â€” trusted, accepted everywhere, and the default consumer preference.",
+            "Klarna 'Pay Later' and Kauf auf Rechnung culture intersect â€” BNPL was essentially pre-invented in Germany via invoice-based payments.",
             "SEPA Instant adoption is growing fast in B2B and subscriptions; consumer-facing A2A still requires merchant education.",
             "Germany has the highest cash share among major EU economies (~4%) but trending down rapidly.",
-            "Sparkasse (savings banks) and Volksbanken (cooperative banks) together serve majority of consumers — their apps increasingly support instant transfers and wallets.",
+            "Sparkasse (savings banks) and Volksbanken (cooperative banks) together serve majority of consumers â€” their apps increasingly support instant transfers and wallets.",
             "Cross-border within EU is frictionless via SEPA; cross-border outside EU requires currency-aware PSPs.",
         ],
         "yuno_coverage": {
@@ -5630,20 +5630,20 @@ COUNTRY_DETAIL_RICH = {
                 ]},
             {"name": "Debit Cards", "share": 22, "growth": "+3% YoY",
                 "schemes": [
-                    {"name": "CB Débit", "share": 15.4, "type": "local"},
+                    {"name": "CB DÃ©bit", "share": 15.4, "type": "local"},
                     {"name": "Visa Debit", "share": 3.6, "type": "international"},
                     {"name": "Mastercard Debit", "share": 3.0, "type": "international"},
                 ]},
             {"name": "Wallets", "detail": "PayPal, Apple Pay", "share": 15, "growth": "+18% YoY"},
             {"name": "A2A", "detail": "SEPA Instant, Paylib", "share": 12, "growth": "+25% YoY"},
             {"name": "BNPL", "detail": "Klarna, Alma, Oney", "share": 8, "growth": "+28% YoY"},
-            {"name": "Direct Debit", "detail": "Prélèvement", "share": 8, "growth": "+2% YoY"},
+            {"name": "Direct Debit", "detail": "PrÃ©lÃ¨vement", "share": 8, "growth": "+2% YoY"},
             {"name": "Cash", "share": 2, "growth": "-12% YoY"},
         ],
         "regulation": [
-            "ACPR (Autorité de contrôle prudentiel et de résolution) under Banque de France regulates banks and PSPs; AMF oversees markets.",
-            "CB (Cartes Bancaires) is France's domestic scheme — almost all French-issued cards co-badge CB + Visa or Mastercard. Merchants routinely route via CB for cheaper interchange.",
-            "PSD2 SCA enforcement is strong — 3DS2 required for most consumer ecommerce transactions.",
+            "ACPR (AutoritÃ© de contrÃ´le prudentiel et de rÃ©solution) under Banque de France regulates banks and PSPs; AMF oversees markets.",
+            "CB (Cartes Bancaires) is France's domestic scheme â€” almost all French-issued cards co-badge CB + Visa or Mastercard. Merchants routinely route via CB for cheaper interchange.",
+            "PSD2 SCA enforcement is strong â€” 3DS2 required for most consumer ecommerce transactions.",
             "VAT at 20% applies; reduced rates 5.5% and 10% for food, hospitality. Payment terms law (LME) limits B2B invoice terms.",
             "Data protection via CNIL is rigorous; GDPR fines and monitoring are high-profile.",
             "Alma, Oney, and Floa Pay compete in French BNPL; FCA-like regulation under PSD3 expected from 2026.",
@@ -5652,7 +5652,7 @@ COUNTRY_DETAIL_RICH = {
             "Cards dominate (~55%) with strong CB co-badging; Visa/Mastercard rails carry the volume but CB processes domestic.",
             "PayPal is the leading wallet but smaller share than Germany; Apple Pay is growing fast, especially among younger consumers.",
             "Alma (French BNPL unicorn) is the local leader; Oney (Auchan) and Floa Pay (BNP) compete.",
-            "B2B payments rely heavily on SEPA direct debit (prélèvement) and invoicing — slow to embrace card.",
+            "B2B payments rely heavily on SEPA direct debit (prÃ©lÃ¨vement) and invoicing â€” slow to embrace card.",
             "Cross-border with EU is frictionless via SEPA; international with US/UK requires currency-aware gateways.",
             "Lydia (French fintech) has pivoted from P2P to super-app with payments, crypto, and banking.",
         ],
@@ -5703,15 +5703,15 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Cash", "share": 3, "growth": "-10% YoY"},
         ],
         "regulation": [
-            "Banco de España (BdE) supervises banks and PSPs. CNMV regulates markets. AEPD enforces data protection.",
-            "Bizum is a wildly successful bank-led A2A wallet — 28M+ users, phone-number based, interbank instant; usage is everyday.",
+            "Banco de EspaÃ±a (BdE) supervises banks and PSPs. CNMV regulates markets. AEPD enforces data protection.",
+            "Bizum is a wildly successful bank-led A2A wallet â€” 28M+ users, phone-number based, interbank instant; usage is everyday.",
             "VAT (IVA) at 21%; reduced 10%/4% for essentials. EU OSS for B2C cross-border.",
             "Spanish Fintech Sandbox (active since 2020) has accelerated PSP and InsurTech innovation.",
             "PSD2 SCA is enforced; 3DS2 coverage is extensive.",
             "Crypto MiCA (EU regulation) applies from 2024; Spain's CNMV and BdE joint oversight of CASPs.",
         ],
         "digital_trends": [
-            "Bizum is a uniquely successful European A2A wallet — comparable to PIX (Brazil) or PayNow (Singapore) in adoption.",
+            "Bizum is a uniquely successful European A2A wallet â€” comparable to PIX (Brazil) or PayNow (Singapore) in adoption.",
             "Cards dominate ecommerce (~48%) but Bizum is rapidly eating into both wallet and small-ticket card share.",
             "SeQura and Klarna compete in Iberia BNPL; SeQura is the local origin brand.",
             "Cross-border tourism drives acquirers to support multiple currencies and DCC at POS.",
@@ -5767,17 +5767,17 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "Banca d'Italia regulates banks and PSPs. CONSOB oversees markets. IVASS covers insurance.",
-            "Satispay (Italian fintech, now European) is a major wallet — phone-based, low-fee, widely accepted.",
-            "Poste Italiane (post office) issues Postepay prepaid cards which are culturally entrenched — treat them as a payment method in their own right.",
+            "Satispay (Italian fintech, now European) is a major wallet â€” phone-based, low-fee, widely accepted.",
+            "Poste Italiane (post office) issues Postepay prepaid cards which are culturally entrenched â€” treat them as a payment method in their own right.",
             "VAT (IVA) at 22%; reduced rates for essentials. E-invoicing is mandatory since 2019 for B2B and B2C.",
             "Italian anti-money laundering is rigorous; KYC requirements for PSPs are among Europe's strictest.",
             "Crypto MiCA applies from 2024; Italian CONSOB and OAM maintain a national registry of CASPs.",
         ],
         "digital_trends": [
-            "Italy has unusually strong non-bank payment brands — Satispay, Postepay, and Bancomat each have distinct consumer use cases.",
+            "Italy has unusually strong non-bank payment brands â€” Satispay, Postepay, and Bancomat each have distinct consumer use cases.",
             "PayPal is the leading checkout wallet; Satispay is the fastest-growing native.",
             "Scalapay (Italian BNPL unicorn) is the local leader in installment payments.",
-            "Cash is still ~5% of payments — higher than northern Europe but declining. Pushed down by government incentives (lottery-for-receipts).",
+            "Cash is still ~5% of payments â€” higher than northern Europe but declining. Pushed down by government incentives (lottery-for-receipts).",
             "Cross-border within EU is frictionless; US/UK cross-border is common for luxury, fashion.",
             "Open Banking adoption is growing but slower than France/Spain; incumbents have fragmented API quality.",
         ],
@@ -5829,18 +5829,18 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "DNB (De Nederlandsche Bank) regulates banks and PSPs; AFM oversees markets; ACM handles competition.",
-            "iDEAL (collectively owned by Dutch banks, now part of EPI) is the dominant ecommerce rail — ~68% of online payments. Moving to iDEAL 2.0 (2024+) with enhanced UX.",
-            "EPI (European Payments Initiative) is building Wero — pan-European wallet — with iDEAL as a foundation. Rollout phased through 2025-26.",
+            "iDEAL (collectively owned by Dutch banks, now part of EPI) is the dominant ecommerce rail â€” ~68% of online payments. Moving to iDEAL 2.0 (2024+) with enhanced UX.",
+            "EPI (European Payments Initiative) is building Wero â€” pan-European wallet â€” with iDEAL as a foundation. Rollout phased through 2025-26.",
             "VAT at 21%; reduced 9% for essentials. E-invoicing rules apply for B2B.",
             "PSD2 SCA enforcement is strong; iDEAL itself was a native A2A so payments UX was already secure.",
             "Crypto regulation via DNB's AMLD5 registration; MiCA applies as of 2024.",
         ],
         "digital_trends": [
-            "Netherlands is the most A2A-native European market — iDEAL dominates at 68% share, eating into what would be card volume elsewhere.",
+            "Netherlands is the most A2A-native European market â€” iDEAL dominates at 68% share, eating into what would be card volume elsewhere.",
             "Tikkie (ABN AMRO's P2P app) is ubiquitous for splitting bills and small payments.",
             "Klarna and Riverty (AfterPay's European arm) dominate BNPL/invoice-based checkout.",
             "Cross-border ecommerce from/to Germany, Belgium is frictionless via SEPA + iDEAL/Bancontact interop.",
-            "Cash has collapsed to <3% — one of the lowest in Europe.",
+            "Cash has collapsed to <3% â€” one of the lowest in Europe.",
             "Wero (EPI wallet) positioning NL as anchor market is strategically important for European sovereignty in payments.",
         ],
         "yuno_coverage": {
@@ -5892,16 +5892,16 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "NBB (National Bank of Belgium) regulates banks and payment services; FSMA oversees markets.",
-            "Bancontact is the domestic scheme — virtually every Belgian debit card is Bancontact-branded with QR and contactless capability.",
-            "Payconiq by Bancontact merged Payconiq and Bancontact Mobile in 2018 — now a unified A2A/QR wallet used by ~3M.",
+            "Bancontact is the domestic scheme â€” virtually every Belgian debit card is Bancontact-branded with QR and contactless capability.",
+            "Payconiq by Bancontact merged Payconiq and Bancontact Mobile in 2018 â€” now a unified A2A/QR wallet used by ~3M.",
             "VAT at 21%; reduced 12%/6% for essentials.",
             "Cross-border within EU is frictionless via SEPA + Bancontact-iDEAL interop for Dutch shoppers.",
             "Data protection via APD (Belgian DPA) is rigorous; GDPR enforcement is active.",
         ],
         "digital_trends": [
-            "Bancontact is culturally default — Belgians expect it at POS and online. International cards are secondary preference.",
+            "Bancontact is culturally default â€” Belgians expect it at POS and online. International cards are secondary preference.",
             "Payconiq QR and A2A grew rapidly post-2020 as contactless and QR became familiar.",
-            "Belgium is bilingual Flemish/French payment UX — merchants must localize both.",
+            "Belgium is bilingual Flemish/French payment UX â€” merchants must localize both.",
             "Cross-border with NL, FR, DE is common; ecommerce often routes via Benelux PSPs.",
             "PayPal remains meaningful for cross-border and subscriptions; Bancontact for domestic high-volume.",
             "Wero (EPI wallet) rollout includes Belgium; long-term aim is pan-European bank-led wallet.",
@@ -5955,18 +5955,18 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "Banco de Portugal (BdP) regulates banks and payment services. CMVM oversees markets.",
-            "SIBS operates Multibanco — the domestic ATM/card network — covering nearly 100% of POS and online card payments.",
-            "MB WAY (SIBS-run mobile wallet) has 4M+ users — everyday use for P2P, QR, and bill pay.",
+            "SIBS operates Multibanco â€” the domestic ATM/card network â€” covering nearly 100% of POS and online card payments.",
+            "MB WAY (SIBS-run mobile wallet) has 4M+ users â€” everyday use for P2P, QR, and bill pay.",
             "VAT (IVA) at 23%; reduced 13%/6% for essentials. E-invoice mandatory for B2G.",
             "Portugal was an early EU adopter of crypto tax rules; MiCA applies from 2024.",
             "Data protection under CNPD is GDPR-aligned; cross-border within EU is fluid.",
         ],
         "digital_trends": [
-            "Multibanco Reference (a 9-digit code paid at ATM or online banking) is a uniquely Portuguese payment method — culturally entrenched.",
+            "Multibanco Reference (a 9-digit code paid at ATM or online banking) is a uniquely Portuguese payment method â€” culturally entrenched.",
             "MB WAY dominates wallet usage; it's the national A2A/QR default.",
             "SIBS is a rare example of a country-owned payment network that crowds out international schemes in consumer mindshare.",
             "Portugal's fintech sandbox is active; Revolut and N26 have significant share.",
-            "Cross-border from Brazil is meaningful — Portuguese-speaking cross-border ecommerce.",
+            "Cross-border from Brazil is meaningful â€” Portuguese-speaking cross-border ecommerce.",
             "EU citizens increasingly retire / relocate to Portugal; this changes payment preferences towards pan-EU wallets.",
         ],
         "yuno_coverage": {
@@ -6017,16 +6017,16 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "Central Bank of Ireland regulates banks and PSPs. Many global fintechs (Stripe, Revolut pre-relocation, Adyen for EU) operate via Irish licenses post-Brexit.",
-            "Ireland is the EU passporting hub for many non-EU PSPs — English-speaking, common law-adjacent, GDPR-aligned.",
+            "Ireland is the EU passporting hub for many non-EU PSPs â€” English-speaking, common law-adjacent, GDPR-aligned.",
             "VAT at 23%; reduced rates 13.5%/9%/0% for specific categories. EU OSS for B2C cross-border.",
             "PSD2 SCA is fully enforced; Irish banks have mature Open Banking APIs.",
             "Revolut is Irish-licensed for its EU business; significant impact on consumer behaviour.",
             "Irish Data Protection Commission (DPC) is the EU-lead regulator for many US Big Tech via main-establishment rules.",
         ],
         "digital_trends": [
-            "Ireland is a cards-dominant market (~48%) with strong Apple Pay adoption — per-capita contactless volume is among the highest in Europe.",
-            "Revolut has extraordinary penetration in Ireland — reportedly 2M+ Irish users out of 5.2M population.",
-            "Stripe originated from an Irish founding team and maintains its EU HQ here — fintech talent density is high.",
+            "Ireland is a cards-dominant market (~48%) with strong Apple Pay adoption â€” per-capita contactless volume is among the highest in Europe.",
+            "Revolut has extraordinary penetration in Ireland â€” reportedly 2M+ Irish users out of 5.2M population.",
+            "Stripe originated from an Irish founding team and maintains its EU HQ here â€” fintech talent density is high.",
             "Cross-border with UK is major but Brexit-complicated; Ireland remains the EU's English-speaking financial hub.",
             "A2A via SEPA Instant is rising; banks are offering free instant transfers to compete with Revolut.",
             "Digital banks dominate among under-35 segments; pillar banks (AIB, Bank of Ireland) are digitizing aggressively.",
@@ -6050,9 +6050,9 @@ COUNTRY_DETAIL_RICH = {
         },
         "local_payments": {
             "scheme":  "Bankomat",
-            "a2a":     "eps Überweisung / SEPA Instant",
+            "a2a":     "eps Ãœberweisung / SEPA Instant",
             "apms":    [
-                {"name": "eps Überweisung","type": "A2A"},
+                {"name": "eps Ãœberweisung","type": "A2A"},
                 {"name": "Bankomat",       "type": "Debit"},
                 {"name": "Klarna",         "type": "BNPL / invoice"},
                 {"name": "Apple Pay",      "type": "Wallet"},
@@ -6080,14 +6080,14 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "FMA (Financial Market Authority) regulates banks and PSPs. OeNB handles monetary and payment rails.",
-            "Bankomat is the domestic debit scheme — every Austrian debit card co-badges Bankomat and V Pay.",
-            "eps Überweisung (owned by Austrian banks) is the online banking A2A rail — similar role to iDEAL / Sofort.",
+            "Bankomat is the domestic debit scheme â€” every Austrian debit card co-badges Bankomat and V Pay.",
+            "eps Ãœberweisung (owned by Austrian banks) is the online banking A2A rail â€” similar role to iDEAL / Sofort.",
             "VAT at 20%; reduced 13%/10% for specific. EU OSS for cross-border B2C.",
             "Invoice-based payment (Kauf auf Rechnung) remains culturally common for larger ticket ecommerce.",
             "Data protection under DSB (Austrian DPA) is GDPR-aligned and strict.",
         ],
         "digital_trends": [
-            "Austria's payment mix resembles Germany more than the Nordics — invoice + PayPal + Klarna all significant.",
+            "Austria's payment mix resembles Germany more than the Nordics â€” invoice + PayPal + Klarna all significant.",
             "Bluecode is a Austrian/Swiss QR wallet focused on discount and loyalty at retail.",
             "Bankomat cards are dominant in-store; contactless adoption is very high.",
             "N26 is Austrian-German founded and has notable domestic share.",
@@ -6143,18 +6143,18 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "FINMA is the unified financial markets regulator. SNB handles monetary policy and the SIC settlement system.",
-            "Switzerland is not in EU/EEA — PSD2 does not apply directly; Swiss FinSA/FinIA are domestic frameworks.",
-            "TWINT (owned by Swiss banks) has 5M+ users and is accepted at most retailers — clear domestic A2A leader.",
+            "Switzerland is not in EU/EEA â€” PSD2 does not apply directly; Swiss FinSA/FinIA are domestic frameworks.",
+            "TWINT (owned by Swiss banks) has 5M+ users and is accepted at most retailers â€” clear domestic A2A leader.",
             "VAT at 8.1% (lowest in Europe); e-invoicing not mandated but widely used.",
             "Strong banking secrecy heritage complicates data-sharing frameworks (though largely normalized post-2010).",
             "Crypto is well-regulated via FINMA; 'Crypto Valley' (Zug) hosts major blockchain firms.",
         ],
         "digital_trends": [
-            "TWINT is Switzerland's answer to the Nordic A2A wallets — universal among Swiss banks, accepted at most retailers.",
+            "TWINT is Switzerland's answer to the Nordic A2A wallets â€” universal among Swiss banks, accepted at most retailers.",
             "Cards are high but not dominant (~40%) given TWINT's success.",
             "Cross-border with EU (especially Germany and France) is common; Swiss residents heavily use EU retailers.",
             "Invoice-based ecommerce (traditional Rechnung) remains meaningful but slowly declining.",
-            "Cash has fallen below 5% — surprising for a historically cash-comfortable society.",
+            "Cash has fallen below 5% â€” surprising for a historically cash-comfortable society.",
             "Crypto and tokenization are mature; Sygnum Bank and SEBA Bank offer regulated crypto banking.",
         ],
         "yuno_coverage": {
@@ -6205,15 +6205,15 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "FI (Finansinspektionen) regulates banks and PSPs. Riksbank runs RIX interbank rail and is building e-Krona.",
-            "Swish (owned by major Swedish banks) is the everyday P2P rail — >8M users, phone-number addressable, Bankid-authenticated.",
-            "Sweden is the world's most cashless society — physical cash is almost obsolete.",
-            "Klarna originates from Sweden — IPO'd 2025 in NYSE. BNPL mainstream since 2000s.",
+            "Swish (owned by major Swedish banks) is the everyday P2P rail â€” >8M users, phone-number addressable, Bankid-authenticated.",
+            "Sweden is the world's most cashless society â€” physical cash is almost obsolete.",
+            "Klarna originates from Sweden â€” IPO'd 2025 in NYSE. BNPL mainstream since 2000s.",
             "VAT at 25%; reduced 12%/6%. Online marketplaces responsible for collecting VAT since 2021.",
             "e-Krona (CBDC) pilots are advanced; no firm retail launch date.",
         ],
         "digital_trends": [
             "Sweden has the world's lowest cash usage (~1%) and the most advanced A2A culture.",
-            "Swish is synonymous with payment — verbs like 'swisha' are used generically.",
+            "Swish is synonymous with payment â€” verbs like 'swisha' are used generically.",
             "Klarna Invoice and Klarna Pay Later are default checkout options at most Swedish ecommerce.",
             "Ecommerce penetration (~24%) is among the highest in Europe.",
             "Cross-border within Nordic markets (with NO/DK/FI) is seamless and heavily used.",
@@ -6268,8 +6268,8 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "Finanstilsynet regulates banks and PSPs. Norges Bank runs the NBO settlement system.",
-            "Norway is not in EU but in EEA — PSD2 and GDPR apply via EEA agreement.",
-            "Vipps (merged with MobilePay in 2022) operates across Norway, Denmark, and Finland — pan-Nordic ambition.",
+            "Norway is not in EU but in EEA â€” PSD2 and GDPR apply via EEA agreement.",
+            "Vipps (merged with MobilePay in 2022) operates across Norway, Denmark, and Finland â€” pan-Nordic ambition.",
             "BankAxept is the domestic debit; every Norwegian debit card co-badges BankAxept + Visa/Mastercard.",
             "VAT (MVA) at 25%; reduced 15%/12%. E-invoice mandated B2G.",
             "Crypto regulated via Finanstilsynet; MiCA applies via EEA.",
@@ -6277,9 +6277,9 @@ COUNTRY_DETAIL_RICH = {
         "digital_trends": [
             "Norway is near-cashless; Vipps is the default consumer payment for P2P and increasingly in-store.",
             "Vipps + MobilePay merger creates a potential Nordic standard wallet; integration work through 2025.",
-            "Klarna is deeply embedded in ecommerce checkout — Norwegians are heavy BNPL users.",
+            "Klarna is deeply embedded in ecommerce checkout â€” Norwegians are heavy BNPL users.",
             "Fish and petroleum B2B sectors drive large cross-border USD/EUR flows; card rails are less central there.",
-            "Consumer banking is dominated by DNB — single-provider concentration affects API ecosystem.",
+            "Consumer banking is dominated by DNB â€” single-provider concentration affects API ecosystem.",
             "Cross-border with SE/DK is seamless under Nordic payment harmonization.",
         ],
         "yuno_coverage": {
@@ -6332,14 +6332,14 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "Finanstilsynet regulates banks and PSPs. Danmarks Nationalbank handles rails and monetary policy.",
             "MobilePay (Danske Bank origin, merged with Vipps 2022) is culturally default for P2P and merchant payment.",
-            "Dankort is the domestic debit scheme — virtually all Danish debit cards co-badge Dankort + Visa.",
+            "Dankort is the domestic debit scheme â€” virtually all Danish debit cards co-badge Dankort + Visa.",
             "Denmark is in EU but retains the DKK; EUR is not legal tender.",
             "VAT (MOMS) at 25%; no reduced rates (flat). E-invoicing mandatory B2G.",
             "PSD2 SCA enforced; consumer protection standards are strict.",
         ],
         "digital_trends": [
-            "Denmark is one of the least cash-using societies — even market vendors accept MobilePay.",
-            "MobilePay's Vipps merger positions it as a pan-Nordic wallet — expect converged UX and rails.",
+            "Denmark is one of the least cash-using societies â€” even market vendors accept MobilePay.",
+            "MobilePay's Vipps merger positions it as a pan-Nordic wallet â€” expect converged UX and rails.",
             "Klarna invoice-based checkout is common; similar role to other Nordic markets.",
             "Danish banks (Danske, Nordea, Jyske) have mature APIs; Open Banking via PSD2 is high-quality.",
             "Cross-border within Nordic is frictionless; SEK/NOK/DKK conversions are a PSP feature.",
@@ -6393,17 +6393,17 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "FIN-FSA (Finanssivalvonta) regulates banks and PSPs. Bank of Finland handles monetary policy.",
-            "Siirto is Finland's instant A2A rail — owned by Automatia (bank consortium).",
+            "Siirto is Finland's instant A2A rail â€” owned by Automatia (bank consortium).",
             "Pivo (OP) and MobilePay are the main wallets; both growing but smaller than Nordic peers' market share.",
             "Finland uses EUR; VAT at 25.5% (highest in Nordics); reduced 14%/10%.",
             "PSD2 SCA fully enforced; Open Banking APIs are high-quality.",
             "Crypto under MiCA framework via EU; Bank of Finland takes cautious stance on CBDC.",
         ],
         "digital_trends": [
-            "Finland's payment mix is closer to Sweden than Germany — high cards, Klarna BNPL, Siirto A2A.",
+            "Finland's payment mix is closer to Sweden than Germany â€” high cards, Klarna BNPL, Siirto A2A.",
             "MobilePay expansion into Finland (post-Vipps merger) is strengthening pan-Nordic positioning.",
             "Klarna is deeply entrenched; invoice-based checkout is a cultural norm.",
-            "Finnish banks (OP Ryhmä, Nordea Finland) have strong digital products.",
+            "Finnish banks (OP RyhmÃ¤, Nordea Finland) have strong digital products.",
             "Cross-border within Nordic is frictionless; USD/EUR B2B flows are standard.",
             "Cash usage is very low (~2%); card + mobile dominate.",
         ],
@@ -6455,18 +6455,18 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "KNF (Polish Financial Supervision Authority) regulates banks and PSPs. NBP (National Bank of Poland) runs rails.",
-            "BLIK is Poland's breakout payment success — ~14M active users, bank-consortium owned, used online and in-store via 6-digit code.",
+            "BLIK is Poland's breakout payment success â€” ~14M active users, bank-consortium owned, used online and in-store via 6-digit code.",
             "Przelewy24 and PayU dominate PSP market; both processing significant ecommerce volume.",
             "VAT at 23%; reduced 8%/5%. Digital services VAT applies to foreign providers.",
             "Polish Data Protection Office (UODO) is active in GDPR enforcement.",
             "Crypto regulated via KNF/MiCA; Polish cryptofintech ecosystem is meaningful (InPay, Coinfirm).",
         ],
         "digital_trends": [
-            "BLIK is the single most successful European domestic A2A payment — simpler than iDEAL, with pan-Polish bank support.",
+            "BLIK is the single most successful European domestic A2A payment â€” simpler than iDEAL, with pan-Polish bank support.",
             "Cards are secondary (~28%) because BLIK handles the fast-growing online segment.",
             "PayPo (Poland's BNPL unicorn) and Klarna compete on installment payments.",
             "Cross-border ecommerce from Germany, Czech Republic is common.",
-            "Polish banks are heavily digital; mBank, Revolut, and ING Bank Śląski lead in app UX.",
+            "Polish banks are heavily digital; mBank, Revolut, and ING Bank ÅšlÄ…ski lead in app UX.",
             "Cash has dropped fast; contactless and BLIK together make Poland nearly cashless in urban centers.",
         ],
         "yuno_coverage": {
@@ -6516,17 +6516,17 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Other", "share": 3, "growth": "flat"},
         ],
         "regulation": [
-            "ČNB (Czech National Bank) regulates banks and PSPs. Supports active regulatory sandbox for fintech.",
+            "ÄŒNB (Czech National Bank) regulates banks and PSPs. Supports active regulatory sandbox for fintech.",
             "Czech Republic uses koruna (CZK) but is moving closer to EUR adoption politically.",
             "VAT at 21%; reduced 15%/10% for essentials.",
             "PSD2 SCA fully enforced; Czech banks have mature APIs.",
-            "Crypto under EU MiCA framework; ČNB has been cautious but permissive.",
+            "Crypto under EU MiCA framework; ÄŒNB has been cautious but permissive.",
             "ComGate and GoPay are the leading domestic PSPs; Stripe/Adyen serve larger merchants.",
         ],
         "digital_trends": [
             "Cards dominate (~50%); Czech consumers are comfortable with Visa/Mastercard.",
             "Twisto (Czech BNPL, acquired by Zip) is the local BNPL leader.",
-            "ČSOB, Komerční banka, and Česká spořitelna are the pillar banks with strong digital.",
+            "ÄŒSOB, KomerÄnÃ­ banka, and ÄŒeskÃ¡ spoÅ™itelna are the pillar banks with strong digital.",
             "Cross-border with Slovakia and Germany is common; cards work seamlessly.",
             "Revolut and mBank (subsidiary of Polish mBank) have meaningful youth share.",
             "Contactless adoption is very high; Apple Pay and Google Pay both widely used.",
@@ -6579,7 +6579,7 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Other", "share": 3, "growth": "flat"},
         ],
         "regulation": [
-            "MNB (Magyar Nemzeti Bank) is the central bank and regulator. It operates GIRO Instant — the mandatory instant payment rail launched 2020.",
+            "MNB (Magyar Nemzeti Bank) is the central bank and regulator. It operates GIRO Instant â€” the mandatory instant payment rail launched 2020.",
             "Hungary uses forint (HUF) and has no firm EUR adoption timeline.",
             "VAT at 27% (highest in EU); reduced rates 18%/5%.",
             "OTP Bank (largest Hungarian bank, also CE Europe regional) leads via SimplePay gateway.",
@@ -6587,7 +6587,7 @@ COUNTRY_DETAIL_RICH = {
             "Data protection via NAIH is active in GDPR enforcement.",
         ],
         "digital_trends": [
-            "GIRO Instant (mandatory Nov 2020) has been a major success — banks compete on instant transfer UX.",
+            "GIRO Instant (mandatory Nov 2020) has been a major success â€” banks compete on instant transfer UX.",
             "Revolut has strong adoption among younger urban consumers.",
             "Barion is a Hungarian PSP unicorn competitor to OTP SimplePay.",
             "BNPL is growing; Enpara, Paygo, and Klarna compete.",
@@ -6641,16 +6641,16 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Other", "share": 4, "growth": "flat"},
         ],
         "regulation": [
-            "BNR (Banca Națională a României) regulates banks; ASF regulates non-bank PSPs.",
+            "BNR (Banca NaÈ›ionalÄƒ a RomÃ¢niei) regulates banks; ASF regulates non-bank PSPs.",
             "Romania uses leu (RON); EUR adoption target 2029.",
             "VAT at 19%; reduced 9%/5%.",
-            "Revolut has extraordinary adoption in Romania — ~4M+ Romanian users.",
+            "Revolut has extraordinary adoption in Romania â€” ~4M+ Romanian users.",
             "Cash on delivery still meaningful (~15%) driven by trust gaps and rural segments.",
             "PSD2 SCA fully enforced; Romanian banks have decent APIs.",
         ],
         "digital_trends": [
             "Romania has one of the fastest-growing ecommerce markets in Europe (~15% CAGR).",
-            "Revolut dominance is a standout European phenomenon — significantly higher share than neighbors.",
+            "Revolut dominance is a standout European phenomenon â€” significantly higher share than neighbors.",
             "NETOPIA and EuPlatesc are the leading domestic PSPs; both service emarket and eMag.",
             "BNPL (TBI Bank Pay, Klarna, Tinka) is growing fast from a small base.",
             "Cross-border with Moldova, Bulgaria, Hungary is common; RON/EUR conversion is a key PSP feature.",
@@ -6705,14 +6705,14 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "Bank of Greece regulates banks; Hellenic Capital Market Commission oversees markets.",
-            "IRIS Online Payments (bank consortium) is the domestic A2A rail — launched 2021, gaining traction.",
+            "IRIS Online Payments (bank consortium) is the domestic A2A rail â€” launched 2021, gaining traction.",
             "Viva Wallet (JPMorgan-owned since 2022) is a Greek PSP unicorn operating across Europe.",
             "VAT at 24%; reduced 13%/6%. Islands have reduced VAT in some categories.",
             "Crypto under EU MiCA.",
             "Data protection via HDPA is active in GDPR enforcement.",
         ],
         "digital_trends": [
-            "Cards dominate (~55%) — Greeks caught up to European card norms post-COVID.",
+            "Cards dominate (~55%) â€” Greeks caught up to European card norms post-COVID.",
             "IRIS is gaining traction as tax authorities push merchants to accept it to reduce cash economy.",
             "Viva Wallet transformation into a mainstream European PSP is a notable success story.",
             "Cross-border tourism drives substantial USD/EUR/GBP card acceptance at hotels and islands.",
@@ -6773,7 +6773,7 @@ COUNTRY_DETAIL_RICH = {
             "Crypto: Ukraine legalized crypto in 2022 (Law 'On Virtual Assets') but operational framework still being developed.",
         ],
         "digital_trends": [
-            "Despite war, Ukrainian fintech remains resilient — Monobank has added millions of users during the war.",
+            "Despite war, Ukrainian fintech remains resilient â€” Monobank has added millions of users during the war.",
             "Diia (government app) integrates digital ID, vaccine passports, business permits, and some payment flows.",
             "Crypto donations and stablecoin rails are meaningful for cross-border aid.",
             "Cross-border ecommerce is constrained by war; Rozetka is the dominant domestic marketplace.",
@@ -6835,9 +6835,9 @@ COUNTRY_DETAIL_RICH = {
             "Cross-border within EU is frictionless via SEPA.",
         ],
         "digital_trends": [
-            "Bulgaria's ecommerce is growing 13% — among the fastest in EU.",
+            "Bulgaria's ecommerce is growing 13% â€” among the fastest in EU.",
             "MyPOS is a Bulgarian payments unicorn with international reach.",
-            "Cash persistence is unusual for EU — driven by rural, older demographics and informal economy.",
+            "Cash persistence is unusual for EU â€” driven by rural, older demographics and informal economy.",
             "Cross-border with Romania and Greece is common; multi-currency EUR/BGN pricing standard.",
             "Revolut has strong youth adoption.",
             "Eurozone entry (2026 target) will simplify payment flows.",
@@ -6958,8 +6958,8 @@ COUNTRY_DETAIL_RICH = {
             "Crypto under EU MiCA.",
         ],
         "digital_trends": [
-            "Similar payment mix to Czech Republic — cards-dominated, SEPA Instant growing.",
-            "Tatra banka and Slovenská sporiteľňa (Erste) lead digital banking.",
+            "Similar payment mix to Czech Republic â€” cards-dominated, SEPA Instant growing.",
+            "Tatra banka and SlovenskÃ¡ sporiteÄ¾Åˆa (Erste) lead digital banking.",
             "Cross-border within CEE is frictionless.",
             "Revolut has strong youth adoption.",
             "Cash has declined steadily; contactless adoption very high.",
@@ -7074,14 +7074,14 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "Finantsinspektsioon (EFSA) regulates banks and PSPs; part of Eurozone since 2011.",
-            "Estonia is a highly digital society — e-Residency, digital ID, and online voting are native.",
+            "Estonia is a highly digital society â€” e-Residency, digital ID, and online voting are native.",
             "Uses EUR.",
             "VAT at 22%.",
             "PSD2 SCA fully enforced.",
             "Crypto under MiCA; Estonian crypto license regime tightened significantly post-2020.",
         ],
         "digital_trends": [
-            "Estonia leads Europe on digital government and payments — e-Residency has attracted 100K+ global entrepreneurs.",
+            "Estonia leads Europe on digital government and payments â€” e-Residency has attracted 100K+ global entrepreneurs.",
             "LHV Pank is a digital-native domestic bank.",
             "Wise (formerly TransferWise) has Estonian roots.",
             "SEPA Instant adoption is very high; consumers expect instant.",
@@ -7142,7 +7142,7 @@ COUNTRY_DETAIL_RICH = {
             "Crypto under MiCA.",
         ],
         "digital_trends": [
-            "Similar to Estonia/Lithuania — cards + SEPA Instant dominant.",
+            "Similar to Estonia/Lithuania â€” cards + SEPA Instant dominant.",
             "Citadele and Swedbank Latvia are the largest banks.",
             "Revolut and Wise have strong youth share.",
             "Cross-border with Nordic and Baltic partners is common.",
@@ -7197,7 +7197,7 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "Lietuvos bankas regulates banks and PSPs; Eurozone member since 2015.",
-            "Lithuania is the largest fintech licensing hub in Europe — hundreds of EMI and PI licenses issued.",
+            "Lithuania is the largest fintech licensing hub in Europe â€” hundreds of EMI and PI licenses issued.",
             "Revolut's banking license is Lithuanian.",
             "VAT at 21%; reduced 9%/5%.",
             "PSD2 SCA fully enforced; Lithuanian banks have high-quality APIs.",
@@ -7258,14 +7258,14 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "CSSF (Commission de Surveillance du Secteur Financier) regulates banks, PSPs, and funds.",
-            "Luxembourg is a major EU financial center — PSP, fund administration, and private banking hub.",
+            "Luxembourg is a major EU financial center â€” PSP, fund administration, and private banking hub.",
             "Uses EUR.",
             "VAT at 17% (lowest in EU); Luxembourg historically benefited from EU VAT arbitrage (pre-2015).",
             "Cross-border with France, Belgium, Germany is daily reality (commuters).",
             "Many global payment firms (Amazon Payments EU, PayPal EU, Rakuten Europe Bank) are Luxembourg-licensed.",
         ],
         "digital_trends": [
-            "Luxembourg hosts many payment giants' EU HQs — PayPal Europe, Amazon Payments, Rakuten Europe.",
+            "Luxembourg hosts many payment giants' EU HQs â€” PayPal Europe, Amazon Payments, Rakuten Europe.",
             "Payconiq originated as a Luxembourg-Netherlands-Belgium alliance.",
             "Retail payment mix is mostly cards; wallets growing.",
             "Multilingual/multi-currency acquiring is a native requirement.",
@@ -7318,20 +7318,20 @@ COUNTRY_DETAIL_RICH = {
             {"name": "Other", "share": 1, "growth": "flat"},
         ],
         "regulation": [
-            "Fjármálaeftirlitið (FME, integrated into Central Bank of Iceland) regulates banks and PSPs.",
-            "Iceland is in EEA (not EU) — PSD2 and GDPR apply.",
-            "Uses ISK (Icelandic króna).",
+            "FjÃ¡rmÃ¡laeftirlitiÃ° (FME, integrated into Central Bank of Iceland) regulates banks and PSPs.",
+            "Iceland is in EEA (not EU) â€” PSD2 and GDPR apply.",
+            "Uses ISK (Icelandic krÃ³na).",
             "VAT at 24%; reduced 11%.",
             "Cashless society (~2% cash); one of the world's lowest.",
             "Crypto under MiCA via EEA; Iceland has cheap geothermal-powered Bitcoin mining.",
         ],
         "digital_trends": [
-            "Iceland has the highest card share in Europe (~65%) — cards are culturally default.",
+            "Iceland has the highest card share in Europe (~65%) â€” cards are culturally default.",
             "Aur and Kass are the native mobile wallets for P2P.",
-            "Tourism is a huge economy driver — card acceptance at every merchant.",
+            "Tourism is a huge economy driver â€” card acceptance at every merchant.",
             "Cross-border with Nordic and US/UK is common.",
             "Cash is nearly gone.",
-            "Banking is concentrated in 3 banks (Landsbanki, Arion, Íslandsbanki).",
+            "Banking is concentrated in 3 banks (Landsbanki, Arion, Ãslandsbanki).",
         ],
         "yuno_coverage": {
             "Merchants processing": "N/A",
@@ -7383,7 +7383,7 @@ COUNTRY_DETAIL_RICH = {
             "Central Bank of Cyprus regulates banks and PSPs; Eurozone member since 2008.",
             "Uses EUR.",
             "VAT at 19%; reduced 9%/5%.",
-            "Cyprus is a regional financial center — many Russian/CIS origin funds pre-2022.",
+            "Cyprus is a regional financial center â€” many Russian/CIS origin funds pre-2022.",
             "JCC is the main domestic acquirer.",
             "Crypto under MiCA.",
         ],
@@ -7446,7 +7446,7 @@ COUNTRY_DETAIL_RICH = {
             "Malta is an iGaming licensing hub and has significant crypto licensing (though reduced post-2020).",
             "Uses EUR.",
             "VAT at 18%; reduced 12%/7%/5%.",
-            "iGaming drives unique payment flows — many PSPs specialize in Malta-licensed operators.",
+            "iGaming drives unique payment flows â€” many PSPs specialize in Malta-licensed operators.",
             "Crypto under MiCA; Malta's early Virtual Financial Assets Act (2018) superseded.",
         ],
         "digital_trends": [
@@ -7454,7 +7454,7 @@ COUNTRY_DETAIL_RICH = {
             "Bank of Valletta and HSBC Malta are the pillars.",
             "Truevo is a Malta-based acquirer with European reach.",
             "Tourism creates heavy card acceptance seasonally.",
-            "Cash still ~8% — declining.",
+            "Cash still ~8% â€” declining.",
             "Cross-border within EU is frictionless.",
         ],
         "yuno_coverage": {
@@ -7508,17 +7508,17 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "CBR (Central Bank of Russia) regulates banks, PSPs, and payment systems. NSPK operates Mir and SBP.",
             "Mir is the national card scheme (launched 2015 after Crimea sanctions); mandatory for government salaries, pensions, and state welfare.",
-            "Post-2022 sanctions: Visa and Mastercard suspended operations in Russia — pre-issued domestic cards still work locally but can't be used abroad. New international issuance runs via UnionPay or Mir-UnionPay co-badge.",
-            "SBP (Sistema Bystrykh Platezhey) launched 2019 — free for consumer P2P up to RUB 100K/month; merchant QR acceptance growing fast.",
+            "Post-2022 sanctions: Visa and Mastercard suspended operations in Russia â€” pre-issued domestic cards still work locally but can't be used abroad. New international issuance runs via UnionPay or Mir-UnionPay co-badge.",
+            "SBP (Sistema Bystrykh Platezhey) launched 2019 â€” free for consumer P2P up to RUB 100K/month; merchant QR acceptance growing fast.",
             "VAT at 20%; digital services tax for foreign providers complex post-2022 as many left the market.",
             "Digital ruble (CBDC) pilots live since 2023; consumer rollout targeted for 2026-27. Crypto regulated via Digital Financial Assets Law (2021).",
         ],
         "digital_trends": [
             "Mir now holds >60% of card issuing in Russia. Every state-linked salary is paid to a Mir card by law.",
-            "SBP usage surged post-2022 — with international cards blocked for cross-border, SBP handles most domestic instant transfers.",
+            "SBP usage surged post-2022 â€” with international cards blocked for cross-border, SBP handles most domestic instant transfers.",
             "Sber ecosystem (Sber, SberPay, SberMarket, Okko) is Russia's closest super-app analogue; 100M+ users.",
             "Yandex (Yandex Pay, YooMoney) remains dominant tech ecosystem; Yandex Go covers delivery, taxi, grocery.",
-            "Cross-border commerce heavily reshaped — Aliexpress and Wildberries dominate; payments route through UnionPay, Mir-UnionPay co-badge, or stablecoin P2P.",
+            "Cross-border commerce heavily reshaped â€” Aliexpress and Wildberries dominate; payments route through UnionPay, Mir-UnionPay co-badge, or stablecoin P2P.",
             "Stablecoin (USDT) is commonly used as a sanctions/capital-controls workaround; Binance P2P activity remains very high despite exchange exits.",
         ],
         "yuno_coverage": {
@@ -7572,8 +7572,8 @@ COUNTRY_DETAIL_RICH = {
             "NBS (National Bank of Serbia) regulates banks and PSPs.",
             "Serbia uses dinar (RSD); not yet EU but an EU candidate.",
             "VAT at 20%; reduced 10%.",
-            "IPS NBS (instant payment system) operates 24/7 — mandatory for banks.",
-            "Cash is still 25% — highest share among European ecommerce markets.",
+            "IPS NBS (instant payment system) operates 24/7 â€” mandatory for banks.",
+            "Cash is still 25% â€” highest share among European ecommerce markets.",
             "Cross-border with Balkans and EU growing.",
         ],
         "digital_trends": [
@@ -7632,13 +7632,13 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "Central Bank of Myanmar (CBM) regulates banks and payment services. Political situation (post-2021) has complicated regulatory environment.",
             "US and EU sanctions restrict international banking; Visa, Mastercard, and SWIFT access for Myanmar-issued instruments is limited.",
-            "Wave Money (Yoma Bank/Telenor — now Norwegian stake sold) and KBZPay are the dominant wallets; KBZ Bank is largest private bank.",
+            "Wave Money (Yoma Bank/Telenor â€” now Norwegian stake sold) and KBZPay are the dominant wallets; KBZ Bank is largest private bank.",
             "VAT/commercial tax at 5%; enforcement tightened since 2022 reforms.",
             "Data protection law is in draft; cyber security law applies.",
             "Remittances primarily via informal hundi corridors and growing stablecoin P2P due to banking restrictions.",
         ],
         "digital_trends": [
-            "Myanmar's digital payment infrastructure was built during 2015–2020 boom but political crisis since 2021 has stalled progress.",
+            "Myanmar's digital payment infrastructure was built during 2015â€“2020 boom but political crisis since 2021 has stalled progress.",
             "Wave Money and KBZPay collectively serve ~25M users; they're the primary digital rails given banking disruption.",
             "International ecommerce is constrained by sanctions; most cross-border flows route through Singapore or Thailand PSPs.",
             "Cash remains dominant (~40%); banking penetration is limited outside Yangon and Mandalay.",
@@ -7693,16 +7693,16 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "SARB (South African Reserve Bank) runs the NPSD. FSCA supervises market conduct.",
             "PayShap (BankservAfrica) is SARB's instant-payment rail launched 2023.",
-            "POPIA applies since 2021 — GDPR-aligned.",
+            "POPIA applies since 2021 â€” GDPR-aligned.",
             "VAT at 15%; foreign digital service providers must register under VAT Act since 2014.",
             "National Payment System Act amendments in draft.",
             "Crypto regulated under FAIS; FSCA licensed VASPs since 2023.",
         ],
         "digital_trends": [
-            "South Africa has the most developed African payment market — cards dominate urban retail and ecommerce.",
+            "South Africa has the most developed African payment market â€” cards dominate urban retail and ecommerce.",
             "PayShap adoption accelerating post-launch; expected to follow PIX trajectory.",
             "Ozow and Yoco lead SMB acceptance; Stitch is a rising Open Banking PSP.",
-            "BNPL grew >40% in 2024 — primarily apparel and electronics.",
+            "BNPL grew >40% in 2024 â€” primarily apparel and electronics.",
             "Cross-border remittances to SADC markets significant; stablecoin rails growing.",
             "Digital banks (Discovery Bank, TymeBank, Bank Zero) have 8M+ combined customers.",
         ],
@@ -7762,7 +7762,7 @@ COUNTRY_DETAIL_RICH = {
             "Crypto regulation tightened then partially reopened 2023 with VASP licensing.",
         ],
         "digital_trends": [
-            "Nigeria has one of the most vibrant fintech ecosystems — OPay, Moniepoint, Kuda, Paystack all leading.",
+            "Nigeria has one of the most vibrant fintech ecosystems â€” OPay, Moniepoint, Kuda, Paystack all leading.",
             "NIP instant transfers dominate ecommerce checkouts.",
             "Cash scarcity (2023 naira redesign) accelerated digital adoption.",
             "Cross-border remittances ~$20B+/year; stablecoin rails competing with MTOs.",
@@ -7815,14 +7815,14 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "CBK regulates banks and PSPs. CA oversees telecom-linked payment services.",
-            "M-PESA (Safaricom) — 35M+ users, processes ~50% of Kenyan GDP annually.",
+            "M-PESA (Safaricom) â€” 35M+ users, processes ~50% of Kenyan GDP annually.",
             "National Payment System Act and Regulations 2014 govern PSP and PSO licensing.",
             "Data Protection Act (2019) aligns with GDPR.",
             "Digital Service Tax (1.5%) applies to foreign digital providers.",
             "Crypto not legal tender; VASP framework under development.",
         ],
         "digital_trends": [
-            "M-PESA is culturally default — taxi fares, bills, ecommerce checkouts.",
+            "M-PESA is culturally default â€” taxi fares, bills, ecommerce checkouts.",
             "Stanbic-M-PESA and KCB-M-PESA bundle savings/loans with the wallet.",
             "Cross-border M-PESA corridors drive regional payments.",
             "Chipper Cash and Flutterwave have strong Kenya presence.",
@@ -7884,7 +7884,7 @@ COUNTRY_DETAIL_RICH = {
             "Crypto banned as a payment instrument per CBE directive.",
         ],
         "digital_trends": [
-            "Fawry is one of MENA's largest payment networks — 50M+ users.",
+            "Fawry is one of MENA's largest payment networks â€” 50M+ users.",
             "InstaPay adoption accelerating; CBE pushing banks to integrate.",
             "Paymob (Egyptian unicorn) dominates SMB acceptance.",
             "BNPL (Sympl, valU, Aman, Contact Pay Later) is among MENA's fastest-growing.",
@@ -7937,10 +7937,10 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "Bank Al-Maghrib is the central bank and primary regulator.",
-            "CMI (Centre Monétique Interbancaire) operates domestic card processing and acquiring.",
+            "CMI (Centre MonÃ©tique Interbancaire) operates domestic card processing and acquiring.",
             "VAT (TVA) at 20%; digital service tax on foreign providers.",
             "Moroccan Data Protection Law 09-08 is GDPR-adjacent; CNDP enforces.",
-            "Strict FX controls — cross-border USD settlement requires Bank Al-Maghrib authorization.",
+            "Strict FX controls â€” cross-border USD settlement requires Bank Al-Maghrib authorization.",
             "Crypto banned for transactional use per 2017 communique.",
         ],
         "digital_trends": [
@@ -8006,7 +8006,7 @@ COUNTRY_DETAIL_RICH = {
             "Crypto regulated via Bank of Ghana VASP guidelines (2024).",
         ],
         "digital_trends": [
-            "MTN MoMo has ~20M users — wallet is everyday default at retailers, utilities, schools.",
+            "MTN MoMo has ~20M users â€” wallet is everyday default at retailers, utilities, schools.",
             "GhIPSS Instant Pay + mobile-money interop make Ghana among most digitized SSA economies.",
             "E-Levy (1.5% tax) slowed wallet growth temporarily 2022-23.",
             "Hubtel and ExpressPay are leading domestic PSPs.",
@@ -8060,14 +8060,14 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "NBE regulates banks and PSPs. ECA oversees communications.",
-            "telebirr (Ethio Telecom) launched 2021 — 45M+ users; government-backed.",
+            "telebirr (Ethio Telecom) launched 2021 â€” 45M+ users; government-backed.",
             "Banking sector liberalization (2024) opened door to foreign banks; Safaricom M-PESA launched 2023.",
             "VAT at 15%; digital service tax on foreign providers.",
             "Data protection framework in draft.",
             "Crypto not legal tender; informal P2P exists.",
         ],
         "digital_trends": [
-            "One of the fastest-growing fintech markets — telebirr launched with aggressive government backing.",
+            "One of the fastest-growing fintech markets â€” telebirr launched with aggressive government backing.",
             "Safaricom M-PESA entry 2023 is reshaping competition.",
             "Banking penetration remains low (~35%); wallets drive digitization.",
             "Cross-border with Djibouti, Kenya, Gulf remittance corridors via fintechs.",
@@ -8122,13 +8122,13 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "BoT regulates banks and PSPs. TCRA oversees telecom.",
             "TIPS launched 2023 to drive mobile-money and banking interop.",
-            "Mobile money interoperability mandated since 2014 — Tanzania was a pioneer.",
+            "Mobile money interoperability mandated since 2014 â€” Tanzania was a pioneer.",
             "VAT at 18%; digital service tax 2% on foreign providers.",
             "Personal Data Protection Act (2022) aligns with GDPR.",
             "Crypto not legal tender; no formal VASP regime yet.",
         ],
         "digital_trends": [
-            "One of Africa's most competitive mobile-money markets — 4 major MNOs offer comparable wallets.",
+            "One of Africa's most competitive mobile-money markets â€” 4 major MNOs offer comparable wallets.",
             "M-Pesa Tanzania is volume leader; Tigo Pesa has strong SMB traction.",
             "Selcom is the largest domestic PSP; Pesapal, DPO expand regionally.",
             "Cross-border with Kenya, Uganda, Rwanda via EAC corridors.",
@@ -8182,7 +8182,7 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "BoU regulates banks and PSPs. UCC oversees telecom.",
-            "MTN MoMo has ~15M users — largest mobile-money operator.",
+            "MTN MoMo has ~15M users â€” largest mobile-money operator.",
             "Interoperability pilots between MNO wallets are maturing.",
             "VAT at 18%; digital service tax enforced since 2023.",
             "Data Protection and Privacy Act (2019) aligns with GDPR.",
@@ -8244,7 +8244,7 @@ COUNTRY_DETAIL_RICH = {
         "regulation": [
             "Bank of Algeria regulates banks and payment services. ARPCE oversees communications.",
             "CIB (Carte Interbancaire) is the domestic debit scheme run by SATIM.",
-            "Edahabia (Algerie Poste prepaid card) has 10M+ users — government-backed.",
+            "Edahabia (Algerie Poste prepaid card) has 10M+ users â€” government-backed.",
             "VAT (TVA) at 19%; foreign digital service providers taxable.",
             "Strict FX controls; cross-border USD settlement requires Bank of Algeria approval.",
             "Crypto is prohibited by law.",
@@ -8304,7 +8304,7 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "BCT regulates banks and PSPs. INTT oversees telecom.",
-            "Tunisie Monétique runs domestic card processing; no exclusive local card scheme.",
+            "Tunisie MonÃ©tique runs domestic card processing; no exclusive local card scheme.",
             "VAT (TVA) at 19%; digital services tax for foreign providers.",
             "Data protection under Law 2004-63; INPDP enforces.",
             "FX restrictions complicate cross-border USD settlement.",
@@ -8313,7 +8313,7 @@ COUNTRY_DETAIL_RICH = {
         "digital_trends": [
             "Tunisia's fintech scene (Flouci, Konnect, DigiPay) is growing despite FX constraints.",
             "D17 (La Poste) is the largest mobile money operator with rural reach.",
-            "Cross-border with France is meaningful — diaspora drives remittance and ecommerce.",
+            "Cross-border with France is meaningful â€” diaspora drives remittance and ecommerce.",
             "Ecommerce is small but growing; Jumia Tunisia and Mytek lead.",
             "Tourism drives seasonal EUR/USD card acceptance.",
             "Political and macro volatility remains a headwind.",
@@ -8372,9 +8372,9 @@ COUNTRY_DETAIL_RICH = {
             "Strong fintech inclusion agenda via Startup Senegal.",
         ],
         "digital_trends": [
-            "Wave revolutionized West African mobile money — low fees drove massive user growth.",
+            "Wave revolutionized West African mobile money â€” low fees drove massive user growth.",
             "Senegal is UEMOA's leading fintech market.",
-            "Cross-border within UEMOA (Côte d'Ivoire, Mali, Burkina Faso) via GIM-UEMOA.",
+            "Cross-border within UEMOA (CÃ´te d'Ivoire, Mali, Burkina Faso) via GIM-UEMOA.",
             "Diaspora remittances from France, US, Spain significant.",
             "Cash still ~20% but digital adoption is among the fastest in West Africa.",
             "Orange Money remains meaningful alongside Wave.",
@@ -8386,7 +8386,7 @@ COUNTRY_DETAIL_RICH = {
             "Payment methods":      [],
         },
     },
-    "Côte d'Ivoire": {
+    "CÃ´te d'Ivoire": {
         "overview": {
             "Population (2024)":                 "29M",
             "GDP nominal (2024)":                "$80B",
@@ -8425,7 +8425,7 @@ COUNTRY_DETAIL_RICH = {
                 ]},
         ],
         "regulation": [
-            "BCEAO regulates banking across UEMOA; Côte d'Ivoire is the largest UEMOA economy.",
+            "BCEAO regulates banking across UEMOA; CÃ´te d'Ivoire is the largest UEMOA economy.",
             "Uses CFA franc (XOF) pegged to EUR.",
             "Orange Money has ~15M users domestically.",
             "VAT at 18%; ARTCI regulates telecom and digital service rules.",
@@ -8433,7 +8433,7 @@ COUNTRY_DETAIL_RICH = {
             "Crypto unregulated; informal adoption exists.",
         ],
         "digital_trends": [
-            "Francophone Africa's leading fintech hub — Abidjan concentrates most activity.",
+            "Francophone Africa's leading fintech hub â€” Abidjan concentrates most activity.",
             "Orange Money and MTN MoMo dominate mobile money; Wave is the disruptor.",
             "Cross-border within UEMOA is seamless via GIM-UEMOA.",
             "Diaspora remittances from France and West Africa meaningful.",
@@ -8463,7 +8463,7 @@ COUNTRY_DETAIL_RICH = {
             "apms":    [
                 {"name": "Orange Money","type": "Mobile money"},
                 {"name": "MTN MoMo",    "type": "Mobile money"},
-                {"name": "YUP",         "type": "Wallet (Société Générale)"},
+                {"name": "YUP",         "type": "Wallet (SociÃ©tÃ© GÃ©nÃ©rale)"},
                 {"name": "PayDunya",    "type": "PSP"},
                 {"name": "CinetPay",    "type": "PSP"},
             ],
@@ -8548,7 +8548,7 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "BNA is the central bank and regulator.",
-            "EMIS runs Multicaixa — Angola's domestic debit scheme; nearly universal on Angolan-issued cards.",
+            "EMIS runs Multicaixa â€” Angola's domestic debit scheme; nearly universal on Angolan-issued cards.",
             "FX shortage 2014-2023; situation improving post-oil recovery.",
             "VAT at 14%; digital service tax enforcement inconsistent.",
             "Portuguese is the official language; payment UX typically Portuguese.",
@@ -8556,7 +8556,7 @@ COUNTRY_DETAIL_RICH = {
         ],
         "digital_trends": [
             "Multicaixa cards are ubiquitous; Angola has high debit-card penetration for SSA.",
-            "Multicaixa Express is the leading mobile wallet — QR and P2P at most retailers.",
+            "Multicaixa Express is the leading mobile wallet â€” QR and P2P at most retailers.",
             "Oil sector drives USD B2B flows; consumer FX access remains constrained.",
             "Cross-border ecommerce from Portugal is common (language, ex-colony ties).",
             "Banking penetration growing; BAI, Millennium Atlantico, BIC are the largest banks.",
@@ -8581,7 +8581,7 @@ COUNTRY_DETAIL_RICH = {
         },
         "local_payments": {
             "scheme":  "N/A",
-            "a2a":     "SIMO (Sociedade Interbancária de Moçambique)",
+            "a2a":     "SIMO (Sociedade InterbancÃ¡ria de MoÃ§ambique)",
             "apms":    [
                 {"name": "M-Pesa",  "type": "Mobile money (Vodacom)"},
                 {"name": "e-Mola",  "type": "Mobile money (Movitel)"},
@@ -8611,7 +8611,7 @@ COUNTRY_DETAIL_RICH = {
             "SIMO runs the interbank switch and integrates mobile money interop.",
             "VAT (IVA) at 17%; digital service tax framework emerging.",
             "Portuguese is the official language.",
-            "Data protection via Law 3/2017 — not yet GDPR-aligned in enforcement.",
+            "Data protection via Law 3/2017 â€” not yet GDPR-aligned in enforcement.",
             "Crypto unregulated.",
         ],
         "digital_trends": [
@@ -8668,14 +8668,14 @@ COUNTRY_DETAIL_RICH = {
         ],
         "regulation": [
             "RBZ regulates banks and PSPs. POTRAZ oversees telecom.",
-            "Multi-currency regime (USD, ZWL) — USD dominates high-value transactions.",
+            "Multi-currency regime (USD, ZWL) â€” USD dominates high-value transactions.",
             "EcoCash (Econet Wireless) has ~80% of mobile money share.",
             "VAT at 15%; digital services tax on foreign providers.",
             "Data Protection Act (2021) aligns with GDPR principles.",
             "Crypto limitations; RBZ cautious but no outright ban.",
         ],
         "digital_trends": [
-            "EcoCash dominates mobile money — culturally default for P2P, bills, merchant payment.",
+            "EcoCash dominates mobile money â€” culturally default for P2P, bills, merchant payment.",
             "USD cash resurgence post-hyperinflation; ZWL used for small transactions.",
             "Paynow handles most Zimbabwean ecommerce.",
             "Cross-border with South Africa and Mozambique via SADC corridors.",
@@ -8735,7 +8735,7 @@ COUNTRY_DETAIL_RICH = {
             "Crypto is regulated via Virtual Asset Act (2022).",
         ],
         "digital_trends": [
-            "One of SSA's most banked markets — cards dominate retail payments.",
+            "One of SSA's most banked markets â€” cards dominate retail payments.",
             "Diamond and mineral exports drive B2B USD flows.",
             "Cross-border with South Africa via SADC corridors.",
             "Mobile money has lower share than SSA average due to card dominance.",
@@ -8791,12 +8791,12 @@ COUNTRY_DETAIL_RICH = {
             "Mauritius is a major financial services hub for Africa and Asia.",
             "MIPS launched 2022; adoption growing.",
             "VAT at 15%; digital service tax on foreign providers.",
-            "Strong regulatory framework — GDPR-aligned via Data Protection Act 2017.",
+            "Strong regulatory framework â€” GDPR-aligned via Data Protection Act 2017.",
             "Crypto regulated via Virtual Asset and Initial Token Offering Services Act (2021).",
         ],
         "digital_trends": [
             "Mauritius has the highest banking penetration in SSA (~90% of adults).",
-            "Card usage is near-European levels — cards dominate ecommerce.",
+            "Card usage is near-European levels â€” cards dominate ecommerce.",
             "Tourism drives heavy multi-currency card acceptance.",
             "Cross-border with South Africa, India, France, UK is common.",
             "Financial services (offshore banking, funds) drive B2B sophistication.",
@@ -8856,7 +8856,7 @@ COUNTRY_DETAIL_RICH = {
             "Data protection via Law 058/2021; similar to GDPR.",
         ],
         "digital_trends": [
-            "Rwanda is Africa's fastest-digitizing economy — cashless initiatives are government-driven.",
+            "Rwanda is Africa's fastest-digitizing economy â€” cashless initiatives are government-driven.",
             "MTN MoMo and Airtel Money dominate mobile money.",
             "Kigali International Financial Centre ambitions attracting fintechs.",
             "Cross-border with EAC partners via regional corridors.",
@@ -8917,7 +8917,7 @@ COUNTRY_DETAIL_RICH = {
             "Crypto not legal tender; BoZ cautions but no ban.",
         ],
         "digital_trends": [
-            "Mobile money dominant digital payment — 70% of adults have a wallet.",
+            "Mobile money dominant digital payment â€” 70% of adults have a wallet.",
             "Copper exports drive USD B2B flows.",
             "Cross-border with DRC, Zimbabwe, Tanzania via SADC corridors.",
             "Tingg (pan-African PSP) serves Zambian merchants alongside Pesapal.",
@@ -8939,7 +8939,7 @@ COUNTRY_PARTNERS = {
     # portfolio sheet) and filling remaining slots with the most relevant
     # third-party big-merchant gateways/aggregators for that market.
     "Brazil":              [{"name":"Cielo","type":"Acquirer"},{"name":"Rede","type":"Acquirer"},{"name":"Stone","type":"Acquirer"},{"name":"Pagar.me","type":"PSP"},{"name":"MercadoPago BR","type":"PSP"}],
-    "Mexico":              [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"BBVA México","type":"Acquirer"},{"name":"GetNet Global","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"}],
+    "Mexico":              [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"BBVA MÃ©xico","type":"Acquirer"},{"name":"GetNet Global","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"}],
     "Argentina":           [{"name":"MercadoPago","type":"PSP"},{"name":"PayWay/Prisma","type":"PSP"},{"name":"Fiserv Argentina","type":"Acquirer"},{"name":"DLocal","type":"Acquirer"},{"name":"Ebanx","type":"Acquirer"}],
     "Colombia":            [{"name":"PayU","type":"Acquirer"},{"name":"Wompi","type":"PSP"},{"name":"OpenPay Colombia","type":"PSP"},{"name":"Bancolombia","type":"Acquirer"},{"name":"Kushki","type":"Acquirer"}],
     "Chile":               [{"name":"Transbank","type":"Acquirer"},{"name":"Klap","type":"Acquirer"},{"name":"Floid","type":"PSP"},{"name":"Kushki","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"}],
@@ -8953,8 +8953,8 @@ COUNTRY_PARTNERS = {
     "Dominican Republic":  [{"name":"BAC International Bank","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"},{"name":"AZUL","type":"Acquirer"},{"name":"Cardnet","type":"Acquirer"},{"name":"Banreservas","type":"Acquirer"}],
     "Panama":              [{"name":"BAC International Bank","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"},{"name":"Banistmo","type":"Acquirer"},{"name":"Banco General","type":"Acquirer"},{"name":"Credicorp Bank","type":"Acquirer"}],
     "Guatemala":           [{"name":"BAC International Bank","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"},{"name":"Visanet Guatemala","type":"Acquirer"},{"name":"Banco Industrial","type":"Acquirer"},{"name":"Credomatic","type":"Acquirer"}],
-    "El Salvador":         [{"name":"BAC International Bank","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"},{"name":"Bancoagrícola","type":"Acquirer"},{"name":"Banco Cuscatlán","type":"Acquirer"},{"name":"N1co","type":"PSP"}],
-    "Honduras":            [{"name":"BAC International Bank","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"},{"name":"Ficohsa","type":"Acquirer"},{"name":"Banco Atlántida","type":"Acquirer"},{"name":"Tengo","type":"PSP"}],
+    "El Salvador":         [{"name":"BAC International Bank","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"},{"name":"BancoagrÃ­cola","type":"Acquirer"},{"name":"Banco CuscatlÃ¡n","type":"Acquirer"},{"name":"N1co","type":"PSP"}],
+    "Honduras":            [{"name":"BAC International Bank","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"},{"name":"Ficohsa","type":"Acquirer"},{"name":"Banco AtlÃ¡ntida","type":"Acquirer"},{"name":"Tengo","type":"PSP"}],
     "Nicaragua":           [{"name":"BAC International Bank","type":"Acquirer"},{"name":"MercadoPago","type":"PSP"},{"name":"Lafise","type":"Acquirer"},{"name":"Banpro","type":"Acquirer"},{"name":"Tica Pay","type":"PSP"}],
     "Puerto Rico":         [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Evertec","type":"Acquirer"},{"name":"Banco Popular","type":"Acquirer"},{"name":"Square","type":"PSP"}],
     "Jamaica":             [{"name":"FAC/Powertranz","type":"Acquirer"},{"name":"NCB","type":"Acquirer"},{"name":"Scotia Jamaica","type":"Acquirer"},{"name":"JN Bank","type":"Acquirer"},{"name":"WiPay","type":"PSP"}],
@@ -8979,14 +8979,14 @@ COUNTRY_PARTNERS = {
     "Ireland":             [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldpay","type":"Acquirer"},{"name":"Worldline","type":"Acquirer"},{"name":"AIB Merchant Services","type":"Acquirer"}],
     "Austria":             [{"name":"Adyen","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Nexi","type":"Acquirer"},{"name":"Novalnet","type":"Acquirer"}],
     "Poland":              [{"name":"Stripe","type":"PSP"},{"name":"PayU","type":"Acquirer"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Przelewy24","type":"PSP"}],
-    "Czech Republic":      [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"ČSOB","type":"Acquirer"},{"name":"Nexi","type":"Acquirer"}],
+    "Czech Republic":      [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"ÄŒSOB","type":"Acquirer"},{"name":"Nexi","type":"Acquirer"}],
     "Hungary":             [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"OTP","type":"Acquirer"},{"name":"K&H Bank","type":"Acquirer"}],
     "Romania":             [{"name":"Stripe","type":"PSP"},{"name":"PayU","type":"Acquirer"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"NETOPIA Payments","type":"PSP"}],
     "Greece":              [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Viva Wallet","type":"PSP"},{"name":"Cardlink","type":"Acquirer"}],
     "Ukraine":             [{"name":"LiqPay","type":"PSP"},{"name":"Fondy","type":"PSP"},{"name":"Portmone","type":"PSP"},{"name":"iPay.ua","type":"PSP"},{"name":"Privat24","type":"Gateway"}],
     "Bulgaria":            [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"ePay","type":"PSP"},{"name":"MyPOS","type":"PSP"},{"name":"Borica","type":"Acquirer"}],
     "Croatia":             [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"WSPay","type":"PSP"},{"name":"CorvusPay","type":"PSP"}],
-    "Slovakia":            [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Tatra banka","type":"Acquirer"},{"name":"VÚB","type":"Acquirer"}],
+    "Slovakia":            [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Tatra banka","type":"Acquirer"},{"name":"VÃšB","type":"Acquirer"}],
     "Slovenia":            [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Nexi","type":"Acquirer"},{"name":"Bankart","type":"Acquirer"}],
     "Estonia":             [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Worldpay","type":"Acquirer"},{"name":"Maksekeskus","type":"PSP"}],
     "Latvia":              [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Worldline","type":"Acquirer"},{"name":"Worldpay","type":"Acquirer"},{"name":"Maksekeskus","type":"PSP"}],
@@ -9043,7 +9043,7 @@ COUNTRY_PARTNERS = {
     "Algeria":             [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"SATIM","type":"Acquirer"},{"name":"CIB Algeria","type":"Acquirer"},{"name":"Algerie Poste","type":"Acquirer"}],
     "Tunisia":             [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"Click to Pay","type":"PSP"},{"name":"Konnect","type":"PSP"},{"name":"Flouci","type":"PSP"}],
     "Senegal":             [{"name":"Onafriq","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"DLocal","type":"Acquirer"},{"name":"PayDunya","type":"PSP"},{"name":"CinetPay","type":"PSP"}],
-    "Côte d'Ivoire":       [{"name":"Onafriq","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"DLocal","type":"Acquirer"},{"name":"Wave Business","type":"PSP"},{"name":"PayDunya","type":"PSP"}],
+    "CÃ´te d'Ivoire":       [{"name":"Onafriq","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"DLocal","type":"Acquirer"},{"name":"Wave Business","type":"PSP"},{"name":"PayDunya","type":"PSP"}],
     "Cameroon":            [{"name":"Onafriq","type":"PSP"},{"name":"Stripe","type":"PSP"},{"name":"DLocal","type":"Acquirer"},{"name":"PayDunya","type":"PSP"},{"name":"CinetPay","type":"PSP"}],
     "Angola":              [{"name":"Stripe","type":"PSP"},{"name":"Multicaixa Express","type":"Acquirer"},{"name":"EMIS","type":"Acquirer"},{"name":"BAI","type":"Acquirer"},{"name":"BFA","type":"Acquirer"}],
     "Mozambique":          [{"name":"Stripe","type":"PSP"},{"name":"Adyen","type":"PSP"},{"name":"MozaPag","type":"PSP"},{"name":"Standard Bank","type":"Acquirer"},{"name":"Conecta","type":"PSP"}],
@@ -9085,10 +9085,10 @@ def default_country_detail():
             "Payment methods":      [],
         },
         "digital_trends": [
-            "Digital trends for this market are not yet available — data coming soon.",
+            "Digital trends for this market are not yet available â€” data coming soon.",
         ],
         "regulation": [
-            "Regulation overview for this market is not yet available — data coming soon.",
+            "Regulation overview for this market is not yet available â€” data coming soon.",
         ],
     }
 
@@ -9112,34 +9112,34 @@ def _parse_news_date(s: str):
 
 REGION_NEWS = {
     "Africa": [
-        {"category":"PARTNERSHIP","date":"May 2026","title":"Paga and Sui launch strategic partnership to transform cross-border payments across Africa","summary":"Joint roadmap covers four products targeting financial accessibility — including tokenized real-world assets accessible from $100 and Sui-blockchain rails for faster, cheaper cross-border transfers.","url":"https://techafricanews.com/2026/05/08/paga-and-sui-launch-strategic-partnership-to-transform-cross-border-payments-across-africa/"},
-        {"category":"MARKET","date":"Apr 2026","title":"Visa Africa Fintech Accelerator hits 104 startups — Cohort 6 opens","summary":"Visa-backed program now spans 100+ startups across the continent. Cohort 6 applications open through May 17, 2026 — pipeline to watch for new acquirer/PSP partnerships.","url":"https://techafricanews.com/2026/04/15/visa-africa-fintech-accelerator-hits-milestone-104-startups-supported-launches-new-cohort/"},
-        {"category":"PARTNERSHIP","date":"Apr 2026","title":"Flutterwave secures Nigerian microfinance banking license — moves into deposits and lending","summary":"CBN license lets Flutterwave hold deposits, offer accounts, and lend off its own balance sheet — no more partner-bank dependency. Eyeing similar licenses in South Africa, Egypt, Kenya, Ghana.","url":"https://weetracker.com/2026/04/02/flutterwave-banking-license-africa-fintech-become-banks/"},
+        {"category":"PARTNERSHIP","date":"May 2026","title":"Paga and Sui launch strategic partnership to transform cross-border payments across Africa","summary":"Joint roadmap covers four products targeting financial accessibility â€” including tokenized real-world assets accessible from $100 and Sui-blockchain rails for faster, cheaper cross-border transfers.","url":"https://techafricanews.com/2026/05/08/paga-and-sui-launch-strategic-partnership-to-transform-cross-border-payments-across-africa/"},
+        {"category":"MARKET","date":"Apr 2026","title":"Visa Africa Fintech Accelerator hits 104 startups â€” Cohort 6 opens","summary":"Visa-backed program now spans 100+ startups across the continent. Cohort 6 applications open through May 17, 2026 â€” pipeline to watch for new acquirer/PSP partnerships.","url":"https://techafricanews.com/2026/04/15/visa-africa-fintech-accelerator-hits-milestone-104-startups-supported-launches-new-cohort/"},
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"Flutterwave secures Nigerian microfinance banking license â€” moves into deposits and lending","summary":"CBN license lets Flutterwave hold deposits, offer accounts, and lend off its own balance sheet â€” no more partner-bank dependency. Eyeing similar licenses in South Africa, Egypt, Kenya, Ghana.","url":"https://weetracker.com/2026/04/02/flutterwave-banking-license-africa-fintech-become-banks/"},
     ],
     "APAC": [
-        {"category":"PARTNERSHIP","date":"May 2026","title":"Tribe Payments joins Emerging Payments Association Asia (EPAA)","summary":"Issuer/acquirer processor Tribe Payments deepens APAC engagement via the EPAA — a signal of accelerating multi-market acquirer activity across the region. Builds on Tribe's Singapore hub.","url":"https://financialit.net/news/payments/tribe-payments-joins-emerging-payments-association-asia-apac-expansion-gathers-pace"},
-        {"category":"PARTNERSHIP","date":"Apr 2026","title":"EBANX expands recurring alternative payments to Thailand and 5 more markets","summary":"Announced at Money20/20 Asia in Bangkok (Apr 21–23). UPI AutoPay-style recurring rails now live across 12 emerging markets, unlocking ~1B users for subscription merchants.","url":"https://www.prnewswire.com/apac/news-releases/money2020-asia-ebanx-expands-recurring-alternative-payments-offering-unlocks-a-1-billion-user-potential-across-12-emerging-markets-302748103.html"},
-        {"category":"MARKET","date":"Apr 2026","title":"Project Nexus links India UPI, Singapore PayNow and Thailand PromptPay","summary":"Single settlement fabric across the three RTP networks — driving cross-border B2B opportunities and lower remittance costs. Malaysia and the Philippines next on the roadmap.","url":"https://paymentexpert.com/2026/04/23/apac-emerging-payment-corridors-2026/"},
+        {"category":"PARTNERSHIP","date":"May 2026","title":"Tribe Payments joins Emerging Payments Association Asia (EPAA)","summary":"Issuer/acquirer processor Tribe Payments deepens APAC engagement via the EPAA â€” a signal of accelerating multi-market acquirer activity across the region. Builds on Tribe's Singapore hub.","url":"https://financialit.net/news/payments/tribe-payments-joins-emerging-payments-association-asia-apac-expansion-gathers-pace"},
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"EBANX expands recurring alternative payments to Thailand and 5 more markets","summary":"Announced at Money20/20 Asia in Bangkok (Apr 21â€“23). UPI AutoPay-style recurring rails now live across 12 emerging markets, unlocking ~1B users for subscription merchants.","url":"https://www.prnewswire.com/apac/news-releases/money2020-asia-ebanx-expands-recurring-alternative-payments-offering-unlocks-a-1-billion-user-potential-across-12-emerging-markets-302748103.html"},
+        {"category":"MARKET","date":"Apr 2026","title":"Project Nexus links India UPI, Singapore PayNow and Thailand PromptPay","summary":"Single settlement fabric across the three RTP networks â€” driving cross-border B2B opportunities and lower remittance costs. Malaysia and the Philippines next on the roadmap.","url":"https://paymentexpert.com/2026/04/23/apac-emerging-payment-corridors-2026/"},
     ],
     "Europe": [
-        {"category":"PRODUCT","date":"May 2026","title":"OKX Card launches in Europe — spend USDC / USDG via the Mastercard network","summary":"Concrete European rollout of stablecoin-funded card payments. Mastercard's stablecoin pay stack now spans consumer cards, acquirer settlement, and wallet payouts.","url":"https://stablecoininsider.org/mastercard-stablecoin-pay-in-2026/"},
+        {"category":"PRODUCT","date":"May 2026","title":"OKX Card launches in Europe â€” spend USDC / USDG via the Mastercard network","summary":"Concrete European rollout of stablecoin-funded card payments. Mastercard's stablecoin pay stack now spans consumer cards, acquirer settlement, and wallet payouts.","url":"https://stablecoininsider.org/mastercard-stablecoin-pay-in-2026/"},
         {"category":"REGULATION","date":"Apr 22, 2026","title":"COREPER endorses PSD3 / PSR trilogue agreement texts","summary":"Final agreed texts published Apr 23. Parliament ECON Committee vote scheduled May 5; plenary expected later in May. Compliance clock is starting for PSPs and acquirers.","url":"https://www.nortonrosefulbright.com/en/knowledge/publications/cedd39c6/psd3-and-psr-from-provisional-agreement-to-2026-readiness"},
-        {"category":"PARTNERSHIP","date":"Apr 2026","title":"Worldpay joins EPI to offer Wero acceptance to European merchants","summary":"Global Payments-owned Worldpay becomes the latest acquirer to integrate the pan-European wallet. Austria's PSA also onboarded — Wero acceptance footprint widening fast.","url":"https://fintechmagazine.com/news/global-payments-will-offering-wero-boost-european-trade"},
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"Worldpay joins EPI to offer Wero acceptance to European merchants","summary":"Global Payments-owned Worldpay becomes the latest acquirer to integrate the pan-European wallet. Austria's PSA also onboarded â€” Wero acceptance footprint widening fast.","url":"https://fintechmagazine.com/news/global-payments-will-offering-wero-boost-european-trade"},
     ],
     "LATAM": [
-        {"category":"PRODUCT","date":"Apr 2026","title":"Mercado Libre shuts down Mercado Coin loyalty crypto, effective Apr 17","summary":"Mercado Coin balances auto-converted to local fiat into Mercado Pago accounts on Apr 17. Loyalty-token experiment over — strategic focus shifts to the Meli Dollar stablecoin and core payments.","url":"https://www.coindesk.com/business/2026/03/31/mercado-libre-shuts-down-mercado-coin-ending-its-loyalty-driven-crypto-experiment"},
-        {"category":"REGULATION","date":"Apr 2026","title":"Brazil refuses to change PIX after US trade-investigation pressure","summary":"White House flagged PIX as a trade barrier under Section 301. Brazil rejected changes — PIX now processes ~80B transactions/year and is geopolitically locked in. Expect continued bilateral friction.","url":"https://www.upi.com/Top_News/World-News/2026/04/02/latam-brazil-pix-no-charges/5151775151795"},
+        {"category":"PRODUCT","date":"Apr 2026","title":"Mercado Libre shuts down Mercado Coin loyalty crypto, effective Apr 17","summary":"Mercado Coin balances auto-converted to local fiat into Mercado Pago accounts on Apr 17. Loyalty-token experiment over â€” strategic focus shifts to the Meli Dollar stablecoin and core payments.","url":"https://www.coindesk.com/business/2026/03/31/mercado-libre-shuts-down-mercado-coin-ending-its-loyalty-driven-crypto-experiment"},
+        {"category":"REGULATION","date":"Apr 2026","title":"Brazil refuses to change PIX after US trade-investigation pressure","summary":"White House flagged PIX as a trade barrier under Section 301. Brazil rejected changes â€” PIX now processes ~80B transactions/year and is geopolitically locked in. Expect continued bilateral friction.","url":"https://www.upi.com/Top_News/World-News/2026/04/02/latam-brazil-pix-no-charges/5151775151795"},
     ],
     "Middle East": [
-        {"category":"PARTNERSHIP","date":"May 2026","title":"barq + Alipay+ go live with cross-border QR for 12M Saudi users","summary":"Saudi Arabia's fastest-growing fintech app rolls out scan-and-pay across 220+ markets via Alipay+. First Alipay+ Middle East partner enabling outbound QR — broader mada/Alipay+ integration on track for 2026.","url":"https://doitqr.com/en/alipay-barq-qr-payments-saudi-arabia"},
+        {"category":"PARTNERSHIP","date":"May 2026","title":"barq + Alipay+ go live with cross-border QR for 12M Saudi users","summary":"Saudi Arabia's fastest-growing fintech app rolls out scan-and-pay across 220+ markets via Alipay+. First Alipay+ Middle East partner enabling outbound QR â€” broader mada/Alipay+ integration on track for 2026.","url":"https://doitqr.com/en/alipay-barq-qr-payments-saudi-arabia"},
         {"category":"PARTNERSHIP","date":"Apr 2026","title":"Careem Pay extends Adyen partnership for international money transfer","summary":"Careem Pay broadens cross-border remittance using Adyen's global rails. Direct overlap with PSP partners pursuing the GCC-to-South Asia corridor.","url":"https://practiceguides.chambers.com/practice-guides/fintech-2026/united-arab-emirates/trends-and-developments"},
-        {"category":"PARTNERSHIP","date":"Apr 2026","title":"PayTabs acquires UAE contactless provider TAPn'GO outright","summary":"Saudi-headquartered orchestrator PayTabs takes full ownership of TAPn'GO — contactless tap-to-pay capability now baked in. GCC consolidation among orchestrators / acquirers continues.","url":"https://practiceguides.chambers.com/practice-guides/fintech-2026/united-arab-emirates/trends-and-developments"},
+        {"category":"PARTNERSHIP","date":"Apr 2026","title":"PayTabs acquires UAE contactless provider TAPn'GO outright","summary":"Saudi-headquartered orchestrator PayTabs takes full ownership of TAPn'GO â€” contactless tap-to-pay capability now baked in. GCC consolidation among orchestrators / acquirers continues.","url":"https://practiceguides.chambers.com/practice-guides/fintech-2026/united-arab-emirates/trends-and-developments"},
     ],
     "North America": [
         {"category":"PARTNERSHIP","date":"May 11, 2026","title":"North + Visa partner on Network Token Service, RTAU and ANI","summary":"North-Visa stack adds tokenization, real-time account updater, and account name inquiry to lift acquirer security and approval rates. Tighter integration between processor and scheme stacks.","url":"https://paymentweek.com/2026-5-11-north-and-visa-team-to-elevate-the-payments-game/"},
         {"category":"SCHEME","date":"Apr 2026","title":"Visa + Stripe (Bridge) extend stablecoin-backed cards to 100 countries","summary":"Following the Mar LATAM launch (AR/CO/MX), Visa-Bridge stablecoin cards expanding across Europe, Asia, Africa. Stablecoins becoming a first-class card-funding instrument.","url":"https://fortune.com/2026/03/03/visa-stripe-bridge-stablecoin-backed-cards-100-countries/"},
         {"category":"PARTNERSHIP","date":"Apr 2026","title":"Visa and Fiserv partner on agentic commerce protocols","summary":"Joint stack to let AI agents transact on consumers' behalf. Stripe, PayPal, Google, Mastercard all pursuing parallel agentic standards. First protocol movers will define the next checkout layer.","url":"https://www.americanbanker.com/payments/news/visa-fiserv-partner-to-boost-agentic-commerce"},
-        {"category":"REGULATION","date":"Apr 1, 2026","title":"VAMP threshold dropped to 1.5% on April 1 — acquirers under tighter fraud monitoring","summary":"Visa Acquirer Monitoring Program tightened fraud/dispute thresholds for US, Canada, and EU. Acquirer partners that miss it risk losing Visa privileges.","url":"https://optimizedpayments.com/insights/card-fees/visa-acquirer-monitoring-program-vamp-updated-2025-guide/"},
+        {"category":"REGULATION","date":"Apr 1, 2026","title":"VAMP threshold dropped to 1.5% on April 1 â€” acquirers under tighter fraud monitoring","summary":"Visa Acquirer Monitoring Program tightened fraud/dispute thresholds for US, Canada, and EU. Acquirer partners that miss it risk losing Visa privileges.","url":"https://optimizedpayments.com/insights/card-fees/visa-acquirer-monitoring-program-vamp-updated-2025-guide/"},
     ],
 }
 
@@ -9148,7 +9148,7 @@ def insights(request: Request, country: str = "", region: str = "all", view: str
     role = require_auth(request)
     if not role:
         return RedirectResponse("/login")
-    # `regions` was the old Sales Decks tab — now its own top-level page
+    # `regions` was the old Sales Decks tab â€” now its own top-level page
     # at /sales_deck, so requests with that param fall back to Country
     # Detail rather than dead-end.
     if view not in ("country", "news"):

@@ -34,7 +34,7 @@
 
   <!-- Sales-deck SPA -->
   <div class="card" style="padding:0;overflow:hidden;border-radius:12px;max-width:1280px;margin:0 auto">
-    <iframe id="sales-deck-iframe" src="/sales-deck/" title="Connections Deck" style="display:block;width:100%;height:calc(100vh - 180px);min-height:600px;border:0"></iframe>
+    <iframe id="sales-deck-iframe" src="/connections-deck/" title="Connections Deck" style="display:block;width:100%;height:calc(100vh - 180px);min-height:600px;border:0"></iframe>
   </div>
 
   <script>
@@ -46,7 +46,7 @@
       btn.addEventListener('click', async function () {
         let url = null;
         try {
-          // Same-origin iframe — read the React app's exposed helper.
+          // Same-origin iframe â€” read the React app's exposed helper.
           const fn = frame.contentWindow && frame.contentWindow.getDeckShareLink;
           if (typeof fn === 'function') url = fn();
         } catch (_) { /* ignored */ }
@@ -57,7 +57,7 @@
         }
         try {
           await navigator.clipboard.writeText(url);
-          btn.textContent = '✓ Link copied';
+          btn.textContent = 'âœ“ Link copied';
         } catch (_) {
           window.prompt('Copy this link:', url);
         }

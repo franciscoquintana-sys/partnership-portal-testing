@@ -5,371 +5,371 @@ export const PARTNER = {
   "adyen": {
     "name": "Adyen",
     "slug": "adyen",
-    "logo": "/sales-deck/partners/adyen.png",
+    "logo": "/connections-deck/partners/adyen.png",
     "logoMono": null,
     "matchedSlug": "adyen"
   },
   "affirm": {
     "name": "Affirm",
     "slug": "affirm",
-    "logo": "/sales-deck/partners/affirm.png",
+    "logo": "/connections-deck/partners/affirm.png",
     "logoMono": null,
     "matchedSlug": "affirm"
   },
   "agentix-pay": {
     "name": "Agentix Pay",
     "slug": "agentix-pay",
-    "logo": "/sales-deck/partners/agentix-pay.png",
+    "logo": "/connections-deck/partners/agentix-pay.png",
     "logoMono": null,
     "matchedSlug": "agentix-pay"
   },
   "airwallex": {
     "name": "Airwallex",
     "slug": "airwallex",
-    "logo": "/sales-deck/partners/airwallex.png",
+    "logo": "/connections-deck/partners/airwallex.png",
     "logoMono": null,
     "matchedSlug": "airwallex"
   },
   "alipay": {
     "name": "Alipay",
     "slug": "alipay",
-    "logo": "/sales-deck/partners/alipay.png",
+    "logo": "/connections-deck/partners/alipay.png",
     "logoMono": null,
     "matchedSlug": "alipay"
   },
   "alma": {
     "name": "Alma",
     "slug": "alma",
-    "logo": "/sales-deck/partners/alma.png",
+    "logo": "/connections-deck/partners/alma.png",
     "logoMono": null,
     "matchedSlug": "alma"
   },
   "american-express": {
     "name": "American Express",
     "slug": "american-express",
-    "logo": "/sales-deck/partners/american-express.png",
+    "logo": "/connections-deck/partners/american-express.png",
     "logoMono": null,
     "matchedSlug": "american-express"
   },
   "ant-group": {
     "name": "Ant Group",
     "slug": "ant-group",
-    "logo": "/sales-deck/partners/ant-group.png",
+    "logo": "/connections-deck/partners/ant-group.png",
     "logoMono": null,
     "matchedSlug": "ant-group"
   },
   "bbva": {
     "name": "BBVA",
     "slug": "bbva",
-    "logo": "/sales-deck/partners/bbva.png",
+    "logo": "/connections-deck/partners/bbva.png",
     "logoMono": null,
     "matchedSlug": "bbva"
   },
   "bcg": {
     "name": "BCG",
     "slug": "bcg",
-    "logo": "/sales-deck/partners/bcg.png",
+    "logo": "/connections-deck/partners/bcg.png",
     "logoMono": null,
     "matchedSlug": "bcg"
   },
   "bankful": {
     "name": "Bankful",
     "slug": "bankful",
-    "logo": "/sales-deck/partners/bankful.png",
+    "logo": "/connections-deck/partners/bankful.png",
     "logoMono": null,
     "matchedSlug": "bankful"
   },
   "barak-consulting-group": {
     "name": "Barak Consulting Group",
     "slug": "barak-consulting-group",
-    "logo": "/sales-deck/partners/barak-consulting-group.png",
+    "logo": "/connections-deck/partners/barak-consulting-group.png",
     "logoMono": null,
     "matchedSlug": "barak-consulting-group"
   },
   "basis-theory": {
     "name": "Basis Theory",
     "slug": "basis-theory",
-    "logo": "/sales-deck/partners/basis-theory.png",
+    "logo": "/connections-deck/partners/basis-theory.png",
     "logoMono": null,
     "matchedSlug": "basis-theory"
   },
   "block": {
     "name": "Block",
     "slug": "block",
-    "logo": "/sales-deck/partners/block.png",
+    "logo": "/connections-deck/partners/block.png",
     "logoMono": null,
     "matchedSlug": "block"
   },
   "boku": {
     "name": "Boku",
     "slug": "boku",
-    "logo": "/sales-deck/partners/boku.png",
+    "logo": "/connections-deck/partners/boku.png",
     "logoMono": null,
     "matchedSlug": "boku"
   },
   "chargebee": {
     "name": "Chargebee",
     "slug": "chargebee",
-    "logo": "/sales-deck/partners/chargebee.png",
+    "logo": "/connections-deck/partners/chargebee.png",
     "logoMono": null,
     "matchedSlug": "chargebee"
   },
   "checkout-com": {
     "name": "Checkout.com",
     "slug": "checkout-com",
-    "logo": "/sales-deck/partners/checkout-com.png",
+    "logo": "/connections-deck/partners/checkout-com.png",
     "logoMono": null,
     "matchedSlug": "checkout-com"
   },
   "cleo": {
     "name": "Cleo",
     "slug": "cleo",
-    "logo": "/sales-deck/partners/cleo.png",
+    "logo": "/connections-deck/partners/cleo.png",
     "logoMono": null,
     "matchedSlug": "cleo"
   },
   "coinbase": {
     "name": "Coinbase",
     "slug": "coinbase",
-    "logo": "/sales-deck/partners/coinbase.png",
+    "logo": "/connections-deck/partners/coinbase.png",
     "logoMono": null,
     "matchedSlug": "coinbase"
   },
   "deloitte": {
     "name": "Deloitte",
     "slug": "deloitte",
-    "logo": "/sales-deck/partners/deloitte.png",
+    "logo": "/connections-deck/partners/deloitte.png",
     "logoMono": null,
     "matchedSlug": "deloitte"
   },
   "ebanx": {
     "name": "EBANX",
     "slug": "ebanx",
-    "logo": "/sales-deck/partners/ebanx.png",
+    "logo": "/connections-deck/partners/ebanx.png",
     "logoMono": null,
     "matchedSlug": "ebanx"
   },
   "elo": {
     "name": "Elo",
     "slug": "elo",
-    "logo": "/sales-deck/partners/elo.png",
+    "logo": "/connections-deck/partners/elo.png",
     "logoMono": null,
     "matchedSlug": "elo"
   },
   "ernst-young": {
     "name": "Ernst & Young",
     "slug": "ernst-young",
-    "logo": "/sales-deck/partners/ernst-young.png",
+    "logo": "/connections-deck/partners/ernst-young.png",
     "logoMono": null,
     "matchedSlug": "ernst-young"
   },
   "fis": {
     "name": "FIS",
     "slug": "fis",
-    "logo": "/sales-deck/partners/fis.png",
+    "logo": "/connections-deck/partners/fis.png",
     "logoMono": null,
     "matchedSlug": "fis"
   },
   "fiserv": {
     "name": "Fiserv",
     "slug": "fiserv",
-    "logo": "/sales-deck/partners/fiserv.png",
+    "logo": "/connections-deck/partners/fiserv.png",
     "logoMono": null,
     "matchedSlug": "fiserv"
   },
   "getnet": {
     "name": "Getnet",
     "slug": "getnet",
-    "logo": "/sales-deck/partners/getnet.png",
+    "logo": "/connections-deck/partners/getnet.png",
     "logoMono": null,
     "matchedSlug": "getnet"
   },
   "klarna": {
     "name": "Klarna",
     "slug": "klarna",
-    "logo": "/sales-deck/partners/klarna.png",
+    "logo": "/connections-deck/partners/klarna.png",
     "logoMono": null,
     "matchedSlug": "klarna"
   },
   "kraken": {
     "name": "Kraken",
     "slug": "kraken",
-    "logo": "/sales-deck/partners/kraken.png",
+    "logo": "/connections-deck/partners/kraken.png",
     "logoMono": null,
     "matchedSlug": "kraken"
   },
   "mastercard": {
     "name": "Mastercard",
     "slug": "mastercard",
-    "logo": "/sales-deck/partners/mastercard.png",
+    "logo": "/connections-deck/partners/mastercard.png",
     "logoMono": null,
     "matchedSlug": "mastercard"
   },
   "mckinsey": {
     "name": "McKinsey",
     "slug": "mckinsey",
-    "logo": "/sales-deck/partners/mckinsey.png",
+    "logo": "/connections-deck/partners/mckinsey.png",
     "logoMono": null,
     "matchedSlug": "mckinsey"
   },
   "nium": {
     "name": "Nium",
     "slug": "nium",
-    "logo": "/sales-deck/partners/nium.png",
+    "logo": "/connections-deck/partners/nium.png",
     "logoMono": null,
     "matchedSlug": "nium"
   },
   "north": {
     "name": "North",
     "slug": "north",
-    "logo": "/sales-deck/partners/north.png",
+    "logo": "/connections-deck/partners/north.png",
     "logoMono": null,
     "matchedSlug": "north"
   },
   "ppro": {
     "name": "PPRO",
     "slug": "ppro",
-    "logo": "/sales-deck/partners/ppro.png",
+    "logo": "/connections-deck/partners/ppro.png",
     "logoMono": null,
     "matchedSlug": "ppro"
   },
   "prosa": {
     "name": "PROSA",
     "slug": "prosa",
-    "logo": "/sales-deck/partners/prosa.png",
+    "logo": "/connections-deck/partners/prosa.png",
     "logoMono": null,
     "matchedSlug": "prosa"
   },
   "paypal": {
     "name": "PayPal",
     "slug": "paypal",
-    "logo": "/sales-deck/partners/paypal.png",
+    "logo": "/connections-deck/partners/paypal.png",
     "logoMono": null,
     "matchedSlug": "paypal"
   },
   "plaid": {
     "name": "Plaid",
     "slug": "plaid",
-    "logo": "/sales-deck/partners/plaid.png",
+    "logo": "/connections-deck/partners/plaid.png",
     "logoMono": null,
     "matchedSlug": "plaid"
   },
   "planet-dds": {
     "name": "Planet DDS",
     "slug": "planet-dds",
-    "logo": "/sales-deck/partners/planet-dds.png",
+    "logo": "/connections-deck/partners/planet-dds.png",
     "logoMono": null,
     "matchedSlug": "planet-dds"
   },
   "pwc": {
     "name": "PwC",
     "slug": "pwc",
-    "logo": "/sales-deck/partners/pwc.png",
+    "logo": "/connections-deck/partners/pwc.png",
     "logoMono": null,
     "matchedSlug": "pwc"
   },
   "rain": {
     "name": "Rain",
     "slug": "rain",
-    "logo": "/sales-deck/partners/rain.png",
+    "logo": "/connections-deck/partners/rain.png",
     "logoMono": null,
     "matchedSlug": "rain"
   },
   "rapyd": {
     "name": "Rapyd",
     "slug": "rapyd",
-    "logo": "/sales-deck/partners/rapyd.png",
+    "logo": "/connections-deck/partners/rapyd.png",
     "logoMono": null,
     "matchedSlug": "rapyd"
   },
   "razorpay": {
     "name": "Razorpay",
     "slug": "razorpay",
-    "logo": "/sales-deck/partners/razorpay.png",
+    "logo": "/connections-deck/partners/razorpay.png",
     "logoMono": null,
     "matchedSlug": "razorpay"
   },
   "recurly": {
     "name": "Recurly",
     "slug": "recurly",
-    "logo": "/sales-deck/partners/recurly.png",
+    "logo": "/connections-deck/partners/recurly.png",
     "logoMono": null,
     "matchedSlug": "recurly"
   },
   "rodina-consulting": {
     "name": "Rodina Consulting",
     "slug": "rodina-consulting",
-    "logo": "/sales-deck/partners/rodina-consulting.png",
+    "logo": "/connections-deck/partners/rodina-consulting.png",
     "logoMono": null,
     "matchedSlug": "rodina-consulting"
   },
   "saas-payments-consulting": {
     "name": "SaaS Payments Consulting",
     "slug": "saas-payments-consulting",
-    "logo": "/sales-deck/partners/saas-payments-consulting.png",
+    "logo": "/connections-deck/partners/saas-payments-consulting.png",
     "logoMono": null,
     "matchedSlug": "saas-payments-consulting"
   },
   "scalapay": {
     "name": "Scalapay",
     "slug": "scalapay",
-    "logo": "/sales-deck/partners/scalapay.png",
+    "logo": "/connections-deck/partners/scalapay.png",
     "logoMono": null,
     "matchedSlug": "scalapay"
   },
   "tabapay": {
     "name": "TabaPay",
     "slug": "tabapay",
-    "logo": "/sales-deck/partners/tabapay.png",
+    "logo": "/connections-deck/partners/tabapay.png",
     "logoMono": null,
     "matchedSlug": "tabapay"
   },
   "truelayer": {
     "name": "TrueLayer",
     "slug": "truelayer",
-    "logo": "/sales-deck/partners/truelayer.png",
+    "logo": "/connections-deck/partners/truelayer.png",
     "logoMono": null,
     "matchedSlug": "truelayer"
   },
   "trustly": {
     "name": "Trustly",
     "slug": "trustly",
-    "logo": "/sales-deck/partners/trustly.png",
+    "logo": "/connections-deck/partners/trustly.png",
     "logoMono": null,
     "matchedSlug": "trustly"
   },
   "visa": {
     "name": "Visa",
     "slug": "visa",
-    "logo": "/sales-deck/partners/visa.png",
+    "logo": "/connections-deck/partners/visa.png",
     "logoMono": null,
     "matchedSlug": "visa"
   },
   "western-union": {
     "name": "Western Union",
     "slug": "western-union",
-    "logo": "/sales-deck/partners/western-union.png",
+    "logo": "/connections-deck/partners/western-union.png",
     "logoMono": null,
     "matchedSlug": "western-union"
   },
   "whish-money": {
     "name": "Whish Money",
     "slug": "whish-money",
-    "logo": "/sales-deck/partners/whish-money.png",
+    "logo": "/connections-deck/partners/whish-money.png",
     "logoMono": null,
     "matchedSlug": "whish-money"
   },
   "zip": {
     "name": "Zip",
     "slug": "zip",
-    "logo": "/sales-deck/partners/zip.png",
+    "logo": "/connections-deck/partners/zip.png",
     "logoMono": null,
     "matchedSlug": "zip"
   },
   "dlocal": {
     "name": "dLocal",
     "slug": "dlocal",
-    "logo": "/sales-deck/partners/dlocal.png",
+    "logo": "/connections-deck/partners/dlocal.png",
     "logoMono": null,
     "matchedSlug": "dlocal"
   }

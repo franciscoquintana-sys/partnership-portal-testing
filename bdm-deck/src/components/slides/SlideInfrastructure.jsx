@@ -16,7 +16,7 @@ import { useTheme } from '../../lib/theme'
 // present-state observations + the bottom cost stats, per call feedback).
 // Each provider is either a plain name (renders as a text pill) or an
 // object with { name, logo } (renders the logo inverted to white). Logos
-// live in /public/logos/providers/ and /public/company-logos/ — we use
+// live in /public/logos/providers/ and /public/company-logos/ â€” we use
 // whichever is already available. Missing logos gracefully fall back to
 // the name-only pill so the row still balances visually.
 // Each category has a `layout` that controls how its provider logos arrange
@@ -31,37 +31,37 @@ import { useTheme } from '../../lib/theme'
 // three competing layouts.
 const CATEGORIES_LEFT = [
   { label: 'Processors / PSPs', providers: [
-    { name: 'Stripe',   logo: '/sales-deck/company-logos/stripe.png' },
-    { name: 'PayPal',   logo: '/sales-deck/company-logos/paypal.png' },
-    { name: 'Worldpay', logo: '/sales-deck/company-logos/worldpay.png' },
+    { name: 'Stripe',   logo: '/connections-deck/company-logos/stripe.png' },
+    { name: 'PayPal',   logo: '/connections-deck/company-logos/paypal.png' },
+    { name: 'Worldpay', logo: '/connections-deck/company-logos/worldpay.png' },
   ]},
   { label: 'BaaS Providers', providers: [
-    { name: 'Green Dot', logo: '/sales-deck/logos/providers/green-dot.svg' },
-    { name: 'Mambu',     logo: '/sales-deck/logos/providers/mambu.png' },
-    { name: 'Galileo',   logo: '/sales-deck/logos/providers/galileo.png' },
+    { name: 'Green Dot', logo: '/connections-deck/logos/providers/green-dot.svg' },
+    { name: 'Mambu',     logo: '/connections-deck/logos/providers/mambu.png' },
+    { name: 'Galileo',   logo: '/connections-deck/logos/providers/galileo.png' },
   ]},
   { label: 'KYC / KYB Providers', providers: [
-    { name: 'Jumio',    logo: '/sales-deck/logos/providers/jumio.png' },
-    { name: 'Onfido',   logo: '/sales-deck/logos/providers/onfido.png' },
-    { name: 'Persona',  logo: '/sales-deck/logos/providers/persona.png' },
+    { name: 'Jumio',    logo: '/connections-deck/logos/providers/jumio.png' },
+    { name: 'Onfido',   logo: '/connections-deck/logos/providers/onfido.png' },
+    { name: 'Persona',  logo: '/connections-deck/logos/providers/persona.png' },
   ]},
 ]
 
 const CATEGORIES_RIGHT = [
   { label: 'Fraud Providers', providers: [
-    { name: 'Sift',         logo: '/sales-deck/logos/providers/sift.png' },
-    { name: 'Kount',        logo: '/sales-deck/logos/providers/kount.png' },
-    { name: 'Riskified',    logo: '/sales-deck/logos/providers/riskified.png' },
+    { name: 'Sift',         logo: '/connections-deck/logos/providers/sift.png' },
+    { name: 'Kount',        logo: '/connections-deck/logos/providers/kount.png' },
+    { name: 'Riskified',    logo: '/connections-deck/logos/providers/riskified.png' },
   ]},
   { label: 'Tax Calculation', providers: [
-    { name: 'Avalara',  logo: '/sales-deck/logos/providers/avalara.svg' },
-    { name: 'Vertex',   logo: '/sales-deck/logos/providers/vertex.png' },
-    { name: 'Sovos',    logo: '/sales-deck/logos/providers/sovos.svg' },
+    { name: 'Avalara',  logo: '/connections-deck/logos/providers/avalara.svg' },
+    { name: 'Vertex',   logo: '/connections-deck/logos/providers/vertex.png' },
+    { name: 'Sovos',    logo: '/connections-deck/logos/providers/sovos.svg' },
   ]},
   { label: 'Payout Providers', providers: [
-    { name: 'Wise',         logo: '/sales-deck/logos/providers/wise.svg' },
-    { name: 'Payoneer',     logo: '/sales-deck/logos/providers/payoneer.png' },
-    { name: 'Thunes',       logo: '/sales-deck/logos/providers/thunes.png' },
+    { name: 'Wise',         logo: '/connections-deck/logos/providers/wise.svg' },
+    { name: 'Payoneer',     logo: '/connections-deck/logos/providers/payoneer.png' },
+    { name: 'Thunes',       logo: '/connections-deck/logos/providers/thunes.png' },
   ]},
 ]
 
@@ -71,17 +71,17 @@ const CATEGORIES_RIGHT = [
 // or lighter than its neighbors at the shared size. Default = 1.0.
 // Banking-mode swap: BaaS isn't a category a bank wants to see (Green Dot
 // / Mambu read as core-banking competitors), so we replace the BaaS slot
-// with Pay-by-Bank — banks' own rail and a category they actively want to
+// with Pay-by-Bank â€” banks' own rail and a category they actively want to
 // own. Merchant + partner modes keep the original BaaS lineup.
 const PAY_BY_BANK_CATEGORY = { label: 'Pay-by-Bank', providers: [
-  { name: 'Plaid',     logo: '/sales-deck/logos/providers/plaid.png' },
-  { name: 'TrueLayer', logo: '/sales-deck/logos/providers/truelayer.png' },
-  { name: 'Trustly',   logo: '/sales-deck/logos/providers/trustly.png' },
+  { name: 'Plaid',     logo: '/connections-deck/logos/providers/plaid.png' },
+  { name: 'TrueLayer', logo: '/connections-deck/logos/providers/truelayer.png' },
+  { name: 'Trustly',   logo: '/connections-deck/logos/providers/trustly.png' },
 ]}
 
 const LOGO_SCALES = {
-  visa:    0.85,  // chunky bold serif — too heavy at default
-  persona: 1.15,  // tall asterisk-and-bar — needs a small lift to read
+  visa:    0.85,  // chunky bold serif â€” too heavy at default
+  persona: 1.15,  // tall asterisk-and-bar â€” needs a small lift to read
   galileo: 1.1,   // square G mark sits smaller than surrounding wordmarks
 }
 
@@ -215,7 +215,7 @@ function buildObservations(styles) {
       },
       {
         render: () => (
-          <>Stop prospecting cold. Yuno’s sales team delivers{' '}
+          <>Stop prospecting cold. Yunoâ€™s sales team delivers{' '}
             <span style={styles.observationStrong}>pre-qualified warm introductions</span>{' '}
             from live enterprise deals.</>
         ),
@@ -230,7 +230,7 @@ function buildObservations(styles) {
     ],
     // Banking version: the three observations are benefits the bank inherits
     // by plugging into Yuno. Each line reads as something the bank executive
-    // underlines — reach, regional expansion, brand control.
+    // underlines â€” reach, regional expansion, brand control.
     banking: [
       {
         render: () => (
@@ -260,7 +260,7 @@ function buildStats(styles) {
   return {
     merchant: [
       {
-        number: '$1–2M',
+        number: '$1â€“2M',
         render: () => (<>cost to <span style={styles.statTextStrong}>set up and manage</span> each direct PSP connection</>),
         icon: <Receipt size={20} weight="regular" aria-hidden />,
       },
@@ -285,7 +285,7 @@ function buildStats(styles) {
       },
     ],
     // Banking stats read as the scale the bank inherits the moment it plugs
-    // in — coverage and reach, not competitive commentary.
+    // in â€” coverage and reach, not competitive commentary.
     banking: [
       {
         number: '460+',
@@ -294,7 +294,7 @@ function buildStats(styles) {
       },
       {
         number: '1,000+',
-        render: () => (<><span style={styles.statTextStrong}>local methods</span> from Pix to UPI to mada, live in your merchants’ checkouts</>),
+        render: () => (<><span style={styles.statTextStrong}>local methods</span> from Pix to UPI to mada, live in your merchantsâ€™ checkouts</>),
         icon: <Receipt size={20} weight="regular" aria-hidden />,
       },
     ],
@@ -302,7 +302,7 @@ function buildStats(styles) {
 }
 
 function providerSlug(logoPath) {
-  // "/sales-deck/logos/providers/visanet.png" → "visanet"
+  // "/connections-deck/logos/providers/visanet.png" â†’ "visanet"
   const base = logoPath.split('/').pop() || ''
   return base.replace(/\.[^.]+$/, '').toLowerCase()
 }
@@ -363,7 +363,7 @@ export default function SlideInfrastructure({ data }) {
   // "Your Bank" placeholder. Specific bank decks keep the bank logo
   // / name as the centerpiece.
   const centerLabel = isGenericBanking ? 'Merchant' : data.COMPANY_NAME
-  // Banks don't want BaaS in the lineup — see PAY_BY_BANK_CATEGORY note.
+  // Banks don't want BaaS in the lineup â€” see PAY_BY_BANK_CATEGORY note.
   const leftCategories = isBanking
     ? CATEGORIES_LEFT.map((c) => c.label === 'BaaS Providers' ? PAY_BY_BANK_CATEGORY : c)
     : CATEGORIES_LEFT
@@ -373,7 +373,7 @@ export default function SlideInfrastructure({ data }) {
   // `brightness(0)` so they read on the white surface.
   const logoFilter = theme.invertLogos ? 'brightness(0) invert(1)' : 'brightness(0)'
 
-  // Title accent gradient: on dark, the original light-blue→white sweep
+  // Title accent gradient: on dark, the original light-blueâ†’white sweep
   // pops on black. On light, swap to a deeper blue ramp so the gradient
   // text stays legible on the white surface (mirrors SlideReplitBenefits).
   const titleAccentGradient = theme.isLight
@@ -417,7 +417,7 @@ export default function SlideInfrastructure({ data }) {
     },
     title: {
       fontFamily: 'var(--font-display)',
-      // Matches slides 6/7 (GlobalPresence, Leadership) — the reference
+      // Matches slides 6/7 (GlobalPresence, Leadership) â€” the reference
       // for title size across the deck. Title wraps to two lines at this
       // size, which is intentional.
       fontSize: '48.5px',
@@ -494,7 +494,7 @@ export default function SlideInfrastructure({ data }) {
       // top, bottom group at the column bottom, middle group centers
       // between them. The `gap` enforces a minimum vertical distance
       // BETWEEN groups so the logos of one group can never kiss the box
-      // of the group above/below — justify-content: space-between alone
+      // of the group above/below â€” justify-content: space-between alone
       // would let them collapse when the card height runs short.
       justifyContent: 'space-between',
       gap: '64px',
@@ -508,10 +508,10 @@ export default function SlideInfrastructure({ data }) {
     //   - 'side'       : logos pack tight against the inner side of the box
     //   - 'side-bottom': half the logos sit beside the box, the rest below
     // Each group occupies an equal share of column height (flex: 1) and
-    // centers its box vertically — that's what keeps the boxes on the left
+    // centers its box vertically â€” that's what keeps the boxes on the left
     // column at the same y as their right-column counterparts.
     categoryGroup: {
-      // Natural content height — the column's space-between spreads the
+      // Natural content height â€” the column's space-between spreads the
       // 3 groups to top / middle / bottom anchors, so the group itself
       // doesn't need to stretch. Fixing the height to auto prevents the
       // box and its logos from drifting vertically as the column flexes.
@@ -521,7 +521,7 @@ export default function SlideInfrastructure({ data }) {
       minWidth: 0,
     },
     // Clean inline row of 3 logos above the category box. Wraps only when
-    // the column gets too narrow; no random staggered offsets — the goal
+    // the column gets too narrow; no random staggered offsets â€” the goal
     // is a tidy ordered ecosystem, not a cloud.
     pillsRow: {
       display: 'flex',
@@ -539,7 +539,7 @@ export default function SlideInfrastructure({ data }) {
       whiteSpace: 'nowrap',
     },
     providerLogo: {
-      // Base geometry only — actual height / maxWidth are scaled per-logo
+      // Base geometry only â€” actual height / maxWidth are scaled per-logo
       // in ProviderLogo() below, because the source PNGs have very different
       // amounts of whitespace around the mark. Scales normalize the optical
       // size so none of them reads as a dwarf next to the others.
@@ -815,7 +815,7 @@ export default function SlideInfrastructure({ data }) {
   // Build trace paths as rectilinear PCB routes: horizontal out of each
   // category box, vertical turn at the midpoint, horizontal into the
   // merchant. Rounded corners (Q arcs) at each elbow keep the traces
-  // reading as real circuit-board routing rather than hard 90° breaks.
+  // reading as real circuit-board routing rather than hard 90Â° breaks.
   const pcbPath = (x1, y1, x2, y2) => {
     const dy = y2 - y1
     const dx = x2 - x1
@@ -841,13 +841,13 @@ export default function SlideInfrastructure({ data }) {
   if (geom) {
     const { center, left, right } = geom
     // Overlap the line endpoints a few px into both the category boxes and
-    // the center node — the boxes have soft semi-transparent borders, so
+    // the center node â€” the boxes have soft semi-transparent borders, so
     // ending the trace right at the bbox edge leaves a visible seam. The
     // small overlap guarantees a clean visual connection on every row.
     // Tiny overlap (2px) lets the trace just kiss the border of the
     // category box and the merchant node without visibly tunneling
     // inside them. Bigger overlaps read as lines slicing through the
-    // boxes — the goal here is clean flush connections.
+    // boxes â€” the goal here is clean flush connections.
     const OVERLAP = 2
     for (const box of left) {
       paths.push(pcbPath(box.right - OVERLAP, box.cy, center.left + OVERLAP, center.cy))
@@ -943,7 +943,7 @@ export default function SlideInfrastructure({ data }) {
               <div ref={centerRef} style={styles.centerNode}>
                 {isPartner ? (
                   <img
-                    src="/sales-deck/assets/yuno-wordmark-white.svg"
+                    src="/connections-deck/assets/yuno-wordmark-white.svg"
                     alt="Yuno"
                     style={styles.centerLogo}
                   />

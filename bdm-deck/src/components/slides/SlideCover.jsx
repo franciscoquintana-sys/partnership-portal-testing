@@ -75,11 +75,11 @@ function TransparentLogo({ src, alt, style, fallbackFilter }) {
           ctx.putImageData(imgData, 0, 0)
           setProcessed(canvas.toDataURL('image/png'))
         } else {
-          // Already transparent or non-uniform — use as-is.
+          // Already transparent or non-uniform â€” use as-is.
           setProcessed(src)
         }
       } catch (e) {
-        // CORS taint — can't read pixels. Fall back to raw img.
+        // CORS taint â€” can't read pixels. Fall back to raw img.
         setFailed(true)
       }
     }
@@ -308,14 +308,14 @@ export default function SlideCover({ data }) {
         {isLight ? (
           <div style={styles.globeMask} aria-hidden />
         ) : (
-          <img src="/sales-deck/assets/embellishments/globe.png" alt="" style={styles.globeDecor} aria-hidden />
+          <img src="/connections-deck/assets/embellishments/globe.png" alt="" style={styles.globeDecor} aria-hidden />
         )}
       </GlobeHalo>
 
       <div className="slide-enter" style={styles.content}>
         <div style={styles.topCluster}>
           <div style={styles.topRow}>
-            <img src="/sales-deck/assets/yuno-logo-white.svg" alt="Yuno" style={styles.yunoLogo} />
+            <img src="/connections-deck/assets/yuno-logo-white.svg" alt="Yuno" style={styles.yunoLogo} />
           </div>
 
           <div className="stagger" style={{ ...styles.greetingBlock, '--stagger-base': '0.12s', '--stagger-step': '0.15s' }}>
@@ -330,7 +330,7 @@ export default function SlideCover({ data }) {
                   {data.COMPANY_LOGO ? (
                     // Presenter-uploaded logos arrive as base64 data URLs.
                     // Render them as a plain <img> so the user-chosen
-                    // image keeps its original colors / transparency —
+                    // image keeps its original colors / transparency â€”
                     // skip the light-theme silhouette mask and the
                     // dark-theme white-out filter both of which assume
                     // a mono brand asset.
@@ -345,7 +345,7 @@ export default function SlideCover({ data }) {
                       // mostly white-on-transparent (built for the dark
                       // canvas). On light they vanish into the surface.
                       // Render as a div masked by the logo image, filled
-                      // with theme.accent — clean Yuno-blue silhouette
+                      // with theme.accent â€” clean Yuno-blue silhouette
                       // regardless of the source asset's color.
                       <div
                         role="img"

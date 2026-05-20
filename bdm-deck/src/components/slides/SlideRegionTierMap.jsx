@@ -258,7 +258,7 @@ export default function SlideRegionTierMap({ region }) {
             <div style={styles.statsCard}>
               <div style={styles.statsHeader}>
                 <span style={styles.statsBadge}>{region}</span>
-                <span style={styles.statsGlobe} aria-hidden>🌐</span>
+                <span style={styles.statsGlobe} aria-hidden>ðŸŒ</span>
               </div>
               <div style={styles.statsRow}>
                 <div style={styles.statItem}>
@@ -274,7 +274,7 @@ export default function SlideRegionTierMap({ region }) {
 
             <div style={styles.mapBox}>
               <div style={styles.mapInner}>
-                <img src="/sales-deck/world-map.svg" alt="" style={styles.mapImage} />
+                <img src="/connections-deck/world-map.svg" alt="" style={styles.mapImage} />
                 {countries.map((c) => {
                   const coord = getCountryCoords(c.country)
                   if (!coord) return null
@@ -306,7 +306,7 @@ export default function SlideRegionTierMap({ region }) {
               return (
                 <div key={c.country} style={styles.countryRow}>
                   <span style={{ ...styles.tierBar, background: color.bar }} />
-                  <span style={styles.countryFlag} aria-hidden>{COUNTRY_FLAG[c.country] || '🏳️'}</span>
+                  <span style={styles.countryFlag} aria-hidden>{COUNTRY_FLAG[c.country] || 'ðŸ³ï¸'}</span>
                   <span style={styles.countryIndex}>{i + 1}.</span>
                   <span style={styles.countryName}>{c.country}</span>
                 </div>

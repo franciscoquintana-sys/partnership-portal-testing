@@ -221,7 +221,7 @@ export default function SlideRegionPMsMap({ region }) {
       <div style={{ ...styles.pmRow, ...(missing ? styles.pmRowMissing : {}) }}>
         <Icon size={18} weight="fill" style={styles.pmIcon} aria-hidden />
         {missing ? (
-          <span>—</span>
+          <span>â€”</span>
         ) : (
           <span style={styles.pmItems}>
             {list.map((v) => <PMItem key={v} name={v} />)}
@@ -239,7 +239,7 @@ export default function SlideRegionPMsMap({ region }) {
       <div style={{ ...styles.callout, borderLeftColor: TIER_BAR_COLOR[tier] }}>
         <div style={styles.calloutHeader}>
           <span style={styles.calloutName}>{country}</span>
-          <span style={styles.calloutFlag} aria-hidden>{COUNTRY_FLAG[country] || '🏳️'}</span>
+          <span style={styles.calloutFlag} aria-hidden>{COUNTRY_FLAG[country] || 'ðŸ³ï¸'}</span>
         </div>
         <PMRow Icon={CreditCard} items={pms?.localScheme} />
         <PMRow Icon={Calculator} items={pms?.localA2A} />
@@ -277,7 +277,7 @@ export default function SlideRegionPMsMap({ region }) {
           </div>
 
           <div style={styles.mapBox}>
-            <img src="/sales-deck/world-map.svg" alt="" style={styles.mapImage} />
+            <img src="/connections-deck/world-map.svg" alt="" style={styles.mapImage} />
             {focusCountries.map((c) => {
               const coord = getCountryCoords(c.country)
               if (!coord) return null
