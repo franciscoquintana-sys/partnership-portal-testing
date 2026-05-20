@@ -254,11 +254,13 @@ export default function SlidePartnerDirectory() {
   const inputBg = isLight ? 'rgba(255,255,255,0.85)' : 'rgba(62,79,224,0.10)'
 
   const styles = {
-    body: { flex: 1, display: 'flex', flexDirection: 'column', gap: 12, minHeight: 0, overflow: 'hidden' },
+    body: { flex: 1, display: 'flex', flexDirection: 'column', gap: 32, minHeight: 0, overflow: 'hidden' },
     title: {
       fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 700,
       letterSpacing: '-1px', lineHeight: 1.05, color: inkStrong, margin: 0,
     },
+    subtitleRow: { display: 'flex', alignItems: 'flex-start', gap: 14 },
+    subtitleIcon: { flexShrink: 0, color: accent, marginTop: 4 },
     subtitle: { fontFamily: 'var(--font)', fontSize: 24, lineHeight: 1.45, color: inkSecondary, margin: 0, maxWidth: 'none' },
     // Single row: search input + four selects, matching the Country
     // Detail map's pill-dropdown aesthetic. Search grows to fill space.
@@ -341,7 +343,7 @@ export default function SlidePartnerDirectory() {
   return (
     <SlideBase section="Providers Directory">
       <div style={styles.body}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 22, flexShrink: 0 }}>
           <h2 style={styles.title}>
             Providers Directory
             <span
@@ -375,9 +377,29 @@ export default function SlidePartnerDirectory() {
               Dynamic slide
             </span>
           </h2>
-          <p style={styles.subtitle}>
-            We have partnerships with the region’s most relevant providers (PSPs, Acquirers, APMs, Anti Fraud Solutions and others), ranging from the largest players to the niche ones. Thanks to our extensive footprint, we can integrate any provider in less than a month and source new ones as needed.
-          </p>
+          <div style={styles.subtitleRow}>
+            <svg
+              style={styles.subtitleIcon}
+              width="28"
+              height="28"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden
+            >
+              <path d="m11 17 2 2a1 1 0 1 0 3-3" />
+              <path d="m14 14 2.5 2.5a1 1 0 1 0 3-3l-3.88-3.88a3 3 0 0 0-4.24 0l-.88.88a1 1 0 1 1-3-3l2.81-2.81a5.79 5.79 0 0 1 7.06-.87l.47.28a2 2 0 0 0 1.42.25L21 4" />
+              <path d="m21 3 1 11h-2" />
+              <path d="M3 3 2 14l6.5 6.5a1 1 0 1 0 3-3" />
+              <path d="M3 4h8" />
+            </svg>
+            <p style={styles.subtitle}>
+              We have partnerships with the region’s most relevant providers (PSPs, Acquirers, APMs, Anti Fraud Solutions and others), ranging from the largest players to the niche ones. Thanks to our extensive footprint, we can integrate any provider in less than a month and source new ones as needed.
+            </p>
+          </div>
         </div>
 
         <div style={styles.filterRow}>
