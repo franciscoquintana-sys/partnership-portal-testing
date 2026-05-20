@@ -553,20 +553,20 @@ _FULL_NAV = [
     ("", [("home","Home")]),
     ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight"),("partners_pipeline","Partners Pipeline")]),
     ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share"),("introduction","Partner - Merchant Intros")]),
-    ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("sales_deck","Sales Deck"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
+    ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("sales_deck","Connections Deck"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
 ]
 NAV = {
     "partnerships": _FULL_NAV,
     "internal": [
         ("", [("home","Home")]),
         ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio"),("mission","Partners In Flight"),("partners_pipeline","Partners Pipeline")]),
-        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("sales_deck","Sales Deck"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
+        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("sales_deck","Connections Deck"),("merch_sim","Merchant Simulator"),("intake","Intake and Outreach Form")]),
     ],
     "partner": [
         ("", [("home","Home")]),
         ("PARTNERS & CONNECTORS", [("partners","Partner Portfolio")]),
         ("PERFORMANCE",           [("performance","Partner Health"),("benchmarks","Partner Rev Share")]),
-        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("sales_deck","Sales Deck")]),
+        ("INTELLIGENCE & TOOLS",  [("insights","Market Analysis"),("sales_deck","Connections Deck")]),
     ],
 }
 
