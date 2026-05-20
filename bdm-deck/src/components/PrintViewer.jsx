@@ -6,25 +6,20 @@ import SlideWhyPlatformPartner from './slides/SlideWhyPlatformPartner'
 import SlideBeyondOrchestration from './slides/SlideBeyondOrchestration'
 import SlideValueLevers from './slides/SlideValueLevers'
 import SlideWhiteLabelPromise from './slides/SlideWhiteLabelPromise'
-import SlideInfrastructure from './slides/SlideInfrastructure'
-import SlideDiagnostic from './slides/SlideDiagnostic'
-import SlideYunoSolve from './slides/SlideYunoSolve'
 import SlideReplitGoingGlobal from './slides/SlideReplitGoingGlobal'
 import SlideReplitBenefits from './slides/SlideReplitBenefits'
-import SlideDashboard from './slides/SlideDashboard'
-import SlideProductSuite from './slides/SlideProductSuite'
-import SlideGlobalPresence from './slides/SlideGlobalPresence'
-import SlideLeadership from './slides/SlideLeadership'
-import SlideTrustedBy from './slides/SlideTrustedBy'
 import SlideRegionTierMap from './slides/SlideRegionTierMap'
 import SlideRegionEcommerceMap from './slides/SlideRegionEcommerceMap'
 import SlideRegionPMsMap from './slides/SlideRegionPMsMap'
 import SlideCountryMarket from './slides/SlideCountryMarket'
 import SlideCountryConnections from './slides/SlideCountryConnections'
+import SlideCountryDetail from './slides/SlideCountryDetail'
+import SlideCountryDetailPage from './slides/SlideCountryDetailPage'
+import SlidePartnerDirectory from './slides/SlidePartnerDirectory'
 import SlideCTA from './slides/SlideCTA'
 import { getRegionCountries } from '../data/regional-data'
 import OrbBackground from './OrbBackground'
-import { ThemeProvider, useTheme, THEMES } from '../lib/theme'
+import { ThemeProvider, THEMES } from '../lib/theme'
 
 const LIGHT_THEME_SLUGS = new Set(['replit'])
 
@@ -39,16 +34,11 @@ const ALL_SLIDES = [
   { Component: SlideBeyondOrchestration, slug: 'beyond-orchestration', onlyForGenericBanking: true },
   { Component: SlideValueLevers, slug: 'value-levers', onlyForGenericBanking: true },
   { Component: SlideWhiteLabelPromise, slug: 'white-label-promise', onlyForGenericBanking: true },
-  { Component: SlideInfrastructure, slug: 'infrastructure' },
-  { Component: SlideDiagnostic, slug: 'diagnostic', skipForModes: ['partner', 'banking'] },
-  { Component: SlideYunoSolve, slug: 'yuno-solve', skipForModes: ['banking'] },
   { Component: SlideReplitGoingGlobal, slug: 'replit-going-global', onlyForSlugs: ['replit'] },
   { Component: SlideReplitBenefits, slug: 'replit-benefits', onlyForSlugs: ['replit'] },
-  { Component: SlideProductSuite, slug: 'product-suite' },
-  { Component: SlideDashboard, slug: 'dashboard' },
-  { Component: SlideGlobalPresence, slug: 'global-presence' },
-  { Component: SlideLeadership, slug: 'leadership' },
-  { Component: SlideTrustedBy, slug: 'trusted-by' },
+  { Component: SlideCountryDetail, slug: 'country-detail' },
+  { Component: SlideCountryDetailPage, slug: 'country-detail-page' },
+  { Component: SlidePartnerDirectory, slug: 'providers-directory' },
   { Component: SlideCTA, slug: 'cta' },
 ]
 
@@ -93,22 +83,11 @@ function buildSlides(mode, { isGenericBanking = false, slug = null, regions = []
     if (s.onlyForSlugs && !s.onlyForSlugs.includes(slug)) return false
     return true
   })
-  const gpIdx = filtered.findIndex((s) => s.Component === SlideGlobalPresence)
-  if (gpIdx !== -1) {
+  const coverIdx = filtered.findIndex((s) => s.Component === SlideCover)
+  if (coverIdx !== -1) {
     const block = buildRegionalBlock(regions, countries)
     if (block.length > 0) {
-      filtered.splice(gpIdx + 1, 0, ...block)
-    }
-  }
-  // Mirror SlideViewer: on Replit, Going Global lands before The Solve
-  // so the PDF export matches the live deck's storyline order.
-  if (slug === 'replit') {
-    const i = filtered.findIndex((s) => s.Component === SlideYunoSolve)
-    const j = filtered.findIndex((s) => s.Component === SlideReplitGoingGlobal)
-    if (i !== -1 && j !== -1) {
-      const swapped = filtered.slice()
-      ;[swapped[i], swapped[j]] = [swapped[j], swapped[i]]
-      return swapped
+      filtered.splice(coverIdx + 1, 0, ...block)
     }
   }
   return filtered
@@ -149,8 +128,6 @@ export default function PrintViewer({ data }) {
           >
             {atmospheric && theme.orbVisible && <OrbBackground />}
             <Component data={data} shared {...(slideProps || {})} />
-            {/* See SlideViewer for the rationale; mirrored here so the
-                PDF export carries the same Replit-only auto numbering. */}
             {theme.isLight && (
               <div
                 style={{
