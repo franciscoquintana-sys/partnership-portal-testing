@@ -145,7 +145,7 @@ const styles = {
     alignItems: 'center',
     gap: '6px',
   },
-  // Form is the new top-level container â€” wraps the merchant input, the
+  // Form is the new top-level container — wraps the merchant input, the
   // region/country pills, and the standalone Let's start button so all three
   // steps live inside the same form submission.
   searchWrapper: {
@@ -192,7 +192,7 @@ const styles = {
     padding: '16px 22px',
     letterSpacing: '0',
   },
-  // Standalone Let's start button â€” lives below the region/country pills.
+  // Standalone Let's start button — lives below the region/country pills.
   // Disabled until the user has typed/picked a merchant; once enabled it
   // matches the original inline button styling so the deck still feels the
   // same once the user reaches the bottom of the form.
@@ -288,7 +288,7 @@ const styles = {
     letterSpacing: '-0.1px',
   },
   // Small grey tag at the right of each dropdown row indicating the
-  // audience type (Merchant / Acquiring Bank / Partner). Visual only â€”
+  // audience type (Merchant / Acquiring Bank / Partner). Visual only —
   // not clickable. Uses a pale grey so it doesn't compete with the name.
   dropdownTypeTag: {
     flexShrink: 0,
@@ -302,7 +302,7 @@ const styles = {
     background: 'rgba(255,255,255,0.04)',
     border: '1px solid rgba(255,255,255,0.08)',
   },
-  // Region pill â€” sits below the search form. Shows the currently selected
+  // Region pill — sits below the search form. Shows the currently selected
   // region with a globe glyph and a caret; opens a small dropdown of the
   // five canonical regions. Default Americas. The selection threads through
   // onGenerate so the deck's final SlideRegionalConnections renders the
@@ -395,7 +395,7 @@ const styles = {
     textTransform: 'uppercase',
     color: 'rgba(255,255,255,0.4)',
   },
-  // Country menu drops a single-column list â€” needs more height because
+  // Country menu drops a single-column list — needs more height because
   // selecting two regions can surface 16+ markets at once.
   countryMenu: {
     minWidth: '280px',
@@ -405,7 +405,7 @@ const styles = {
   pinIcon: {
     color: 'rgba(189,195,246,0.95)',
   },
-  // Small numeric badge on the pill â€” shows the count of selected items
+  // Small numeric badge on the pill — shows the count of selected items
   // so the presenter can tell at a glance how many regions / countries
   // are active without opening the menu.
   pillCount: {
@@ -475,7 +475,7 @@ const TYPE_LABEL = {
   partner: 'Partner',
 }
 
-// The search box is URL-only â€” no preset entries, no Banking shortcut,
+// The search box is URL-only — no preset entries, no Banking shortcut,
 // no merchant / bank / partner suggestions.
 const SYNTHETIC_ENTRIES = []
 
@@ -492,7 +492,7 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
   const [hoveringBtn, setHoveringBtn] = useState(false)
   // Optional override: presenter uploads a clean logo for the cover when
   // the auto-fetched one (Brandfetch / site scrape) looks bad. Read as
-  // a base64 data URL so it lives entirely client-side â€” no server
+  // a base64 data URL so it lives entirely client-side — no server
   // upload needed and the existing pipeline treats it just like any
   // other COMPANY_LOGO src.
   const [customLogo, setCustomLogo] = useState(null)
@@ -514,7 +514,7 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
     reader.readAsDataURL(file)
     e.target.value = ''
   }
-  // Multi-select region + country. Both default empty â€” the deck only
+  // Multi-select region + country. Both default empty — the deck only
   // surfaces region / country slides when the presenter explicitly picks
   // them. Country list is the union of every country in the selected
   // regions; deselecting a region drops its countries from the picker and
@@ -525,7 +525,7 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
   const [showCountryMenu, setShowCountryMenu] = useState(false)
   // 'bottom' = menu drops below the pill; 'top' = menu opens above. Flipped
   // on open when there is not enough room below the pill (e.g. iframe
-  // viewport too short), so the full list â€” including its internal scroll â€”
+  // viewport too short), so the full list — including its internal scroll —
   // stays visible.
   const [regionPlacement, setRegionPlacement] = useState('bottom')
   const [countryPlacement, setCountryPlacement] = useState('bottom')
@@ -734,7 +734,7 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
             )}
           </div>
 
-          {/* Optional logo upload â€” sits right below the URL input so
+          {/* Optional logo upload — sits right below the URL input so
               the presenter can attach a clean logo before generating the
               deck. Skipped silently if they leave it untouched. */}
           <div
@@ -812,7 +812,7 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
             onMouseEnter={() => setHoveringBtn(true)}
             onMouseLeave={() => setHoveringBtn(false)}
           >
-            {loading ? 'Loadingâ€¦' : "Let's start â†’"}
+            {loading ? 'Loading…' : "Let's start →"}
           </button>
           </div>
           {(loading || errorMessage) && (
@@ -827,7 +827,7 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
                 animation: 'fadeIn 0.25s ease-out',
               }}
             >
-              {loading ? 'Fetching name and logoâ€¦' : errorMessage}
+              {loading ? 'Fetching name and logo…' : errorMessage}
             </div>
           )}
         </form>

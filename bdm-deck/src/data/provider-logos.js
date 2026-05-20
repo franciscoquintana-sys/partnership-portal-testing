@@ -1,7 +1,7 @@
-// Provider â†’ logo URL map. Logos render in the SlideCountryConnections
+// Provider → logo URL map. Logos render in the SlideCountryConnections
 // "Most Relevant" column. Two-tier lookup:
 //   1. Local file under /public/company-logos/ or /public/logos/providers/
-//      (preferred â€” no external dependency, no rate limit).
+//      (preferred — no external dependency, no rate limit).
 //   2. Clearbit Logo API by company domain
 //      (https://logo.clearbit.com/<domain>?size=128) as fallback.
 // When both fail, the slide renders the provider's name as a styled
@@ -75,7 +75,7 @@ const PROVIDER_DOMAIN = {
   'Mercado Pago': 'mercadopago.com',
   'EBANX': 'ebanx.com',
   'PicPay': 'picpay.com',
-  'ItaÃº': 'itau.com.br',
+  'Itaú': 'itau.com.br',
   'Vindi': 'vindi.com.br',
   'PayU': 'payu.com',
   'Wompi': 'wompi.co',
@@ -109,7 +109,7 @@ const DDG_ICON_BASE = 'https://icons.duckduckgo.com/ip3'
 //
 // Strategy: prefer local white-silhouette assets (consistent rendering,
 // no external dependency), then Clearbit (global brands), then drop the
-// favicon paths â€” favicons at table scale rendered as tiny illegible
+// favicon paths — favicons at table scale rendered as tiny illegible
 // blobs in QA, so the wordmark pill is the cleaner fallback.
 export function getProviderLogoSources(name) {
   if (!name) return []
@@ -162,7 +162,7 @@ export const PROVIDER_BRAND_COLOR = {
   'Mercado Pago': '#00B1EA',
   'EBANX': '#1F4FFF',
   'PicPay': '#21C25E',
-  'ItaÃº': '#EC7000',
+  'Itaú': '#EC7000',
   'Vindi': '#FF7A00',
   'PayU': '#A6CE39',
   'Wompi': '#FFDC00',
@@ -195,7 +195,7 @@ export function getProviderLogo(name) {
   return sources[0]?.url || null
 }
 
-// Payment-method â†’ local logo path. Used by SlideRegionPMsMap to render
+// Payment-method → local logo path. Used by SlideRegionPMsMap to render
 // each country's Local Scheme / Local A2A / APM row as a real brand
 // mark instead of plain text. Files live in /public/logos/pm/ and are
 // the curated Yuno brand-kit assets (PNG with alpha so the

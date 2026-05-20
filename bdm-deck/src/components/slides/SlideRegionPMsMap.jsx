@@ -221,7 +221,7 @@ export default function SlideRegionPMsMap({ region }) {
       <div style={{ ...styles.pmRow, ...(missing ? styles.pmRowMissing : {}) }}>
         <Icon size={18} weight="fill" style={styles.pmIcon} aria-hidden />
         {missing ? (
-          <span>â€”</span>
+          <span>—</span>
         ) : (
           <span style={styles.pmItems}>
             {list.map((v) => <PMItem key={v} name={v} />)}
@@ -239,7 +239,7 @@ export default function SlideRegionPMsMap({ region }) {
       <div style={{ ...styles.callout, borderLeftColor: TIER_BAR_COLOR[tier] }}>
         <div style={styles.calloutHeader}>
           <span style={styles.calloutName}>{country}</span>
-          <span style={styles.calloutFlag} aria-hidden>{COUNTRY_FLAG[country] || 'ðŸ³ï¸'}</span>
+          <span style={styles.calloutFlag} aria-hidden>{COUNTRY_FLAG[country] || '🏳️'}</span>
         </div>
         <PMRow Icon={CreditCard} items={pms?.localScheme} />
         <PMRow Icon={Calculator} items={pms?.localA2A} />

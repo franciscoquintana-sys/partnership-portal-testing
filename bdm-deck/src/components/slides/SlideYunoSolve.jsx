@@ -9,7 +9,7 @@ import SlideBase from './SlideBase'
 import BeamRule from '../BeamRule'
 import { useTheme } from '../../lib/theme'
 
-// Capability icons â€” one per slot (01â€“04). Phosphor bold weight to match
+// Capability icons — one per slot (01–04). Phosphor bold weight to match
 // the rest of the deck. Slots map to Yuno's default 4-capability pattern:
 // routing, cascade recovery, local APMs, unified dashboard.
 const CAP_ICONS = {
@@ -27,7 +27,7 @@ function CapIconSvg({ num }) {
 
 // Build a rectilinear "PCB trace" path from (x1,y1) down to a horizontal bus
 // at midY, then over to x2, then down to y2. Quadratic-rounded corners so
-// the elbows look like a real circuit trace, not a hard 90Â° angle.
+// the elbows look like a real circuit trace, not a hard 90° angle.
 function rectiPath(x1, y1, x2, y2, midY) {
   const dx = x2 - x1
   if (Math.abs(dx) < 1) {
@@ -96,7 +96,7 @@ function ArchitectureStack({ merchantName, merchantLogo, isTileLogo, psps, style
       // PSP is long and the curve doesn't kiss the chip top.
       const busY = y.bottom + (cps[0].top - y.bottom) * 0.35
       // Stop drops short of the chip top so the stroke doesn't visually
-      // bleed over the chip's border â€” leaves a clean air gap between
+      // bleed over the chip's border — leaves a clean air gap between
       // the trace end and the chip.
       const CHIP_GAP = 8
       for (const c of cps) {
@@ -135,7 +135,7 @@ function ArchitectureStack({ merchantName, merchantLogo, isTileLogo, psps, style
             const delay = -((i * 0.5) % dur)
             return (
               <g key={i}>
-                {/* base trace â€” always-on dim line so the wiring is visible */}
+                {/* base trace — always-on dim line so the wiring is visible */}
                 <path
                   d={d}
                   fill="none"
@@ -143,7 +143,7 @@ function ArchitectureStack({ merchantName, merchantLogo, isTileLogo, psps, style
                   strokeWidth="1.4"
                   strokeLinecap="round"
                 />
-                {/* energy beam â€” short bright dash slides along the path
+                {/* energy beam — short bright dash slides along the path
                     via stroke-dashoffset, glow filter for the "current"
                     feel. pathLength=100 normalizes regardless of geometry. */}
                 <path
@@ -431,7 +431,7 @@ export default function SlideYunoSolve({ data }) {
       boxShadow: theme.isLight ? '0 0 8px rgba(62,79,224,0.55)' : '0 0 8px rgba(89,103,228,0.9)',
     },
 
-    // The stacked architecture. Merchant â†’ Yuno â†’ PSPs connected by animated
+    // The stacked architecture. Merchant → Yuno → PSPs connected by animated
     // SVG circuit lines drawn in an absolute-positioned overlay. `position:
     // relative` roots that overlay; `justify-content: center` shifts the
     // stack a bit down from the card header so the diagram breathes.
@@ -547,8 +547,8 @@ export default function SlideYunoSolve({ data }) {
       fontFamily: 'var(--font-mono)',
       padding: '4px 9px',
       // Pills sit on the Yuno block. On dark that block is a translucent
-      // navy gradient â†’ keep the original soft white wash so pills read.
-      // On light the Yuno block is solid blue â†’ bump to a slightly stronger
+      // navy gradient → keep the original soft white wash so pills read.
+      // On light the Yuno block is solid blue → bump to a slightly stronger
       // white wash so pills stay legible on the saturated accent fill.
       background: theme.isLight ? 'rgba(255,255,255,0.18)' : 'rgba(255,255,255,0.06)',
       border: theme.isLight ? '1px solid rgba(255,255,255,0.30)' : '1px solid rgba(255,255,255,0.12)',
@@ -595,7 +595,7 @@ export default function SlideYunoSolve({ data }) {
       // Dark: deep matte chip. Light: white surface with subtle border so
       // chips read as crisp tiles on the pale architecture card.
       background: theme.isLight ? theme.bgElevated : 'rgba(0,0,0,0.5)',
-      // Dark uses borderDefault (0.10) â€” matches the original 0.1 hairline.
+      // Dark uses borderDefault (0.10) — matches the original 0.1 hairline.
       border: `1px solid ${theme.borderDefault}`,
       borderRadius: '10px',
       fontSize: '11.5px',
@@ -637,7 +637,7 @@ export default function SlideYunoSolve({ data }) {
       fontSize: '8.5px',
       fontWeight: 600,
       letterSpacing: '1.4px',
-      // Sits on the +460 accent chip in both themes â€” keep the pale-blue
+      // Sits on the +460 accent chip in both themes — keep the pale-blue
       // label readable on the brand fill.
       color: 'rgba(189,195,246,0.9)',
       textTransform: 'uppercase',
@@ -709,7 +709,7 @@ export default function SlideYunoSolve({ data }) {
     // Back face: holds the description. On dark we keep the original
     // accent-tinted gradient (gives the back a different feel from front);
     // on light we keep the same white card so the flip just swaps content,
-    // not surface â€” adding a soft accent border instead so the eye still
+    // not surface — adding a soft accent border instead so the eye still
     // registers the flip as state change.
     capFaceBack: {
       transform: 'rotateY(180deg)',
@@ -828,7 +828,7 @@ export default function SlideYunoSolve({ data }) {
     },
   }
 
-  // Default capability copy â€” matches the live BDM deck. [merchant] tokens
+  // Default capability copy — matches the live BDM deck. [merchant] tokens
   // get swapped for COMPANY_NAME below; per-merchant data still wins when
   // supplied via CAPABILITY_* fields.
   const merchantName = data?.COMPANY_NAME || 'the merchant'
@@ -844,7 +844,7 @@ export default function SlideYunoSolve({ data }) {
     },
     {
       title: 'Local Payment Methods',
-      desc: "1,000+ payment methods, wallets and local rails â€” UPI, Pix, iDEAL, Konbini, GrabPay â€” live through one integration, unlocking [merchant]'s global conversion.",
+      desc: "1,000+ payment methods, wallets and local rails — UPI, Pix, iDEAL, Konbini, GrabPay — live through one integration, unlocking [merchant]'s global conversion.",
     },
     {
       title: 'Unified Orchestration',
@@ -862,7 +862,7 @@ export default function SlideYunoSolve({ data }) {
   return (
     <SlideBase
       section={isBanking ? 'Banking Vertical'
-        : isPartner ? 'For partners Â· What we deliver to merchants today'
+        : isPartner ? 'For partners · What we deliver to merchants today'
         : 'Solution'}
       slideNumber={4}
     >
@@ -937,8 +937,8 @@ export default function SlideYunoSolve({ data }) {
           <span style={styles.bottomLabel}>Expected Impact</span>
           <div className="stagger" style={{ ...styles.impactCards, '--stagger-base': '0.7s', '--stagger-step': '0.06s' }}>
             {[
-              { n: '+3â€“8%', l: 'auth-rate uplift' },
-              { n: '20â€“30%', l: 'decline recovery' },
+              { n: '+3–8%', l: 'auth-rate uplift' },
+              { n: '20–30%', l: 'decline recovery' },
               { n: 'Weeks', l: 'to new markets' },
               { n: '1', l: 'integration' },
             ].map((s) => (

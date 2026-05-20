@@ -16,7 +16,7 @@ import SlideBase from './SlideBase'
 import BeamRule from '../BeamRule'
 import { useTheme } from '../../lib/theme'
 
-// Phosphor Icons, bold weight â€” single source of truth across the deck so
+// Phosphor Icons, bold weight — single source of truth across the deck so
 // every slide renders glyphs with the same stroke and rounding.
 const ICONS = {
   orchestration:  ShareNetwork,
@@ -225,13 +225,13 @@ function PaymentsConciergeHero({ styles, theme }) {
             />
           </div>
           <div style={styles.heroAiBubble}>
-            <span style={styles.heroAiBubbleAccent}>âˆ’1.8pp</span> vs 7-day avg.
+            <span style={styles.heroAiBubbleAccent}>−1.8pp</span> vs 7-day avg.
             Driver: <span style={styles.heroAiBubbleAccent}>3DS challenge spike</span> on
             Visa EU.
           </div>
         </div>
 
-        {/* Second turn â€” typing #2 + AI #2 share the same absolute
+        {/* Second turn — typing #2 + AI #2 share the same absolute
             bottom slot as AI #1, cycling in sequence within the same
             container footprint. */}
         <div
@@ -331,7 +331,7 @@ export default function SlideProductSuite() {
       // Visual-only nudge down so the cascade lands just above the
       // Payments Concierge card instead of crossing the Reconciliation
       // card. Layout math of the surrounding flex column stays
-      // unchanged â€” transform doesn't affect sibling positions.
+      // unchanged — transform doesn't affect sibling positions.
       transform: 'translateY(46px)',
     },
     aiArrowSvg: {
@@ -375,7 +375,7 @@ export default function SlideProductSuite() {
       textAlign: 'right',
     },
 
-    // Techie mono kicker â€” describes the visual below, reinforces the
+    // Techie mono kicker — describes the visual below, reinforces the
     // developer/coding aesthetic without competing with the title.
     monoKicker: {
       fontFamily: 'var(--font-mono)',
@@ -453,7 +453,7 @@ export default function SlideProductSuite() {
     },
 
     // ---------- Pillar header - numbered kicker replaces the old icon box.
-    // "01 Â· Orchestration" reinforces the "four pillars" framing and the
+    // "01 · Orchestration" reinforces the "four pillars" framing and the
     // developer/mono aesthetic already used in `> payment_lifecycle`.
     pillarHead: {
       display: 'flex',
@@ -564,7 +564,7 @@ export default function SlideProductSuite() {
     },
     // Payments Concierge - flagship card modeled on yuno.tools: macOS-style
     // traffic-light header, conversation body with user bubble (Yuno blue,
-    // right) â†’ typing dots â†’ AI bubble (dark, left) with PC logomark avatar.
+    // right) → typing dots → AI bubble (dark, left) with PC logomark avatar.
     // Animation cycles on a 10s loop so the slide reads as a live chat.
     heroCard: {
       flex: '0 0 auto',
@@ -772,7 +772,7 @@ export default function SlideProductSuite() {
       <div className="stagger" style={{ ...styles.body, '--stagger-base': '0.1s', '--stagger-step': '0.1s' }}>
         <div style={styles.titleRow}>
           <h2 style={styles.title}>
-            A complete suite Â· Four pillars Â·{' '}
+            A complete suite · Four pillars ·{' '}
             <span style={styles.titleAccent}>One brain</span>
           </h2>
         </div>
@@ -850,7 +850,7 @@ export default function SlideProductSuite() {
             <div style={styles.pcInfo}>
               <span style={styles.pcEyebrow}>
                 <span style={styles.pcEyebrowDot} />
-                AI Â· Live
+                AI · Live
               </span>
               <h3 style={styles.pcTitle}>Payments Concierge</h3>
               <p style={styles.pcDescription}>

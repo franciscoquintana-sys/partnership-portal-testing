@@ -22,13 +22,13 @@ const COUNTRIES_BY_REGION = Object.fromEntries(
   ]),
 )
 
-// Every portal-recognised country flattened across regions â€” used when
+// Every portal-recognised country flattened across regions — used when
 // "All regions" is selected so the country pill spans the global set.
 const ALL_COUNTRIES = DETAIL_REGIONS.flatMap((r) =>
   COUNTRIES_BY_REGION[r].map((country) => ({ country, region: r })),
 ).sort((a, b) => a.country.localeCompare(b.country))
 
-// E-commerce-development index per country â€” same numbers the portal's
+// E-commerce-development index per country — same numbers the portal's
 // Country Detail heatmap uses.
 const ECOMMERCE_INDEX = {
   'South Korea': 95, 'United Kingdom': 94, 'China': 93, 'United States': 92,
@@ -50,7 +50,7 @@ const ECOMMERCE_INDEX = {
   'Dominican Republic': 35, 'Nigeria': 34, 'Ghana': 33, 'Bangladesh': 33,
   'Pakistan': 32, 'Algeria': 31, 'Tunisia': 31, 'Botswana': 32,
   'Ecuador': 32, 'Bolivia': 30, 'Paraguay': 30, 'Guatemala': 30,
-  'Cambodia': 28, 'Rwanda': 28, 'Senegal': 25, "CÃ´te d'Ivoire": 26,
+  'Cambodia': 28, 'Rwanda': 28, 'Senegal': 25, "Côte d'Ivoire": 26,
   'Nepal': 26, 'Honduras': 26, 'Nicaragua': 25, 'Venezuela': 24,
   'Tanzania': 24, 'Cameroon': 22, 'Angola': 22, 'Iraq': 22, 'Myanmar': 22,
   'Uganda': 22, 'Zambia': 22, 'Mozambique': 20, 'Ethiopia': 20,
@@ -78,7 +78,7 @@ function indexColor(value) {
   return `rgb(${lerp(lo.rgb[0], hi.rgb[0])}, ${lerp(lo.rgb[1], hi.rgb[1])}, ${lerp(lo.rgb[2], hi.rgb[2])})`
 }
 
-// world-atlas long-form â†’ ECOMMERCE_INDEX short-form name mapping.
+// world-atlas long-form → ECOMMERCE_INDEX short-form name mapping.
 const NAME_ALIASES = {
   'United States of America': 'United States',
   'Russian Federation': 'Russia',
@@ -183,7 +183,7 @@ function ChoroplethMap({ pickerCountries, region, onPick, styles, theme }) {
               onClick={() => { if (inPicker && idx != null) onPick(name) }}
             >
               <title>
-                {name}{idx != null && inPicker ? ` Â· ecommerce development: ${idx}/100` : ''}
+                {name}{idx != null && inPicker ? ` · ecommerce development: ${idx}/100` : ''}
               </title>
             </path>
           )
@@ -193,7 +193,7 @@ function ChoroplethMap({ pickerCountries, region, onPick, styles, theme }) {
   )
 }
 
-function PillDropdown({ icon: Icon, label, items, value, onChange, searchPlaceholder = 'Type to searchâ€¦' }) {
+function PillDropdown({ icon: Icon, label, items, value, onChange, searchPlaceholder = 'Type to search…' }) {
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const wrapRef = useRef(null)
@@ -209,7 +209,7 @@ function PillDropdown({ icon: Icon, label, items, value, onChange, searchPlaceho
   }, [open])
 
   // Reset the typed query and autofocus the search input each time the
-  // dropdown opens â€” keystrokes go straight into filtering.
+  // dropdown opens — keystrokes go straight into filtering.
   useEffect(() => {
     if (open) {
       setQuery('')
@@ -448,7 +448,12 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
       color: 'transparent',
     },
     subtitle: {
-      display: 'none',
+      fontFamily: 'var(--font)',
+      fontSize: 17,
+      lineHeight: 1.5,
+      color: theme.inkSecondary,
+      margin: 0,
+      maxWidth: 1280,
     },
     filterRow: {
       display: 'flex',
@@ -587,7 +592,7 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
     overview: {
       gridColumn: '1 / -1',
       position: 'relative',
-      // Fill all remaining body space â€” flex parent grows, child overview
+      // Fill all remaining body space — flex parent grows, child overview
       // expands instead of being capped by min-content grid sizing.
       flex: 1,
       minHeight: 0,
@@ -674,7 +679,9 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
             </span>
           </h2>
           {!country && (
-            <p style={styles.subtitle}>Click any country on the map to open its market brief.</p>
+            <p style={styles.subtitle}>
+              We have partnerships with the region’s most relevant providers (PSPs, Acquirers, APMs, Product and others), ranging from the largest players to the niche ones. Thanks to our extensive footprint, we can integrate any provider in less than a month and source new ones as needed.
+            </p>
           )}
           <div style={styles.filterRow}>
             <span style={styles.filterKicker}>Filter</span>
@@ -684,7 +691,7 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
               value={region}
               onChange={setRegion}
               items={regionItems}
-              searchPlaceholder="Type a regionâ€¦"
+              searchPlaceholder="Type a region…"
             />
             <PillDropdown
               icon={MapPin}
@@ -692,11 +699,11 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
               value={country}
               onChange={handleCountryPick}
               items={countryItems}
-              searchPlaceholder="Type a countryâ€¦"
+              searchPlaceholder="Type a country…"
             />
             {country && (
               <button type="button" style={styles.backBtn} onClick={() => setCountry('')}>
-                â† Back to map
+                ← Back to map
               </button>
             )}
           </div>

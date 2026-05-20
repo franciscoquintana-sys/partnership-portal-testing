@@ -4,7 +4,7 @@
 
 // Cache-busting version for team photos. Files in /public are served
 // at fixed paths, so browsers and Railway's CDN cache them indefinitely
-// â€” a byte-level change to /team/justo-benetti.png won't reach users
+// — a byte-level change to /team/justo-benetti.png won't reach users
 // until the URL changes. Bump this whenever build-team-photos.mjs
 // regenerates any headshot.
 export const TEAM_PHOTO_VERSION = '2026-04-24-5'
@@ -21,9 +21,9 @@ export const FOUNDERS = [
   },
   {
     photo: v('/connections-deck/team/julian-nunez.png'),
-    name: 'JuliÃ¡n NuÃ±ez',
-    firstName: 'JuliÃ¡n',
-    lastName: 'NuÃ±ez',
+    name: 'Julián Nuñez',
+    firstName: 'Julián',
+    lastName: 'Nuñez',
     role: 'Co-founder & COO',
     pedigree: ['rappi'],
     pedigreeLabel: 'Rappi Early Employee',
@@ -54,7 +54,7 @@ export const LEADERS = [
     photo: v('/connections-deck/team/walter-campos.png'),
     name: 'Walter Campos',
     role: 'General Manager, LatAm',
-    pedigreeLabel: 'MercadoPago Â· Cielo',
+    pedigreeLabel: 'MercadoPago · Cielo',
   },
   {
     photo: v('/connections-deck/team/briana-gargurevich.png'),

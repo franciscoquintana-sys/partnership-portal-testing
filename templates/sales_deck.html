@@ -46,7 +46,7 @@
       btn.addEventListener('click', async function () {
         let url = null;
         try {
-          // Same-origin iframe â€” read the React app's exposed helper.
+          // Same-origin iframe — read the React app's exposed helper.
           const fn = frame.contentWindow && frame.contentWindow.getDeckShareLink;
           if (typeof fn === 'function') url = fn();
         } catch (_) { /* ignored */ }
@@ -57,7 +57,7 @@
         }
         try {
           await navigator.clipboard.writeText(url);
-          btn.textContent = 'âœ“ Link copied';
+          btn.textContent = '✓ Link copied';
         } catch (_) {
           window.prompt('Copy this link:', url);
         }

@@ -79,7 +79,7 @@ const styles = {
   },
   title: {
     fontFamily: 'var(--font-display)',
-    // Reduced from 34â€“72px so the one-line composition fits at 1920px.
+    // Reduced from 34–72px so the one-line composition fits at 1920px.
     fontSize: '34.5px',
     fontWeight: 700,
     letterSpacing: '-1px',
@@ -239,7 +239,7 @@ export default function SlideBookDemo({ data }) {
 
             <div style={styles.statsRow}>
               {[
-                { n: '+3â€“8%', l: 'authorization uplift' },
+                { n: '+3–8%', l: 'authorization uplift' },
                 { n: '25%+', l: 'of declines recovered' },
                 { n: 'Weeks', l: 'to launch new markets' },
               ].map((s) => (
@@ -265,7 +265,7 @@ export default function SlideBookDemo({ data }) {
                 />
               </div>
               <div style={styles.qrUrl}>y.uno/book-a-demo</div>
-              <div style={styles.qrFooter}>Point your camera Â· We'll bring the right people</div>
+              <div style={styles.qrFooter}>Point your camera · We'll bring the right people</div>
             </div>
           </div>
         </div>
