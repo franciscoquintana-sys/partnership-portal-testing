@@ -259,7 +259,7 @@ export default function SlidePartnerDirectory() {
       fontFamily: 'var(--font-display)', fontSize: 48, fontWeight: 700,
       letterSpacing: '-1px', lineHeight: 1.05, color: inkStrong, margin: 0,
     },
-    subtitle: { fontFamily: 'var(--font)', fontSize: 13, color: inkSecondary, margin: 0 },
+    subtitle: { fontFamily: 'var(--font)', fontSize: 17, lineHeight: 1.5, color: inkSecondary, margin: 0, maxWidth: 1280 },
     // Single row: search input + four selects, matching the Country
     // Detail map's pill-dropdown aesthetic. Search grows to fill space.
     filterRow: { display: 'flex', flexWrap: 'nowrap', gap: 10, alignItems: 'center', flexShrink: 0 },
@@ -375,6 +375,9 @@ export default function SlidePartnerDirectory() {
               Dynamic slide
             </span>
           </h2>
+          <p style={styles.subtitle}>
+            We have partnerships with the region’s most relevant providers (PSPs, Acquirers, APMs, Fraud Solutions and others), ranging from the largest players to the niche ones. Thanks to our extensive footprint, we can integrate any provider in less than a month and source new ones as needed.
+          </p>
         </div>
 
         <div style={styles.filterRow}>
