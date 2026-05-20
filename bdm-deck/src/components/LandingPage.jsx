@@ -656,7 +656,7 @@ export default function LandingPage({ onGenerate, loading = false, errorMessage 
           </h1>
 
           <div style={styles.subtitle}>
-            <span>Type client URL to generate their tailored brief.</span>
+            <span>Type client URL to generate the connection deck.</span>
           </div>
         </div>
 
