@@ -208,7 +208,8 @@ export default function SlidePartnerDirectory() {
         if (!hasMethod) return false
       }
       if (q) {
-        const hay = `${p.provider} ${p.type} ${(p.regions || []).join(' ')} ${(p.countries || []).join(' ')}`.toLowerCase()
+        const methods = Object.values(p.country_methods || {}).flat()
+        const hay = `${p.provider} ${p.type} ${(p.regions || []).join(' ')} ${(p.countries || []).join(' ')} ${methods.join(' ')}`.toLowerCase()
         if (!hay.includes(q)) return false
       }
       return true
