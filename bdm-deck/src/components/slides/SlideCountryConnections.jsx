@@ -198,7 +198,7 @@ export default function SlideCountryConnections({ region, country }) {
         {covered ? (
           <>
             <div style={styles.intro}>
-              We have partnerships with the region's most relevant providers, ranging from the largest players to the niche ones. Thanks to our extensive {region} footprint, we can integrate any PSPs in less than a month and source new ones as needed.
+              We have partnerships with the most relevant providers, ranging from the largest players to the niche ones. Thanks to our extensive {region} footprint, we can integrate any PSPs in less than a month and source new ones as needed.
             </div>
 
             <div style={styles.table}>

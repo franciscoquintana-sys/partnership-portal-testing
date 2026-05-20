@@ -398,7 +398,7 @@ export default function SlidePartnerDirectory() {
               <path d="M3 4h8" />
             </svg>
             <p style={styles.subtitle}>
-              We have partnerships with the region’s most relevant providers (PSPs, Acquirers, APMs, Anti Fraud Solutions and others), ranging from the largest players to the niche ones. Thanks to our extensive footprint, we can integrate any provider in less than a month and source new ones as needed.
+              We have partnerships with the most relevant providers (PSPs, Acquirers, APMs, Anti Fraud Solutions and others), ranging from the largest players to the niche ones. Thanks to our extensive footprint, we can integrate any provider in less than a month and source new ones as needed.
             </p>
           </div>
         </div>

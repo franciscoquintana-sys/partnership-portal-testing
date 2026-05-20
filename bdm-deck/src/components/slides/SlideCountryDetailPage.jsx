@@ -1026,7 +1026,7 @@ export default function SlideCountryDetailPage({ selectedCountry, merchantVertic
             <div style={styles.card}>
               <span style={styles.cardHeader}>🤝 Providers</span>{/* footnote rendered below the grid */}
               <p style={styles.partnersIntro}>
-                We have partnerships with the region&rsquo;s most relevant providers
+                We have partnerships with the most relevant providers
                 (PSPs, Acquirers, APMs, Anti Fraud Solutions and others), ranging from the largest
                 players to the niche ones. Thanks to our extensive footprint, we can
                 integrate any provider in less than a month and source new ones as
