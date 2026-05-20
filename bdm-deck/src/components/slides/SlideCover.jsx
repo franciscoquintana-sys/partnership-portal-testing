@@ -415,9 +415,7 @@ export default function SlideCover({ data }) {
             </p>
           ) : (
             <p style={styles.subtitle}>
-              How Yuno unifies payments for{' '}
-              <span style={styles.companyNameInline}>{data.COMPANY_NAME}</span>{' '}
-              across every market, method, and moment
+              Connections Deck
             </p>
           )}
         </div>
