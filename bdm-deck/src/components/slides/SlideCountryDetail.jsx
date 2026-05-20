@@ -448,12 +448,7 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
       color: 'transparent',
     },
     subtitle: {
-      fontFamily: 'var(--font)',
-      fontSize: 17,
-      lineHeight: 1.5,
-      color: theme.inkSecondary,
-      margin: 0,
-      maxWidth: 1280,
+      display: 'none',
     },
     filterRow: {
       display: 'flex',
@@ -679,9 +674,7 @@ export default function SlideCountryDetail({ goTo, currentIndex, setSelectedCoun
             </span>
           </h2>
           {!country && (
-            <p style={styles.subtitle}>
-              We have partnerships with the region’s most relevant providers (PSPs, Acquirers, APMs, Product and others), ranging from the largest players to the niche ones. Thanks to our extensive footprint, we can integrate any provider in less than a month and source new ones as needed.
-            </p>
+            <p style={styles.subtitle}>Click any country on the map to open its market brief.</p>
           )}
           <div style={styles.filterRow}>
             <span style={styles.filterKicker}>Filter</span>
