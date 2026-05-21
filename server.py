@@ -99,6 +99,12 @@ _BOT_BLOCK_PATTERNS = (
     "please verify", "checking your browser", "cloudflare",
     "one moment, please", "are you human", "captcha",
     "verify you are a human",
+    # Generic WAF / security-filter blocking pages (e.g. Imperva / Akamai /
+    # custom). These phrases leaked into the cover greeting as the company
+    # name when the scraped <title> or first <h1> was the block message.
+    "request didn't go through", "security filter flagged",
+    "permission to access this page", "you don't have permission",
+    "request is blocked", "blocked for security reasons",
 )
 
 
