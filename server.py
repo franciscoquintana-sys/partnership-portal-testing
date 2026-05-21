@@ -433,6 +433,63 @@ def sales_deck_site_info(url: str = ""):
     return _site_info(url)
 
 
+# Uploaded-logo cache for the Connections Deck. The landing page lets a
+# presenter override the auto-fetched merchant logo with a local file (turned
+# into a data: URL on the client). Without a server-side stash, the file lives
+# only in that browser tab — so the "Copy interactive deck link" flow handed
+# recipients a URL that re-fetched the merchant homepage and showed the
+# original auto-fetched logo, not the presenter's upload. Stash uploads here
+# keyed by a short id, embed the id in the share link, and the recipient SPA
+# downloads the bytes back. In-memory only: a Railway restart drops links.
+# FIFO eviction past the cap keeps memory bounded.
+import base64 as _b64_logo
+import uuid as _uuid_logo
+from fastapi.responses import Response as _FastAPIResponse
+
+_UPLOADED_LOGOS = {}  # key -> (mime, raw_bytes)
+_UPLOADED_LOGOS_MAX = 200
+
+
+@app.post("/api/upload-logo", response_class=JSONResponse)
+async def upload_deck_logo(req: Request):
+    try:
+        body = await req.json()
+    except Exception:
+        return JSONResponse({"error": "invalid JSON body"}, status_code=400)
+    data = (body or {}).get("data") or ""
+    if not isinstance(data, str) or not data.startswith("data:"):
+        return JSONResponse({"error": "data must be a data: URL"}, status_code=400)
+    try:
+        header, b64 = data.split(",", 1)
+        mime = header[5:].split(";")[0] or "application/octet-stream"
+        raw = _b64_logo.b64decode(b64, validate=False)
+    except Exception:
+        return JSONResponse({"error": "invalid data URL"}, status_code=400)
+    if len(raw) > 5 * 1024 * 1024:
+        return JSONResponse({"error": "logo too large (>5MB)"}, status_code=413)
+    if len(_UPLOADED_LOGOS) >= _UPLOADED_LOGOS_MAX:
+        try:
+            _UPLOADED_LOGOS.pop(next(iter(_UPLOADED_LOGOS)))
+        except StopIteration:
+            pass
+    key = _uuid_logo.uuid4().hex[:16]
+    _UPLOADED_LOGOS[key] = (mime, raw)
+    return {"key": key}
+
+
+@app.get("/api/uploaded-logo/{key}")
+def get_deck_uploaded_logo(key: str):
+    entry = _UPLOADED_LOGOS.get(key)
+    if not entry:
+        raise StarletteHTTPException(status_code=404)
+    mime, raw = entry
+    return _FastAPIResponse(
+        content=raw,
+        media_type=mime,
+        headers={"Cache-Control": "public, max-age=3600"},
+    )
+
+
 # Sales-deck partner directory — flat JSON list of every partner in the
 # SOT grouped by PROVIDER_NAME, with type / regions / countries / methods
 # attached. Powers the in-deck partner-directory slide (filters + click

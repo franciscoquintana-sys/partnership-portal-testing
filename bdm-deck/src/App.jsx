@@ -223,6 +223,26 @@ function matchPrintRoute(pathname) {
   return m ? decodeURIComponent(m[1]) : null
 }
 
+// Pull a presenter-uploaded logo back from the server cache and stamp it on
+// the share-link merchant data as a data: URL — that's what SlideCover keys
+// on to render the original colors/transparency without the auto-key
+// transparent-bg processing.
+async function applySharedLogo(data, key) {
+  if (!data || !key) return
+  try {
+    const r = await fetch(`/api/uploaded-logo/${encodeURIComponent(key)}`)
+    if (!r.ok) return
+    const blob = await r.blob()
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result)
+      reader.onerror = reject
+      reader.readAsDataURL(blob)
+    })
+    data.COMPANY_LOGO = dataUrl
+  } catch (_) { /* keep auto-fetched logo on any failure */ }
+}
+
 export default function App() {
   const [merchantData, setMerchantData] = useState(null)
   const [sharedMode, setSharedMode] = useState(false)
@@ -256,8 +276,11 @@ export default function App() {
       const sharedParams = new URLSearchParams(window.location.search)
       const sharedRegions = (sharedParams.get('regions') || '').split(',').filter(Boolean)
       const sharedCountries = (sharedParams.get('countries') || '').split(',').filter(Boolean)
-      buildMerchantData(printSlug, sharedRegions, sharedCountries).then((data) => {
+      const sharedLogoKey = sharedParams.get('logo') || ''
+      buildMerchantData(printSlug, sharedRegions, sharedCountries).then(async (data) => {
         if (cancelled || !data) return
+        await applySharedLogo(data, sharedLogoKey)
+        if (cancelled) return
         setMerchantData(data)
         setPrintMode(true)
       })
@@ -269,8 +292,11 @@ export default function App() {
     const sharedParams = new URLSearchParams(window.location.search)
     const sharedRegions = (sharedParams.get('regions') || '').split(',').filter(Boolean)
     const sharedCountries = (sharedParams.get('countries') || '').split(',').filter(Boolean)
-    buildMerchantData(slug, sharedRegions, sharedCountries).then((data) => {
+    const sharedLogoKey = sharedParams.get('logo') || ''
+    buildMerchantData(slug, sharedRegions, sharedCountries).then(async (data) => {
       if (cancelled || !data) return
+      await applySharedLogo(data, sharedLogoKey)
+      if (cancelled) return
       setMerchantData(data)
       setSharedMode(true)
     })
@@ -297,7 +323,25 @@ export default function App() {
     // (no auto-fetch needed because the presenter brought their own).
     const customLogo = typeof rawInput === 'object' ? rawInput?.customLogo : null
     if (data && data.COMPANY_NAME && (data.COMPANY_LOGO || customLogo)) {
-      if (customLogo) data.COMPANY_LOGO = customLogo
+      if (customLogo) {
+        data.COMPANY_LOGO = customLogo
+        // Stash the upload server-side so the Copy-Link flow can hand the
+        // recipient the SAME logo (otherwise their /m/<slug> visit re-fetches
+        // the merchant homepage and lands on the original auto-fetched logo).
+        // Best-effort: if the upload fails we still show it locally; the
+        // share link just falls back to the auto-fetch on the recipient side.
+        try {
+          const r = await fetch('/api/upload-logo', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: customLogo }),
+          })
+          if (r.ok) {
+            const j = await r.json()
+            if (j?.key) data.UPLOADED_LOGO_KEY = j.key
+          }
+        } catch (_) { /* swallow — local logo still works */ }
+      }
       setMerchantData(data)
       return
     }
@@ -336,6 +380,9 @@ export default function App() {
       }
       if (Array.isArray(merchantData.COUNTRIES) && merchantData.COUNTRIES.length) {
         params.set('countries', merchantData.COUNTRIES.join(','))
+      }
+      if (merchantData.UPLOADED_LOGO_KEY) {
+        params.set('logo', merchantData.UPLOADED_LOGO_KEY)
       }
       const qs = params.toString()
       return `${window.location.origin}${base}m/${encodeURIComponent(slug)}${qs ? `?${qs}` : ''}`
